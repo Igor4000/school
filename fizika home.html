@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="page-title">Fizika Bevezető | TECHSCIENCE</title>
+    <style>
+        /* RESET ÉS ALAPSTÍLUSOK */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a56db;
+            --secondary-orange: #f97316;
+            --accent-purple: #7c3aed;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-medium: #475569;
+            --text-light: #64748b;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* NYELVVÁLASZTÓ */
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 6px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(226, 232, 240, 0.7);
+            transition: var(--transition);
+        }
+
+        .lang-switcher:hover {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .lang-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            letter-spacing: 0.02em;
+            transition: var(--transition);
+            background: transparent;
+            color: var(--text-medium);
+            white-space: nowrap;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+
+        .lang-btn:hover {
+            color: var(--text-dark);
+            background: rgba(26, 86, 219, 0.06);
+        }
+
+        .lang-btn.active {
+            background: var(--primary-blue);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(26, 86, 219, 0.35);
+        }
+
+        .lang-btn.active:hover {
+            background: #1550c8;
+            color: #ffffff;
+        }
+
+        .lang-btn:focus-visible {
+            outline: 3px solid var(--accent-purple);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .lang-switcher {
+                top: 12px;
+                right: 12px;
+                padding: 5px;
+                gap: 4px;
+                border-radius: 44px;
+            }
+            .lang-btn {
+                padding: 8px 14px;
+                font-size: 0.82rem;
+                border-radius: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .lang-switcher {
+                top: 8px;
+                right: 8px;
+                padding: 4px;
+                gap: 3px;
+                border-radius: 40px;
+            }
+            .lang-btn {
+                padding: 7px 12px;
+                font-size: 0.78rem;
+                border-radius: 32px;
+                letter-spacing: 0.01em;
+            }
+        }
+
+        /* KONTAINER ÉS ÁLTALÁNOS */
+        .physics-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-spacing {
+            margin-bottom: 80px;
+        }
+
+        /* FEJLÉC */
+        .page-header {
+            text-align: center;
+            padding: 80px 0 60px;
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 100%);
+            border-radius: 0 0 32px 32px;
+            margin-bottom: 60px;
+        }
+
+        .main-title {
+            font-size: clamp(2.5rem, 5vw, 3.8rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            color: var(--text-medium);
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-weight: 400;
+        }
+
+        /* KÉP-SZÖVEG SZEKCIÓK */
+        .content-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+
+        .text-content {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.3rem);
+            margin-bottom: 24px;
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .physics-text {
+            font-size: clamp(1rem, 1.8vw, 1.1rem);
+            color: var(--text-medium);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .highlight {
+            color: var(--secondary-orange);
+            font-weight: 600;
+            background: linear-gradient(120deg, #fed7aa 0%, #fed7aa 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 0.3em;
+            background-position: 0 88%;
+            padding: 0 2px;
+        }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+
+        .image-wrapper:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .physics-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .image-wrapper:hover .physics-image {
+            transform: scale(1.05);
+        }
+
+        /* KARTYÁK A FIZIKAI ALAPOKHOZ */
+        .physics-principles {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 60px 40px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .principles-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
+            margin-bottom: 50px;
+            color: var(--primary-blue);
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .principle-card {
+            background: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 32px 28px;
+            border-left: 4px solid var(--accent-purple);
+            transition: var(--transition);
+        }
+
+        .principle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .principle-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .principle-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .principle-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* FIZIKAI TÖRVÉNYEK */
+        .laws-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #fefce8 100%);
+            border-radius: var(--border-radius);
+            padding: 60px 40px;
+            margin-top: 40px;
+        }
+
+        .laws-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .law-item {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border-top: 3px solid var(--secondary-orange);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .law-item h4 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* LÁBLÉC */
+        .page-footer {
+            text-align: center;
+            padding: 50px 20px 30px;
+            color: var(--text-light);
+            border-top: 1px solid #e2e8f0;
+            margin-top: 60px;
+            font-size: 0.95rem;
+        }
+
+        /* SZÖVEG ÁTMENET */
+        .text-fade {
+            transition: opacity 0.25s ease;
+        }
+        .text-fading {
+            opacity: 0;
+        }
+
+        /* MOBIL OPTIMALIZÁLÁS */
+        @media (max-width: 992px) {
+            .content-section {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .image-wrapper {
+                order: -1;
+            }
+
+            .physics-image {
+                height: 350px;
+            }
+
+            .page-header {
+                padding: 60px 0 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .physics-container {
+                padding: 0 16px;
+            }
+
+            .section-spacing {
+                margin-bottom: 60px;
+            }
+
+            .physics-principles,
+            .laws-section {
+                padding: 40px 24px;
+            }
+
+            .principles-grid,
+            .laws-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .physics-image {
+                height: 300px;
+            }
+
+            .main-title {
+                font-size: 2.3rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .page-header {
+                padding-top: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 70px 0 30px;
+                border-radius: 0 0 24px 24px;
+            }
+
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .physics-image {
+                height: 250px;
+            }
+
+            .principle-card {
+                padding: 24px 20px;
+            }
+        }
+
+        /* ANIMÁCIÓK */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .subtitle {
+            animation: fadeInUp 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+
+        .content-section {
+            animation: fadeInUp 0.8s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+
+        .physics-principles {
+            animation: fadeInUp 0.8s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- NYELVVÁLASZTÓ GOMBOK -->
+    <div class="lang-switcher" aria-label="Nyelvválasztó / Izbor jezika">
+        <button class="lang-btn active" data-lang="hu" aria-pressed="true" aria-label="Magyar nyelv">Magyar</button>
+        <button class="lang-btn" data-lang="sr" aria-pressed="false" aria-label="Srpski jezik">Srpski</button>
+    </div>
+
+    <div class="physics-container">
+        <!-- FEJLÉC -->
+        <header class="page-header">
+            <h1 class="main-title" data-translate-key="main-title">Fizikai Bevezető</h1>
+            <p class="subtitle" data-translate-key="subtitle">Az univerzum nyelvének megértése – a legkisebb részecskétől a legnagyobb galaxisokig</p>
+        </header>
+
+        <!-- ELSŐ SZEKCIÓ -->
+        <section class="content-section section-spacing">
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section1-title">Mi is a fizika?</h2>
+                <p class="physics-text" data-translate-key="section1-p1">
+                    A <span class="highlight">fizika</span> a természettudományok alapja, amely az anyag, az energia, a tér és az idő kölcsönhatásait vizsgálja. Nem csupán egy tantárgy, hanem egy <span class="highlight">gondolkodásmód</span>, amely segít megérteni a minket körülvevő világ működését.
+                </p>
+                <p class="physics-text" data-translate-key="section1-p2">
+                    A fizika törvényei mindenhol jelen vannak – a toll esésében, a felhők mozgásában, a mobiltelefonok működésében vagy a csillagok születésében. Ez a tudomány a <span class="highlight">kísérletezés</span> és a <span class="highlight">matematikai modellezés</span> tökéletes egyensúlya.
+                </p>
+                <p class="physics-text" data-translate-key="section1-p3">
+                    A fizikai gondolkodás fejleszti a <span class="highlight">kritikus gondolkodást</span>, a <span class="highlight">problémaanalízis</span> képességét és a <span class="highlight">kreatív megoldáskeresést</span> – készségeket, amelyek bármely karrierút során hasznosak.
+                </p>
+            </div>
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Fizikai kísérletek és jelenségek"
+                class="physics-image"
+                data-translate-key="image1-alt"
+                data-translate-attr="alt">
+            </div>
+        </section>
+
+        <!-- MÁSODIK SZEKCIÓ -->
+        <section class="content-section section-spacing">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Csillagászat és univerzum"
+                class="physics-image"
+                data-translate-key="image2-alt"
+                data-translate-attr="alt">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section2-title">A fizika világa</h2>
+                <p class="physics-text" data-translate-key="section2-p1">
+                    A fizika nem egy homogén terület – számos izgalmas ága létezik, mindegyik a valóság más aspektusait vizsgálja. A <span class="highlight">klasszikus mechanika</span> a hétköznapi tárgyak mozgását írja le, míg a <span class="highlight">kvantumfizika</span> a legkisebb részecskék rejtélyes világába enged betekintést.
+                </p>
+                <p class="physics-text" data-translate-key="section2-p2">
+                    A <span class="highlight">relativitáselmélet</span> megváltoztatta, hogyan értelmezzük a teret és az időt, a <span class="highlight">termodinamika</span> pedig az energiaátalakulások törvényszerűségeit tárja fel.
+                </p>
+                <p class="physics-text" data-translate-key="section2-p3">
+                    Mindezek az elméletek nem csupán elvont fogalmak – meghatározzák, hogyan működnek a technológiák, amelyek mindennapi életünket alakítják, az MRI-készülékektől a GPS-ig.
+                </p>
+            </div>
+        </section>
+
+        <!-- LÁBLÉC -->
+        <footer class="page-footer">
+            <p data-translate-key="footer-text">TECHSCIENCE Fizikai Bevezető • Középiskolások számára</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // --- FORDÍTÁSI ADATBÁZIS ---
+            const translations = {
+                'page-title': {
+                    hu: 'Fizika Bevezető | TECHSCIENCE',
+                    sr: 'Uvod u fiziku | TECHSCIENCE'
+                },
+                'main-title': {
+                    hu: 'Fizikai Bevezető',
+                    sr: 'Uvod u fiziku'
+                },
+                'subtitle': {
+                    hu: 'Az univerzum nyelvének megértése – a legkisebb részecskétől a legnagyobb galaxisokig',
+                    sr: 'Razumevanje jezika univerzuma – od najmanje čestice do najvećih galaksija'
+                },
+                'section1-title': {
+                    hu: 'Mi is a fizika?',
+                    sr: 'Šta je fizika?'
+                },
+                'section1-p1': {
+                    hu: 'A <span class="highlight">fizika</span> a természettudományok alapja, amely az anyag, az energia, a tér és az idő kölcsönhatásait vizsgálja. Nem csupán egy tantárgy, hanem egy <span class="highlight">gondolkodásmód</span>, amely segít megérteni a minket körülvevő világ működését.',
+                    sr: '<span class="highlight">Fizika</span> je osnova prirodnih nauka, koja proučava međudejstva materije, energije, prostora i vremena. Ona nije samo nastavni predmet, već <span class="highlight">način razmišljanja</span> koji pomaže da razumemo funkcionisanje sveta koji nas okružuje.'
+                },
+                'section1-p2': {
+                    hu: 'A fizika törvényei mindenhol jelen vannak – a toll esésében, a felhők mozgásában, a mobiltelefonok működésében vagy a csillagok születésében. Ez a tudomány a <span class="highlight">kísérletezés</span> és a <span class="highlight">matematikai modellezés</span> tökéletes egyensúlya.',
+                    sr: 'Zakoni fizike su prisutni svuda – u padu olovke, kretanju oblaka, radu mobilnih telefona ili rađanju zvezda. Ova nauka je savršena ravnoteža <span class="highlight">eksperimentisanja</span> i <span class="highlight">matematičkog modelovanja</span>.'
+                },
+                'section1-p3': {
+                    hu: 'A fizikai gondolkodás fejleszti a <span class="highlight">kritikus gondolkodást</span>, a <span class="highlight">problémaanalízis</span> képességét és a <span class="highlight">kreatív megoldáskeresést</span> – készségeket, amelyek bármely karrierút során hasznosak.',
+                    sr: 'Fizičko razmišljanje razvija <span class="highlight">kritičko mišljenje</span>, <span class="highlight">sposobnost analize problema</span> i <span class="highlight">kreativno pronalaženje rešenja</span> – veštine koje su korisne na bilo kom karijernom putu.'
+                },
+                'image1-alt': {
+                    hu: 'Fizikai kísérletek és jelenségek',
+                    sr: 'Fizički eksperimenti i pojave'
+                },
+                'section2-title': {
+                    hu: 'A fizika világa',
+                    sr: 'Svet fizike'
+                },
+                'section2-p1': {
+                    hu: 'A fizika nem egy homogén terület – számos izgalmas ága létezik, mindegyik a valóság más aspektusait vizsgálja. A <span class="highlight">klasszikus mechanika</span> a hétköznapi tárgyak mozgását írja le, míg a <span class="highlight">kvantumfizika</span> a legkisebb részecskék rejtélyes világába enged betekintést.',
+                    sr: 'Fizika nije homogena oblast – postoji mnogo uzbudljivih grana, od kojih svaka proučava različite aspekte stvarnosti. <span class="highlight">Klasična mehanika</span> opisuje kretanje svakodnevnih predmeta, dok <span class="highlight">kvantna fizika</span> pruža uvid u tajanstveni svet najmanjih čestica.'
+                },
+                'section2-p2': {
+                    hu: 'A <span class="highlight">relativitáselmélet</span> megváltoztatta, hogyan értelmezzük a teret és az időt, a <span class="highlight">termodinamika</span> pedig az energiaátalakulások törvényszerűségeit tárja fel.',
+                    sr: '<span class="highlight">Teorija relativiteta</span> je promenila način na koji shvatamo prostor i vreme, a <span class="highlight">termodinamika</span> otkriva zakonitosti transformacije energije.'
+                },
+                'section2-p3': {
+                    hu: 'Mindezek az elméletek nem csupán elvont fogalmak – meghatározzák, hogyan működnek a technológiák, amelyek mindennapi életünket alakítják, az MRI-készülékektől a GPS-ig.',
+                    sr: 'Sve ove teorije nisu samo apstraktni pojmovi – one određuju kako funkcionišu tehnologije koje oblikuju naš svakodnevni život, od MRI uređaja do GPS-a.'
+                },
+                'image2-alt': {
+                    hu: 'Csillagászat és univerzum',
+                    sr: 'Astronomija i univerzum'
+                },
+                'footer-text': {
+                    hu: 'TECHSCIENCE Fizikai Bevezető • Középiskolások számára',
+                    sr: 'TECHSCIENCE Uvod u fiziku • Za srednjoškolce'
+                }
+            };
+
+            // --- DOM ELEMEK ---
+            const langBtns = document.querySelectorAll('.lang-btn');
+            const translateElements = document.querySelectorAll('[data-translate-key]');
+            const htmlElement = document.documentElement;
+
+            let currentLang = 'hu';
+            let fadeTimeout = null;
+
+            // --- NYELV BEÁLLÍTÁSA ---
+            function setLanguage(lang) {
+                if (lang === currentLang) return;
+                currentLang = lang;
+
+                // Gombok frissítése
+                langBtns.forEach(btn => {
+                    const isActive = btn.getAttribute('data-lang') === lang;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+
+                // HTML lang attribútum
+                htmlElement.setAttribute('lang', lang);
+
+                // Oldal cím
+                document.title = translations['page-title'][lang];
+
+                // Átmeneti fade effektus a szöveges elemeken
+                const textElements = document.querySelectorAll('[data-translate-key]');
+                textElements.forEach(el => {
+                    el.classList.add('text-fading');
+                });
+
+                if (fadeTimeout) clearTimeout(fadeTimeout);
+
+                fadeTimeout = setTimeout(() => {
+                    translateElements.forEach(el => {
+                        const key = el.getAttribute('data-translate-key');
+                        const attr = el.getAttribute('data-translate-attr');
+                        if (!key || !translations[key]) return;
+
+                        const translated = translations[key][lang];
+                        if (!translated) return;
+
+                        if (attr === 'alt') {
+                            el.setAttribute('alt', translated);
+                        } else if (attr) {
+                            el.setAttribute(attr, translated);
+                        } else {
+                            el.innerHTML = translated;
+                        }
+                    });
+
+                    // Eltávolítjuk a fade osztályt
+                    textElements.forEach(el => {
+                        el.classList.remove('text-fading');
+                    });
+
+                    // Tároljuk a nyelvi preferenciát
+                    try {
+                        localStorage.setItem('preferred-lang', lang);
+                    } catch (e) {
+                        // localStorage nem elérhető
+                    }
+                }, 250);
+            }
+
+            // --- ESEMÉNYKEZELŐK ---
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    if (lang) setLanguage(lang);
+                });
+
+                // Billentyűzet támogatás
+                btn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const lang = this.getAttribute('data-lang');
+                        if (lang) setLanguage(lang);
+                    }
+                });
+            });
+
+            // --- INICIALIZÁLÁS ---
+            function init() {
+                // Ellenőrizzük a tárolt preferenciát
+                let storedLang = null;
+                try {
+                    storedLang = localStorage.getItem('preferred-lang');
+                } catch (e) {
+                    // localStorage nem elérhető
+                }
+
+                // Ha van tárolt szerb preferencia, alkalmazzuk
+                if (storedLang === 'sr') {
+                    // Frissítjük a gombokat és a tartalmat közvetlenül
+                    currentLang = 'sr';
+                    langBtns.forEach(btn => {
+                        const isActive = btn.getAttribute('data-lang') === 'sr';
+                        btn.classList.toggle('active', isActive);
+                        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                    });
+                    htmlElement.setAttribute('lang', 'sr');
+                    document.title = translations['page-title']['sr'];
+
+                    translateElements.forEach(el => {
+                        const key = el.getAttribute('data-translate-key');
+                        const attr = el.getAttribute('data-translate-attr');
+                        if (!key || !translations[key]) return;
+                        const translated = translations[key]['sr'];
+                        if (!translated) return;
+                        if (attr === 'alt') {
+                            el.setAttribute('alt', translated);
+                        } else if (attr) {
+                            el.setAttribute(attr, translated);
+                        } else {
+                            el.innerHTML = translated;
+                        }
+                    });
+                }
+            }
+
+            // Oldal betöltése után inicializálás
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>

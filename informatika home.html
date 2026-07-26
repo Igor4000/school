@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatika Bevezető | TECHSCIENCE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e1e8ed 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333333;
+            line-height: 1.7;
+            padding: 20px;
+        }
+
+        /* Nyelvváltó gomb */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            border-radius: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(30, 64, 175, 0.15);
+        }
+
+        .lang-btn {
+            padding: 10px 22px;
+            border: none;
+            background: transparent;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #1e40af, #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: rgba(30, 64, 175, 0.08);
+            color: #1e40af;
+        }
+
+        @media (max-width: 768px) {
+            .lang-switch {
+                top: 10px;
+                right: 10px;
+                padding: 5px;
+                gap: 4px;
+            }
+            .lang-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .intro-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .main-title {
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #1e40af, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 3.2vw, 1.8rem);
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Tartalom szekció */
+        .content-section {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            margin-bottom: 5rem;
+        }
+
+        .text-content {
+            flex: 1;
+        }
+
+        .image-content {
+            flex: 1;
+        }
+
+        .intro-image {
+            width: 100%;
+            height: clamp(220px, 45vh, 420px);
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(30, 64, 175, 0.4);
+            transition: transform 0.5s ease;
+        }
+
+        .intro-image:hover {
+            transform: scale(1.02);
+        }
+
+        .section-title {
+            font-size: clamp(1.4rem, 4vw, 2.5rem);
+            margin-bottom: 2rem;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .intro-text {
+            font-size: 1.3rem;
+            margin-bottom: 1.8rem;
+            opacity: 0.95;
+        }
+
+        .highlight {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        /* Második szekció (képpel jobb oldalon) */
+        .content-section.reverse {
+            flex-direction: row-reverse;
+        }
+
+        /* Lábléc */
+        .page-footer {
+            text-align: center;
+            margin-top: 5rem;
+            padding-top: 3rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Nyelvi elemek elrejtése/megjelenítése */
+        .lang-hu, .lang-sr {
+            transition: opacity 0.3s ease;
+        }
+
+        body[data-lang="hu"] .lang-sr {
+            display: none;
+        }
+
+        body[data-lang="sr"] .lang-hu {
+            display: none;
+        }
+
+        /* Animációk */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            animation: slideUp 1s ease-out;
+        }
+
+        .subtitle {
+            animation: slideUp 1s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+
+        .content-section {
+            animation: fadeIn 1.5s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+
+        /* Reszponzív */
+        @media (max-width: 992px) {
+            .content-section {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .content-section.reverse {
+                flex-direction: column;
+            }
+
+            .main-title {
+                font-size: 3rem;
+            }
+
+            .subtitle {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .intro-image {
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .intro-container {
+                padding: 2rem 1rem;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body data-lang="hu">
+    <!-- Nyelvváltó gombok -->
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="switchLang('hu')" id="btn-hu">🇭🇺 Magyar</button>
+        <button class="lang-btn" onclick="switchLang('sr')" id="btn-sr">🇷🇸 Srpski</button>
+    </div>
+
+    <div class="intro-container">
+        <div class="page-title">
+            <h1 class="main-title">
+                <span class="lang-hu">Informatikai Bevezető</span>
+                <span class="lang-sr">Uvod u informatiku</span>
+            </h1>
+            <p class="subtitle">
+                <span class="lang-hu">A digitális kor alapjai és lehetőségei</span>
+                <span class="lang-sr">Osnove i mogućnosti digitalnog doba</span>
+            </p>
+        </div>
+
+        <!-- Első szekció: szöveg balra, kép jobbra -->
+        <div class="content-section">
+            <div class="text-content">
+                <h2 class="section-title">
+                    <span class="lang-hu">Mi az informatika?</span>
+                    <span class="lang-sr">Šta je informatika?</span>
+                </h2>
+                <p class="intro-text lang-hu">
+                    Az <span class="highlight">informatika</span> nem csupán a számítógépek használatát jelenti. 
+                    Ez egy modern tudományág, amely az <span class="highlight">információ</span> feldolgozásával, 
+                    tárolásával, továbbításával és alkalmazásával foglalkozik.
+                </p>
+                <p class="intro-text lang-sr">
+                    <span class="highlight">Informatika</span> nije samo korišćenje računara. 
+                    To je moderna naučna disciplina koja se bavi obradom, 
+                    skladištenjem, prenosom i primenom <span class="highlight">informacija</span>.
+                </p>
+                <p class="intro-text lang-hu">
+                    Mindennapi életünk szerves részévé vált: okostelefonjainktól az okotthonokig, 
+                    a közösségi médiától a mesterséges intelligenciáig mindenhol jelen van.
+                </p>
+                <p class="intro-text lang-sr">
+                    Postala je sastavni deo našeg svakodnevnog života: od pametnih telefona do pametnih domova, 
+                    od društvenih medija do veštačke inteligencije, prisutna je svuda.
+                </p>
+                <p class="intro-text lang-hu">
+                    Az informatika legszebb része, hogy <span class="highlight">kreatív problémamegoldást</span> 
+                    és logikus gondolkodást ötvöz, lehetővé téve számunkra, hogy új digitális 
+                    világokat alkossunk.
+                </p>
+                <p class="intro-text lang-sr">
+                    Najlepši deo informatike je to što kombinuje <span class="highlight">kreativno rešavanje problema</span> 
+                    i logičko razmišljanje, omogućavajući nam da stvaramo nove digitalne svetove.
+                </p>
+            </div>
+            <div class="image-content">
+                <!-- SAJÁT KÉP IDE: cseréld le a src értékét -->
+                <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1400&q=80" 
+                     alt="Informatika és technológia" 
+                     class="intro-image">
+            </div>
+        </div>
+
+        <!-- Második szekció: kép balra, szöveg jobbra -->
+        <div class="content-section reverse">
+            <div class="image-content">
+                <!-- SAJÁT KÉP IDE: cseréld le a src értékét -->
+                <img src="https://images.unsplash.com/photo-1555255707-c07966088b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                     alt="Kódolás és programozás" 
+                     class="intro-image">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title">
+                    <span class="lang-hu">A jövő nyelve</span>
+                    <span class="lang-sr">Jezik budućnosti</span>
+                </h2>
+                <p class="intro-text lang-hu">
+                    Ahogy az olvasás és írás alapvető készség, úgy válik az <span class="highlight">alapvető digitális műveltség</span> 
+                    is a 21. században. Az informatika megértése nem csak szakembereknek fontos.
+                </p>
+                <p class="intro-text lang-sr">
+                    Kao što su čitanje i pisanje osnovne veštine, tako i <span class="highlight">osnovna digitalna pismenost</span> 
+                    postaje neophodna u 21. veku. Razumevanje informatike nije važno samo za stručnjake.
+                </p>
+                <p class="intro-text lang-hu">
+                    A <span class="highlight">programozás</span> olyan, mint egy új nyelv megtanulása: 
+                    lehetővé teszi, hogy kommunikálj a gépekkel, és utasításokat adj nekik.
+                </p>
+                <p class="intro-text lang-sr">
+                    <span class="highlight">Programiranje</span> je poput učenja novog jezika: 
+                    omogućava ti da komuniciraš sa mašinama i daješ im instrukcije.
+                </p>
+                <p class="intro-text lang-hu">
+                    Ez a készség nemcsak technikai karrierhez vezet, hanem fejleszti a <span class="highlight">kritikus gondolkodást</span>, 
+                    a problémamegoldó képességet és a kreativitást is.
+                </p>
+                <p class="intro-text lang-sr">
+                    Ova veština ne vodi samo ka tehničkoj karijeri, već razvija <span class="highlight">kritičko razmišljanje</span>, 
+                    sposobnost rešavanja problema i kreativnost.
+                </p>
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span class="lang-hu">TECHSCIENCE Informatikai Bevezető • Középiskolások számára</span>
+            <span class="lang-sr">TECHSCIENCE Uvod u informatiku • Za srednjoškolce</span>
+        </div>
+    </div>
+
+    <script>
+        function switchLang(lang) {
+            // Body data-lang attribútum frissítése
+            document.body.setAttribute('data-lang', lang);
+            
+            // Gombok aktív státuszának frissítése
+            document.getElementById('btn-hu').classList.toggle('active', lang === 'hu');
+            document.getElementById('btn-sr').classList.toggle('active', lang === 'sr');
+            
+            // Opcionális: nyelv mentése localStorage-ba
+            localStorage.setItem('preferredLang', lang);
+        }
+        
+        // Oldal betöltésekor ellenőrizzük a mentett nyelvet
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferredLang');
+            if (savedLang && (savedLang === 'hu' || savedLang === 'sr')) {
+                switchLang(savedLang);
+            }
+        });
+    </script>
+</body>
+</html>
