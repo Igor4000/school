@@ -1,28 +1,469 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dobrodošli na lekciju</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Üdvözlet | TECHSCIENCE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f4; line-height: 1.6; }
-        .kontejner { background: white; padding: 30px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; }
-        .DugmeLink { display: inline-block; background: #238636; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f7ff 0%, #e6f2fc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+            padding: 1.5rem;
+            margin: 0;
+            color: #1a2b3c;
+            line-height: 1.6;
+        }
+
+        .welcome-container {
+            position: relative;
+            max-width: 1100px;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 2.5rem;
+            padding: 2.5rem 2.5rem 2rem;
+            box-shadow: 0 30px 50px rgba(0, 20, 40, 0.12), 0 10px 25px rgba(0, 100, 150, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        /* Nyelvváltó kapcsoló */
+        .language-toggle {
+            position: absolute;
+            top: 1.8rem;
+            right: 2.2rem;
+            display: flex;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 3rem;
+            padding: 0.3rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(41, 128, 185, 0.15);
+            z-index: 10;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.4px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-family: inherit;
+        }
+
+        .lang-btn i {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .lang-btn.active {
+            background: #1e4a6b;
+            color: white;
+            box-shadow: 0 6px 14px rgba(30, 74, 107, 0.3);
+        }
+
+        .lang-btn.active i {
+            color: white;
+            opacity: 1;
+        }
+
+        .welcome-title {
+            font-size: clamp(2.8rem, 8vw, 4.8rem);
+            font-weight: 750;
+            text-align: center;
+            margin-bottom: 1.8rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #1e4a6b, #1f7b4d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            padding-right: 120px;
+        }
+
+        @media (max-width: 600px) {
+            .welcome-title {
+                padding-right: 0;
+                margin-top: 1rem;
+            }
+        }
+
+        .content-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2.8rem;
+            margin: 2rem 0 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .welcome-image {
+            flex: 0 0 280px;
+            height: 280px;
+            border-radius: 2rem;
+            object-fit: cover;
+            box-shadow: 0 25px 35px -10px rgba(0, 100, 120, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            background: #cbdde8;
+        }
+
+        .welcome-image:hover {
+            transform: scale(1.03) translateY(-6px);
+            box-shadow: 0 30px 45px rgba(20, 100, 120, 0.35);
+        }
+
+        .text-content {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .welcome-message {
+            font-size: 2rem;
+            font-weight: 650;
+            margin-bottom: 0.8rem;
+            color: #0a3144;
+            line-height: 1.3;
+        }
+
+        .welcome-description {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #1e4056;
+            font-weight: 450;
+        }
+
+        .welcome-details {
+            font-size: 1.05rem;
+            margin-bottom: 0.6rem;
+            color: #2c4b60;
+            line-height: 1.7;
+        }
+
+        /* ---- NAVIGÁCIÓS GOMBOK ---- */
+        .nav-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1.8rem 0 2rem;
+        }
+
+        .nav-card {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.8rem;
+            padding: 1.8rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            border: 2px solid rgba(30, 74, 107, 0.15);
+            box-shadow: 0 12px 28px rgba(0, 40, 60, 0.08);
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            color: inherit;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            border-color: #1e4a6b;
+            box-shadow: 0 22px 38px rgba(30, 74, 107, 0.18);
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        .nav-card-physics:hover {
+            border-color: #e67e22;
+            box-shadow: 0 22px 38px rgba(230, 126, 34, 0.2);
+        }
+
+        .nav-card-informatics:hover {
+            border-color: #2980b9;
+            box-shadow: 0 22px 38px rgba(41, 128, 185, 0.22);
+        }
+
+        .nav-icon {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #1e4a6b, #1f7b4d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: transform 0.35s ease;
+        }
+
+        .nav-card-physics .nav-icon {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-card-informatics .nav-icon {
+            background: linear-gradient(135deg, #2980b9, #1e4a6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-card:hover .nav-icon {
+            transform: scale(1.15);
+        }
+
+        .nav-label {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: #122b3b;
+            text-align: center;
+        }
+
+        .nav-sublabel {
+            font-size: 0.9rem;
+            color: #4a6274;
+            text-align: center;
+            font-weight: 450;
+            line-height: 1.5;
+        }
+
+        .highlight-box {
+            background: linear-gradient(120deg, rgba(30, 74, 107, 0.08), rgba(39, 174, 96, 0.1));
+            padding: 1.8rem 2rem;
+            border-radius: 2rem;
+            margin: 1.5rem 0 1.8rem;
+            border-left: 6px solid #1f7b4d;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 20px rgba(0, 80, 70, 0.08);
+        }
+
+        .highlight-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            font-weight: 500;
+            color: #122b3b;
+            line-height: 1.7;
+        }
+
+        .welcome-subtitle {
+            font-size: 0.95rem;
+            color: #3a5568;
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(41, 128, 185, 0.2);
+            font-weight: 450;
+            letter-spacing: 0.2px;
+        }
+
+        /* Reszponzív finomítások */
+        @media (max-width: 850px) {
+            .content-wrapper {
+                flex-direction: column;
+                text-align: center;
+            }
+            .text-content {
+                text-align: center;
+            }
+            .welcome-image {
+                flex: 0 0 220px;
+                width: 100%;
+                max-width: 350px;
+                height: 220px;
+            }
+            .language-toggle {
+                top: 1.2rem;
+                right: 1.5rem;
+            }
+            .nav-card {
+                min-width: 160px;
+                padding: 1.4rem 1.2rem;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .welcome-container {
+                padding: 2rem 1.2rem;
+            }
+            .language-toggle {
+                position: relative;
+                top: auto;
+                right: auto;
+                justify-content: center;
+                margin-bottom: 1.5rem;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .welcome-title {
+                margin-top: 0.5rem;
+                font-size: 2.4rem;
+            }
+            .welcome-message {
+                font-size: 1.6rem;
+            }
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .nav-card {
+                max-width: 100%;
+                width: 100%;
+                flex-direction: row;
+                justify-content: center;
+                gap: 1rem;
+                padding: 1.2rem 1.5rem;
+                border-radius: 2rem;
+            }
+            .nav-icon {
+                font-size: 2.2rem;
+            }
+            .nav-label {
+                font-size: 1.1rem;
+            }
+            .nav-sublabel {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="welcome-container">
 
-    <div class="kontejner">
-        <h1>Dobrodošli, dragi učenici!</h1>
-        <p>Ovo je naša nova internet stranica za nastavu, prebačena sa Weebly platforme.</p>
-        
-        <h3>Lekcija 1: Zaštita podataka</h3>
-        <p>Klikom na dugme ispod možete otvoriti drugu stranicu o zaštiti podataka:</p>
-        
-        <!-- Ovde povezujemo vaš drugi HTML fajl sa slike -->
-        <a class="DugmeLink" href="Adat vedelem2.html">Otvori lekciju o zaštiti podataka</a>
+        <!-- Nyelvválasztó gombok -->
+        <div class="language-toggle" id="languageToggle">
+            <button class="lang-btn active" id="btnHu"><i class="fas fa-globe"></i> HU</button>
+            <button class="lang-btn" id="btnSr"><i class="fas fa-language"></i> SR</button>
+        </div>
+
+        <h1 class="welcome-title">TECHSCIENCE</h1>
+
+        <div class="content-wrapper">
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+            alt="Technológia és oktatás"
+            class="welcome-image">
+
+            <div class="text-content">
+                <div class="welcome-message" data-lang="hu">
+                    Üdvözöljük a TECHSCIENCE közösségében!
+                </div>
+                <div class="welcome-message" data-lang="sr" style="display: none;">
+                    Dobrodošli u TECHSCIENCE zajednicu!
+                </div>
+
+                <div class="welcome-description" data-lang="hu">
+                    Egy dinamikus platform középiskolások számára, ahol a technológia, informatika és tudomány világa tárul eléd.
+                </div>
+                <div class="welcome-description" data-lang="sr" style="display: none;">
+                    Dinamična platforma za srednjoškolce na kojoj se otvara svet tehnologije, informatike i nauke.
+                </div>
+
+                <div class="welcome-details" data-lang="hu">
+                    Célunk, hogy inspiráló és könnyen érthető anyagokkal segítsük a digitális készségeid fejlesztését. Itt megtalálod a legfontosabb ismereteket a programozás alapjaitól a kiberbiztonság kihívásaiig.
+                </div>
+                <div class="welcome-details" data-lang="sr" style="display: none;">
+                    Naš cilj je da ti pomognemo da razviješ digitalne veštine kroz inspirativne i lako razumljive materijale. Ovde ćeš pronaći ključna znanja od osnova programiranja do izazova sajber bezbednosti.
+                </div>
+            </div>
+        </div>
+
+        <!-- ---- NAVIGÁCIÓS GOMBOK: FIZIKA ÉS INFORMATIKA ---- -->
+        <div class="nav-buttons">
+            <!-- Fizika kártya -->
+            <a href="fizika.html" class="nav-card nav-card-physics" title="Fizika oldal">
+                <span class="nav-icon"><i class="fas fa-atom"></i></span>
+                <span class="nav-label" data-lang="hu">Fizika</span>
+                <span class="nav-label" data-lang="sr" style="display: none;">Fizika</span>
+                <span class="nav-sublabel" data-lang="hu">Bevezető a fizika világába</span>
+                <span class="nav-sublabel" data-lang="sr" style="display: none;">Uvod u svet fizike</span>
+            </a>
+
+            <!-- Informatika kártya -->
+            <a href="informatika.html" class="nav-card nav-card-informatics" title="Informatika oldal">
+                <span class="nav-icon"><i class="fas fa-laptop-code"></i></span>
+                <span class="nav-label" data-lang="hu">Informatika</span>
+                <span class="nav-label" data-lang="sr" style="display: none;">Informatika</span>
+                <span class="nav-sublabel" data-lang="hu">Programozás, hálózatok, adatbiztonság</span>
+                <span class="nav-sublabel" data-lang="sr" style="display: none;">Programiranje, mreže, bezbednost podataka</span>
+            </a>
+        </div>
+
+        <div class="highlight-box">
+            <div class="highlight-text" data-lang="hu">
+                "A jövő nem varázslat, hanem kód. A technológia nem csoda, hanem megértés. Itt kezdődik az utad a digitális mesternövévé váláshoz."
+            </div>
+            <div class="highlight-text" data-lang="sr" style="display: none;">
+                „Budućnost nije magija, već kod. Tehnologija nije čudo, već razumevanje. Ovde počinje tvoj put ka tome da postaneš digitalni majstor.”
+            </div>
+        </div>
+
+        <div class="welcome-subtitle">
+            <span data-lang="hu">Középiskolások számára készült informatikai tartalmak | Folyamatosan bővülő anyaggyűjtemény | Gyakorlati példák és megoldások</span>
+            <span data-lang="sr" style="display: none;">Informatički sadržaji namenjeni srednjoškolcima | Kolekcija materijala koja se stalno proširuje | Praktični primeri i rešenja</span>
+        </div>
     </div>
 
+    <script>
+        (function() {
+            const btnHu = document.getElementById('btnHu');
+            const btnSr = document.getElementById('btnSr');
+
+            // Minden elem, ami rendelkezik data-lang attribútummal
+            const elementsHu = document.querySelectorAll('[data-lang="hu"]');
+            const elementsSr = document.querySelectorAll('[data-lang="sr"]');
+
+            function setLanguage(lang) {
+                if (lang === 'hu') {
+                    elementsHu.forEach(el => el.style.display = '');
+                    elementsSr.forEach(el => el.style.display = 'none');
+                    btnHu.classList.add('active');
+                    btnSr.classList.remove('active');
+                    document.documentElement.lang = 'hu';
+                } else {
+                    elementsHu.forEach(el => el.style.display = 'none');
+                    elementsSr.forEach(el => el.style.display = '');
+                    btnSr.classList.add('active');
+                    btnHu.classList.remove('active');
+                    document.documentElement.lang = 'sr';
+                }
+            }
+
+            btnHu.addEventListener('click', () => setLanguage('hu'));
+            btnSr.addEventListener('click', () => setLanguage('sr'));
+
+            // Böngészőnyelv alapján automatikus váltás
+            if (navigator.language && navigator.language.startsWith('sr')) {
+                setLanguage('sr');
+            } else {
+                setLanguage('hu');
+            }
+        })();
+    </script>
 </body>
 </html>
