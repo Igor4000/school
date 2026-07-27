@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folyamatábrák / Dijagrami toka - Teljes Összefoglaló / Kompletan pregled</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* === CSS Reset & Variables === */
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #131835;
+            --bg-card: #1a1f3a;
+            --bg-elevated: #232847;
+            --text-primary: #e4e6f0;
+            --text-secondary: #b0b5d1;
+            --text-muted: #8b8faa;
+            --accent-blue: #4dabf7;
+            --accent-purple: #9775fa;
+            --accent-green: #69db7c;
+            --accent-orange: #ffa94d;
+            --accent-red: #ff6b6b;
+            --accent-cyan: #66d9e8;
+            --border-color: #2a2f52;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'Fira Code', 'Consolas', 'Monaco', monospace;
+            --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* === Global Styles === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.7;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 24px;
+            transition: background var(--transition-smooth), color var(--transition-smooth);
+        }
+
+        /* === Scrollbar === */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* === Language Toggle === */
+        .lang-toggle-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: var(--bg-elevated);
+            border-radius: 50px;
+            padding: 6px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .lang-btn.active {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .lang-btn .flag-icon {
+            margin-right: 6px;
+        }
+
+        /* === Header === */
+        header {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 40px 36px;
+            border-radius: var(--radius-xl);
+            text-align: center;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
+            animation: headerGlow 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(2%, 1%); }
+        }
+
+        header > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .lang-indicator {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 16px;
+            font-family: var(--font-mono);
+        }
+
+        /* === Page Sections === */
+        .page {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 36px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--transition-smooth);
+        }
+
+        .page:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .page-header i {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            background: rgba(77, 171, 247, 0.1);
+            padding: 14px;
+            border-radius: var(--radius-md);
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            color: var(--accent-cyan);
+            margin: 28px 0 16px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* === Symbol Container === */
+        .symbol-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 24px 0;
+            justify-content: center;
+        }
+
+        .symbol {
+            width: 170px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .symbol::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .symbol:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-blue);
+        }
+
+        .symbol-shape {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            border-radius: var(--radius-sm);
+            transition: transform var(--transition-fast);
+        }
+
+        .symbol:hover .symbol-shape {
+            transform: scale(1.1);
+        }
+
+        .symbol-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .symbol p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        /* === Symbol Colors === */
+        .start-end .symbol-shape {
+            background: var(--gradient-1);
+            border-radius: 50%;
+        }
+        .process-sym .symbol-shape {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .decision-sym .symbol-shape {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            border-radius: 0;
+        }
+        .io-sym .symbol-shape {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            border-radius: 0;
+        }
+        .connector-sym .symbol-shape {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 50%;
+        }
+        .arrow-sym .symbol-shape {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 80px;
+            height: 44px;
+            border-radius: 8px;
+        }
+
+        /* === Flowchart Steps === */
+        .flowchart {
+            margin: 28px 0;
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flowchart-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .flowchart-step {
+            padding: 16px 28px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            min-width: 160px;
+            color: white;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-fast);
+            cursor: default;
+            border: 1px solid transparent;
+        }
+
+        .flowchart-step:hover {
+            filter: brightness(115%);
+            transform: scale(1.03);
+            box-shadow: var(--shadow-md);
+        }
+
+        .step-start-end {
+            background: var(--gradient-1);
+            border-radius: 50px;
+        }
+        .step-process {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .step-decision {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            padding: 28px 24px;
+            min-width: 140px;
+        }
+        .step-io {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+            padding: 20px 28px;
+        }
+
+        .arrow-down {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 14px solid var(--accent-blue);
+            margin: 4px auto;
+        }
+
+        .arrow-right {
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 14px solid var(--accent-blue);
+            margin: 0 8px;
+        }
+
+        .cycle-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent-orange);
+            font-weight: 500;
+        }
+
+        /* === Cards === */
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            flex: 1 1 280px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: all var(--transition-smooth);
+            border-top: 4px solid var(--accent-blue);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            border-top-color: var(--accent-purple);
+        }
+
+        .card-title {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* === Rules List === */
+        .rules-list {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            transition: background var(--transition-fast);
+        }
+
+        .rule-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .rule-number {
+            background: var(--gradient-1);
+            color: white;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-family: var(--font-mono);
+        }
+
+        .rule-item strong {
+            color: var(--accent-cyan);
+        }
+
+        .rule-item div {
+            color: var(--text-secondary);
+        }
+
+        /* === Example Section === */
+        .example {
+            background: rgba(77, 171, 247, 0.05);
+            border: 1px solid rgba(77, 171, 247, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .example-title {
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .example ol {
+            color: var(--text-secondary);
+            padding-left: 24px;
+        }
+        .example li {
+            margin-bottom: 6px;
+        }
+
+        /* === Exercise Section === */
+        .exercise {
+            background: rgba(151, 117, 250, 0.05);
+            border: 2px dashed rgba(151, 117, 250, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .exercise-title {
+            color: var(--accent-purple);
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 1.15rem;
+        }
+
+        .exercise p, .exercise strong {
+            color: var(--text-secondary);
+        }
+
+        /* === Tables === */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: var(--bg-elevated);
+            color: var(--accent-cyan);
+            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+        td strong {
+            color: var(--text-primary);
+        }
+
+        /* === Footer === */
+        footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 32px;
+        }
+
+        /* === Print Button === */
+        .print-button {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-smooth);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .print-button:hover {
+            transform: scale(1.12);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.5);
+        }
+
+        /* === Language visibility === */
+        .lang-hu, .lang-sr {
+            transition: opacity var(--transition-smooth);
+        }
+        .hidden-lang {
+            display: none;
+        }
+
+        /* === Responsive Design === */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            header {
+                padding: 28px 18px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .subtitle {
+                font-size: 0.95rem;
+            }
+            .page {
+                padding: 20px 16px;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .symbol-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .symbol {
+                width: 100%;
+                max-width: 300px;
+            }
+            .card-container {
+                flex-direction: column;
+            }
+            .card {
+                flex: 1 1 100%;
+            }
+            .flowchart-row {
+                flex-direction: column;
+            }
+            .flowchart-step {
+                min-width: 100%;
+                max-width: 100%;
+            }
+            .step-decision {
+                clip-path: none;
+                border-radius: var(--radius-md);
+                padding: 16px 20px;
+            }
+            .step-io {
+                clip-path: none;
+                border-radius: var(--radius-md);
+                padding: 16px 20px;
+            }
+            .arrow-right {
+                transform: rotate(90deg);
+                margin: 8px auto;
+            }
+            .lang-toggle-container {
+                top: 10px;
+                right: 10px;
+                padding: 4px;
+            }
+            .lang-btn {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+            .print-button {
+                width: 46px;
+                height: 46px;
+                font-size: 1.1rem;
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            .page {
+                padding: 16px 12px;
+            }
+            .flowchart-step {
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+            .symbol {
+                max-width: 260px;
+            }
+        }
+
+        /* === Print Styles === */
+        @media print {
+            body {
+                background: white;
+                color: #1a1a1a;
+                padding: 0;
+            }
+            .page {
+                background: white;
+                border: 1px solid #ddd;
+                box-shadow: none;
+                break-inside: avoid;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .flowchart-step {
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            h1 {
+                -webkit-text-fill-color: #1a1a1a;
+                color: #1a1a1a;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== LANGUAGE TOGGLE ==================== -->
+    <div class="lang-toggle-container no-print">
+        <button class="lang-btn active" id="btn-hu" onclick="switchLanguage('hu')" aria-label="Magyar nyelv">
+            🇭🇺 Magyar
+        </button>
+        <button class="lang-btn" id="btn-sr" onclick="switchLanguage('sr')" aria-label="Srpski jezik">
+            🇷🇸 Srpski
+        </button>
+    </div>
+
+    <!-- ==================== PRINT BUTTON ==================== -->
+    <button class="print-button no-print" onclick="window.print()" aria-label="Nyomtatás / Štampanje">
+        <i class="fas fa-print"></i>
+    </button>
+
+    <!-- ==================== HEADER ==================== -->
+    <header>
+        <h1 class="lang-hu">Folyamatábrák Teljes Összefoglaló</h1>
+        <h1 class="lang-sr hidden-lang">Dijagrami toka - Kompletan pregled</h1>
+        <p class="subtitle lang-hu">Algoritmusok vizuális ábrázolása – Szabványos szimbólumok, rajzolási szabályok, példák</p>
+        <p class="subtitle lang-sr hidden-lang">Vizuelno predstavljanje algoritama – Standardni simboli, pravila crtanja, primeri</p>
+        <span class="lang-indicator"><i class="fas fa-code"></i> flowchart-alapok.md</span>
+    </header>
+
+    <!-- ==================== PAGE 1: Bevezetés / Uvod ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <i class="fas fa-project-diagram"></i>
+            <h2 class="lang-hu">Mi az a folyamatábra?</h2>
+            <h2 class="lang-sr hidden-lang">Šta je dijagram toka?</h2>
+        </div>
+
+        <p class="lang-hu">A folyamatábra (angolul <em>flowchart</em>) egy algoritmus vagy folyamat vizuális ábrázolása. Szabványos geometriai alakzatokkal és nyilakkal szemlélteti a lépések sorrendjét, döntési pontokat és adatáramlást.</p>
+        <p class="lang-sr hidden-lang">Dijagram toka (engl. <em>flowchart</em>) je vizuelno predstavljanje algoritma ili procesa. Standardnim geometrijskim oblicima i strelicama prikazuje redosled koraka, tačke odlučivanja i tok podataka.</p>
+
+        <h3 class="lang-hu">Folyamatábrák célja és haszna</h3>
+        <h3 class="lang-sr hidden-lang">Cilj i korist dijagrama toka</h3>
+
+        <div class="card-container">
+            <div class="card">
+                <div class="card-title lang-hu">Algoritmusok dokumentálása</div>
+                <div class="card-title lang-sr hidden-lang">Dokumentovanje algoritama</div>
+                <p class="lang-hu">Komplex algoritmusok áttekinthető, vizuális formában való bemutatása, amely könnyebben érthető, mint a szöveges leírás.</p>
+                <p class="lang-sr hidden-lang">Pregledno predstavljanje složenih algoritama u vizuelnom obliku, koje je lakše razumljivo od tekstualnog opisa.</p>
+            </div>
+            <div class="card">
+                <div class="card-title lang-hu">Folyamatok elemzése</div>
+                <div class="card-title lang-sr hidden-lang">Analiza procesa</div>
+                <p class="lang-hu">Üzleti folyamatok, gyártási lépések vagy adminisztratív eljárások vizualizálása a hatékonyság növelése érdekében.</p>
+                <p class="lang-sr hidden-lang">Vizuelizacija poslovnih procesa, proizvodnih koraka ili administrativnih procedura radi povećanja efikasnosti.</p>
+            </div>
+            <div class="card">
+                <div class="card-title lang-hu">Programtervezés</div>
+                <div class="card-title lang-sr hidden-lang">Planiranje programa</div>
+                <p class="lang-hu">Szoftverfejlesztés előtti tervezési fázis, ahol a program logikáját vizuálisan tervezzük meg, mielőtt kódot írnánk.</p>
+                <p class="lang-sr hidden-lang">Faza planiranja pre razvoja softvera, gde se logika programa vizuelno osmišljava pre pisanja kôda.</p>
+            </div>
+        </div>
+
+        <h3 class="lang-hu">Rövid története</h3>
+        <h3 class="lang-sr hidden-lang">Kratka istorija</h3>
+        <div class="example">
+            <p class="lang-hu">A folyamatábrákat az 1920-as években kezdték el használni az ipari mérnöki folyamatok dokumentálására. Frank és Lillian Gilbreth voltak az elsők, akik 1921-ben bemutatták a "Process Chart" (folyamatábra) fogalmát. A számítástechnikában az 1940-es évek óta használják algoritmusok ábrázolására.</p>
+            <p class="lang-sr hidden-lang">Dijagrami toka počeli su da se koriste 1920-ih godina za dokumentovanje industrijskih inženjerskih procesa. Frank i Lillian Gilbreth bili su prvi koji su 1921. godine predstavili koncept „Process Chart" (dijagram procesa). U računarstvu se koriste od 1940-ih godina za predstavljanje algoritama.</p>
+        </div>
+
+        <div class="rules-list">
+            <div class="rule-item">
+                <div class="rule-number">1</div>
+                <div>
+                    <strong class="lang-hu">Fő előnye:</strong>
+                    <strong class="lang-sr hidden-lang">Glavna prednost:</strong>
+                    <span class="lang-hu">Bárki számára könnyen érthető, függetlenül a programozási ismeretektől</span>
+                    <span class="lang-sr hidden-lang">Lako razumljivo svakome, bez obzira na poznavanje programiranja</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">2</div>
+                <div>
+                    <strong class="lang-hu">Alapelv:</strong>
+                    <strong class="lang-sr hidden-lang">Osnovni princip:</strong>
+                    <span class="lang-hu">A folyamat lépéseit szabványos szimbólumokkal ábrázoljuk, és nyilakkal jelöljük a végrehajtás irányát</span>
+                    <span class="lang-sr hidden-lang">Koraci procesa se predstavljaju standardnim simbolima, a strelicama se označava smer izvršavanja</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">3</div>
+                <div>
+                    <strong class="lang-hu">Használat:</strong>
+                    <strong class="lang-sr hidden-lang">Upotreba:</strong>
+                    <span class="lang-hu">Programtervezés, dokumentáció, oktatás, folyamatoptimalizálás, hibakeresés</span>
+                    <span class="lang-sr hidden-lang">Planiranje programa, dokumentacija, obrazovanje, optimizacija procesa, otklanjanje grešaka</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 2: Alapszimbólumok / Osnovni simboli ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <i class="fas fa-shapes"></i>
+            <h2 class="lang-hu">Folyamatábra Alapszimbólumok</h2>
+            <h2 class="lang-sr hidden-lang">Osnovni simboli dijagrama toka</h2>
+        </div>
+
+        <p class="lang-hu">Minden folyamatábra szabványos szimbólumokból épül fel. Ezek a szimbólumok világszerte elterjedtek és mindenki által megértett jelentéssel bírnak.</p>
+        <p class="lang-sr hidden-lang">Svaki dijagram toka se sastoji od standardnih simbola. Ovi simboli su široko rasprostranjeni i imaju univerzalno razumljivo značenje.</p>
+
+        <h3 class="lang-hu">Alapszimbólumok és jelentésük</h3>
+        <h3 class="lang-sr hidden-lang">Osnovni simboli i njihovo značenje</h3>
+
+        <div class="symbol-container">
+            <div class="symbol start-end">
+                <div class="symbol-shape"><span>S</span></div>
+                <div class="symbol-title lang-hu">Start/End</div>
+                <div class="symbol-title lang-sr hidden-lang">Početak/Kraj</div>
+                <p class="lang-hu">Kezdet vagy vég</p>
+                <p class="lang-sr hidden-lang">Početak ili kraj</p>
+            </div>
+            <div class="symbol process-sym">
+                <div class="symbol-shape"><span>P</span></div>
+                <div class="symbol-title lang-hu">Process</div>
+                <div class="symbol-title lang-sr hidden-lang">Proces</div>
+                <p class="lang-hu">Művelet, számítás</p>
+                <p class="lang-sr hidden-lang">Operacija, izračunavanje</p>
+            </div>
+            <div class="symbol decision-sym">
+                <div class="symbol-shape"><span>D</span></div>
+                <div class="symbol-title lang-hu">Decision</div>
+                <div class="symbol-title lang-sr hidden-lang">Odluka</div>
+                <p class="lang-hu">Döntési pont</p>
+                <p class="lang-sr hidden-lang">Tačka odlučivanja</p>
+            </div>
+            <div class="symbol io-sym">
+                <div class="symbol-shape"><span>I/O</span></div>
+                <div class="symbol-title lang-hu">Input/Output</div>
+                <div class="symbol-title lang-sr hidden-lang">Ulaz/Izlaz</div>
+                <p class="lang-hu">Adatbevitel/kimenet</p>
+                <p class="lang-sr hidden-lang">Unos/izlaz podataka</p>
+            </div>
+            <div class="symbol connector-sym">
+                <div class="symbol-shape"><span>C</span></div>
+                <div class="symbol-title lang-hu">Connector</div>
+                <div class="symbol-title lang-sr hidden-lang">Konektor</div>
+                <p class="lang-hu">Összekötő pont</p>
+                <p class="lang-sr hidden-lang">Tačka povezivanja</p>
+            </div>
+            <div class="symbol arrow-sym">
+                <div class="symbol-shape"><span>→</span></div>
+                <div class="symbol-title lang-hu">Flow Line</div>
+                <div class="symbol-title lang-sr hidden-lang">Linija toka</div>
+                <p class="lang-hu">Végrehajtás iránya</p>
+                <p class="lang-sr hidden-lang">Smer izvršavanja</p>
+            </div>
+        </div>
+
+        <h3 class="lang-hu">Részletes szimbólumleírás</h3>
+        <h3 class="lang-sr hidden-lang">Detaljan opis simbola</h3>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="lang-hu">Szimbólum</th>
+                        <th class="lang-sr hidden-lang">Simbol</th>
+                        <th class="lang-hu">Név</th>
+                        <th class="lang-sr hidden-lang">Naziv</th>
+                        <th class="lang-hu">Jelentés</th>
+                        <th class="lang-sr hidden-lang">Značenje</th>
+                        <th class="lang-hu">Használata</th>
+                        <th class="lang-sr hidden-lang">Upotreba</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div style="width:40px;height:40px;background:var(--gradient-1);border-radius:50%;margin:0 auto;"></div></td>
+                        <td><strong class="lang-hu">Terminátor</strong><strong class="lang-sr hidden-lang">Terminator</strong></td>
+                        <td class="lang-hu">Folyamat kezdete vagy vége</td>
+                        <td class="lang-sr hidden-lang">Početak ili kraj procesa</td>
+                        <td class="lang-hu">A diagram első és utolsó eleme</td>
+                        <td class="lang-sr hidden-lang">Prvi i poslednji element dijagrama</td>
+                    </tr>
+                    <tr>
+                        <td><div style="width:60px;height:40px;background:linear-gradient(135deg,#4facfe,#00f2fe);border-radius:8px;margin:0 auto;"></div></td>
+                        <td><strong class="lang-hu">Process (Művelet)</strong><strong class="lang-sr hidden-lang">Proces (Operacija)</strong></td>
+                        <td class="lang-hu">Számítás vagy művelet végrehajtása</td>
+                        <td class="lang-sr hidden-lang">Izvršavanje izračunavanja ili operacije</td>
+                        <td class="lang-hu">Változó értékadás, számítás, függvényhívás</td>
+                        <td class="lang-sr hidden-lang">Dodela vrednosti promenljivoj, izračunavanje, poziv funkcije</td>
+                    </tr>
+                    <tr>
+                        <td><div style="width:50px;height:50px;background:linear-gradient(135deg,#f093fb,#f5576c);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);margin:0 auto;"></div></td>
+                        <td><strong class="lang-hu">Decision (Döntés)</strong><strong class="lang-sr hidden-lang">Odluka (Grananje)</strong></td>
+                        <td class="lang-hu">Döntési pont, elágazás</td>
+                        <td class="lang-sr hidden-lang">Tačka odlučivanja, grananje</td>
+                        <td class="lang-hu">Feltétel vizsgálata, igaz/hamis ágak</td>
+                        <td class="lang-sr hidden-lang">Provera uslova, tačne/netačne grane</td>
+                    </tr>
+                    <tr>
+                        <td><div style="width:50px;height:50px;background:linear-gradient(135deg,#a18cd1,#fbc2eb);clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);margin:0 auto;"></div></td>
+                        <td><strong class="lang-hu">Input/Output</strong><strong class="lang-sr hidden-lang">Ulaz/Izlaz</strong></td>
+                        <td class="lang-hu">Adatbevitel vagy kimenet</td>
+                        <td class="lang-sr hidden-lang">Unos ili izlaz podataka</td>
+                        <td class="lang-hu">Felhasználói bevitel, adat olvasása, eredmény kiírása</td>
+                        <td class="lang-sr hidden-lang">Korisnički unos, čitanje podataka, ispis rezultata</td>
+                    </tr>
+                    <tr>
+                        <td><div style="width:40px;height:40px;background:linear-gradient(135deg,#ffecd2,#fcb69f);border-radius:50%;margin:0 auto;"></div></td>
+                        <td><strong class="lang-hu">Connector</strong><strong class="lang-sr hidden-lang">Konektor</strong></td>
+                        <td class="lang-hu">Összekötő pont</td>
+                        <td class="lang-sr hidden-lang">Tačka povezivanja</td>
+                        <td class="lang-hu">Összetett diagramok részeinek összekapcsolása</td>
+                        <td class="lang-sr hidden-lang">Povezivanje delova složenih dijagrama</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 3: Rajzolási szabályok / Pravila crtanja ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <i class="fas fa-ruler-combined"></i>
+            <h2 class="lang-hu">Folyamatábra Rajzolási Szabályok</h2>
+            <h2 class="lang-sr hidden-lang">Pravila crtanja dijagrama toka</h2>
+        </div>
+
+        <p class="lang-hu">A folyamatábrák rajzolásakor fontos betartani bizonyos szabályokat, hogy a diagram könnyen érthető és szabványos legyen.</p>
+        <p class="lang-sr hidden-lang">Prilikom crtanja dijagrama toka važno je poštovati određena pravila kako bi dijagram bio lako razumljiv i standardan.</p>
+
+        <h3 class="lang-hu">Alapvető rajzolási szabályok</h3>
+        <h3 class="lang-sr hidden-lang">Osnovna pravila crtanja</h3>
+
+        <div class="rules-list">
+            <div class="rule-item">
+                <div class="rule-number">1</div>
+                <div>
+                    <strong class="lang-hu">Irány:</strong>
+                    <strong class="lang-sr hidden-lang">Smer:</strong>
+                    <span class="lang-hu">A folyamatábrát általában felülről lefelé, balról jobbra rajzoljuk. A nyilak mindig az aktuális lépésből a következő lépésbe mutatnak.</span>
+                    <span class="lang-sr hidden-lang">Dijagram toka se obično crta odozgo prema dole, s leva na desno. Strelice uvek pokazuju od trenutnog koraka ka sledećem.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">2</div>
+                <div>
+                    <strong class="lang-hu">Kezdés és vég:</strong>
+                    <strong class="lang-sr hidden-lang">Početak i kraj:</strong>
+                    <span class="lang-hu">Minden folyamatábrának legyen egy "Start" és egy "End" szimbóluma. Egyszerű diagramok esetén a "Start" szimbólum elhagyható.</span>
+                    <span class="lang-sr hidden-lang">Svaki dijagram toka treba da ima simbol „Start" i „End". Kod jednostavnih dijagrama simbol „Start" se može izostaviti.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">3</div>
+                <div>
+                    <strong class="lang-hu">Méret és arányok:</strong>
+                    <strong class="lang-sr hidden-lang">Veličina i proporcije:</strong>
+                    <span class="lang-hu">A szimbólumok mérete legyen arányos, a szöveg olvasható legyen a szimbólumokon belül. Ne használjunk túl nagy vagy túl kicsi szimbólumokat.</span>
+                    <span class="lang-sr hidden-lang">Veličina simbola treba da bude proporcionalna, tekst treba da bude čitljiv unutar simbola. Ne koristite prevelike ili premale simbole.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">4</div>
+                <div>
+                    <strong class="lang-hu">Csatlakozások:</strong>
+                    <strong class="lang-sr hidden-lang">Povezivanja:</strong>
+                    <span class="lang-hu">Egy szimbólumból általában egy nyíl indul ki, kivéve a döntési szimbólumot, amiből két (igaz/hamis) vagy több nyíl is indulhat.</span>
+                    <span class="lang-sr hidden-lang">Iz jednog simbola obično izlazi jedna strelica, osim kod simbola odluke, iz kog mogu izaći dve (tačno/netačno) ili više strelica.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">5</div>
+                <div>
+                    <strong class="lang-hu">Átlászthatóság:</strong>
+                    <strong class="lang-sr hidden-lang">Preglednost:</strong>
+                    <span class="lang-hu">Kerüljük a nyilak keresztezését! Ha szükséges, használjunk összekötő szimbólumokat a tisztaság érdekében.</span>
+                    <span class="lang-sr hidden-lang">Izbegavajte ukrštanje strelica! Ako je potrebno, koristite simbole konektora radi jasnoće.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">6</div>
+                <div>
+                    <strong class="lang-hu">Szövegezés:</strong>
+                    <strong class="lang-sr hidden-lang">Tekst:</strong>
+                    <span class="lang-hu">A szöveg legyen rövid, tömör és egyértelmű. Döntési szimbólumoknál a kérdés legyen igen/nem típusú, vagy egyértelmű alternatívákat tartalmazzon.</span>
+                    <span class="lang-sr hidden-lang">Tekst treba da bude kratak, sažet i jasan. Kod simbola odluke pitanje treba da bude tipa da/ne, ili da sadrži jasne alternative.</span>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="lang-hu">Gyakori hibák és elkerülésük</h3>
+        <h3 class="lang-sr hidden-lang">Česte greške i kako ih izbeći</h3>
+
+        <div class="card-container">
+            <div class="card">
+                <div class="card-title lang-hu">1. Hiányzó nyilak</div>
+                <div class="card-title lang-sr hidden-lang">1. Nedostajuće strelice</div>
+                <p><strong class="lang-hu">Hiba:</strong><strong class="lang-sr hidden-lang">Greška:</strong> <span class="lang-hu">A szimbólumok között nincs nyíl, nem világos a végrehajtás sorrendje.</span><span class="lang-sr hidden-lang">Između simbola nema strelice, redosled izvršavanja nije jasan.</span></p>
+                <p><strong class="lang-hu">Megoldás:</strong><strong class="lang-sr hidden-lang">Rešenje:</strong> <span class="lang-hu">Minden szimbólumot nyilakkal kössünk össze a következő lépéssel.</span><span class="lang-sr hidden-lang">Povežite svaki simbol strelicom sa sledećim korakom.</span></p>
+            </div>
+            <div class="card">
+                <div class="card-title lang-hu">2. Végtelen ciklus</div>
+                <div class="card-title lang-sr hidden-lang">2. Beskonačna petlja</div>
+                <p><strong class="lang-hu">Hiba:</strong><strong class="lang-sr hidden-lang">Greška:</strong> <span class="lang-hu">Nincs kilépési feltétel a ciklusból, a folyamat soha nem ér véget.</span><span class="lang-sr hidden-lang">Nema uslova za izlazak iz petlje, proces se nikada ne završava.</span></p>
+                <p><strong class="lang-hu">Megoldás:</strong><strong class="lang-sr hidden-lang">Rešenje:</strong> <span class="lang-hu">Minden ciklusnak legyen egy feltétele, amely hamis érték esetén kilép a ciklusból.</span><span class="lang-sr hidden-lang">Svaka petlja treba da ima uslov koji pri netačnoj vrednosti izlazi iz petlje.</span></p>
+            </div>
+            <div class="card">
+                <div class="card-title lang-hu">3. Túl bonyolult diagram</div>
+                <div class="card-title lang-sr hidden-lang">3. Previše složen dijagram</div>
+                <p><strong class="lang-hu">Hiba:</strong><strong class="lang-sr hidden-lang">Greška:</strong> <span class="lang-hu">Túl sok részlet, áttekinthetetlenség.</span><span class="lang-sr hidden-lang">Previše detalja, nepreglednost.</span></p>
+                <p><strong class="lang-hu">Megoldás:</strong><strong class="lang-sr hidden-lang">Rešenje:</strong> <span class="lang-hu">Használjunk összekötő szimbólumokat vagy bontsuk részekre a diagramot.</span><span class="lang-sr hidden-lang">Koristite konektore ili podelite dijagram na delove.</span></p>
+            </div>
+        </div>
+
+        <h3 class="lang-hu">Döntési pontok jelölése</h3>
+        <h3 class="lang-sr hidden-lang">Označavanje tačaka odlučivanja</h3>
+        <div class="example">
+            <div class="example-title lang-hu">Helyes jelölés döntési pontoknál:</div>
+            <div class="example-title lang-sr hidden-lang">Ispravno označavanje kod tačaka odlučivanja:</div>
+            <p class="lang-hu">A döntési szimbólumoknál a kilépő nyilakat egyértelműen fel kell címkézni. A legjobb gyakorlat az igen/nem, igaz/hamis, vagy konkrét értékek (pl. "A > B", "A ≤ B") használata.</p>
+            <p class="lang-sr hidden-lang">Kod simbola odluke izlazne strelice treba jasno označiti. Najbolja praksa je korišćenje da/ne, tačno/netačno, ili konkretnih vrednosti (npr. „A > B", „A ≤ B").</p>
+            <div class="flowchart" style="max-width:450px;margin:20px auto;">
+                <div class="flowchart-step step-decision">A &gt; B?</div>
+                <div class="arrow-down"></div>
+                <div class="flowchart-row">
+                    <div class="flowchart-step step-process" style="background:#69db7c;">✔ IGEN / DA<br>Kiír: A / Ispis: A</div>
+                    <div class="flowchart-step step-process" style="background:#ff6b6b;">✘ NEM / NE<br>Kiír: B / Ispis: B</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 4: Egyszerű példák / Jednostavni primeri ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <i class="fas fa-code-branch"></i>
+            <h2 class="lang-hu">Egyszerű Folyamatábra Példák</h2>
+            <h2 class="lang-sr hidden-lang">Jednostavni primeri dijagrama toka</h2>
+        </div>
+
+        <h3 class="lang-hu">1. példa: Két szám összeadása</h3>
+        <h3 class="lang-sr hidden-lang">1. primer: Sabiranje dva broja</h3>
+
+        <div class="flowchart">
+            <div class="flowchart-step step-start-end">START</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Be: A, B / Unos: A, B</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-process">C = A + B</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Kiír: C / Ispis: C</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-start-end">END / KRAJ</div>
+        </div>
+
+        <div class="example">
+            <div class="example-title">📝 <span class="lang-hu">Magyarázat:</span><span class="lang-sr hidden-lang">Objašnjenje:</span></div>
+            <ol>
+                <li class="lang-hu">A program elindul (START)</li>
+                <li class="lang-sr hidden-lang">Program počinje (START)</li>
+                <li class="lang-hu">Bekérjük a felhasználótól az A és B értékeket</li>
+                <li class="lang-sr hidden-lang">Unosimo vrednosti A i B od korisnika</li>
+                <li class="lang-hu">Összeadjuk A-t és B-t, az eredményt C-be mentjük</li>
+                <li class="lang-sr hidden-lang">Sabiranjem A i B, rezultat čuvamo u C</li>
+                <li class="lang-hu">Kiírjuk C értékét</li>
+                <li class="lang-sr hidden-lang">Ispisujemo vrednost C</li>
+                <li class="lang-hu">A program véget ér (END)</li>
+                <li class="lang-sr hidden-lang">Program se završava (KRAJ)</li>
+            </ol>
+        </div>
+
+        <h3 class="lang-hu">2. példa: Páros szám ellenőrzése</h3>
+        <h3 class="lang-sr hidden-lang">2. primer: Provera parnog broja</h3>
+
+        <div class="flowchart">
+            <div class="flowchart-step step-start-end">START</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Be: szám / Unos: broj</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-decision">szám % 2 == 0?<br>broj % 2 == 0?</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-row">
+                <div class="flowchart-step step-process" style="background:#69db7c;">✔ IGEN / DA<br>"Páros" / "Paran"</div>
+                <div class="flowchart-step step-process" style="background:#ff6b6b;">✘ NEM / NE<br>"Páratlan" / "Neparan"</div>
+            </div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-start-end">END / KRAJ</div>
+        </div>
+
+        <div class="example">
+            <div class="example-title">📝 <span class="lang-hu">Magyarázat:</span><span class="lang-sr hidden-lang">Objašnjenje:</span></div>
+            <ol>
+                <li class="lang-hu">A program elindul (START)</li>
+                <li class="lang-sr hidden-lang">Program počinje (START)</li>
+                <li class="lang-hu">Bekérünk egy számot a felhasználótól</li>
+                <li class="lang-sr hidden-lang">Unosimo broj od korisnika</li>
+                <li class="lang-hu">Megnézzük, hogy a szám maradékos osztása 2-vel egyenlő-e 0-val (páros-e)</li>
+                <li class="lang-sr hidden-lang">Proveravamo da li je ostatak pri deljenju broja sa 2 jednak 0 (da li je paran)</li>
+                <li class="lang-hu">Ha IGEN, kiírjuk hogy "Páros"</li>
+                <li class="lang-sr hidden-lang">Ako DA, ispisujemo „Paran"</li>
+                <li class="lang-hu">Ha NEM, kiírjuk hogy "Páratlan"</li>
+                <li class="lang-sr hidden-lang">Ako NE, ispisujemo „Neparan"</li>
+                <li class="lang-hu">A program véget ér (END)</li>
+                <li class="lang-sr hidden-lang">Program se završava (KRAJ)</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 5: Ciklusok / Petlje ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <i class="fas fa-redo-alt"></i>
+            <h2 class="lang-hu">Ciklusok Folyamatábrában</h2>
+            <h2 class="lang-sr hidden-lang">Petlje u dijagramu toka</h2>
+        </div>
+
+        <p class="lang-hu">A ciklusok (loops) olyan szerkezetek, amelyek egy műveletet ismételten végrehajtanak, amíg egy feltétel teljesül. A folyamatábrákban különböző módon ábrázolhatjuk a ciklusokat.</p>
+        <p class="lang-sr hidden-lang">Petlje su strukture koje ponavljaju operaciju sve dok je uslov ispunjen. U dijagramima toka petlje se mogu predstaviti na različite načine.</p>
+
+        <h3 class="lang-hu">3. példa: Számok összeadása 1-től N-ig</h3>
+        <h3 class="lang-sr hidden-lang">3. primer: Sabiranje brojeva od 1 do N</h3>
+
+        <div class="flowchart">
+            <div class="flowchart-step step-start-end">START</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Be: N / Unos: N</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-process">i = 1<br>összeg / zbir = 0</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-decision">i ≤ N?</div>
+            <div class="flowchart-row">
+                <div class="flowchart-step step-process" style="background:#69db7c;">✔ IGEN / DA<br>összeg += i<br>i = i + 1</div>
+                <div class="cycle-indicator">
+                    <i class="fas fa-undo-alt"></i> <span class="lang-hu">vissza</span><span class="lang-sr hidden-lang">nazad</span>
+                </div>
+            </div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">✘ NEM / NE<br>Kiír: összeg / Ispis: zbir</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-start-end">END / KRAJ</div>
+        </div>
+
+        <div class="example">
+            <div class="example-title">📝 <span class="lang-hu">Magyarázat (WHILE ciklus):</span><span class="lang-sr hidden-lang">Objašnjenje (WHILE petlja):</span></div>
+            <ol>
+                <li class="lang-hu">Bekérjük N értékét (meddig szeretnénk összeadni)</li>
+                <li class="lang-sr hidden-lang">Unosimo vrednost N (do kog broja želimo da sabiramo)</li>
+                <li class="lang-hu">Beállítjuk a számlálót (i) 1-re és az összeget 0-ra</li>
+                <li class="lang-sr hidden-lang">Postavljamo brojač (i) na 1 i zbir na 0</li>
+                <li class="lang-hu">Megnézzük, hogy i ≤ N?</li>
+                <li class="lang-sr hidden-lang">Proveravamo da li je i ≤ N?</li>
+                <li class="lang-hu">Ha IGEN: hozzáadjuk i-t az összeghez, növeljük i-t 1-gyel, visszaugrunk a feltétel ellenőrzésére</li>
+                <li class="lang-sr hidden-lang">Ako DA: dodajemo i zbiru, povećavamo i za 1, vraćamo se na proveru uslova</li>
+                <li class="lang-hu">Ha NEM: kiírjuk az összeget és a program véget ér</li>
+                <li class="lang-sr hidden-lang">Ako NE: ispisujemo zbir i program se završava</li>
+            </ol>
+        </div>
+
+        <h3 class="lang-hu">4. példa: Legnagyobb szám keresése egy sorozatban</h3>
+        <h3 class="lang-sr hidden-lang">4. primer: Pronalaženje najvećeg broja u nizu</h3>
+
+        <div class="flowchart">
+            <div class="flowchart-step step-start-end">START</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Be: N (darabszám / broj elemenata)</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Be: első szám / Unos: prvi broj</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-process">max = első szám / prvi broj<br>számláló / brojač = 2</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-decision">számláló ≤ N?<br>brojač ≤ N?</div>
+            <div class="flowchart-row">
+                <div class="flowchart-step step-process" style="background:#69db7c;">✔ Be: következő szám<br>Unos: sledeći broj</div>
+                <div class="arrow-right"></div>
+                <div class="flowchart-step step-decision">szám &gt; max?<br>broj &gt; max?</div>
+            </div>
+            <div class="flowchart-row">
+                <div class="flowchart-step step-process" style="background:#69db7c;">✔ max = szám / broj</div>
+                <div class="flowchart-step step-process" style="background:#ff6b6b;">✘ /* üres / prazno */</div>
+            </div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-process">számláló++ / brojač++</div>
+            <div class="cycle-indicator">
+                <i class="fas fa-undo-alt"></i> <span class="lang-hu">vissza a feltételhez</span><span class="lang-sr hidden-lang">nazad na uslov</span>
+            </div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">✘ Kiír: max / Ispis: max</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-start-end">END / KRAJ</div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 6: Komplex példa / Složeni primer ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <i class="fas fa-puzzle-piece"></i>
+            <h2 class="lang-hu">Komplex Példa és Gyakorló Feladatok</h2>
+            <h2 class="lang-sr hidden-lang">Složeni primer i vežbe</h2>
+        </div>
+
+        <h3 class="lang-hu">5. példa: Másodfokú egyenlet megoldása</h3>
+        <h3 class="lang-sr hidden-lang">5. primer: Rešavanje kvadratne jednačine</h3>
+
+        <div class="flowchart">
+            <div class="flowchart-step step-start-end">START</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Be: a, b, c / Unos: a, b, c</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-process">D = b² - 4*a*c</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-decision">D &lt; 0?</div>
+            <div class="flowchart-row">
+                <div class="flowchart-step step-io" style="background:#ff6b6b;">✔ IGEN / DA<br>„Nincs valós gyök"<br>„Nema realnih korena"</div>
+                <div class="flowchart-step step-decision">D == 0?</div>
+            </div>
+            <div class="flowchart-row">
+                <div class="flowchart-step step-process" style="background:#69db7c;">✔ IGEN / DA<br>x = -b/(2a)<br>„Egy gyök" / „Jedan koren"</div>
+                <div class="flowchart-step step-process" style="background:#a18cd1;">✘ NEM / NE<br>x₁ = (-b+√D)/(2a)<br>x₂ = (-b-√D)/(2a)</div>
+            </div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-io">Kiír: x₁, x₂ / Ispis: x₁, x₂</div>
+            <div class="arrow-down"></div>
+            <div class="flowchart-step step-start-end">END / KRAJ</div>
+        </div>
+
+        <div class="example">
+            <div class="example-title">📝 <span class="lang-hu">Magyarázat:</span><span class="lang-sr hidden-lang">Objašnjenje:</span></div>
+            <ol>
+                <li class="lang-hu">Bekérjük az a, b, c együtthatókat</li>
+                <li class="lang-sr hidden-lang">Unosimo koeficijente a, b, c</li>
+                <li class="lang-hu">Kiszámoljuk a diszkriminánst: D = b² - 4ac</li>
+                <li class="lang-sr hidden-lang">Izračunavamo diskriminantu: D = b² - 4ac</li>
+                <li class="lang-hu">Ha D < 0, nincs valós gyök, kiírjuk és vége</li>
+                <li class="lang-sr hidden-lang">Ako D < 0, nema realnih korena, ispisujemo i završavamo</li>
+                <li class="lang-hu">Különben, ha D = 0, egy gyök van: x = -b/(2a)</li>
+                <li class="lang-sr hidden-lang">Inače, ako D = 0, jedan koren: x = -b/(2a)</li>
+                <li class="lang-hu">Különben két gyök van</li>
+                <li class="lang-sr hidden-lang">Inače dva korena</li>
+                <li class="lang-hu">Kiírjuk az eredményt és vége</li>
+                <li class="lang-sr hidden-lang">Ispisujemo rezultat i završavamo</li>
+            </ol>
+        </div>
+
+        <h3 class="lang-hu">Gyakorló feladatok</h3>
+        <h3 class="lang-sr hidden-lang">Vežbe</h3>
+
+        <div class="exercise">
+            <div class="exercise-title">🔢 <span class="lang-hu">1. feladat: Prímszám ellenőrzés</span><span class="lang-sr hidden-lang">1. zadatak: Provera prostog broja</span></div>
+            <p class="lang-hu">Készíts folyamatábrát egy olyan algoritmushoz, amely ellenőrzi, hogy egy adott szám prímszám-e!</p>
+            <p class="lang-sr hidden-lang">Napravi dijagram toka za algoritam koji proverava da li je dati broj prost broj!</p>
+            <p><strong class="lang-hu">Tipp:</strong><strong class="lang-sr hidden-lang">Savet:</strong> <span class="lang-hu">Ellenőrizd, hogy a szám osztható-e 2-től szám-1-ig bármely számmal.</span><span class="lang-sr hidden-lang">Proveri da li je broj deljiv bilo kojim brojem od 2 do broj-1.</span></p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title">🌀 <span class="lang-hu">2. feladat: Fibonacci sorozat</span><span class="lang-sr hidden-lang">2. zadatak: Fibonačijev niz</span></div>
+            <p class="lang-hu">Készíts folyamatábrát, amely kiírja az első N Fibonacci számot!</p>
+            <p class="lang-sr hidden-lang">Napravi dijagram toka koji ispisuje prvih N Fibonačijevih brojeva!</p>
+            <p><strong class="lang-hu">Tipp:</strong><strong class="lang-sr hidden-lang">Savet:</strong> <span class="lang-hu">Fibonacci sorozat: F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2)</span><span class="lang-sr hidden-lang">Fibonačijev niz: F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2)</span></p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title">📊 <span class="lang-hu">3. feladat: Számok átlaga</span><span class="lang-sr hidden-lang">3. zadatak: Prosek brojeva</span></div>
+            <p class="lang-hu">Készíts folyamatábrát, amely bekér N darab számot, majd kiszámolja az átlagukat!</p>
+            <p class="lang-sr hidden-lang">Napravi dijagram toka koji unosi N brojeva, a zatim izračunava njihov prosek!</p>
+            <p><strong class="lang-hu">Tipp:</strong><strong class="lang-sr hidden-lang">Savet:</strong> <span class="lang-hu">Használj egy ciklust a számok beolvasásához és összegzéséhez.</span><span class="lang-sr hidden-lang">Koristi petlju za unos brojeva i sabiranje.</span></p>
+        </div>
+
+        <h3 class="lang-hu">Ellenőrző kérdések</h3>
+        <h3 class="lang-sr hidden-lang">Kontrolna pitanja</h3>
+        <div class="rules-list">
+            <div class="rule-item">
+                <div class="rule-number">1</div>
+                <div>
+                    <strong class="lang-hu">Kérdés:</strong><strong class="lang-sr hidden-lang">Pitanje:</strong>
+                    <span class="lang-hu">Melyik folyamatábra szimbólumot használjuk a feltételes elágazáshoz?</span>
+                    <span class="lang-sr hidden-lang">Koji simbol dijagrama toka se koristi za uslovno grananje?</span>
+                    <p><strong class="lang-hu">Válasz:</strong><strong class="lang-sr hidden-lang">Odgovor:</strong> <span class="lang-hu">A rombusz alakú döntési szimbólumot.</span><span class="lang-sr hidden-lang">Simbol odluke u obliku romba.</span></p>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">2</div>
+                <div>
+                    <strong class="lang-hu">Kérdés:</strong><strong class="lang-sr hidden-lang">Pitanje:</strong>
+                    <span class="lang-hu">Hogyan jelöljük a ciklusokat folyamatábrán?</span>
+                    <span class="lang-sr hidden-lang">Kako označavamo petlje u dijagramu toka?</span>
+                    <p><strong class="lang-hu">Válasz:</strong><strong class="lang-sr hidden-lang">Odgovor:</strong> <span class="lang-hu">Egy feltétel ellenőrzésével (rombusz) és visszairányított nyíllal.</span><span class="lang-sr hidden-lang">Proverom uslova (romb) i strelicom usmerenom unazad.</span></p>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">3</div>
+                <div>
+                    <strong class="lang-hu">Kérdés:</strong><strong class="lang-sr hidden-lang">Pitanje:</strong>
+                    <span class="lang-hu">Mi a különbség a paralellogramma és a téglalap szimbólum között?</span>
+                    <span class="lang-sr hidden-lang">Koja je razlika između simbola paralelograma i pravougaonika?</span>
+                    <p><strong class="lang-hu">Válasz:</strong><strong class="lang-sr hidden-lang">Odgovor:</strong> <span class="lang-hu">A paralellogramma input/output műveleteket jelöl, a téglalap általános feldolgozási lépést.</span><span class="lang-sr hidden-lang">Paralelogram označava ulazno/izlazne operacije, a pravougaonik opšti korak obrade.</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 7: Összefoglalás / Rezime ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <i class="fas fa-graduation-cap"></i>
+            <h2 class="lang-hu">Összefoglalás és Források</h2>
+            <h2 class="lang-sr hidden-lang">Rezime i izvori</h2>
+        </div>
+
+        <h3 class="lang-hu">Folyamatábra Létrehozás Lépései</h3>
+        <h3 class="lang-sr hidden-lang">Koraci za kreiranje dijagrama toka</h3>
+        <div class="rules-list">
+            <div class="rule-item">
+                <div class="rule-number">1</div>
+                <div>
+                    <strong class="lang-hu">Probléma megértése:</strong>
+                    <strong class="lang-sr hidden-lang">Razumevanje problema:</strong>
+                    <span class="lang-hu">Világosan definiáld, mit szeretnél elérni a programmal/algoritmussal.</span>
+                    <span class="lang-sr hidden-lang">Jasno definiši šta želiš postići programom/algoritmom.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">2</div>
+                <div>
+                    <strong class="lang-hu">Lépések azonosítása:</strong>
+                    <strong class="lang-sr hidden-lang">Identifikacija koraka:</strong>
+                    <span class="lang-hu">Bontsd fel a problémát egyszerű, különálló lépésekre.</span>
+                    <span class="lang-sr hidden-lang">Podeli problem na jednostavne, zasebne korake.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">3</div>
+                <div>
+                    <strong class="lang-hu">Szimbólumok kiválasztása:</strong>
+                    <strong class="lang-sr hidden-lang">Izbor simbola:</strong>
+                    <span class="lang-hu">Minden lépéshez válassz megfelelő folyamatábra szimbólumot.</span>
+                    <span class="lang-sr hidden-lang">Za svaki korak izaberi odgovarajući simbol dijagrama toka.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">4</div>
+                <div>
+                    <strong class="lang-hu">Rajzolás:</strong>
+                    <strong class="lang-sr hidden-lang">Crtanje:</strong>
+                    <span class="lang-hu">Kösd össze a szimbólumokat nyilakkal a megfelelő sorrendben.</span>
+                    <span class="lang-sr hidden-lang">Poveži simbole strelicama u odgovarajućem redosledu.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">5</div>
+                <div>
+                    <strong class="lang-hu">Ellenőrzés:</strong>
+                    <strong class="lang-sr hidden-lang">Provera:</strong>
+                    <span class="lang-hu">Végigköveted a folyamatábrát, hogy biztosan jól működik-e minden esetben.</span>
+                    <span class="lang-sr hidden-lang">Pratiš dijagram toka da se uveriš da ispravno radi u svim slučajevima.</span>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">6</div>
+                <div>
+                    <strong class="lang-hu">Tesztelés:</strong>
+                    <strong class="lang-sr hidden-lang">Testiranje:</strong>
+                    <span class="lang-hu">Próbáld ki különböző bemeneti értékekkel, hogy jól működik-e az algoritmus.</span>
+                    <span class="lang-sr hidden-lang">Isprobaj sa različitim ulaznim vrednostima da vidiš da li algoritam ispravno radi.</span>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="lang-hu">Alkalmazási területek</h3>
+        <h3 class="lang-sr hidden-lang">Oblasti primene</h3>
+        <div class="card-container">
+            <div class="card">
+                <div class="card-title lang-hu">Programtervezés</div>
+                <div class="card-title lang-sr hidden-lang">Planiranje programa</div>
+                <p class="lang-hu">Algoritmusok tervezése és dokumentálása kódolás előtt</p>
+                <p class="lang-sr hidden-lang">Planiranje i dokumentovanje algoritama pre kodiranja</p>
+            </div>
+            <div class="card">
+                <div class="card-title lang-hu">Üzleti folyamatok</div>
+                <div class="card-title lang-sr hidden-lang">Poslovni procesi</div>
+                <p class="lang-hu">Vállalati munkafolyamatok modellezése és optimalizálása</p>
+                <p class="lang-sr hidden-lang">Modeliranje i optimizacija korporativnih radnih tokova</p>
+            </div>
+            <div class="card">
+                <div class="card-title lang-hu">Oktatás</div>
+                <div class="card-title lang-sr hidden-lang">Obrazovanje</div>
+                <p class="lang-hu">Algoritmikus gondolkodás tanítása vizuális segédlettel</p>
+                <p class="lang-sr hidden-lang">Podučavanje algoritamskom razmišljanju uz vizuelna pomagala</p>
+            </div>
+            <div class="card">
+                <div class="card-title lang-hu">Hibakeresés</div>
+                <div class="card-title lang-sr hidden-lang">Otklanjanje grešaka</div>
+                <p class="lang-hu">Komplex rendszerek működésének elemzése, hibák lokalizálása</p>
+                <p class="lang-sr hidden-lang">Analiza funkcionisanja složenih sistema, lokalizacija grešaka</p>
+            </div>
+        </div>
+
+        <h3 class="lang-hu">Hasznos források és eszközök</h3>
+        <h3 class="lang-sr hidden-lang">Korisni izvori i alati</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="lang-hu">Eszköz/Forrás</th>
+                        <th class="lang-sr hidden-lang">Alat/Izvor</th>
+                        <th class="lang-hu">Leírás</th>
+                        <th class="lang-sr hidden-lang">Opis</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Lucidchart</strong></td>
+                        <td class="lang-hu">Online diagramkészítő eszköz</td>
+                        <td class="lang-sr hidden-lang">Online alat za kreiranje dijagrama</td>
+                        <td>lucidchart.com</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Draw.io</strong></td>
+                        <td class="lang-hu">Ingyenes online diagramkészítő (diagrams.net)</td>
+                        <td class="lang-sr hidden-lang">Besplatan online alat (diagrams.net)</td>
+                        <td>diagrams.net</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Microsoft Visio</strong></td>
+                        <td class="lang-hu">Professzionális diagramkészítő szoftver</td>
+                        <td class="lang-sr hidden-lang">Profesionalni softver za dijagrame</td>
+                        <td>microsoft.com/visio</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Flowgorithm</strong></td>
+                        <td class="lang-hu">Ingyenes program folyamatábrákhoz és futtatáshoz</td>
+                        <td class="lang-sr hidden-lang">Besplatan program za dijagrame toka i izvršavanje</td>
+                        <td>flowgorithm.org</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="example" style="text-align:center;background:rgba(102,217,232,0.05);border-color:rgba(102,217,232,0.2);margin-top:32px;">
+            <h3 style="color:var(--accent-cyan);">
+                <span class="lang-hu">Sok sikert a folyamatábrák rajzolásához! 📊</span>
+                <span class="lang-sr hidden-lang">Srećno sa crtanjem dijagrama toka! 📊</span>
+            </h3>
+            <p class="lang-hu">Ne feledd: A gyakorlat teszi a mestert. Minél több folyamatábrát rajzolsz, annál jobban elsajátítod a technikát.</p>
+            <p class="lang-sr hidden-lang">Ne zaboravi: Vežba čini majstora. Što više dijagrama toka nacrtaš, to ćeš bolje savladati tehniku.</p>
+            <p style="margin-top:12px;font-style:italic;color:var(--text-muted);">
+                <span class="lang-hu">"A folyamatábra egy univerzális nyelv, amellyel bárki kommunikálhat a logikáról."</span>
+                <span class="lang-sr hidden-lang">„Dijagram toka je univerzalni jezik kojim svako može komunicirati o logici."</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer>
+        <p>&copy; 2024 <span class="lang-hu">Folyamatábrák Összefoglaló</span><span class="lang-sr hidden-lang">Dijagrami toka - Pregled</span> | 
+        <span class="lang-hu">Készült szenvedéllyel az algoritmikus gondolkodásért</span>
+        <span class="lang-sr hidden-lang">Napravljeno sa strašću za algoritamsko razmišljanje</span></p>
+    </footer>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // === LANGUAGE SWITCHING ===
+        function switchLanguage(lang) {
+            const btnHu = document.getElementById('btn-hu');
+            const btnSr = document.getElementById('btn-sr');
+            const huElements = document.querySelectorAll('.lang-hu');
+            const srElements = document.querySelectorAll('.lang-sr');
+
+            if (lang === 'hu') {
+                btnHu.classList.add('active');
+                btnSr.classList.remove('active');
+                huElements.forEach(el => el.classList.remove('hidden-lang'));
+                srElements.forEach(el => el.classList.add('hidden-lang'));
+                document.documentElement.lang = 'hu';
+                localStorage.setItem('preferred-lang', 'hu');
+            } else {
+                btnSr.classList.add('active');
+                btnHu.classList.remove('active');
+                srElements.forEach(el => el.classList.remove('hidden-lang'));
+                huElements.forEach(el => el.classList.add('hidden-lang'));
+                document.documentElement.lang = 'sr';
+                localStorage.setItem('preferred-lang', 'sr');
+            }
+        }
+
+        // === LOAD SAVED LANGUAGE PREFERENCE ===
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferred-lang');
+            if (savedLang) {
+                switchLanguage(savedLang);
+            }
+
+            // === SYMBOL CLICK ANIMATION ===
+            const symbols = document.querySelectorAll('.symbol');
+            symbols.forEach(symbol => {
+                symbol.addEventListener('click', function() {
+                    this.style.boxShadow = '0 12px 32px rgba(77, 171, 247, 0.3)';
+                    this.style.transform = 'scale(1.06) translateY(-6px)';
+                    this.style.borderColor = 'var(--accent-blue)';
+                    
+                    setTimeout(() => {
+                        this.style.boxShadow = '';
+                        this.style.transform = '';
+                        this.style.borderColor = '';
+                    }, 600);
+                });
+            });
+
+            // === FLOWCHART STEP HOVER ===
+            const steps = document.querySelectorAll('.flowchart-step');
+            steps.forEach(step => {
+                step.addEventListener('mouseenter', function() {
+                    this.style.filter = 'brightness(120%)';
+                    this.style.transform = 'scale(1.04)';
+                    this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.5)';
+                });
+                step.addEventListener('mouseleave', function() {
+                    this.style.filter = '';
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // === PRINT BUTTON ===
+            const printBtn = document.querySelector('.print-button');
+            if (printBtn) {
+                printBtn.addEventListener('click', function(e) {
+                    const currentLang = document.documentElement.lang;
+                    const confirmMsg = currentLang === 'hu' 
+                        ? 'A folyamatábrák összefoglalója kinyomtatásra készül. Ellenőrizd, hogy az összes oldal megjelenjen.'
+                        : 'Pregled dijagrama toka se priprema za štampu. Proveri da li se sve stranice prikazuju.';
+                    if (!confirm(confirmMsg)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+
+        // === KEYBOARD SHORTCUT FOR LANGUAGE SWITCH ===
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'h':
+                        e.preventDefault();
+                        switchLanguage('hu');
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        switchLanguage('sr');
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
