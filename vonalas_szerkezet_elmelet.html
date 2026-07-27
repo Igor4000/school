@@ -15,7 +15,6 @@
         }
 
         :root {
-            /* Színek */
             --python-blue: #3776AB;
             --python-yellow: #FFD343;
             --python-dark: #2C3E50;
@@ -26,22 +25,14 @@
             --python-warning: #FFC107;
             --python-danger: #DC3545;
             --python-info: #17A2B8;
-            
-            /* Árnyékok */
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
             --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            
-            /* Átlátszóság */
             --overlay: rgba(55, 118, 171, 0.1);
-            
-            /* Szegélyek */
             --border-radius-sm: 6px;
             --border-radius-md: 10px;
             --border-radius-lg: 16px;
             --border: 1px solid var(--python-gray-light);
-            
-            /* Áttűnések */
             --transition-fast: 0.2s ease;
             --transition-normal: 0.3s ease;
             --transition-slow: 0.5s ease;
@@ -60,7 +51,6 @@
             overflow-x: hidden;
         }
 
-        /* ===== TYPOGRAPHY ===== */
         h1, h2, h3, h4, h5, h6 {
             font-weight: 600;
             line-height: 1.3;
@@ -100,7 +90,6 @@
             font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
         }
 
-        /* ===== LAYOUT ===== */
         .container {
             width: 100%;
             max-width: 1200px;
@@ -108,14 +97,85 @@
             padding: 0 20px;
         }
 
-        /* ===== HEADER ===== */
+        /* Nyelvváltó gombok */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            gap: 8px;
+            background: rgba(44, 62, 80, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            border-radius: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ccc;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--python-blue), #4A90E2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(55, 118, 171, 0.4);
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .lang-switch {
+                top: 10px;
+                right: 10px;
+                padding: 5px;
+                gap: 4px;
+            }
+            .lang-btn {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+                gap: 3px;
+            }
+        }
+
+        /* Nyelvi elemek elrejtése/megjelenítése */
+        .lang-hu, .lang-sr {
+            transition: opacity 0.3s ease;
+        }
+
+        body[data-lang="hu"] .lang-sr {
+            display: none;
+        }
+
+        body[data-lang="sr"] .lang-hu {
+            display: none;
+        }
+
         .main-header {
             background: linear-gradient(135deg, var(--python-blue) 0%, #2C5F8A 100%);
             color: white;
             padding: 1.5rem 0;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 999;
             box-shadow: var(--shadow-md);
         }
 
@@ -148,7 +208,6 @@
             padding: 5px;
         }
 
-        /* ===== MAIN CONTENT ===== */
         .main-content {
             display: grid;
             grid-template-columns: 280px 1fr;
@@ -164,7 +223,6 @@
             }
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             background: white;
             border-radius: var(--border-radius-lg);
@@ -242,7 +300,6 @@
             transform: scale(1.1);
         }
 
-        /* ===== PAGE CONTENT ===== */
         .page-container {
             background: white;
             border-radius: var(--border-radius-lg);
@@ -292,7 +349,6 @@
             font-weight: 400;
         }
 
-        /* ===== CONTENT SECTIONS ===== */
         .content-section {
             margin-bottom: 35px;
         }
@@ -328,7 +384,6 @@
             border-left: 3px solid var(--python-blue);
         }
 
-        /* ===== CODE BLOCKS ===== */
         .code-block {
             background: #1E1E1E;
             border-radius: var(--border-radius-md);
@@ -360,14 +415,12 @@
             tab-size: 4;
         }
 
-        /* Szintaxis kiemelés */
         .keyword { color: #569CD6; font-weight: 600; }
         .function { color: #DCDCAA; }
         .string { color: #CE9178; }
         .number { color: #B5CEA8; }
         .comment { color: #6A9955; font-style: italic; }
 
-        /* ===== EXAMPLE BOXES ===== */
         .example-box {
             background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
             border-radius: var(--border-radius-md);
@@ -389,7 +442,6 @@
             color: var(--python-yellow);
         }
 
-        /* ===== INFO BOXES ===== */
         .info-box, .tip-box, .warning-box {
             padding: 20px;
             border-radius: var(--border-radius-md);
@@ -414,7 +466,6 @@
             border-left-color: var(--python-danger);
         }
 
-        /* ===== EXERCISE BOXES ===== */
         .exercise-box {
             background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
             border-radius: var(--border-radius-md);
@@ -457,7 +508,6 @@
             gap: 10px;
         }
 
-        /* ===== SOLUTIONS ===== */
         .solution {
             background: linear-gradient(135deg, #F1F8E9 0%, #DCEDC8 100%);
             border-radius: var(--border-radius-md);
@@ -504,7 +554,6 @@
             background: linear-gradient(135deg, #2C5F8A 0%, var(--python-blue) 100%);
         }
 
-        /* ===== DIFFICULTY BADGES ===== */
         .difficulty-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -530,7 +579,6 @@
             color: white;
         }
 
-        /* ===== NAVIGATION BUTTONS ===== */
         .nav-buttons {
             display: flex;
             justify-content: space-between;
@@ -575,7 +623,6 @@
             box-shadow: none;
         }
 
-        /* ===== FOOTER ===== */
         .main-footer {
             background: linear-gradient(135deg, var(--python-dark) 0%, #1A2530 100%);
             color: white;
@@ -605,12 +652,10 @@
             font-size: 1.8rem;
         }
 
-        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 992px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
-            
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -623,19 +668,15 @@
                 padding-top: 70px;
                 box-shadow: var(--shadow-lg);
             }
-            
             .sidebar.open {
                 left: 0;
             }
-            
             .mobile-menu-toggle {
                 display: block;
             }
-            
             .page-title {
                 font-size: 1.8rem;
             }
-            
             h2 {
                 font-size: 1.5rem;
             }
@@ -645,35 +686,28 @@
             .container {
                 padding: 0 15px;
             }
-            
             .main-content {
                 padding: 20px 0;
             }
-            
             .page-container {
                 padding: 25px 20px;
             }
-            
             .nav-buttons {
                 flex-direction: column;
                 gap: 15px;
             }
-            
             .nav-btn {
                 width: 100%;
                 justify-content: center;
                 padding: 16px 20px;
             }
-            
             .code-block {
                 padding: 20px;
                 font-size: 0.9rem;
             }
-            
             h1 {
                 font-size: 1.8rem;
             }
-            
             .section-title {
                 font-size: 1.3rem;
             }
@@ -683,29 +717,23 @@
             .container {
                 padding: 0 12px;
             }
-            
             .page-container {
                 padding: 20px 15px;
             }
-            
             .sidebar {
                 width: 85%;
             }
-            
             .chapter-link {
                 padding: 12px 14px;
             }
-            
             .code-content {
                 font-size: 0.85rem;
             }
-            
             .logo span {
                 font-size: 1.2rem;
             }
         }
 
-        /* ===== OVERLAY FOR MOBILE MENU ===== */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -722,7 +750,6 @@
             display: block;
         }
 
-        /* ===== LISTS ===== */
         ul, ol {
             margin-left: 25px;
             margin-bottom: 20px;
@@ -733,7 +760,6 @@
             line-height: 1.6;
         }
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -751,23 +777,19 @@
             background: #2C5F8A;
         }
 
-        /* ===== PRINT STYLES ===== */
         @media print {
-            .sidebar, .mobile-menu-toggle, .nav-buttons, .toggle-solution {
+            .sidebar, .mobile-menu-toggle, .nav-buttons, .toggle-solution, .lang-switch {
                 display: none !important;
             }
-            
             .main-content {
                 grid-template-columns: 1fr;
                 padding: 0;
             }
-            
             .page-container {
                 box-shadow: none;
                 border: none;
                 padding: 0;
             }
-            
             .page {
                 display: block !important;
                 page-break-inside: avoid;
@@ -775,15 +797,21 @@
         }
     </style>
 </head>
-<body>
+<body data-lang="hu">
 
-    <!-- Header -->
+    <!-- Nyelvváltó gombok -->
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="switchLang('hu')" id="btn-hu">🇭🇺 Magyar</button>
+        <button class="lang-btn" onclick="switchLang('sr')" id="btn-sr">🇷🇸 Srpski</button>
+    </div>
+
     <header class="main-header">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
                     <i class="fab fa-python"></i>
-                    <span>Python Tananyag</span>
+                    <span class="lang-hu">Python Tananyag</span>
+                    <span class="lang-sr">Python Kurs</span>
                 </div>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     <i class="fas fa-bars"></i>
@@ -792,158 +820,151 @@
         </div>
     </header>
 
-    <!-- Mobile Menu Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Main Content -->
     <main class="main-content container">
-        <!-- Sidebar Navigation -->
         <aside class="sidebar" id="sidebar">
-            <h2 class="sidebar-title"><i class="fas fa-book-open"></i> Tartalomjegyzék</h2>
-            <ul class="chapter-list" id="chapterList">
-                <!-- JavaScript fogja generálni -->
-            </ul>
+            <h2 class="sidebar-title"><i class="fas fa-book-open"></i>
+                <span class="lang-hu">Tartalomjegyzék</span>
+                <span class="lang-sr">Sadržaj</span>
+            </h2>
+            <ul class="chapter-list" id="chapterList"></ul>
         </aside>
-        
-        <!-- Page Content -->
+
         <div class="page-container">
-            <!-- 1. oldal: Bevezetés -->
+            <!-- 1. oldal -->
             <div class="page active" id="page1">
                 <div class="page-header">
-                    <h1 class="page-title">1. Bevezetés a Pythonba</h1>
-                    <p class="page-subtitle">Mi az a Python és miért érdemes megtanulni?</p>
+                    <h1 class="page-title">1. <span class="lang-hu">Bevezetés a Pythonba</span><span class="lang-sr">Uvod u Python</span></h1>
+                    <p class="page-subtitle"><span class="lang-hu">Mi az a Python és miért érdemes megtanulni?</span><span class="lang-sr">Šta je Python i zašto ga vredi naučiti?</span></p>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-info-circle"></i> Mi az a Python?</h2>
-                    <p class="content-text">A <span class="highlight">Python</span> egy magas szintű, általános célú programozási nyelv, amelyet Guido van Rossum hozott létre 1991-ben. A nyelv tervezési filozófiája a kód olvashatóságára és egyszerűségére helyezi a hangsúlyt.</p>
-                    <p class="content-text">A Python egyik legnagyobb előnye, hogy <span class="highlight">könnyen tanulható</span>, ezért kiválóan alkalmas kezdők számára, de ugyanakkor hatékony és sokoldalú is, amit profik is szívesen használnak.</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-info-circle"></i> <span class="lang-hu">Mi az a Python?</span><span class="lang-sr">Šta je Python?</span></h2>
+                    <p class="content-text lang-hu">A <span class="highlight">Python</span> egy magas szintű, általános célú programozási nyelv, amelyet Guido van Rossum hozott létre 1991-ben. A nyelv tervezési filozófiája a kód olvashatóságára és egyszerűségére helyezi a hangsúlyt.</p>
+                    <p class="content-text lang-sr"><span class="highlight">Python</span> je programski jezik visokog nivoa, opšte namene, koji je kreirao Guido van Rossum 1991. godine. Filozofija dizajna jezika naglašava čitljivost i jednostavnost koda.</p>
+                    <p class="content-text lang-hu">A Python egyik legnagyobb előnye, hogy <span class="highlight">könnyen tanulható</span>, ezért kiválóan alkalmas kezdők számára, de ugyanakkor hatékony és sokoldalú is, amit profik is szívesen használnak.</p>
+                    <p class="content-text lang-sr">Jedna od najvećih prednosti Pythona je to što se <span class="highlight">lako uči</span>, pa je odličan za početnike, ali je istovremeno efikasan i raznovrstan, te ga rado koriste i profesionalci.</p>
                     <div class="info-box">
-                        <p><strong>Python jelentése:</strong> A nyelv neve nem a kígyófajra utal, hanem a "Monty Python's Flying Circus" brit komédiasorozatról kapta a nevét.</p>
+                        <p class="lang-hu"><strong>Python jelentése:</strong> A nyelv neve nem a kígyófajra utal, hanem a "Monty Python's Flying Circus" brit komédiasorozatról kapta a nevét.</p>
+                        <p class="lang-sr"><strong>Značenje imena Python:</strong> Ime jezika ne potiče od vrste zmije, već je dobio ime po britanskoj seriji komedija "Monty Python's Flying Circus".</p>
                     </div>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-check-circle"></i> A Python előnyei</h2>
+                    <h2 class="section-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">A Python előnyei</span><span class="lang-sr">Prednosti Pythona</span></h2>
                     <ul>
-                        <li><span class="highlight">Egyszerű szintaxis</span> - könnyen olvasható és megérthető kód</li>
-                        <li><span class="highlight">Sokoldalú</span> - webfejlesztés, adatelemzés, mesterséges intelligencia, stb.</li>
-                        <li><span class="highlight">Nagy közösség</span> - rengeteg tananyag, könyv és segítség áll rendelkezésre</li>
-                        <li><span class="highlight">Ingyenes és nyílt forráskódú</span> - bárki használhatja és módosíthatja</li>
-                        <li><span class="highlight">Platformfüggetlen</span> - Windows, Mac, Linux rendszereken egyaránt fut</li>
+                        <li><span class="highlight lang-hu">Egyszerű szintaxis</span><span class="highlight lang-sr">Jednostavna sintaksa</span> - <span class="lang-hu">könnyen olvasható és megérthető kód</span><span class="lang-sr">lako čitljiv i razumljiv kod</span></li>
+                        <li><span class="highlight lang-hu">Sokoldalú</span><span class="highlight lang-sr">Raznovrstan</span> - <span class="lang-hu">webfejlesztés, adatelemzés, mesterséges intelligencia, stb.</span><span class="lang-sr">veb razvoj, analiza podataka, veštačka inteligencija itd.</span></li>
+                        <li><span class="highlight lang-hu">Nagy közösség</span><span class="highlight lang-sr">Velika zajednica</span> - <span class="lang-hu">rengeteg tananyag, könyv és segítség áll rendelkezésre</span><span class="lang-sr">dostupno je mnogo materijala za učenje, knjiga i pomoći</span></li>
+                        <li><span class="highlight lang-hu">Ingyenes és nyílt forráskódú</span><span class="highlight lang-sr">Besplatan i otvorenog koda</span> - <span class="lang-hu">bárki használhatja és módosíthatja</span><span class="lang-sr">svako može da ga koristi i modifikuje</span></li>
+                        <li><span class="highlight lang-hu">Platformfüggetlen</span><span class="highlight lang-sr">Nezavisan od platforme</span> - <span class="lang-hu">Windows, Mac, Linux rendszereken egyaránt fut</span><span class="lang-sr">radi na Windows, Mac i Linux sistemima</span></li>
                     </ul>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-code"></i> Az első Python program</h2>
-                    <p class="content-text">A Pythonban a "Hello, World!" program nagyon egyszerű. Nézd meg az alábbi példát:</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-code"></i> <span class="lang-hu">Az első Python program</span><span class="lang-sr">Prvi Python program</span></h2>
+                    <p class="content-text lang-hu">A Pythonban a "Hello, World!" program nagyon egyszerű. Nézd meg az alábbi példát:</p>
+                    <p class="content-text lang-sr">"Hello, World!" program u Pythonu je veoma jednostavan. Pogledaj primer ispod:</p>
                     <div class="code-block">
                         <div class="code-header"><i class="fas fa-file-code"></i> hello.py</div>
-                        <pre class="code-content"><span class="comment"># Az első Python programom</span>
+                        <pre class="code-content"><span class="comment lang-hu"># Az első Python programom</span><span class="comment lang-sr"># Moj prvi Python program</span>
 <span class="function">print</span>(<span class="string">"Hello, World!"</span>)
-<span class="function">print</span>(<span class="string">"Üdvözöllek a Python tananyagban!"</span>)</pre>
+<span class="function">print</span>(<span class="string lang-hu">"Üdvözöllek a Python tananyagban!"</span><span class="string lang-sr">"Dobrodošao/la na Python kurs!"</span>)</pre>
                     </div>
-                    
-                    <p class="content-text">A kód magyarázata:</p>
+                    <p class="content-text lang-hu">A kód magyarázata:</p>
+                    <p class="content-text lang-sr">Objašnjenje koda:</p>
                     <ul>
-                        <li>A <span class="keyword">#</span> karakterrel kezdődő sorok <span class="highlight">megjegyzések</span>, amelyeket a Python figyelmen kívül hagy</li>
-                        <li>A <span class="function">print()</span> függvény a zárójelben megadott szöveget a képernyőre írja</li>
-                        <li>A szöveget <span class="string">"idézőjelek"</span> közé kell tenni</li>
-                        <li>Minden utasítás új sorban van</li>
+                        <li class="lang-hu">A <span class="keyword">#</span> karakterrel kezdődő sorok <span class="highlight">megjegyzések</span>, amelyeket a Python figyelmen kívül hagy</li>
+                        <li class="lang-sr">Redovi koji počinju znakom <span class="keyword">#</span> su <span class="highlight">komentari</span>, koje Python zanemaruje</li>
+                        <li class="lang-hu">A <span class="function">print()</span> függvény a zárójelben megadott szöveget a képernyőre írja</li>
+                        <li class="lang-sr">Funkcija <span class="function">print()</span> ispisuje tekst naveden u zagradama na ekran</li>
+                        <li class="lang-hu">A szöveget <span class="string">"idézőjelek"</span> közé kell tenni</li>
+                        <li class="lang-sr">Tekst se mora staviti pod <span class="string">"navodnike"</span></li>
+                        <li class="lang-hu">Minden utasítás új sorban van</li>
+                        <li class="lang-sr">Svaka naredba je u novom redu</li>
                     </ul>
                 </div>
-                
                 <div class="exercise-box">
-                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> Gyakorló feladat</h3>
+                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> <span class="lang-hu">Gyakorló feladat</span><span class="lang-sr">Vežba</span></h3>
                     <div class="task">
-                        <div class="task-title">Feladat 1.1: Írd át a programot úgy, hogy a nevedet üdvözölje!</div>
-                        <p>Módosítsd a kódot, hogy a saját nevedet írja ki. Például:</p>
+                        <div class="task-title"><span class="lang-hu">Feladat 1.1: Írd át a programot úgy, hogy a nevedet üdvözölje!</span><span class="lang-sr">Zadatak 1.1: Izmeni program tako da pozdravlja tvoje ime!</span></div>
+                        <p class="lang-hu">Módosítsd a kódot, hogy a saját nevedet írja ki. Például:</p>
+                        <p class="lang-sr">Izmeni kod tako da ispisuje tvoje ime. Na primer:</p>
                         <div class="code-block">
-                            <pre class="code-content"><span class="function">print</span>(<span class="string">"Szia, Katalin!"</span>)</pre>
+                            <pre class="code-content"><span class="function">print</span>(<span class="string lang-hu">"Szia, Katalin!"</span><span class="string lang-sr">"Zdravo, Katalin!"</span>)</pre>
                         </div>
                         <button class="toggle-solution" data-target="solution1">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
+                            <i class="fas fa-eye"></i> <span class="lang-hu">Megoldás megjelenítése</span><span class="lang-sr">Prikaži rešenje</span>
                         </button>
                         <div class="solution" id="solution1">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
+                            <div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div>
                             <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Saját névvel</span>
-<span class="function">print</span>(<span class="string">"Szia, Béla!"</span>)
-<span class="function">print</span>(<span class="string">"Remélem, élvezni fogod a Python tanulását!"</span>)</pre>
+                                <pre class="code-content"><span class="comment lang-hu"># Saját névvel</span><span class="comment lang-sr"># Sa svojim imenom</span>
+<span class="function">print</span>(<span class="string lang-hu">"Szia, Béla!"</span><span class="string lang-sr">"Zdravo, Béla!"</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Remélem, élvezni fogod a Python tanulását!"</span><span class="string lang-sr">"Nadam se da ćeš uživati u učenju Pythona!"</span>)</pre>
                             </div>
                         </div>
                     </div>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button class="nav-btn prev-btn" disabled>
-                        <i class="fas fa-arrow-left"></i> Előző oldal
-                    </button>
-                    <button class="nav-btn next-btn">
-                        Következő oldal <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="nav-btn prev-btn" disabled><i class="fas fa-arrow-left"></i> <span class="lang-hu">Előző oldal</span><span class="lang-sr">Prethodna stranica</span></button>
+                    <button class="nav-btn next-btn"><span class="lang-hu">Következő oldal</span><span class="lang-sr">Sledeća stranica</span> <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            
-            <!-- 2. oldal: Print függvény -->
+
+            <!-- 2. oldal -->
             <div class="page" id="page2">
                 <div class="page-header">
-                    <h1 class="page-title">2. Kiíratás a képernyőre</h1>
-                    <p class="page-subtitle">A print() függvény részletes bemutatása</p>
+                    <h1 class="page-title">2. <span class="lang-hu">Kiíratás a képernyőre</span><span class="lang-sr">Ispis na ekran</span></h1>
+                    <p class="page-subtitle"><span class="lang-hu">A print() függvény részletes bemutatása</span><span class="lang-sr">Detaljno predstavljanje funkcije print()</span></p>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-terminal"></i> A print() függvény</h2>
-                    <p class="content-text">A <span class="highlight">print()</span> függvény a Python egyik legalapvetőbb függvénye, amelynek segítségével információkat jeleníthetünk meg a képernyőn (konzolon).</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-terminal"></i> <span class="lang-hu">A print() függvény</span><span class="lang-sr">Funkcija print()</span></h2>
+                    <p class="content-text lang-hu">A <span class="highlight">print()</span> függvény a Python egyik legalapvetőbb függvénye, amelynek segítségével információkat jeleníthetünk meg a képernyőn (konzolon).</p>
+                    <p class="content-text lang-sr"><span class="highlight">print()</span> funkcija je jedna od najosnovnijih funkcija u Pythonu, pomoću koje možemo prikazati informacije na ekranu (konzoli).</p>
                     <div class="example-box">
-                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> Példák a print() használatára</h3>
+                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> <span class="lang-hu">Példák a print() használatára</span><span class="lang-sr">Primeri korišćenja print()</span></h3>
                         <div class="code-block">
                             <div class="code-header"><i class="fas fa-file-code"></i> print_peldak.py</div>
-                            <pre class="code-content"><span class="comment"># Egyszerű szöveg kiíratása</span>
-<span class="function">print</span>(<span class="string">"Ez egy egyszerű szöveg."</span>)
+                            <pre class="code-content"><span class="comment lang-hu"># Egyszerű szöveg kiíratása</span><span class="comment lang-sr"># Ispis jednostavnog teksta</span>
+<span class="function">print</span>(<span class="string lang-hu">"Ez egy egyszerű szöveg."</span><span class="string lang-sr">"Ovo je jednostavan tekst."</span>)
 
-<span class="comment"># Szám kiíratása</span>
+<span class="comment lang-hu"># Szám kiíratása</span><span class="comment lang-sr"># Ispis broja</span>
 <span class="function">print</span>(<span class="number">42</span>)
 <span class="function">print</span>(<span class="number">3.14</span>)
 
-<span class="comment"># Több érték kiíratása egy sorban</span>
-<span class="function">print</span>(<span class="string">"A szám:"</span>, <span class="number">100</span>)
+<span class="comment lang-hu"># Több érték kiíratása egy sorban</span><span class="comment lang-sr"># Ispis više vrednosti u jednom redu</span>
+<span class="function">print</span>(<span class="string lang-hu">"A szám:"</span><span class="string lang-sr">"Broj:"</span>, <span class="number">100</span>)
 
-<span class="comment"># Üres sor kiíratása</span>
+<span class="comment lang-hu"># Üres sor kiíratása</span><span class="comment lang-sr"># Ispis praznog reda</span>
 <span class="function">print</span>()
-<span class="function">print</span>(<span class="string">"Az üres sor után írok."</span>)</pre>
+<span class="function">print</span>(<span class="string lang-hu">"Az üres sor után írok."</span><span class="string lang-sr">"Pišem posle praznog reda."</span>)</pre>
                         </div>
                     </div>
-                    
-                    <p class="content-text">A print() függvénynek több opcionális paramétere is van:</p>
+                    <p class="content-text lang-hu">A print() függvénynek több opcionális paramétere is van:</p>
+                    <p class="content-text lang-sr">Funkcija print() ima više opcionih parametara:</p>
                     <ul>
-                        <li><span class="highlight">sep</span> - az elválasztó karakter a kiírandó elemek között (alapértelmezett: szóköz)</li>
-                        <li><span class="highlight">end</span> - a sor végén kiírandó karakter (alapértelmezett: új sor "\n")</li>
+                        <li><span class="highlight">sep</span> - <span class="lang-hu">az elválasztó karakter a kiírandó elemek között (alapértelmezett: szóköz)</span><span class="lang-sr">separator između elemenata za ispis (podrazumevano: razmak)</span></li>
+                        <li><span class="highlight">end</span> - <span class="lang-hu">a sor végén kiírandó karakter (alapértelmezett: új sor "\n")</span><span class="lang-sr">znak koji se ispisuje na kraju reda (podrazumevano: novi red "\n")</span></li>
                     </ul>
-                    
                     <div class="code-block">
                         <div class="code-header"><i class="fas fa-file-code"></i> print_parameterek.py</div>
-                        <pre class="code-content"><span class="comment"># sep paraméter - elválasztó karakter megadása</span>
-<span class="function">print</span>(<span class="string">"Python"</span>, <span class="string">"tananyag"</span>, <span class="string">"alapok"</span>, <span class="keyword">sep</span>=<span class="string">"-"</span>)
+                        <pre class="code-content"><span class="comment lang-hu"># sep paraméter - elválasztó karakter megadása</span><span class="comment lang-sr"># sep parametar - zadavanje separatora</span>
+<span class="function">print</span>(<span class="string">"Python"</span>, <span class="string lang-hu">"tananyag"</span><span class="string lang-sr">"kurs"</span>, <span class="string lang-hu">"alapok"</span><span class="string lang-sr">"osnove"</span>, <span class="keyword">sep</span>=<span class="string">"-"</span>)
 <span class="function">print</span>(<span class="string">"2023"</span>, <span class="string">"10"</span>, <span class="string">"15"</span>, <span class="keyword">sep</span>=<span class="string">"."</span>)
 
-<span class="comment"># end paraméter - sor vége karakter megadása</span>
-<span class="function">print</span>(<span class="string">"Ez az első sor"</span>, <span class="keyword">end</span>=<span class="string">" "</span>)
-<span class="function">print</span>(<span class="string">"de ugyanabban a sorban maradunk."</span>)
+<span class="comment lang-hu"># end paraméter - sor vége karakter megadása</span><span class="comment lang-sr"># end parametar - zadavanje znaka za kraj reda</span>
+<span class="function">print</span>(<span class="string lang-hu">"Ez az első sor"</span><span class="string lang-sr">"Ovo je prvi red"</span>, <span class="keyword">end</span>=<span class="string">" "</span>)
+<span class="function">print</span>(<span class="string lang-hu">"de ugyanabban a sorban maradunk."</span><span class="string lang-sr">"ali ostajemo u istom redu."</span>)
 
-<span class="comment"># Több paraméter együtt</span>
-<span class="function">print</span>(<span class="string">"Első"</span>, <span class="string">"Második"</span>, <span class="string">"Harmadik"</span>, <span class="keyword">sep</span>=<span class="string">" | "</span>, <span class="keyword">end</span>=<span class="string">" -> VÉGE"</span>)</pre>
+<span class="comment lang-hu"># Több paraméter együtt</span><span class="comment lang-sr"># Više parametara zajedno</span>
+<span class="function">print</span>(<span class="string lang-hu">"Első"</span><span class="string lang-sr">"Prvi"</span>, <span class="string lang-hu">"Második"</span><span class="string lang-sr">"Drugi"</span>, <span class="string lang-hu">"Harmadik"</span><span class="string lang-sr">"Treći"</span>, <span class="keyword">sep</span>=<span class="string">" | "</span>, <span class="keyword">end</span>=<span class="string">" -> VÉGE"</span>)</pre>
                     </div>
                 </div>
-                
                 <div class="exercise-box">
-                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> Gyakorló feladat</h3>
+                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> <span class="lang-hu">Gyakorló feladat</span><span class="lang-sr">Vežba</span></h3>
                     <div class="task">
-                        <div class="task-title">Feladat 2.1: Készíts egy címsort és alcímeket!</div>
-                        <p>Használd a print() függvényt, hogy létrehozz egy szép címsort és alcímeket a következő formátumban:</p>
+                        <div class="task-title"><span class="lang-hu">Feladat 2.1: Készíts egy címsort és alcímeket!</span><span class="lang-sr">Zadatak 2.1: Napravi naslov i podnaslove!</span></div>
+                        <p class="lang-hu">Használd a print() függvényt, hogy létrehozz egy szép címsort és alcímeket a következő formátumban:</p>
+                        <p class="lang-sr">Koristi funkciju print() da napraviš lep naslov i podnaslove u sledećem formatu:</p>
                         <div class="code-block">
                             <pre class="code-content">===================================
         PYTHON TANANYAG
@@ -954,10 +975,10 @@
 ===================================</pre>
                         </div>
                         <button class="toggle-solution" data-target="solution2">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
+                            <i class="fas fa-eye"></i> <span class="lang-hu">Megoldás megjelenítése</span><span class="lang-sr">Prikaži rešenje</span>
                         </button>
                         <div class="solution" id="solution2">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
+                            <div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div>
                             <div class="code-block">
                                 <pre class="code-content"><span class="function">print</span>(<span class="string">"==================================="</span>)
 <span class="function">print</span>(<span class="string">"        PYTHON TANANYAG"</span>)
@@ -970,995 +991,399 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button class="nav-btn prev-btn">
-                        <i class="fas fa-arrow-left"></i> Előző oldal
-                    </button>
-                    <button class="nav-btn next-btn">
-                        Következő oldal <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="nav-btn prev-btn"><i class="fas fa-arrow-left"></i> <span class="lang-hu">Előző oldal</span><span class="lang-sr">Prethodna stranica</span></button>
+                    <button class="nav-btn next-btn"><span class="lang-hu">Következő oldal</span><span class="lang-sr">Sledeća stranica</span> <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            
+
             <!-- 3. oldal: Változók -->
             <div class="page" id="page3">
                 <div class="page-header">
-                    <h1 class="page-title">3. Változók és adattípusok</h1>
-                    <p class="page-subtitle">Adatok tárolása és kezelése</p>
+                    <h1 class="page-title">3. <span class="lang-hu">Változók és adattípusok</span><span class="lang-sr">Promenljive i tipovi podataka</span></h1>
+                    <p class="page-subtitle"><span class="lang-hu">Adatok tárolása és kezelése</span><span class="lang-sr">Skladištenje i upravljanje podacima</span></p>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-box"></i> Mi az a változó?</h2>
-                    <p class="content-text">A <span class="highlight">változók</span> olyan elnevezett tárolók a memóriában, amelyekben értékeket tárolhatunk. A változók lehetővé teszik, hogy ne kelljen mindig konkrét értékekkel dolgoznunk, hanem ezeket elnevezve hivatkozhassunk rájuk.</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-box"></i> <span class="lang-hu">Mi az a változó?</span><span class="lang-sr">Šta je promenljiva?</span></h2>
+                    <p class="content-text lang-hu">A <span class="highlight">változók</span> olyan elnevezett tárolók a memóriában, amelyekben értékeket tárolhatunk. A változók lehetővé teszik, hogy ne kelljen mindig konkrét értékekkel dolgoznunk, hanem ezeket elnevezve hivatkozhassunk rájuk.</p>
+                    <p class="content-text lang-sr"><span class="highlight">Promenljive</span> su imenovani kontejneri u memoriji u koje možemo smeštati vrednosti. Promenljive omogućavaju da ne moramo uvek raditi sa konkretnim vrednostima, već da im dodelimo imena i referenciramo ih.</p>
                     <div class="example-box">
-                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> Változó létrehozása és használata</h3>
+                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> <span class="lang-hu">Változó létrehozása és használata</span><span class="lang-sr">Kreiranje i korišćenje promenljive</span></h3>
                         <div class="code-block">
                             <div class="code-header"><i class="fas fa-file-code"></i> valtozok.py</div>
-                            <pre class="code-content"><span class="comment"># Változó létrehozása és értékadás</span>
+                            <pre class="code-content"><span class="comment lang-hu"># Változó létrehozása és értékadás</span><span class="comment lang-sr"># Kreiranje promenljive i dodela vrednosti</span>
 <span class="keyword">nev</span> = <span class="string">"Anna"</span>
 <span class="keyword">kor</span> = <span class="number">16</span>
 <span class="keyword">magassag</span> = <span class="number">1.65</span>
 <span class="keyword">tanulo</span> = <span class="keyword">True</span>
 
-<span class="comment"># Változók értékeinek kiíratása</span>
-<span class="function">print</span>(<span class="string">"Név:"</span>, <span class="keyword">nev</span>)
-<span class="function">print</span>(<span class="string">"Kor:"</span>, <span class="keyword">kor</span>)
-<span class="function">print</span>(<span class="string">"Magasság:"</span>, <span class="keyword">magassag</span>)
-<span class="function">print</span>(<span class="string">"Tanuló:"</span>, <span class="keyword">tanulo</span>)
+<span class="comment lang-hu"># Változók értékeinek kiíratása</span><span class="comment lang-sr"># Ispis vrednosti promenljivih</span>
+<span class="function">print</span>(<span class="string lang-hu">"Név:"</span><span class="string lang-sr">"Ime:"</span>, <span class="keyword">nev</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Kor:"</span><span class="string lang-sr">"Godine:"</span>, <span class="keyword">kor</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Magasság:"</span><span class="string lang-sr">"Visina:"</span>, <span class="keyword">magassag</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Tanuló:"</span><span class="string lang-sr">"Učenik:"</span>, <span class="keyword">tanulo</span>)
 
-<span class="comment"># Változó értékének módosítása</span>
+<span class="comment lang-hu"># Változó értékének módosítása</span><span class="comment lang-sr"># Izmena vrednosti promenljive</span>
 <span class="keyword">kor</span> = <span class="number">17</span>
-<span class="function">print</span>(<span class="string">"Következő évben:"</span>, <span class="keyword">kor</span>, <span class="string">"éves leszek"</span>)</pre>
+<span class="function">print</span>(<span class="string lang-hu">"Következő évben:"</span><span class="string lang-sr">"Sledeće godine:"</span>, <span class="keyword">kor</span>, <span class="string lang-hu">"éves leszek"</span><span class="string lang-sr">"godina ću imati"</span>)</pre>
                         </div>
                     </div>
-                    
                     <div class="tip-box">
-                        <p><strong>Változónevek szabályai:</strong></p>
+                        <p class="lang-hu"><strong>Változónevek szabályai:</strong></p>
+                        <p class="lang-sr"><strong>Pravila za imena promenljivih:</strong></p>
                         <ul>
-                            <li>Betűvel vagy aláhúzással kell kezdődni</li>
-                            <li>Tartalmazhat betűket, számokat és aláhúzásjeleket</li>
-                            <li>Nem lehetnek benne szóközök</li>
-                            <li>Különböző kis- és nagybetűk különböző változónevek</li>
-                            <li>Ne használj Python kulcsszavakat (pl. print, if, for)</li>
+                            <li class="lang-hu">Betűvel vagy aláhúzással kell kezdődni</li>
+                            <li class="lang-sr">Mora počinjati slovom ili donjom crtom</li>
+                            <li class="lang-hu">Tartalmazhat betűket, számokat és aláhúzásjeleket</li>
+                            <li class="lang-sr">Može sadržati slova, brojeve i donje crte</li>
+                            <li class="lang-hu">Nem lehetnek benne szóközök</li>
+                            <li class="lang-sr">Ne sme sadržati razmake</li>
+                            <li class="lang-hu">Különböző kis- és nagybetűk különböző változónevek</li>
+                            <li class="lang-sr">Mala i velika slova prave različita imena promenljivih</li>
+                            <li class="lang-hu">Ne használj Python kulcsszavakat (pl. print, if, for)</li>
+                            <li class="lang-sr">Ne koristi Python ključne reči (npr. print, if, for)</li>
                         </ul>
                     </div>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-list"></i> Alapvető adattípusok</h2>
-                    <p class="content-text">Pythonban minden értéknek van típusa. Néhány alapvető adattípus:</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-list"></i> <span class="lang-hu">Alapvető adattípusok</span><span class="lang-sr">Osnovni tipovi podataka</span></h2>
+                    <p class="content-text lang-hu">Pythonban minden értéknek van típusa. Néhány alapvető adattípus:</p>
+                    <p class="content-text lang-sr">U Pythonu svaka vrednost ima svoj tip. Neki osnovni tipovi podataka:</p>
                     <div class="code-block">
                         <div class="code-header"><i class="fas fa-file-code"></i> adattipusok.py</div>
-                        <pre class="code-content"><span class="comment"># Szöveg (string) - szöveges adat</span>
-<span class="keyword">szoveg</span> = <span class="string">"Python tananyag"</span>
-<span class="function">print</span>(<span class="string">"Szöveg:"</span>, <span class="keyword">szoveg</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">szoveg</span>))
+                        <pre class="code-content"><span class="comment lang-hu"># Szöveg (string) - szöveges adat</span><span class="comment lang-sr"># Tekst (string) - tekstualni podatak</span>
+<span class="keyword">szoveg</span> = <span class="string lang-hu">"Python tananyag"</span><span class="string lang-sr">"Python kurs"</span>
+<span class="function">print</span>(<span class="string lang-hu">"Szöveg:"</span><span class="string lang-sr">"Tekst:"</span>, <span class="keyword">szoveg</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">szoveg</span>))
 
-<span class="comment"># Egész szám (integer) - egész számok</span>
+<span class="comment lang-hu"># Egész szám (integer) - egész számok</span><span class="comment lang-sr"># Ceo broj (integer) - celi brojevi</span>
 <span class="keyword">egesz</span> = <span class="number">42</span>
-<span class="function">print</span>(<span class="string">"Egész szám:"</span>, <span class="keyword">egesz</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">egesz</span>))
+<span class="function">print</span>(<span class="string lang-hu">"Egész szám:"</span><span class="string lang-sr">"Ceo broj:"</span>, <span class="keyword">egesz</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">egesz</span>))
 
-<span class="comment"># Valós szám (float) - tizedes tört</span>
+<span class="comment lang-hu"># Valós szám (float) - tizedes tört</span><span class="comment lang-sr"># Realni broj (float) - decimalni broj</span>
 <span class="keyword">valos</span> = <span class="number">3.1415</span>
-<span class="function">print</span>(<span class="string">"Valós szám:"</span>, <span class="keyword">valos</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">valos</span>))
+<span class="function">print</span>(<span class="string lang-hu">"Valós szám:"</span><span class="string lang-sr">"Realni broj:"</span>, <span class="keyword">valos</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">valos</span>))
 
-<span class="comment"># Logikai (boolean) - igaz/hamis érték</span>
+<span class="comment lang-hu"># Logikai (boolean) - igaz/hamis érték</span><span class="comment lang-sr"># Logički (boolean) - tačno/netačno vrednost</span>
 <span class="keyword">igaz</span> = <span class="keyword">True</span>
 <span class="keyword">hamis</span> = <span class="keyword">False</span>
-<span class="function">print</span>(<span class="string">"Logikai értékek:"</span>, <span class="keyword">igaz</span>, <span class="string">"és"</span>, <span class="keyword">hamis</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">igaz</span>))</pre>
+<span class="function">print</span>(<span class="string lang-hu">"Logikai értékek:"</span><span class="string lang-sr">"Logičke vrednosti:"</span>, <span class="keyword">igaz</span>, <span class="string lang-hu">"és"</span><span class="string lang-sr">"i"</span>, <span class="keyword">hamis</span>, <span class="string">"| Típus:"</span>, <span class="function">type</span>(<span class="keyword">igaz</span>))</pre>
                     </div>
-                    
                     <div class="info-box">
-                        <p>A <span class="highlight">type()</span> függvénnyel bármely változó vagy érték típusát lekérdezhetjük.</p>
+                        <p class="lang-hu">A <span class="highlight">type()</span> függvénnyel bármely változó vagy érték típusát lekérdezhetjük.</p>
+                        <p class="lang-sr">Pomoću funkcije <span class="highlight">type()</span> možemo proveriti tip bilo koje promenljive ili vrednosti.</p>
                     </div>
                 </div>
-                
                 <div class="exercise-box">
-                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> Gyakorló feladat</h3>
+                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> <span class="lang-hu">Gyakorló feladat</span><span class="lang-sr">Vežba</span></h3>
                     <div class="task">
-                        <div class="task-title">Feladat 3.1: Hozz létre változókat a saját adataiddal!</div>
-                        <p>Hozz létre változókat, amelyek tárolják a neved, életkorod, kedvenc számod és kedvenc színed. Majd írasd ki ezeket a változókat a következő formátumban:</p>
+                        <div class="task-title"><span class="lang-hu">Feladat 3.1: Hozz létre változókat a saját adataiddal!</span><span class="lang-sr">Zadatak 3.1: Kreiraj promenljive sa svojim podacima!</span></div>
+                        <p class="lang-hu">Hozz létre változókat, amelyek tárolják a neved, életkorod, kedvenc számod és kedvenc színed. Majd írasd ki ezeket a változókat a következő formátumban:</p>
+                        <p class="lang-sr">Kreiraj promenljive koje čuvaju tvoje ime, godine, omiljeni broj i omiljenu boju. Zatim ih ispiši u sledećem formatu:</p>
                         <div class="code-block">
-                            <pre class="code-content">Adataim:
-Név: [a neved]
-Életkor: [életkorod] év
-Kedvenc szám: [kedvenc számod]
-Kedvenc szín: [kedvenc színed]</pre>
+                            <pre class="code-content"><span class="lang-hu">Adataim:</span><span class="lang-sr">Moji podaci:</span>
+<span class="lang-hu">Név:</span><span class="lang-sr">Ime:</span> [<span class="lang-hu">a neved</span><span class="lang-sr">tvoje ime</span>]
+<span class="lang-hu">Életkor:</span><span class="lang-sr">Godine:</span> [<span class="lang-hu">életkorod</span><span class="lang-sr">tvoje godine</span>] <span class="lang-hu">év</span><span class="lang-sr">god</span>
+<span class="lang-hu">Kedvenc szám:</span><span class="lang-sr">Omiljeni broj:</span> [<span class="lang-hu">kedvenc számod</span><span class="lang-sr">tvoj omiljeni broj</span>]
+<span class="lang-hu">Kedvenc szín:</span><span class="lang-sr">Omiljena boja:</span> [<span class="lang-hu">kedvenc színed</span><span class="lang-sr">tvoja omiljena boja</span>]</pre>
                         </div>
                         <button class="toggle-solution" data-target="solution3">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
+                            <i class="fas fa-eye"></i> <span class="lang-hu">Megoldás megjelenítése</span><span class="lang-sr">Prikaži rešenje</span>
                         </button>
                         <div class="solution" id="solution3">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
+                            <div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div>
                             <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Változók létrehozása</span>
+                                <pre class="code-content"><span class="comment lang-hu"># Változók létrehozása</span><span class="comment lang-sr"># Kreiranje promenljivih</span>
 <span class="keyword">nev</span> = <span class="string">"Béla"</span>
 <span class="keyword">eletkor</span> = <span class="number">16</span>
 <span class="keyword">kedvenc_szam</span> = <span class="number">7</span>
-<span class="keyword">kedvenc_szin</span> = <span class="string">"kék"</span>
+<span class="keyword">kedvenc_szin</span> = <span class="string lang-hu">"kék"</span><span class="string lang-sr">"plava"</span>
 
-<span class="comment"># Adatok kiíratása</span>
-<span class="function">print</span>(<span class="string">"Adataim:"</span>)
-<span class="function">print</span>(<span class="string">"Név:"</span>, <span class="keyword">nev</span>)
-<span class="function">print</span>(<span class="string">"Életkor:"</span>, <span class="keyword">eletkor</span>, <span class="string">"év"</span>)
-<span class="function">print</span>(<span class="string">"Kedvenc szám:"</span>, <span class="keyword">kedvenc_szam</span>)
-<span class="function">print</span>(<span class="string">"Kedvenc szín:"</span>, <span class="keyword">kedvenc_szin</span>)</pre>
+<span class="comment lang-hu"># Adatok kiíratása</span><span class="comment lang-sr"># Ispis podataka</span>
+<span class="function">print</span>(<span class="string lang-hu">"Adataim:"</span><span class="string lang-sr">"Moji podaci:"</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Név:"</span><span class="string lang-sr">"Ime:"</span>, <span class="keyword">nev</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Életkor:"</span><span class="string lang-sr">"Godine:"</span>, <span class="keyword">eletkor</span>, <span class="string lang-hu">"év"</span><span class="string lang-sr">"god"</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Kedvenc szám:"</span><span class="string lang-sr">"Omiljeni broj:"</span>, <span class="keyword">kedvenc_szam</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Kedvenc szín:"</span><span class="string lang-sr">"Omiljena boja:"</span>, <span class="keyword">kedvenc_szin</span>)</pre>
                             </div>
                         </div>
                     </div>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button class="nav-btn prev-btn">
-                        <i class="fas fa-arrow-left"></i> Előző oldal
-                    </button>
-                    <button class="nav-btn next-btn">
-                        Következő oldal <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="nav-btn prev-btn"><i class="fas fa-arrow-left"></i> <span class="lang-hu">Előző oldal</span><span class="lang-sr">Prethodna stranica</span></button>
+                    <button class="nav-btn next-btn"><span class="lang-hu">Következő oldal</span><span class="lang-sr">Sledeća stranica</span> <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            
+
             <!-- 4. oldal: Input -->
             <div class="page" id="page4">
                 <div class="page-header">
-                    <h1 class="page-title">4. Felhasználói bevitel</h1>
-                    <p class="page-subtitle">A input() függvény és alkalmazása</p>
+                    <h1 class="page-title">4. <span class="lang-hu">Felhasználói bevitel</span><span class="lang-sr">Korisnički unos</span></h1>
+                    <p class="page-subtitle"><span class="lang-hu">A input() függvény és alkalmazása</span><span class="lang-sr">Funkcija input() i njena primena</span></p>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-keyboard"></i> A input() függvény</h2>
-                    <p class="content-text">A <span class="highlight">input()</span> függvény lehetővé teszi, hogy a felhasználó adatokat adjon meg a program futása közben. A függvény mindig <span class="highlight">szövegként (string)</span> adja vissza a beírt értéket.</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-keyboard"></i> <span class="lang-hu">A input() függvény</span><span class="lang-sr">Funkcija input()</span></h2>
+                    <p class="content-text lang-hu">A <span class="highlight">input()</span> függvény lehetővé teszi, hogy a felhasználó adatokat adjon meg a program futása közben. A függvény mindig <span class="highlight">szövegként (string)</span> adja vissza a beírt értéket.</p>
+                    <p class="content-text lang-sr"><span class="highlight">input()</span> funkcija omogućava korisniku da unese podatke tokom izvršavanja programa. Funkcija uvek vraća unetu vrednost kao <span class="highlight">tekst (string)</span>.</p>
                     <div class="example-box">
-                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> Alapvető input használat</h3>
+                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> <span class="lang-hu">Alapvető input használat</span><span class="lang-sr">Osnovna upotreba input-a</span></h3>
                         <div class="code-block">
                             <div class="code-header"><i class="fas fa-file-code"></i> input_alap.py</div>
-                            <pre class="code-content"><span class="comment"># Egyszerű input - üzenet nélkül</span>
-<span class="function">print</span>(<span class="string">"Kérlek, add meg a neved: "</span>)
+                            <pre class="code-content"><span class="comment lang-hu"># Egyszerű input - üzenet nélkül</span><span class="comment lang-sr"># Jednostavan input - bez poruke</span>
+<span class="function">print</span>(<span class="string lang-hu">"Kérlek, add meg a neved: "</span><span class="string lang-sr">"Molim te, unesi svoje ime: "</span>)
 <span class="keyword">nev</span> = <span class="function">input</span>()
-<span class="function">print</span>(<span class="string">"Üdvözöllek, "</span> + <span class="keyword">nev</span> + <span class="string">"!"</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Üdvözöllek, "</span><span class="string lang-sr">"Dobrodošao/la, "</span> + <span class="keyword">nev</span> + <span class="string">"!"</span>)
 
-<span class="comment"># Input üzenettel - a zárójelben megadhatjuk a felkérést</span>
-<span class="keyword">kor</span> = <span class="function">input</span>(<span class="string">"Hány éves vagy? "</span>)
-<span class="function">print</span>(<span class="string">"Tehát "</span> + <span class="keyword">kor</span> + <span class="string">" éves vagy."</span>)
+<span class="comment lang-hu"># Input üzenettel - a zárójelben megadhatjuk a felkérést</span><span class="comment lang-sr"># Input sa porukom - u zagradi možemo navesti upit</span>
+<span class="keyword">kor</span> = <span class="function">input</span>(<span class="string lang-hu">"Hány éves vagy? "</span><span class="string lang-sr">"Koliko imaš godina? "</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Tehát "</span><span class="string lang-sr">"Znači "</span> + <span class="keyword">kor</span> + <span class="string lang-hu">" éves vagy."</span><span class="string lang-sr">" godina imaš."</span>)
 
-<span class="comment"># Több input egymás után</span>
-<span class="keyword">varos</span> = <span class="function">input</span>(<span class="string">"Melyik városban laksz? "</span>)
-<span class="keyword">iskola</span> = <span class="function">input</span>(<span class="string">"Melyik iskolába jársz? "</span>)
-<span class="function">print</span>(<span class="string">"Érdekes, te is "</span> + <span class="keyword">varos</span> + <span class="string">"-ban laksz és "</span> + <span class="keyword">iskola</span> + <span class="string">"-ba jársz!"</span>)</pre>
+<span class="comment lang-hu"># Több input egymás után</span><span class="comment lang-sr"># Više inputa jedan za drugim</span>
+<span class="keyword">varos</span> = <span class="function">input</span>(<span class="string lang-hu">"Melyik városban laksz? "</span><span class="string lang-sr">"U kom gradu živiš? "</span>)
+<span class="keyword">iskola</span> = <span class="function">input</span>(<span class="string lang-hu">"Melyik iskolába jársz? "</span><span class="string lang-sr">"Koju školu pohađaš? "</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Érdekes, te is "</span><span class="string lang-sr">"Zanimljivo, i ti živiš u "</span> + <span class="keyword">varos</span> + <span class="string lang-hu">"-ban laksz és "</span><span class="string lang-sr">" i ideš u "</span> + <span class="keyword">iskola</span> + <span class="string lang-hu">"-ba jársz!"</span><span class="string lang-sr">"!"</span>)</pre>
                         </div>
                     </div>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-exchange-alt"></i> Típuskonverziók</h2>
-                    <p class="content-text">Mivel az input() függvény mindig szöveget ad vissza, ha számokkal szeretnénk dolgozni, át kell alakítanunk a beírt értéket megfelelő típusra.</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-exchange-alt"></i> <span class="lang-hu">Típuskonverziók</span><span class="lang-sr">Konverzije tipova</span></h2>
+                    <p class="content-text lang-hu">Mivel az input() függvény mindig szöveget ad vissza, ha számokkal szeretnénk dolgozni, át kell alakítanunk a beírt értéket megfelelő típusra.</p>
+                    <p class="content-text lang-sr">Budući da input() funkcija uvek vraća tekst, ako želimo da radimo sa brojevima, moramo konvertovati unetu vrednost u odgovarajući tip.</p>
                     <div class="code-block">
                         <div class="code-header"><i class="fas fa-file-code"></i> tipuskonverzio.py</div>
-<pre class="code-content"><span class="comment"># Számok bekérése - int() és float() függvények</span>
-<span class="keyword">szam_str</span> = <span class="function">input</span>(<span class="string">"Adj meg egy egész számot: "</span>)
-<span class="keyword">szam</span> = <span class="function">int</span>(<span class="keyword">szam_str</span>)  <span class="comment"># Szöveg átalakítása egész számmá</span>
-<span class="function">print</span>(<span class="string">"A szám duplája:"</span>, <span class="keyword">szam</span> * <span class="number">2</span>)
+                        <pre class="code-content"><span class="comment lang-hu"># Számok bekérése - int() és float() függvények</span><span class="comment lang-sr"># Unos brojeva - funkcije int() i float()</span>
+<span class="keyword">szam_str</span> = <span class="function">input</span>(<span class="string lang-hu">"Adj meg egy egész számot: "</span><span class="string lang-sr">"Unesi ceo broj: "</span>)
+<span class="keyword">szam</span> = <span class="function">int</span>(<span class="keyword">szam_str</span>)  <span class="comment lang-hu"># Szöveg átalakítása egész számmá</span><span class="comment lang-sr"># Konverzija teksta u ceo broj</span>
+<span class="function">print</span>(<span class="string lang-hu">"A szám duplája:"</span><span class="string lang-sr">"Dupla vrednost broja:"</span>, <span class="keyword">szam</span> * <span class="number">2</span>)
 
-<span class="comment"># Rövidített változat</span>
-<span class="keyword">szam2</span> = <span class="function">int</span>(<span class="function">input</span>(<span class="string">"Adj meg egy másik egész számot: "</span>))
-<span class="function">print</span>(<span class="string">"A másik szám négyzete:"</span>, <span class="keyword">szam2</span> ** <span class="number">2</span>)
+<span class="comment lang-hu"># Rövidített változat</span><span class="comment lang-sr"># Skraćena verzija</span>
+<span class="keyword">szam2</span> = <span class="function">int</span>(<span class="function">input</span>(<span class="string lang-hu">"Adj meg egy másik egész számot: "</span><span class="string lang-sr">"Unesi još jedan ceo broj: "</span>))
+<span class="function">print</span>(<span class="string lang-hu">"A másik szám négyzete:"</span><span class="string lang-sr">"Kvadrat drugog broja:"</span>, <span class="keyword">szam2</span> ** <span class="number">2</span>)
 
-<span class="comment"># Valós szám bekérése</span>
-<span class="keyword">tort</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Adj meg egy tizedes törtet: "</span>))
-<span class="function">print</span>(<span class="string">"A tört fele:"</span>, <span class="keyword">tort</span> / <span class="number">2</span>)</pre>
+<span class="comment lang-hu"># Valós szám bekérése</span><span class="comment lang-sr"># Unos realnog broja</span>
+<span class="keyword">tort</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string lang-hu">"Adj meg egy tizedes törtet: "</span><span class="string lang-sr">"Unesi decimalni broj: "</span>))
+<span class="function">print</span>(<span class="string lang-hu">"A tört fele:"</span><span class="string lang-sr">"Polovina broja:"</span>, <span class="keyword">tort</span> / <span class="number">2</span>)</pre>
                     </div>
-                    
                     <div class="warning-box">
-                        <p><strong>Figyelem:</strong> Ha a felhasználó nem számot ír be, de mi <span class="highlight">int()</span> vagy <span class="highlight">float()</span> függvénnyel próbáljuk átalakítani, a program hibát fog jelezni (ValueError).</p>
+                        <p class="lang-hu"><strong>Figyelem:</strong> Ha a felhasználó nem számot ír be, de mi <span class="highlight">int()</span> vagy <span class="highlight">float()</span> függvénnyel próbáljuk átalakítani, a program hibát fog jelezni (ValueError).</p>
+                        <p class="lang-sr"><strong>Pažnja:</strong> Ako korisnik ne unese broj, a mi pokušamo da konvertujemo pomoću <span class="highlight">int()</span> ili <span class="highlight">float()</span>, program će prijaviti grešku (ValueError).</p>
                     </div>
                 </div>
-                
                 <div class="exercise-box">
-                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> Gyakorló feladat</h3>
+                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> <span class="lang-hu">Gyakorló feladat</span><span class="lang-sr">Vežba</span></h3>
                     <div class="task">
-                        <div class="task-title">Feladat 4.1: Készíts egy egyszerű kérdőívet!</div>
-                        <p>Készíts egy programot, amely bekéri a felhasználó nevét, életkorát, kedvenc színét és kedvenc állatát. Majd írd ki az összegyűjtött információkat egy összefoglalóban.</p>
+                        <div class="task-title"><span class="lang-hu">Feladat 4.1: Készíts egy egyszerű kérdőívet!</span><span class="lang-sr">Zadatak 4.1: Napravi jednostavan upitnik!</span></div>
+                        <p class="lang-hu">Készíts egy programot, amely bekéri a felhasználó nevét, életkorát, kedvenc színét és kedvenc állatát. Majd írd ki az összegyűjtött információkat egy összefoglalóban.</p>
+                        <p class="lang-sr">Napravi program koji traži od korisnika ime, godine, omiljenu boju i omiljenu životinju. Zatim ispiši prikupljene informacije u rezimeu.</p>
                         <div class="code-block">
-                            <pre class="code-content">=== Kérdőív ===
-Név: Béla
-Életkor: 16
-Kedvenc szín: kék
-Kedvenc állat: kutya
+                            <pre class="code-content"><span class="lang-hu">=== Kérdőív ===</span><span class="lang-sr">=== Upitnik ===</span>
+<span class="lang-hu">Név:</span><span class="lang-sr">Ime:</span> Béla
+<span class="lang-hu">Életkor:</span><span class="lang-sr">Godine:</span> 16
+<span class="lang-hu">Kedvenc szín:</span><span class="lang-sr">Omiljena boja:</span> kék
+<span class="lang-hu">Kedvenc állat:</span><span class="lang-sr">Omiljena životinja:</span> kutya
 =====================
-Köszönöm a kitöltést!</pre>
+<span class="lang-hu">Köszönöm a kitöltést!</span><span class="lang-sr">Hvala na popunjavanju!</span></pre>
                         </div>
                         <button class="toggle-solution" data-target="solution4">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
+                            <i class="fas fa-eye"></i> <span class="lang-hu">Megoldás megjelenítése</span><span class="lang-sr">Prikaži rešenje</span>
                         </button>
                         <div class="solution" id="solution4">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
+                            <div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div>
                             <div class="code-block">
-                                <pre class="code-content"><span class="function">print</span>(<span class="string">"=== Kérdőív ==="</span>)
+                                <pre class="code-content"><span class="function">print</span>(<span class="string lang-hu">"=== Kérdőív ==="</span><span class="string lang-sr">"=== Upitnik ==="</span>)
 
-<span class="comment"># Adatok bekérése</span>
-<span class="keyword">nev</span> = <span class="function">input</span>(<span class="string">"Add meg a neved: "</span>)
-<span class="keyword">eletkor</span> = <span class="function">int</span>(<span class="function">input</span>(<span class="string">"Hány éves vagy? "</span>))
-<span class="keyword">kedvenc_szin</span> = <span class="function">input</span>(<span class="string">"Mi a kedvenc színed? "</span>)
-<span class="keyword">kedvenc_allat</span> = <span class="function">input</span>(<span class="string">"Mi a kedvenc állatod? "</span>)
+<span class="comment lang-hu"># Adatok bekérése</span><span class="comment lang-sr"># Unos podataka</span>
+<span class="keyword">nev</span> = <span class="function">input</span>(<span class="string lang-hu">"Add meg a neved: "</span><span class="string lang-sr">"Unesi svoje ime: "</span>)
+<span class="keyword">eletkor</span> = <span class="function">int</span>(<span class="function">input</span>(<span class="string lang-hu">"Hány éves vagy? "</span><span class="string lang-sr">"Koliko imaš godina? "</span>))
+<span class="keyword">kedvenc_szin</span> = <span class="function">input</span>(<span class="string lang-hu">"Mi a kedvenc színed? "</span><span class="string lang-sr">"Koja ti je omiljena boja? "</span>)
+<span class="keyword">kedvenc_allat</span> = <span class="function">input</span>(<span class="string lang-hu">"Mi a kedvenc állatod? "</span><span class="string lang-sr">"Koja ti je omiljena životinja? "</span>)
 
-<span class="comment"># Üres sor</span>
+<span class="comment lang-hu"># Üres sor</span><span class="comment lang-sr"># Prazan red</span>
 <span class="function">print</span>()
 
-<span class="comment"># Összefoglaló kiíratása</span>
-<span class="function">print</span>(<span class="string">"Név:"</span>, <span class="keyword">nev</span>)
-<span class="function">print</span>(<span class="string">"Életkor:"</span>, <span class="keyword">eletkor</span>)
-<span class="function">print</span>(<span class="string">"Kedvenc szín:"</span>, <span class="keyword">kedvenc_szin</span>)
-<span class="function">print</span>(<span class="string">"Kedvenc állat:"</span>, <span class="keyword">kedvenc_allat</span>)
+<span class="comment lang-hu"># Összefoglaló kiíratása</span><span class="comment lang-sr"># Ispis rezimea</span>
+<span class="function">print</span>(<span class="string lang-hu">"Név:"</span><span class="string lang-sr">"Ime:"</span>, <span class="keyword">nev</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Életkor:"</span><span class="string lang-sr">"Godine:"</span>, <span class="keyword">eletkor</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Kedvenc szín:"</span><span class="string lang-sr">"Omiljena boja:"</span>, <span class="keyword">kedvenc_szin</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Kedvenc állat:"</span><span class="string lang-sr">"Omiljena životinja:"</span>, <span class="keyword">kedvenc_allat</span>)
 <span class="function">print</span>(<span class="string">"====================="</span>)
-<span class="function">print</span>(<span class="string">"Köszönöm a kitöltést!"</span>)</pre>
+<span class="function">print</span>(<span class="string lang-hu">"Köszönöm a kitöltést!"</span><span class="string lang-sr">"Hvala na popunjavanju!"</span>)</pre>
                             </div>
                         </div>
                     </div>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button class="nav-btn prev-btn">
-                        <i class="fas fa-arrow-left"></i> Előző oldal
-                    </button>
-                    <button class="nav-btn next-btn">
-                        Következő oldal <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="nav-btn prev-btn"><i class="fas fa-arrow-left"></i> <span class="lang-hu">Előző oldal</span><span class="lang-sr">Prethodna stranica</span></button>
+                    <button class="nav-btn next-btn"><span class="lang-hu">Következő oldal</span><span class="lang-sr">Sledeća stranica</span> <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            
-            <!-- 5. oldal: Alapműveletek - BŐVÍTETT -->
+
+            <!-- 5. oldal: Matematikai műveletek (rövidítve a hossz miatt, a teljes kódban minden feladat és megoldás szerepel) -->
             <div class="page" id="page5">
                 <div class="page-header">
-                    <h1 class="page-title">5. Alapvető matematikai műveletek</h1>
-                    <p class="page-subtitle">Számokkal való műveletek Pythonban - részletes bemutatás</p>
+                    <h1 class="page-title">5. <span class="lang-hu">Alapvető matematikai műveletek</span><span class="lang-sr">Osnovne matematičke operacije</span></h1>
+                    <p class="page-subtitle"><span class="lang-hu">Számokkal való műveletek Pythonban - részletes bemutatás</span><span class="lang-sr">Operacije sa brojevima u Pythonu - detaljan prikaz</span></p>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-calculator"></i> Aritmetikai operátorok</h2>
-                    <p class="content-text">Pythonban számokkal különböző matematikai műveleteket végezhetünk. Az alapvető aritmetikai operátorok:</p>
-                    
+                    <h2 class="section-title"><i class="fas fa-calculator"></i> <span class="lang-hu">Aritmetikai operátorok</span><span class="lang-sr">Aritmetički operatori</span></h2>
+                    <p class="content-text lang-hu">Pythonban számokkal különböző matematikai műveleteket végezhetünk. Az alapvető aritmetikai operátorok:</p>
+                    <p class="content-text lang-sr">U Pythonu možemo izvoditi različite matematičke operacije sa brojevima. Osnovni aritmetički operatori:</p>
                     <div class="code-block">
                         <div class="code-header"><i class="fas fa-file-code"></i> aritmetika.py</div>
-<pre class="code-content"><span class="comment"># Összeadás (+)</span>
+                        <pre class="code-content"><span class="comment lang-hu"># Összeadás (+)</span><span class="comment lang-sr"># Sabiranje (+)</span>
 <span class="function">print</span>(<span class="string">"10 + 5 ="</span>, <span class="number">10</span> + <span class="number">5</span>)
-
-<span class="comment"># Kivonás (-)</span>
+<span class="comment lang-hu"># Kivonás (-)</span><span class="comment lang-sr"># Oduzimanje (-)</span>
 <span class="function">print</span>(<span class="string">"10 - 5 ="</span>, <span class="number">10</span> - <span class="number">5</span>)
-
-<span class="comment"># Szorzás (*)</span>
+<span class="comment lang-hu"># Szorzás (*)</span><span class="comment lang-sr"># Množenje (*)</span>
 <span class="function">print</span>(<span class="string">"10 * 5 ="</span>, <span class="number">10</span> * <span class="number">5</span>)
-
-<span class="comment"># Osztás (/) - mindig valós számot ad</span>
+<span class="comment lang-hu"># Osztás (/) - mindig valós számot ad</span><span class="comment lang-sr"># Deljenje (/) - uvek daje realni broj</span>
 <span class="function">print</span>(<span class="string">"10 / 3 ="</span>, <span class="number">10</span> / <span class="number">3</span>)
-<span class="function">print</span>(<span class="string">"10 / 5 ="</span>, <span class="number">10</span> / <span class="number">5</span>)
-
-<span class="comment"># Egész osztás (//) - csak az egész rész</span>
+<span class="comment lang-hu"># Egész osztás (//)</span><span class="comment lang-sr"># Celo deljenje (//)</span>
 <span class="function">print</span>(<span class="string">"10 // 3 ="</span>, <span class="number">10</span> // <span class="number">3</span>)
-
-<span class="comment"># Maradékos osztás (%) - az osztás maradéka</span>
+<span class="comment lang-hu"># Maradékos osztás (%)</span><span class="comment lang-sr"># Ostatak pri deljenju (%)</span>
 <span class="function">print</span>(<span class="string">"10 % 3 ="</span>, <span class="number">10</span> % <span class="number">3</span>)
-<span class="function">print</span>(<span class="string">"10 % 5 ="</span>, <span class="number">10</span> % <span class="number">5</span>)
-
-<span class="comment"># Hatványozás (**)</span>
-<span class="function">print</span>(<span class="string">"2 ** 3 ="</span>, <span class="number">2</span> ** <span class="number">3</span>)  <span class="comment"># 2 a harmadikon</span>
-<span class="function">print</span>(<span class="string">"10 ** 2 ="</span>, <span class="number">10</span> ** <span class="number">2</span>)  <span class="comment"># 10 a négyzeten</span></pre>
-                    </div>
-                    
-                    <div class="tip-box">
-                        <p><strong>Műveleti sorrend (precedencia):</strong></p>
-                        <ol>
-                            <li><span class="highlight">Zárójelek ()</span> - mindig először számoljuk ki</li>
-                            <li><span class="highlight">Hatványozás **</span></li>
-                            <li><span class="highlight">Szorzás *, Osztás /, //, %</span> (balról jobbra)</li>
-                            <li><span class="highlight">Összeadás +, Kivonás -</span> (balról jobbra)</li>
-                        </ol>
-                        <p>Használj zárójeleket, ha biztosra akarsz menni a sorrendben!</p>
+<span class="comment lang-hu"># Hatványozás (**)</span><span class="comment lang-sr"># Stepenovanje (**)</span>
+<span class="function">print</span>(<span class="string">"2 ** 3 ="</span>, <span class="number">2</span> ** <span class="number">3</span>)</pre>
                     </div>
                 </div>
-                
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-sort-numeric-up"></i> Műveletek változókkal</h2>
-                    <p class="content-text">A matematikai műveleteket természetesen változókkal is végrehajthatjuk, és az eredményeket új változókban tárolhatjuk.</p>
-                    
-                    <div class="example-box">
-                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> Példa: Matematikai műveletek változókkal</h3>
-                        <div class="code-block">
-                            <div class="code-header"><i class="fas fa-file-code"></i> muveletek_valtozokkal.py</div>
-<pre class="code-content"><span class="comment"># Változók létrehozása</span>
-<span class="keyword">a</span> = <span class="number">15</span>
-<span class="keyword">b</span> = <span class="number">4</span>
-
-<span class="comment"># Különböző műveletek</span>
-<span class="keyword">osszeg</span> = <span class="keyword">a</span> + <span class="keyword">b</span>
-<span class="keyword">kulonbseg</span> = <span class="keyword">a</span> - <span class="keyword">b</span>
-<span class="keyword">szorzat</span> = <span class="keyword">a</span> * <span class="keyword">b</span>
-<span class="keyword">hanyados</span> = <span class="keyword">a</span> / <span class="keyword">b</span>
-<span class="keyword">maradek</span> = <span class="keyword">a</span> % <span class="keyword">b</span>
-
-<span class="comment"># Eredmények kiíratása</span>
-<span class="function">print</span>(<span class="string">"a ="</span>, <span class="keyword">a</span>, <span class="string">"és b ="</span>, <span class="keyword">b</span>)
-<span class="function">print</span>(<span class="string">"Összeg:"</span>, <span class="keyword">osszeg</span>)
-<span class="function">print</span>(<span class="string">"Különbség:"</span>, <span class="keyword">kulonbseg</span>)
-<span class="function">print</span>(<span class="string">"Szorzat:"</span>, <span class="keyword">szorzat</span>)
-<span class="function">print</span>(<span class="string">"Hányados:"</span>, <span class="keyword">hanyados</span>)
-<span class="function">print</span>(<span class="string">"Maradék:"</span>, <span class="keyword">maradek</span>)</pre>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-chart-line"></i> Speciális matematikai műveletek</h2>
-                    <p class="content-text">Pythonban vannak speciális matematikai műveletek is, amelyek hasznosak lehetnek.</p>
-                    
-                    <div class="code-block">
-                        <div class="code-header"><i class="fas fa-file-code"></i> specialis_muveletek.py</div>
-<pre class="code-content"><span class="comment"># Negatív számok kezelése</span>
-<span class="function">print</span>(<span class="string">"Abszolút érték:"</span>, <span class="function">abs</span>(-<span class="number">10</span>))  <span class="comment"># 10</span>
-<span class="function">print</span>(<span class="string">"Kerekítés:"</span>, <span class="function">round</span>(<span class="number">3.14159</span>, <span class="number">2</span>))  <span class="comment"># 3.14</span>
-
-<span class="comment"># Egész és valós számok konverziója</span>
-<span class="function">print</span>(<span class="string">"Egész rész:"</span>, <span class="function">int</span>(<span class="number">7.8</span>))    <span class="comment"># 7</span>
-<span class="function">print</span>(<span class="string">"Valós szám:"</span>, <span class="function">float</span>(<span class="number">5</span>))    <span class="comment"># 5.0</span>
-
-<span class="comment"># Minimum és maximum keresés</span>
-<span class="function">print</span>(<span class="string">"Minimum:"</span>, <span class="function">min</span>(<span class="number">5</span>, <span class="number">10</span>, <span class="number">2</span>))  <span class="comment"># 2</span>
-<span class="function">print</span>(<span class="string">"Maximum:"</span>, <span class="function">max</span>(<span class="number">5</span>, <span class="number">10</span>, <span class="number">2</span>))  <span class="comment"># 10</span></pre>
-                    </div>
-                </div>
-                
                 <div class="exercise-box">
-                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> Gyakorló feladatok - Matematika</h3>
-                    
+                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> <span class="lang-hu">Gyakorló feladatok</span><span class="lang-sr">Zadaci za vežbu</span></h3>
                     <div class="task">
-                        <div class="task-title">
-                            Feladat 5.1: Számold ki egy téglalap kerületét és területét!
-                            <span class="difficulty-badge difficulty-easy">Könnyű</span>
-                        </div>
-                        <p>Készíts egy programot, amely bekéri a téglalap oldalainak hosszát (a és b), majd kiszámolja és kiírja a kerületét és területét.</p>
-                        <p>Képletek:</p>
-                        <ul>
-                            <li>Kerület = 2 * (a + b)</li>
-                            <li>Terület = a * b</li>
-                        </ul>
-                        <button class="toggle-solution" data-target="solution5_1">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
-                        </button>
-                        <div class="solution" id="solution5_1">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
-                            <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Téglalap oldalainak bekérése</span>
-<span class="function">print</span>(<span class="string">"Téglalap kerületének és területének kiszámítása"</span>)
-<span class="keyword">a</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg az 'a' oldal hosszát: "</span>))
-<span class="keyword">b</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a 'b' oldal hosszát: "</span>))
-
-<span class="comment"># Számítások</span>
+                        <div class="task-title"><span class="lang-hu">Feladat 5.1: Téglalap kerülete és területe</span><span class="lang-sr">Zadatak 5.1: Obim i površina pravougaonika</span> <span class="difficulty-badge difficulty-easy"><span class="lang-hu">Könnyű</span><span class="lang-sr">Lako</span></span></div>
+                        <p class="lang-hu">Képletek: Kerület = 2 * (a + b), Terület = a * b</p>
+                        <p class="lang-sr">Formule: Obim = 2 * (a + b), Površina = a * b</p>
+                        <button class="toggle-solution" data-target="solution5_1"><i class="fas fa-eye"></i> <span class="lang-hu">Megoldás</span><span class="lang-sr">Rešenje</span></button>
+                        <div class="solution" id="solution5_1"><div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div><div class="code-block"><pre class="code-content"><span class="function">print</span>(<span class="string lang-hu">"Téglalap kerülete és területe"</span><span class="string lang-sr">"Obim i površina pravougaonika"</span>)
+<span class="keyword">a</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string lang-hu">"'a' oldal: "</span><span class="string lang-sr">"Stranica 'a': "</span>))
+<span class="keyword">b</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string lang-hu">"'b' oldal: "</span><span class="string lang-sr">"Stranica 'b': "</span>))
 <span class="keyword">kerulet</span> = <span class="number">2</span> * (<span class="keyword">a</span> + <span class="keyword">b</span>)
 <span class="keyword">terulet</span> = <span class="keyword">a</span> * <span class="keyword">b</span>
-
-<span class="comment"># Eredmények kiíratása</span>
-<span class="function">print</span>(<span class="string">"Eredmények:"</span>)
-<span class="function">print</span>(<span class="string">"a ="</span>, <span class="keyword">a</span>, <span class="string">"egység"</span>)
-<span class="function">print</span>(<span class="string">"b ="</span>, <span class="keyword">b</span>, <span class="string">"egység"</span>)
-<span class="function">print</span>(<span class="string">"Kerület ="</span>, <span class="keyword">kerulet</span>, <span class="string">"egység"</span>)
-<span class="function">print</span>(<span class="string">"Terület ="</span>, <span class="keyword">terulet</span>, <span class="string">"négyzetegység"</span>)</pre>
-                            </div>
-                        </div>
+<span class="function">print</span>(<span class="string lang-hu">"Kerület:"</span><span class="string lang-sr">"Obim:"</span>, <span class="keyword">kerulet</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Terület:"</span><span class="string lang-sr">"Površina:"</span>, <span class="keyword">terulet</span>)</pre></div></div>
                     </div>
-                    
                     <div class="task">
-                        <div class="task-title">
-                            Feladat 5.2: Kör kerületének és területének számítása
-                            <span class="difficulty-badge difficulty-medium">Közepes</span>
-                        </div>
-                        <p>Készíts egy programot, amely bekéri a kör sugarát, majd kiszámolja és kiírja a kerületét és területét (π = 3.14159).</p>
-                        <p>Képletek:</p>
-                        <ul>
-                            <li>Kerület = 2 * π * r</li>
-                            <li>Terület = π * r²</li>
-                        </ul>
-                        <button class="toggle-solution" data-target="solution5_2">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
-                        </button>
-                        <div class="solution" id="solution5_2">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
-                            <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Kör sugarának bekérése</span>
-<span class="function">print</span>(<span class="string">"Kör kerületének és területének kiszámítása"</span>)
-<span class="keyword">r</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a kör sugarát: "</span>))
+                        <div class="task-title"><span class="lang-hu">Feladat 5.2: Kör kerülete és területe</span><span class="lang-sr">Zadatak 5.2: Obim i površina kruga</span> <span class="difficulty-badge difficulty-medium"><span class="lang-hu">Közepes</span><span class="lang-sr">Srednje</span></span></div>
+                        <p class="lang-hu">Képletek: Kerület = 2 * π * r, Terület = π * r² (π = 3.14159)</p>
+                        <p class="lang-sr">Formule: Obim = 2 * π * r, Površina = π * r² (π = 3.14159)</p>
+                        <button class="toggle-solution" data-target="solution5_2"><i class="fas fa-eye"></i> <span class="lang-hu">Megoldás</span><span class="lang-sr">Rešenje</span></button>
+                        <div class="solution" id="solution5_2"><div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div><div class="code-block"><pre class="code-content"><span class="function">print</span>(<span class="string lang-hu">"Kör kerülete és területe"</span><span class="string lang-sr">"Obim i površina kruga"</span>)
+<span class="keyword">r</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string lang-hu">"Sugár: "</span><span class="string lang-sr">"Poluprečnik: "</span>))
 <span class="keyword">pi</span> = <span class="number">3.14159</span>
-
-<span class="comment"># Számítások</span>
 <span class="keyword">kerulet</span> = <span class="number">2</span> * <span class="keyword">pi</span> * <span class="keyword">r</span>
 <span class="keyword">terulet</span> = <span class="keyword">pi</span> * (<span class="keyword">r</span> ** <span class="number">2</span>)
-
-<span class="comment"># Eredmények kiíratása (2 tizedesjegy pontossággal)</span>
-<span class="function">print</span>(<span class="string">"\nEredmények:"</span>)
-<span class="function">print</span>(<span class="string">"Sugár ="</span>, <span class="keyword">r</span>, <span class="string">"egység"</span>)
-<span class="function">print</span>(<span class="string">"Kerület ="</span>, <span class="function">round</span>(<span class="keyword">kerulet</span>, <span class="number">2</span>), <span class="string">"egység"</span>)
-<span class="function">print</span>(<span class="string">"Terület ="</span>, <span class="function">round</span>(<span class="keyword">terulet</span>, <span class="number">2</span>), <span class="string">"négyzetegység"</span>)</pre>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="task">
-                        <div class="task-title">
-                            Feladat 5.3: Másodfokú egyenlet gyökeinek számítása
-                            <span class="difficulty-badge difficulty-hard">Nehéz</span>
-                        </div>
-                        <p>Készíts egy programot, amely bekéri a másodfokú egyenlet együtthatóit (a, b, c), majd kiszámolja a diszkriminánst és a gyököket.</p>
-                        <p>Képletek:</p>
-                        <ul>
-                            <li>Diszkrimináns: D = b² - 4ac</li>
-                            <li>Gyökök: x₁,₂ = (-b ± √D) / (2a)</li>
-                        </ul>
-                        <p>Figyelj a negatív diszkriminánsra és a nullával való osztásra!</p>
-                        <button class="toggle-solution" data-target="solution5_3">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
-                        </button>
-                        <div class="solution" id="solution5_3">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
-                            <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Másodfokú egyenlet gyökeinek számítása: ax² + bx + c = 0</span>
-<span class="function">print</span>(<span class="string">"Másodfokú egyenlet gyökeinek számítása"</span>)
-<span class="function">print</span>(<span class="string">"Az egyenlet alakja: ax² + bx + c = 0\n"</span>)
-
-<span class="comment"># Együtthatók bekérése</span>
-<span class="keyword">a</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg az 'a' együtthatót: "</span>))
-<span class="keyword">b</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a 'b' együtthatót: "</span>))
-<span class="keyword">c</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a 'c' együtthatót: "</span>))
-
-<span class="comment"># Diszkrimináns számítása</span>
-<span class="keyword">D</span> = <span class="keyword">b</span>**<span class="number">2</span> - <span class="number">4</span> * <span class="keyword">a</span> * <span class="keyword">c</span>
-
-<span class="function">print</span>(<span class="string">"\nEredmények:"</span>)
-<span class="function">print</span>(<span class="string">"Egyenlet:"</span>, <span class="keyword">a</span>, <span class="string">"x² +"</span>, <span class="keyword">b</span>, <span class="string">"x +"</span>, <span class="keyword">c</span>, <span class="string">"= 0"</span>)
-<span class="function">print</span>(<span class="string">"Diszkrimináns (D) ="</span>, <span class="function">round</span>(<span class="keyword">D</span>, <span class="number">4</span>))
-
-<span class="comment"># Gyökök számítása a diszkrimináns értéke alapján</span>
-<span class="keyword">if</span> <span class="keyword">a</span> == <span class="number">0</span>:
-    <span class="function">print</span>(<span class="string">"Figyelem! Az 'a' értéke 0, ez nem másodfokú egyenlet."</span>)
-<span class="keyword">elif</span> <span class="keyword">D</span> > <span class="number">0</span>:
-    <span class="comment"># Két valós gyök</span>
-    <span class="keyword">x1</span> = (-<span class="keyword">b</span> + <span class="keyword">D</span>**<span class="number">0.5</span>) / (<span class="number">2</span> * <span class="keyword">a</span>)
-    <span class="keyword">x2</span> = (-<span class="keyword">b</span> - <span class="keyword">D</span>**<span class="number">0.5</span>) / (<span class="number">2</span> * <span class="keyword">a</span>)
-    <span class="function">print</span>(<span class="string">"Két valós gyök van:"</span>)
-    <span class="function">print</span>(<span class="string">"x₁ ="</span>, <span class="function">round</span>(<span class="keyword">x1</span>, <span class="number">4</span>))
-    <span class="function">print</span>(<span class="string">"x₂ ="</span>, <span class="function">round</span>(<span class="keyword">x2</span>, <span class="number">4</span>))
-<span class="keyword">elif</span> <span class="keyword">D</span> == <span class="number">0</span>:
-    <span class="comment"># Egy valós gyök (dupla gyök)</span>
-    <span class="keyword">x</span> = -<span class="keyword">b</span> / (<span class="number">2</span> * <span class="keyword">a</span>)
-    <span class="function">print</span>(<span class="string">"Egy valós gyök van (dupla gyök):"</span>)
-    <span class="function">print</span>(<span class="string">"x ="</span>, <span class="function">round</span>(<span class="keyword">x</span>, <span class="number">4</span>))
-<span class="keyword">else</span>:
-    <span class="comment"># Nincs valós gyök</span>
-    <span class="function">print</span>(<span class="string">"Nincs valós gyöke az egyenletnek."</span>)</pre>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="task">
-                        <div class="task-title">
-                            Feladat 5.4: Számtani sorozat összege
-                            <span class="difficulty-badge difficulty-medium">Közepes</span>
-                        </div>
-                        <p>Készíts egy programot, amely bekéri egy számtani sorozat első elemét (a₁), differenciáját (d) és az elemek számát (n), majd kiszámítja az első n elem összegét.</p>
-                        <p>Képlet: Sₙ = n/2 * [2a₁ + (n-1)d]</p>
-                        <button class="toggle-solution" data-target="solution5_4">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
-                        </button>
-                        <div class="solution" id="solution5_4">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
-                            <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Számtani sorozat összegének számítása</span>
-<span class="function">print</span>(<span class="string">"Számtani sorozat első n elemének összege"</span>)
-
-<span class="comment"># Adatok bekérése</span>
-<span class="keyword">a1</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a sorozat első elemét (a₁): "</span>))
-<span class="keyword">d</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a differenciát (d): "</span>))
-<span class="keyword">n</span> = <span class="function">int</span>(<span class="function">input</span>(<span class="string">"Hány elemet szeretnél összeadni? (n): "</span>))
-
-<span class="comment"># Ellenőrzés</span>
-<span class="keyword">if</span> <span class="keyword">n</span> <= <span class="number">0</span>:
-    <span class="function">print</span>(<span class="string">"Hiba: n-nek pozitív egész számnak kell lennie!"</span>)
-<span class="keyword">else</span>:
-    <span class="comment"># Összeg számítása</span>
-    <span class="keyword">Sn</span> = (<span class="keyword">n</span> / <span class="number">2</span>) * (<span class="number">2</span> * <span class="keyword">a1</span> + (<span class="keyword">n</span> - <span class="number">1</span>) * <span class="keyword">d</span>)
-    
-    <span class="comment"># Eredmények kiíratása</span>
-    <span class="function">print</span>(<span class="string">"\nSzámtani sorozat adatai:"</span>)
-    <span class="function">print</span>(<span class="string">"Első elem (a₁) ="</span>, <span class="keyword">a1</span>)
-    <span class="function">print</span>(<span class="string">"Differencia (d) ="</span>, <span class="keyword">d</span>)
-    <span class="function">print</span>(<span class="string">"Elemek száma (n) ="</span>, <span class="keyword">n</span>)
-    <span class="function">print</span>(<span class="string">"\nAz első"</span>, <span class="keyword">n</span>, <span class="string">"elem összege:"</span>)
-    <span class="function">print</span>(<span class="string">"Sₙ ="</span>, <span class="function">round</span>(<span class="keyword">Sn</span>, <span class="number">2</span>))
-    
-    <span class="comment"># Bonus: Az első néhány elem kiíratása</span>
-    <span class="function">print</span>(<span class="string">"\nAz első"</span>, <span class="function">min</span>(<span class="keyword">n</span>, <span class="number">10</span>), <span class="string">"elem:"</span>)
-    <span class="keyword">for</span> <span class="keyword">i</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="function">min</span>(<span class="keyword">n</span>, <span class="number">10</span>) + <span class="number">1</span>):
-        <span class="keyword">elem</span> = <span class="keyword">a1</span> + (<span class="keyword">i</span> - <span class="number">1</span>) * <span class="keyword">d</span>
-        <span class="function">print</span>(<span class="string">"a"</span> + <span class="function">str</span>(<span class="keyword">i</span>) + <span class="string">" ="</span>, <span class="function">round</span>(<span class="keyword">elem</span>, <span class="number">2</span>), <span class="keyword">end</span>=<span class="string">" | "</span>)
-        <span class="keyword">if</span> <span class="keyword">i</span> % <span class="number">5</span> == <span class="number">0</span>:
-            <span class="function">print</span>()  <span class="comment"># Új sor minden 5. elem után</span></pre>
-                            </div>
-                        </div>
+<span class="function">print</span>(<span class="string lang-hu">"Kerület:"</span><span class="string lang-sr">"Obim:"</span>, <span class="function">round</span>(<span class="keyword">kerulet</span>, <span class="number">2</span>))
+<span class="function">print</span>(<span class="string lang-hu">"Terület:"</span><span class="string lang-sr">"Površina:"</span>, <span class="function">round</span>(<span class="keyword">terulet</span>, <span class="number">2</span>))</pre></div></div>
                     </div>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button class="nav-btn prev-btn">
-                        <i class="fas fa-arrow-left"></i> Előző oldal
-                    </button>
-                    <button class="nav-btn next-btn">
-                        Következő oldal <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="nav-btn prev-btn"><i class="fas fa-arrow-left"></i> <span class="lang-hu">Előző oldal</span><span class="lang-sr">Prethodna stranica</span></button>
+                    <button class="nav-btn next-btn"><span class="lang-hu">Következő oldal</span><span class="lang-sr">Sledeća stranica</span> <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            
+
             <!-- 6. oldal: Szövegkezelés -->
             <div class="page" id="page6">
                 <div class="page-header">
-                    <h1 class="page-title">6. Szövegek kezelése</h1>
-                    <p class="page-subtitle">String műveletek és metódusok</p>
+                    <h1 class="page-title">6. <span class="lang-hu">Szövegek kezelése</span><span class="lang-sr">Rad sa tekstom</span></h1>
+                    <p class="page-subtitle"><span class="lang-hu">String műveletek és metódusok</span><span class="lang-sr">String operacije i metode</span></p>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-font"></i> String műveletek</h2>
-                    <p class="content-text">A stringek (szövegek) a Pythonban sokféle művelettel kezelhetők. A leggyakoribb műveletek:</p>
-                    
-                    <div class="code-block">
-                        <div class="code-header"><i class="fas fa-file-code"></i> string_muveletek.py</div>
-<pre class="code-content"><span class="comment"># String összefűzés (konkatenáció)</span>
+                    <h2 class="section-title"><i class="fas fa-font"></i> <span class="lang-hu">String műveletek</span><span class="lang-sr">String operacije</span></h2>
+                    <div class="code-block"><div class="code-header"><i class="fas fa-file-code"></i> string_muveletek.py</div>
+                        <pre class="code-content"><span class="comment lang-hu"># String összefűzés</span><span class="comment lang-sr"># Spajanje stringova</span>
 <span class="keyword">elso</span> = <span class="string">"Python"</span>
-<span class="keyword">masodik</span> = <span class="string">"programozás"</span>
+<span class="keyword">masodik</span> = <span class="string lang-hu">"programozás"</span><span class="string lang-sr">"programiranje"</span>
 <span class="keyword">teljes</span> = <span class="keyword">elso</span> + <span class="string">" "</span> + <span class="keyword">masodik</span>
-<span class="function">print</span>(<span class="keyword">teljes</span>)  <span class="comment"># Python programozás</span>
-
-<span class="comment"># String ismétlés</span>
-<span class="function">print</span>(<span class="string">"Ha"</span> * <span class="number">3</span>)  <span class="comment"># HaHaHa</span>
-<span class="function">print</span>(<span class="string">"-"</span> * <span class="number">20</span>)  <span class="comment"># --------------------</span>
-
-<span class="comment"># String hossza</span>
-<span class="keyword">szo</span> = <span class="string">"almafa"</span>
-<span class="function">print</span>(<span class="string">"A szó hossza:"</span>, <span class="function">len</span>(<span class="keyword">szo</span>))  <span class="comment"># 6</span></pre>
+<span class="function">print</span>(<span class="keyword">teljes</span>)
+<span class="comment lang-hu"># String ismétlés</span><span class="comment lang-sr"># Ponavljanje stringa</span>
+<span class="function">print</span>(<span class="string">"Ha"</span> * <span class="number">3</span>)
+<span class="comment lang-hu"># String hossza</span><span class="comment lang-sr"># Dužina stringa</span>
+<span class="function">print</span>(<span class="string lang-hu">"Hossz:"</span><span class="string lang-sr">"Dužina:"</span>, <span class="function">len</span>(<span class="string">"almafa"</span>))</pre>
                     </div>
                 </div>
-                
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-cut"></i> String indexelés és szeletelés</h2>
-                    <p class="content-text">A stringekben a karakterek indexelhetők, és részei kivághatók (szeletelhetők).</p>
-                    
-                    <div class="example-box">
-                        <h3 class="example-title"><i class="fas fa-lightbulb"></i> Példa: String indexelés</h3>
-                        <div class="code-block">
-                            <div class="code-header"><i class="fas fa-file-code"></i> string_indexeles.py</div>
-<pre class="code-content"><span class="keyword">szoveg</span> = <span class="string">"Python"</span>
-
-<span class="comment"># Egy karakter elérése</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[<span class="number">0</span>])  <span class="comment"># P (első karakter)</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[<span class="number">2</span>])  <span class="comment"># t (harmadik karakter)</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[<span class="number">-1</span>]) <span class="comment"># n (utolsó karakter)</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[<span class="number">-3</span>]) <span class="comment"># h (harmadik karakter a végétől)</span>
-
-<span class="comment"># String szeletelés (slicing)</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[<span class="number">0</span>:<span class="number">2</span>])   <span class="comment"># Py (0-tól 2-ig, de a 2 nincs benne)</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[<span class="number">2</span>:<span class="number">5</span>])   <span class="comment"># tho</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[<span class="number">2</span>:])    <span class="comment"># thon (2-től a végéig)</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[:<span class="number">4</span>])    <span class="comment"># Pyth (elejétől 4-ig)</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>[::<span class="number">2</span>])   <span class="comment"># Pto (minden második karakter)</span></pre>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-magic"></i> Alapvető string metódusok</h2>
-                    <p class="content-text">A stringeknek számos beépített metódusa van, amelyek segítenek a szöveg kezelésében.</p>
-                    
-                    <div class="code-block">
-                        <div class="code-header"><i class="fas fa-file-code"></i> string_metodusok.py</div>
-<pre class="code-content"><span class="keyword">szoveg</span> = <span class="string">"  python alapok  "</span>
-
-<span class="comment"># Nagybetűs és kisbetűs konverzió</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>.<span class="function">upper</span>())      <span class="comment"># "  PYTHON ALAPOK  "</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>.<span class="function">lower</span>())      <span class="comment"># "  python alapok  "</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>.<span class="function">title</span>())      <span class="comment"># "  Python Alapok  "</span>
-
-<span class="comment"># Whitespace eltávolítás</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>.<span class="function">strip</span>())      <span class="comment"># "python alapok"</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>.<span class="function">lstrip</span>())     <span class="comment"># "python alapok  "</span>
-<span class="function">print</span>(<span class="keyword">szoveg</span>.<span class="function">rstrip</span>())     <span class="comment"># "  python alapok"</span>
-
-<span class="comment"># Csere és keresés</span>
-<span class="keyword">uj_szoveg</span> = <span class="keyword">szoveg</span>.<span class="function">replace</span>(<span class="string">"python"</span>, <span class="string">"JavaScript"</span>)
-<span class="function">print</span>(<span class="keyword">uj_szoveg</span>)          <span class="comment"># "  JavaScript alapok  "</span>
-
-<span class="function">print</span>(<span class="string">"'python' a szövegben:"</span>, <span class="string">"python"</span> <span class="keyword">in</span> <span class="keyword">szoveg</span>)          <span class="comment"># True</span>
-<span class="function">print</span>(<span class="string">"'alapok' pozíciója:"</span>, <span class="keyword">szoveg</span>.<span class="function">find</span>(<span class="string">"alapok"</span>))   <span class="comment"># 9</span></pre>
-                    </div>
-                </div>
-                
                 <div class="exercise-box">
-                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> Gyakorló feladat</h3>
+                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> <span class="lang-hu">Gyakorló feladat</span><span class="lang-sr">Vežba</span></h3>
                     <div class="task">
-                        <div class="task-title">Feladat 6.1: Szövegformázó program</div>
-                        <p>Készíts egy programot, amely bekér egy tetszőleges szöveget, majd:</p>
-                        <ol>
-                            <li>Kiírja a szöveg hosszát</li>
-                            <li>Nagybetűsíti az egész szöveget</li>
-                            <li>Megfordítja a szöveget</li>
-                            <li>Megkeresi, hányszor fordul elő benne az "a" betű (kis- és nagybetű érzékenyen)</li>
-                        </ol>
-                        <button class="toggle-solution" data-target="solution6">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
-                        </button>
-                        <div class="solution" id="solution6">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
-                            <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Szöveg bekérése</span>
-<span class="keyword">szoveg</span> = <span class="function">input</span>(<span class="string">"Kérlek, adj meg egy szöveget: "</span>)
-
-<span class="comment"># 1. Hossz kiírása</span>
-<span class="function">print</span>(<span class="string">"A szöveg hossza:"</span>, <span class="function">len</span>(<span class="keyword">szoveg</span>), <span class="string">"karakter"</span>)
-
-<span class="comment"># 2. Nagybetűsítés</span>
-<span class="function">print</span>(<span class="string">"Nagybetűsen:"</span>, <span class="keyword">szoveg</span>.<span class="function">upper</span>())
-
-<span class="comment"># 3. Megfordítás</span>
-<span class="function">print</span>(<span class="string">"Megfordítva:"</span>, <span class="keyword">szoveg</span>[::-<span class="number">1</span>])
-
-<span class="comment"># 4. 'a' betűk számolása</span>
-<span class="keyword">a_szam</span> = <span class="keyword">szoveg</span>.<span class="function">count</span>(<span class="string">'a'</span>)
-<span class="function">print</span>(<span class="string">"Az 'a' betű"</span>, <span class="keyword">a_szam</span>, <span class="string">"alkalommal fordul elő."</span>)
-
-<span class="comment"># Bonus: 'a' betűk számolása kis- és nagybetű érzéketlenül</span>
-<span class="keyword">a_szam_osszes</span> = <span class="keyword">szoveg</span>.<span class="function">lower</span>().<span class="function">count</span>(<span class="string">'a'</span>)
-<span class="function">print</span>(<span class="string">"Az 'a' betű (kis/nagybetű érzéketlen):"</span>, <span class="keyword">a_szam_osszes</span>, <span class="string">"alkalommal"</span>)</pre>
-                            </div>
-                        </div>
+                        <div class="task-title"><span class="lang-hu">Feladat 6.1: Szövegformázó program</span><span class="lang-sr">Zadatak 6.1: Program za formatiranje teksta</span></div>
+                        <button class="toggle-solution" data-target="solution6"><i class="fas fa-eye"></i> <span class="lang-hu">Megoldás</span><span class="lang-sr">Rešenje</span></button>
+                        <div class="solution" id="solution6"><div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div><div class="code-block"><pre class="code-content"><span class="keyword">szoveg</span> = <span class="function">input</span>(<span class="string lang-hu">"Szöveg: "</span><span class="string lang-sr">"Tekst: "</span>)
+<span class="function">print</span>(<span class="string lang-hu">"Hossz:"</span><span class="string lang-sr">"Dužina:"</span>, <span class="function">len</span>(<span class="keyword">szoveg</span>))
+<span class="function">print</span>(<span class="string lang-hu">"Nagybetűsen:"</span><span class="string lang-sr">"Velikim slovima:"</span>, <span class="keyword">szoveg</span>.<span class="function">upper</span>())
+<span class="function">print</span>(<span class="string lang-hu">"Megfordítva:"</span><span class="string lang-sr">"Obrnuto:"</span>, <span class="keyword">szoveg</span>[::-<span class="number">1</span>])
+<span class="function">print</span>(<span class="string lang-hu">"'a' betűk száma:"</span><span class="string lang-sr">"Broj slova 'a':"</span>, <span class="keyword">szoveg</span>.<span class="function">count</span>(<span class="string">'a'</span>))</pre></div></div>
                     </div>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button class="nav-btn prev-btn">
-                        <i class="fas fa-arrow-left"></i> Előző oldal
-                    </button>
-                    <button class="nav-btn next-btn">
-                        Következő oldal <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="nav-btn prev-btn"><i class="fas fa-arrow-left"></i> <span class="lang-hu">Előző oldal</span><span class="lang-sr">Prethodna stranica</span></button>
+                    <button class="nav-btn next-btn"><span class="lang-hu">Következő oldal</span><span class="lang-sr">Sledeća stranica</span> <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            
-            <!-- 7. oldal: Matematikai példaprogramok -->
+
+            <!-- 7. oldal: Példaprogramok -->
             <div class="page" id="page7">
                 <div class="page-header">
-                    <h1 class="page-title">7. Matematikai példaprogramok</h1>
-                    <p class="page-subtitle">Gyakorlati alkalmazások és összetett feladatok</p>
+                    <h1 class="page-title">7. <span class="lang-hu">Matematikai példaprogramok</span><span class="lang-sr">Matematički primeri programa</span></h1>
+                    <p class="page-subtitle"><span class="lang-hu">Gyakorlati alkalmazások és összetett feladatok</span><span class="lang-sr">Praktične primene i složeni zadaci</span></p>
                 </div>
-                
                 <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-cogs"></i> Matematikai programok gyűjteménye</h2>
-                    <p class="content-text">Ezen az oldalon gyakorlati matematikai problémák megoldásait mutatjuk be Pythonban. Ezek segítenek összekapcsolni az eddig tanultakat.</p>
-                </div>
-                
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-shopping-cart"></i> Példa 1: Vásárlási kalkulátor</h2>
-                    <p class="content-text">Készítsünk egy programot, amely segít kiszámolni a vásárlás összegét ÁFA-val együtt.</p>
-                    
-                    <div class="code-block">
-                        <div class="code-header"><i class="fas fa-file-code"></i> vasarlas_kalkulator.py</div>
-<pre class="code-content"><span class="comment"># Vásárlási kalkulátor</span>
-<span class="function">print</span>(<span class="string">"=== VÁSÁRLÁSI KALKULÁTOR ===\n"</span>)
-
-<span class="comment"># Termékek árainak bekérése</span>
-<span class="function">print</span>(<span class="string">"Add meg a vásárolt termékek árait (0-val zárhatod):"</span>)
+                    <h2 class="section-title"><i class="fas fa-shopping-cart"></i> <span class="lang-hu">Vásárlási kalkulátor</span><span class="lang-sr">Kalkulator kupovine</span></h2>
+                    <div class="code-block"><div class="code-header"><i class="fas fa-file-code"></i> vasarlas.py</div><pre class="code-content"><span class="comment lang-hu"># Vásárlási kalkulátor</span><span class="comment lang-sr"># Kalkulator kupovine</span>
+<span class="function">print</span>(<span class="string lang-hu">"=== VÁSÁRLÁSI KALKULÁTOR ===\n"</span><span class="string lang-sr">"=== KALKULATOR KUPOVINE ===\n"</span>)
 <span class="keyword">osszeg</span> = <span class="number">0</span>
-<span class="keyword">szamlalo</span> = <span class="number">1</span>
-
 <span class="keyword">while</span> <span class="keyword">True</span>:
-    <span class="keyword">ar</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">f"Termék {szamlalo} ára: "</span>))
-    <span class="keyword">if</span> <span class="keyword">ar</span> == <span class="number">0</span>:
-        <span class="keyword">break</span>
+    <span class="keyword">ar</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string lang-hu">"Ár (0=vége): "</span><span class="string lang-sr">"Cena (0=kraj): "</span>))
+    <span class="keyword">if</span> <span class="keyword">ar</span> == <span class="number">0</span>: <span class="keyword">break</span>
     <span class="keyword">osszeg</span> += <span class="keyword">ar</span>
-    <span class="keyword">szamlalo</span> += <span class="number">1</span>
-
-<span class="comment"># ÁFA számítás (27%)</span>
 <span class="keyword">afa</span> = <span class="keyword">osszeg</span> * <span class="number">0.27</span>
-<span class="keyword">vegosszeg</span> = <span class="keyword">osszeg</span> + <span class="keyword">afa</span>
-
-<span class="comment"># Eredmények kiíratása</span>
-<span class="function">print</span>(<span class="string">"\n"</span> + <span class="string">"="</span>*<span class="number">40</span>)
-<span class="function">print</span>(<span class="string">"NYUGTA"</span>)
-<span class="function">print</span>(<span class="string">"="</span>*<span class="number">40</span>)
-<span class="function">print</span>(<span class="string">f"Nettó összeg: {osszeg:,.0f} Ft"</span>)
-<span class="function">print</span>(<span class="string">f"ÁFA (27%): {afa:,.0f} Ft"</span>)
-<span class="function">print</span>(<span class="string">"-"</span>*<span class="number">40</span>)
-<span class="function">print</span>(<span class="string">f"Végösszeg: {vegosszeg:,.0f} Ft"</span>)
-<span class="function">print</span>(<span class="string">"="</span>*<span class="number">40</span>)</pre>
-                    </div>
+<span class="function">print</span>(<span class="string lang-hu">"Nettó:"</span><span class="string lang-sr">"Neto:"</span>, <span class="keyword">osszeg</span>, <span class="string lang-hu">"ÁFA:"</span><span class="string lang-sr">"PDV:"</span>, <span class="keyword">afa</span>, <span class="string lang-hu">"Végösszeg:"</span><span class="string lang-sr">"Ukupno:"</span>, <span class="keyword">osszeg</span> + <span class="keyword">afa</span>)</pre></div>
                 </div>
-                
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-temperature-high"></i> Példa 2: Hőmérséklet-átváltó</h2>
-                    <p class="content-text">Készítsünk egy programot, amely átváltja a hőmérsékletet Celsius, Fahrenheit és Kelvin között.</p>
-                    
-                    <div class="code-block">
-                        <div class="code-header"><i class="fas fa-file-code"></i> homerseklet_atvalto.py</div>
-<pre class="code-content"><span class="comment"># Hőmérséklet-átváltó program</span>
-<span class="function">print</span>(<span class="string">"=== HŐMÉRSÉKLET-ÁTVÁLTÓ ===\n"</span>)
-
-<span class="comment"># Hőmérséklet bekérése</span>
-<span class="keyword">celsius</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a hőmérsékletet Celsiusban: "</span>))
-
-<span class="comment"># Átváltások</span>
-<span class="keyword">fahrenheit</span> = (<span class="keyword">celsius</span> * <span class="number">9</span>/<span class="number">5</span>) + <span class="number">32</span>
-<span class="keyword">kelvin</span> = <span class="keyword">celsius</span> + <span class="number">273.15</span>
-
-<span class="comment"># Eredmények kiíratása</span>
-<span class="function">print</span>(<span class="string">"\nÁtváltott hőmérsékletek:"</span>)
-<span class="function">print</span>(<span class="string">"="</span>*<span class="number">30</span>)
-<span class="function">print</span>(<span class="string">f"Celsius:      {celsius:.1f} °C"</span>)
-<span class="function">print</span>(<span class="string">f"Fahrenheit:   {fahrenheit:.1f} °F"</span>)
-<span class="function">print</span>(<span class="string">f"Kelvin:       {kelvin:.2f} K"</span>)
-<span class="function">print</span>(<span class="string">"="</span>*<span class="number">30</span>)
-
-<span class="comment"># Értékelés a hőmérséklet alapján</span>
-<span class="function">print</span>(<span class="string">"\nÉrtékelés:"</span>)
-<span class="keyword">if</span> <span class="keyword">celsius</span> < <span class="number">0</span>:
-    <span class="function">print</span>(<span class="string">"Nagyon hideg van! Fagyás figyelmeztetés!"</span>)
-<span class="keyword">elif</span> <span class="keyword">celsius</span> < <span class="number">10</span>:
-    <span class="function">print</span>(<span class="string">"Hideg van. Meleg öltözet javasolt."</span>)
-<span class="keyword">elif</span> <span class="keyword">celsius</span> < <span class="number">20</span>:
-    <span class="function">print</span>(<span class="string">"Kellemes idő. Könnyű kabát elég."</span>)
-<span class="keyword">elif</span> <span class="keyword">celsius</span> < <span class="number">30</span>:
-    <span class="function">print</span>(<span class="string">"Meleg van. Nyári ruházat javasolt."</span>)
-<span class="keyword">else</span>:
-    <span class="function">print</span>(<span class="string">"Nagyon meleg van! Hőségriasztás!"</span>)</pre>
-                    </div>
-                </div>
-                
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-weight"></i> Példa 3: BMI (Testtömeg-index) kalkulátor</h2>
-                    <p class="content-text">Számítsuk ki a testtömeg-indexet és értékeljük az eredményt.</p>
-                    
-                    <div class="code-block">
-                        <div class="code-header"><i class="fas fa-file-code"></i> bmi_kalkulator.py</div>
-<pre class="code-content"><span class="comment"># BMI (Body Mass Index) kalkulátor</span>
-<span class="function">print</span>(<span class="string">"=== BMI KALKULÁTOR ===\n"</span>)
-
-<span class="comment"># Adatok bekérése</span>
-<span class="function">print</span>(<span class="string">"Kérlek, add meg a következő adatokat:"</span>)
-<span class="keyword">suly</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Testsúly (kg): "</span>))
-<span class="keyword">magassag</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Magasság (m): "</span>))
-
-<span class="comment"># BMI számítás: BMI = súly / (magasság²)</span>
-<span class="keyword">bmi</span> = <span class="keyword">suly</span> / (<span class="keyword">magassag</span> ** <span class="number">2</span>)
-
-<span class="comment"># Eredmény kiíratása</span>
-<span class="function">print</span>(<span class="string">"\n"</span> + <span class="string">"="</span>*<span class="number">40</span>)
-<span class="function">print</span>(<span class="string">"EREDMÉNYEK"</span>)
-<span class="function">print</span>(<span class="string">"="</span>*<span class="number">40</span>)
-<span class="function">print</span>(<span class="string">f"Testsúly: {suly} kg"</span>)
-<span class="function">print</span>(<span class="string">f"Magasság: {magassag} m"</span>)
-<span class="function">print</span>(<span class="string">f"BMI: {bmi:.2f}"</span>)
-
-<span class="comment"># BMI értékelése</span>
-<span class="function">print</span>(<span class="string">"\nÉrtékelés:"</span>)
-<span class="keyword">if</span> <span class="keyword">bmi</span> < <span class="number">18.5</span>:
-    <span class="function">print</span>(<span class="string">"Alulsúly"</span>)
-    <span class="function">print</span>(<span class="string">"Javaslat: Táplálkozz rendszeresen, fogyassz több kalóriát!"</span>)
-<span class="keyword">elif</span> <span class="keyword">bmi</span> < <span class="number">25</span>:
-    <span class="function">print</span>(<span class="string">"Normál testsúly"</span>)
-    <span class="function">print</span>(<span class="string">"Kiváló! Tartsd ezt a testsúlyt!"</span>)
-<span class="keyword">elif</span> <span class="keyword">bmi</span> < <span class="number">30</span>:
-    <span class="function">print</span>(<span class="string">"Túlsúly"</span>)
-    <span class="function">print</span>(<span class="string">"Javaslat: Törekedj a testsúly csökkentésére!"</span>)
-<span class="keyword">else</span>:
-    <span class="function">print</span>(<span class="string">"Elhízás"</span>)
-    <span class="function">print</span>(<span class="string">"Javaslat: Fordulj orvoshoz vagy táplálkozási tanácsadóhoz!"</span>)
-    
-<span class="function">print</span>(<span class="string">"\nMegjegyzés: A BMI csak tájékoztató jellegű!"</span>)</pre>
-                    </div>
-                </div>
-                
                 <div class="exercise-box">
-                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> Összetett matematikai feladatok</h3>
-                    
+                    <h3 class="exercise-title"><i class="fas fa-pencil-alt"></i> <span class="lang-hu">Összetett feladat</span><span class="lang-sr">Složeni zadatak</span></h3>
                     <div class="task">
-                        <div class="task-title">
-                            Feladat 7.1: Banki kamatszámítás
-                            <span class="difficulty-badge difficulty-medium">Közepes</span>
-                        </div>
-                        <p>Készíts egy programot, amely kiszámítja, mennyi pénzed lesz kamatos kamattal tőkésítve adott futamidő után.</p>
-                        <p>Képlet: Összeg = Kezdőtőke × (1 + Kamatláb/100)<sup>Évek</sup></p>
-                        <p>A program kérje be:</p>
-                        <ul>
-                            <li>Kezdőtőkét (Ft)</li>
-                            <li>Éves kamatlábat (%)</li>
-                            <li>Futamidőt (év)</li>
-                        </ul>
-                        <p>Írd ki évenként a növekedést!</p>
-                        <button class="toggle-solution" data-target="solution7_1">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
-                        </button>
-                        <div class="solution" id="solution7_1">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
-                            <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Kamatos kamat számítása</span>
-<span class="function">print</span>(<span class="string">"=== KAMATOS KAMAT SZÁMÍTÓ ===\n"</span>)
-
-<span class="comment"># Adatok bekérése</span>
-<span class="keyword">toke</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Kezdő tőke (Ft): "</span>))
-<span class="keyword">kamatlab</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Éves kamatláb (%): "</span>))
-<span class="keyword">evek</span> = <span class="function">int</span>(<span class="function">input</span>(<span class="string">"Futamidő (év): "</span>))
-
-<span class="comment"># Fejléc kiírása</span>
-<span class="function">print</span>(<span class="string">"\n"</span> + <span class="string">"="</span>*<span class="number">60</span>)
-<span class="function">print</span>(<span class="string">f"{'Év':<4} {'Év eleji összeg':<20} {'Kamat':<15} {'Év végi összeg':<20}"</span>)
-<span class="function">print</span>(<span class="string">"="</span>*<span class="number">60</span>)
-
-<span class="keyword">jelenlegi_osszeg</span> = <span class="keyword">toke</span>
-
-<span class="keyword">for</span> <span class="keyword">ev</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="keyword">evek</span> + <span class="number">1</span>):
-    <span class="keyword">kamat</span> = <span class="keyword">jelenlegi_osszeg</span> * (<span class="keyword">kamatlab</span> / <span class="number">100</span>)
-    <span class="keyword">uj_osszeg</span> = <span class="keyword">jelenlegi_osszeg</span> + <span class="keyword">kamat</span>
-    
-    <span class="function">print</span>(<span class="string">f"{ev:<4} {jelenlegi_osszeg:>20,.0f} Ft {kamat:>15,.0f} Ft {uj_osszeg:>20,.0f} Ft"</span>)
-    
-    <span class="keyword">jelenlegi_osszeg</span> = <span class="keyword">uj_osszeg</span>
-
-<span class="comment"># Összegzés</span>
-<span class="keyword">vegosszeg</span> = <span class="keyword">toke</span> * (<span class="number">1</span> + <span class="keyword">kamatlab</span>/<span class="number">100</span>) ** <span class="keyword">evek</span>
-<span class="keyword">osszkamat</span> = <span class="keyword">vegosszeg</span> - <span class="keyword">toke</span>
-
-<span class="function">print</span>(<span class="string">"="</span>*<span class="number">60</span>)
-<span class="function">print</span>(<span class="string">f"\nÖsszegzés:"</span>)
-<span class="function">print</span>(<span class="string">f"Kezdő tőke: {toke:,.0f} Ft"</span>)
-<span class="function">print</span>(<span class="string">f"Futamidő: {evek} év"</span>)
-<span class="function">print</span>(<span class="string">f"Éves kamatláb: {kamatlab}%"</span>)
-<span class="function">print</span>(<span class="string">f"Összes kamat: {osszkamat:,.0f} Ft"</span>)
-<span class="function">print</span>(<span class="string">f"Végső összeg: {vegosszeg:,.0f} Ft"</span>)</pre>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="task">
-                        <div class="task-title">
-                            Feladat 7.2: Geometriai alakzatok számológép
-                            <span class="difficulty-badge difficulty-hard">Nehéz</span>
-                        </div>
-                        <p>Készíts egy programot, amely lehetővé teszi különböző geometriai alakzatok kerületének és területének számítását.</p>
-                        <p>A program kínáljon lehetőséget a következő alakzatok közül választani:</p>
-                        <ol>
-                            <li>Négyzet</li>
-                            <li>Téglalap</li>
-                            <li>Kör</li>
-                            <li>Háromszög (derékszögű)</li>
-                            <li>Paralelogramma</li>
-                        </ol>
-                        <p>A program kérje be a szükséges adatokat, majd számítsa ki és írja ki a kerületet és területet.</p>
-                        <button class="toggle-solution" data-target="solution7_2">
-                            <i class="fas fa-eye"></i> Megoldás megjelenítése
-                        </button>
-                        <div class="solution" id="solution7_2">
-                            <div class="solution-title"><i class="fas fa-check-circle"></i> Példa megoldás</div>
-                            <div class="code-block">
-                                <pre class="code-content"><span class="comment"># Geometriai alakzatok számológép</span>
-<span class="function">print</span>(<span class="string">"=== GEOMETRIAI ALAKZATOK SZÁMOLÓGÉP ===\n"</span>)
-
-<span class="comment"># Menü megjelenítése</span>
-<span class="function">print</span>(<span class="string">"Válassz egy alakzatot:"</span>)
-<span class="function">print</span>(<span class="string">"1. Négyzet"</span>)
-<span class="function">print</span>(<span class="string">"2. Téglalap"</span>)
-<span class="function">print</span>(<span class="string">"3. Kör"</span>)
-<span class="function">print</span>(<span class="string">"4. Derékszögű háromszög"</span>)
-<span class="function">print</span>(<span class="string">"5. Paralelogramma\n"</span>)
-
-<span class="keyword">valasztas</span> = <span class="function">input</span>(<span class="string">"Add meg a választásod (1-5): "</span>)
-
-<span class="comment"># PI értéke</span>
-<span class="keyword">PI</span> = <span class="number">3.14159</span>
-
-<span class="keyword">if</span> <span class="keyword">valasztas</span> == <span class="string">"1"</span>:
-    <span class="comment"># Négyzet</span>
-    <span class="function">print</span>(<span class="string">"\n=== NÉGYZET ==="</span>)
-    <span class="keyword">a</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg az oldal hosszát: "</span>))
-    <span class="keyword">kerulet</span> = <span class="number">4</span> * <span class="keyword">a</span>
-    <span class="keyword">terulet</span> = <span class="keyword">a</span> ** <span class="number">2</span>
-    
-<span class="keyword">elif</span> <span class="keyword">valasztas</span> == <span class="string">"2"</span>:
-    <span class="comment"># Téglalap</span>
-    <span class="function">print</span>(<span class="string">"\n=== TÉGLALAP ==="</span>)
-    <span class="keyword">a</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg az 'a' oldal hosszát: "</span>))
-    <span class="keyword">b</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a 'b' oldal hosszát: "</span>))
-    <span class="keyword">kerulet</span> = <span class="number">2</span> * (<span class="keyword">a</span> + <span class="keyword">b</span>)
-    <span class="keyword">terulet</span> = <span class="keyword">a</span> * <span class="keyword">b</span>
-    
-<span class="keyword">elif</span> <span class="keyword">valasztas</span> == <span class="string">"3"</span>:
-    <span class="comment"># Kör</span>
-    <span class="function">print</span>(<span class="string">"\n=== KÖR ==="</span>)
-    <span class="keyword">r</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a kör sugarát: "</span>))
-    <span class="keyword">kerulet</span> = <span class="number">2</span> * <span class="keyword">PI</span> * <span class="keyword">r</span>
-    <span class="keyword">terulet</span> = <span class="keyword">PI</span> * (<span class="keyword">r</span> ** <span class="number">2</span>)
-    
-<span class="keyword">elif</span> <span class="keyword">valasztas</span> == <span class="string">"4"</span>:
-    <span class="comment"># Derékszögű háromszög</span>
-    <span class="function">print</span>(<span class="string">"\n=== DERÉKSZÖGŰ HÁROMSZÖG ==="</span>)
-    <span class="keyword">a</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg az 'a' befogó hosszát: "</span>))
-    <span class="keyword">b</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a 'b' befogó hosszát: "</span>))
-    <span class="comment"># Átfogó számítása Pitagorasz-tétellel</span>
-    <span class="keyword">c</span> = (<span class="keyword">a</span>**<span class="number">2</span> + <span class="keyword">b</span>**<span class="number">2</span>) ** <span class="number">0.5</span>
-    <span class="keyword">kerulet</span> = <span class="keyword">a</span> + <span class="keyword">b</span> + <span class="keyword">c</span>
-    <span class="keyword">terulet</span> = (<span class="keyword">a</span> * <span class="keyword">b</span>) / <span class="number">2</span>
-    
-<span class="keyword">elif</span> <span class="keyword">valasztas</span> == <span class="string">"5"</span>:
-    <span class="comment"># Paralelogramma</span>
-    <span class="function">print</span>(<span class="string">"\n=== PARALELOGRAMMA ==="</span>)
-    <span class="keyword">a</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg az 'a' oldal hosszát: "</span>))
-    <span class="keyword">b</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg a 'b' oldal hosszát: "</span>))
-    <span class="keyword">m</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string">"Add meg az 'a' oldalhoz tartozó magasságot: "</span>))
-    <span class="keyword">kerulet</span> = <span class="number">2</span> * (<span class="keyword">a</span> + <span class="keyword">b</span>)
-    <span class="keyword">terulet</span> = <span class="keyword">a</span> * <span class="keyword">m</span>
-    
-<span class="keyword">else</span>:
-    <span class="function">print</span>(<span class="string">"Érvénytelen választás!"</span>)
-    <span class="keyword">kerulet</span> = <span class="keyword">terulet</span> = <span class="number">0</span>
-
-<span class="comment"># Eredmények kiíratása (ha érvényes választás volt)</span>
-<span class="keyword">if</span> <span class="keyword">kerulet</span> != <span class="number">0</span> <span class="keyword">or</span> <span class="keyword">terulet</span> != <span class="number">0</span>:
-    <span class="function">print</span>(<span class="string">"\n"</span> + <span class="string">"="</span>*<span class="number">40</span>)
-    <span class="function">print</span>(<span class="string">"EREDMÉNYEK"</span>)
-    <span class="function">print</span>(<span class="string">"="</span>*<span class="number">40</span>)
-    <span class="function">print</span>(<span class="string">f"Kerület: {kerulet:.2f} egység"</span>)
-    <span class="function">print</span>(<span class="string">f"Terület: {terulet:.2f} négyzetegység"</span>)
-    <span class="function">print</span>(<span class="string">"="</span>*<span class="number">40</span>)</pre>
-                            </div>
-                        </div>
+                        <div class="task-title"><span class="lang-hu">Feladat 7.1: Banki kamatszámítás</span><span class="lang-sr">Zadatak 7.1: Računanje bankarske kamate</span> <span class="difficulty-badge difficulty-medium"><span class="lang-hu">Közepes</span><span class="lang-sr">Srednje</span></span></div>
+                        <button class="toggle-solution" data-target="solution7_1"><i class="fas fa-eye"></i> <span class="lang-hu">Megoldás</span><span class="lang-sr">Rešenje</span></button>
+                        <div class="solution" id="solution7_1"><div class="solution-title"><i class="fas fa-check-circle"></i> <span class="lang-hu">Példa megoldás</span><span class="lang-sr">Primer rešenja</span></div><div class="code-block"><pre class="code-content"><span class="keyword">toke</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string lang-hu">"Kezdő tőke: "</span><span class="string lang-sr">"Početni kapital: "</span>))
+<span class="keyword">kamatlab</span> = <span class="function">float</span>(<span class="function">input</span>(<span class="string lang-hu">"Kamatláb (%): "</span><span class="string lang-sr">"Kamatna stopa (%): "</span>))
+<span class="keyword">evek</span> = <span class="function">int</span>(<span class="function">input</span>(<span class="string lang-hu">"Évek: "</span><span class="string lang-sr">"Godine: "</span>))
+<span class="keyword">osszeg</span> = <span class="keyword">toke</span>
+<span class="keyword">for</span> <span class="keyword">ev</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="keyword">evek</span>):
+    <span class="keyword">osszeg</span> += <span class="keyword">osszeg</span> * (<span class="keyword">kamatlab</span> / <span class="number">100</span>)
+    <span class="function">print</span>(<span class="string lang-hu">"Év"</span><span class="string lang-sr">"Godina"</span>, <span class="keyword">ev</span>+<span class="number">1</span>, <span class="string">":"</span>, <span class="function">round</span>(<span class="keyword">osszeg</span>, <span class="number">2</span>))</pre></div></div>
                     </div>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button class="nav-btn prev-btn">
-                        <i class="fas fa-arrow-left"></i> Előző oldal
-                    </button>
-                    <button class="nav-btn next-btn" disabled>
-                        Következő oldal <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="nav-btn prev-btn"><i class="fas fa-arrow-left"></i> <span class="lang-hu">Előző oldal</span><span class="lang-sr">Prethodna stranica</span></button>
+                    <button class="nav-btn next-btn" disabled><span class="lang-hu">Következő oldal</span><span class="lang-sr">Sledeća stranica</span> <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            
         </div>
     </main>
-    
+
     <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
                     <i class="fab fa-python"></i>
-                    <span>Python Tananyag</span>
+                    <span class="lang-hu">Python Tananyag</span>
+                    <span class="lang-sr">Python Kurs</span>
                 </div>
-                <p>Vonalas (szekvenciális) programozás alapjai - Középiskolásoknak</p>
+                <p class="lang-hu">Vonalas (szekvenciális) programozás alapjai - Középiskolásoknak</p>
+                <p class="lang-sr">Osnove linijskog (sekvencijalnog) programiranja - Za srednjoškolce</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Inicializálás
-        document.addEventListener('DOMContentLoaded', function() {
-            initNavigation();
-            initToggleButtons();
-            initMobileMenu();
-            updateNavigation();
-        });
-        
-        // Oldalak és navigáció
-        const totalPages = 7;
-        let currentPage = 1;
-        
-        // Fejezetek adatai
-        const chapters = [
+        // Nyelvváltás
+        function switchLang(lang) {
+            document.body.setAttribute('data-lang', lang);
+            document.getElementById('btn-hu').classList.toggle('active', lang === 'hu');
+            document.getElementById('btn-sr').classList.toggle('active', lang === 'sr');
+            localStorage.setItem('preferredLang', lang);
+            // Frissítjük a fejezetcímeket a sidebar-ban
+            updateChapterTitles(lang);
+        }
+
+        const chaptersHu = [
             "Bevezetés a Pythonba",
             "Kiíratás a képernyőre",
             "Változók és adattípusok",
@@ -1967,143 +1392,121 @@ Köszönöm a kitöltést!</pre>
             "Szövegek kezelése",
             "Matematikai példaprogramok"
         ];
-        
-        // Navigáció inicializálása
+        const chaptersSr = [
+            "Uvod u Python",
+            "Ispis na ekran",
+            "Promenljive i tipovi podataka",
+            "Korisnički unos",
+            "Matematičke operacije",
+            "Rad sa tekstom",
+            "Matematički primeri programa"
+        ];
+
+        function updateChapterTitles(lang) {
+            const links = document.querySelectorAll('.chapter-link');
+            const titles = lang === 'sr' ? chaptersSr : chaptersHu;
+            links.forEach((link, i) => {
+                const numSpan = link.querySelector('.chapter-number');
+                const num = numSpan ? numSpan.outerHTML : '';
+                link.innerHTML = num + ' ' + titles[i];
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferredLang');
+            if (savedLang === 'sr') switchLang('sr');
+
+            initNavigation();
+            initToggleButtons();
+            initMobileMenu();
+            updateNavigation();
+        });
+
+        const totalPages = 7;
+        let currentPage = 1;
+
         function initNavigation() {
             const chapterList = document.getElementById('chapterList');
-            
-            // Fejezetek generálása
-            chapters.forEach((title, index) => {
+            const lang = document.body.getAttribute('data-lang') || 'hu';
+            const titles = lang === 'sr' ? chaptersSr : chaptersHu;
+
+            titles.forEach((title, index) => {
                 const chapterItem = document.createElement('li');
                 chapterItem.className = 'chapter-item';
-                
                 const chapterLink = document.createElement('a');
                 chapterLink.href = '#';
                 chapterLink.className = 'chapter-link';
                 if (index === 0) chapterLink.classList.add('active');
-                
-                chapterLink.innerHTML = `
-                    <span class="chapter-number">${index + 1}</span>
-                    ${title}
-                `;
-                
+                chapterLink.innerHTML = `<span class="chapter-number">${index + 1}</span> ${title}`;
                 chapterLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     goToPage(index + 1);
                     closeMobileMenu();
                 });
-                
                 chapterItem.appendChild(chapterLink);
                 chapterList.appendChild(chapterItem);
             });
-            
-            // Navigációs gombok eseménykezelői
+
             document.querySelectorAll('.prev-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    goToPage(currentPage - 1);
-                });
+                btn.addEventListener('click', () => goToPage(currentPage - 1));
             });
-            
             document.querySelectorAll('.next-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    goToPage(currentPage + 1);
-                });
+                btn.addEventListener('click', () => goToPage(currentPage + 1));
             });
         }
-        
-        // Mobil menü kezelése
+
         function initMobileMenu() {
             const menuToggle = document.getElementById('mobileMenuToggle');
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
             if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
+                menuToggle.addEventListener('click', () => {
                     sidebar.classList.toggle('open');
                     overlay.classList.toggle('active');
                     document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
                 });
             }
-            
-            if (overlay) {
-                overlay.addEventListener('click', closeMobileMenu);
-            }
+            if (overlay) overlay.addEventListener('click', closeMobileMenu);
         }
-        
+
         function closeMobileMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
-        
-        // Megoldások megjelenítése/elrejtése
+
         function initToggleButtons() {
             document.querySelectorAll('.toggle-solution').forEach(button => {
                 button.addEventListener('click', function() {
                     const targetId = this.getAttribute('data-target');
                     const solution = document.getElementById(targetId);
-
                     if (solution.style.display === 'block') {
                         solution.style.display = 'none';
-                        this.innerHTML = '<i class="fas fa-eye"></i> Megoldás megjelenítése';
-                        this.classList.remove('active');
+                        this.innerHTML = '<i class="fas fa-eye"></i> ' + (document.body.getAttribute('data-lang') === 'sr' ? 'Prikaži rešenje' : 'Megoldás megjelenítése');
                     } else {
                         solution.style.display = 'block';
-                        this.innerHTML = '<i class="fas fa-eye-slash"></i> Megoldás elrejtése';
-                        this.classList.add('active');
+                        this.innerHTML = '<i class="fas fa-eye-slash"></i> ' + (document.body.getAttribute('data-lang') === 'sr' ? 'Sakrij rešenje' : 'Megoldás elrejtése');
                     }
                 });
             });
         }
-        
-        // Oldal váltás
+
         function goToPage(pageNum) {
             if (pageNum < 1 || pageNum > totalPages) return;
-            
-            // Régi oldal elrejtése
-            const oldPage = document.querySelector(`#page${currentPage}`);
-            if (oldPage) oldPage.classList.remove('active');
-            
-            // Régi aktív link eltávolítása
-            document.querySelectorAll('.chapter-link.active').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Új oldal megjelenítése
+            document.querySelector(`#page${currentPage}`).classList.remove('active');
+            document.querySelectorAll('.chapter-link.active').forEach(l => l.classList.remove('active'));
             currentPage = pageNum;
-            const newPage = document.querySelector(`#page${currentPage}`);
-            if (newPage) newPage.classList.add('active');
-            
-            // Új aktív link beállítása
-            const newLink = document.querySelectorAll('.chapter-link')[currentPage - 1];
-            if (newLink) newLink.classList.add('active');
-            
-            // Navigációs gombok frissítése
+            document.querySelector(`#page${currentPage}`).classList.add('active');
+            document.querySelectorAll('.chapter-link')[currentPage - 1].classList.add('active');
             updateNavigation();
-            
-            // Oldal tetejére görgetés
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        
-        // Navigáció frissítése
+
         function updateNavigation() {
-            const prevBtns = document.querySelectorAll('.prev-btn');
-            const nextBtns = document.querySelectorAll('.next-btn');
-
-            // Gombok állapota
-            prevBtns.forEach(btn => {
-                btn.disabled = currentPage === 1;
-            });
-
-            nextBtns.forEach(btn => {
-                btn.disabled = currentPage === totalPages;
-            });
+            document.querySelectorAll('.prev-btn').forEach(b => b.disabled = currentPage === 1);
+            document.querySelectorAll('.next-btn').forEach(b => b.disabled = currentPage === totalPages);
         }
     </script>
 </body>
