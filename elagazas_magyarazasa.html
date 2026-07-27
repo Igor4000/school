@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>If-Elif-Else elágazások magyarázata · Középiskolásoknak</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=Source+Code+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(145deg, #e8f0f5 0%, #dde6ed 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            margin: 0;
+            position: relative;
+        }
+
+        /* Nyelvváltó gombok */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            border-radius: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(79, 126, 163, 0.3);
+        }
+
+        .lang-btn {
+            padding: 10px 22px;
+            border: none;
+            background: transparent;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2c577c;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #4f7ea3, #2c577c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(40, 70, 100, 0.4);
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: rgba(79, 126, 163, 0.12);
+            color: #1f4868;
+        }
+
+        @media (max-width: 768px) {
+            .lang-switch {
+                top: 10px;
+                right: 10px;
+                padding: 5px;
+                gap: 4px;
+            }
+            .lang-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Nyelvi elemek elrejtése/megjelenítése */
+        .lang-hu, .lang-sr {
+            transition: opacity 0.3s ease;
+        }
+
+        body[data-lang="hu"] .lang-sr {
+            display: none;
+        }
+
+        body[data-lang="sr"] .lang-hu {
+            display: none;
+        }
+
+        .card {
+            max-width: 950px;
+            width: 100%;
+            background: #fffef7;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08), 0 10px 20px rgba(0, 0, 0, 0.05);
+            border-radius: 2.5rem;
+            padding: 2rem 2.2rem 2.5rem;
+            border: 1px solid rgba(110, 130, 150, 0.2);
+            transition: all 0.2s ease;
+            margin-top: 70px; /* hely a fixált nyelvváltónak */
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                margin-top: 60px;
+            }
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 2.1rem;
+            letter-spacing: -0.5px;
+            color: #2c4e6e;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px dashed #b8cfec;
+            padding-bottom: 0.8rem;
+            flex-wrap: wrap;
+        }
+        h1 span {
+            background: #c9dfee;
+            font-size: 1.6rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 3rem;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 2px solid #9bb7d4;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            padding: 0.7rem 2rem;
+            border-radius: 3rem;
+            color: #2c577c;
+            cursor: pointer;
+            background: #f5faff;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+        .tab-btn i {
+            font-style: normal;
+            font-size: 1.3rem;
+        }
+        .tab-btn:hover {
+            background: #e3effa;
+            border-color: #7b9fc9;
+        }
+        .tab-btn.active {
+            background: #4f7ea3;
+            border-color: #2c577c;
+            color: white;
+            box-shadow: 0 10px 15px -8px rgba(40, 70, 100, 0.4);
+        }
+
+        .content-panel {
+            background: #fefcf5;
+            border-radius: 1.8rem;
+            padding: 1.8rem 2rem;
+            box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid #cfdef0;
+            transition: opacity 0.15s ease;
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .explanation h2 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: #2c4e6e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .definition {
+            background: #eef3fc;
+            padding: 1rem 1.5rem;
+            border-radius: 1.5rem;
+            margin: 1.2rem 0 1.8rem;
+            font-weight: 500;
+            color: #1f4868;
+            border-left: 6px solid #4f7ea3;
+        }
+
+        .syntax-highlight {
+            background: linear-gradient(135deg, #2a3b48 0%, #1f2e38 100%);
+            color: #e7f0fa;
+            font-family: 'Source Code Pro', 'Courier New', monospace;
+            padding: 2rem 1.8rem;
+            border-radius: 2rem;
+            margin: 1.8rem 0;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2), 0 0 0 4px #b8cfec;
+            border: 2px solid #4f7ea3;
+            position: relative;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+        .syntax-highlight .keyword-syn {
+            color: #ffd966;
+            font-weight: 700;
+        }
+        .syntax-highlight .cond-syn {
+            color: #ffb347;
+        }
+        .syntax-highlight .colon-syn {
+            color: #f0dbb0;
+            font-size: 2.5rem;
+            margin-left: 2px;
+        }
+
+        .syntax-label {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4f7ea3;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.3rem 1.8rem;
+            border-radius: 3rem;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .code-block {
+            background: #1e2a32;
+            color: #e0edf5;
+            font-family: 'Source Code Pro', 'Courier New', monospace;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.2rem;
+            margin: 1.3rem 0;
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .code-block .comment {
+            color: #8ba4b5;
+        }
+        .code-block .keyword {
+            color: #ffd966;
+            font-weight: 500;
+        }
+        .code-block .func {
+            color: #e6c384;
+        }
+
+        ul,
+        ol {
+            margin: 1rem 0 1rem 1.5rem;
+            line-height: 1.7;
+            color: #3e3a31;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            background: #e9f2f9;
+            padding: 0.9rem 1.3rem;
+            border-radius: 1rem;
+            margin: 1.4rem 0;
+            font-weight: 500;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            border: 1px solid #bdd6ed;
+        }
+
+        .badge {
+            background: #4f7ea3;
+            color: white;
+            border-radius: 2rem;
+            padding: 0.15rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 0.4rem;
+            display: inline-block;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #cddeef;
+            margin: 1.8rem 0 1rem;
+        }
+
+        @media (max-width: 650px) {
+            .syntax-highlight {
+                font-size: 1.4rem;
+                padding: 1.5rem 1rem;
+            }
+            .syntax-highlight .colon-syn {
+                font-size: 1.8rem;
+            }
+            .syntax-label {
+                font-size: 0.8rem;
+                padding: 0.2rem 1.2rem;
+                top: -15px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .card {
+                padding: 1.5rem;
+                margin-top: 60px;
+            }
+            .tab-btn {
+                padding: 0.6rem 1.4rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body data-lang="hu">
+
+    <!-- Nyelvváltó gombok -->
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="switchLang('hu')" id="btn-hu">🇭🇺 Magyar</button>
+        <button class="lang-btn" onclick="switchLang('sr')" id="btn-sr">🇷🇸 Srpski</button>
+    </div>
+
+    <div class="card">
+        <h1>
+            <span>🐍</span>
+            <span class="lang-hu">Python elágazások (if-elif-else) közérthetően</span>
+            <span class="lang-sr">Python grananja (if-elif-else) razumljivo</span>
+        </h1>
+
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('basic', this)">
+                <i>⚡</i> <span class="lang-hu">Alap elágazások</span><span class="lang-sr">Osnovna grananja</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('advanced', this)">
+                <i>🎯</i> <span class="lang-hu">Összetett &amp; trükkök</span><span class="lang-sr">Složena &amp; trikovi</span>
+            </button>
+        </div>
+
+        <div class="content-panel">
+            <!-- Alap elágazások panel -->
+            <div id="tab-basic" class="tab-content active">
+                <div class="explanation">
+                    <h2>⚡ <span class="lang-hu">If-Elif-Else elágazás</span><span class="lang-sr">If-Elif-Else grananje</span></h2>
+                    <div class="definition">
+                        <span class="lang-hu">Az <strong>elágazás (if)</strong> lehetővé teszi, hogy a program <strong>feltételektől függően</strong> más-más utasításokat hajtson végre. Pythonban az <code>if</code>, <code>elif</code> (else if) és <code>else</code> kulcsszavakkal építhetjük fel.</span>
+                        <span class="lang-sr"><strong>Grananje (if)</strong> omogućava programu da <strong>u zavisnosti od uslova</strong> izvršava različite naredbe. U Pythonu se gradi pomoću ključnih reči <code>if</code>, <code>elif</code> (else if) i <code>else</code>.</span>
+                    </div>
+
+                    <div class="syntax-highlight">
+                        <span class="syntax-label">✨ <span class="lang-hu">ALAP FELÉPÍTÉS</span><span class="lang-sr">OSNOVNA STRUKTURA</span> ✨</span>
+                        <span class="keyword-syn">if</span>
+                        <span class="cond-syn"><span class="lang-hu">feltétel</span><span class="lang-sr">uslov</span></span><span class="colon-syn">:</span>
+                        <span style="font-size:1.2rem"><span class="lang-hu">utasítások</span><span class="lang-sr">naredbe</span></span><br>
+                        <span class="keyword-syn">elif</span>
+                        <span class="cond-syn"><span class="lang-hu">másik_feltétel</span><span class="lang-sr">drugi_uslov</span></span><span class="colon-syn">:</span>
+                        <span style="font-size:1.2rem"><span class="lang-hu">utasítások</span><span class="lang-sr">naredbe</span></span><br>
+                        <span class="keyword-syn">else</span><span class="colon-syn">:</span>
+                        <span style="font-size:1.2rem"><span class="lang-hu">utasítások</span><span class="lang-sr">naredbe</span></span>
+                    </div>
+
+                    <h3 style="margin-top:1.5rem; color:#2c577c"><span class="lang-hu">🧱 Az elágazás elemei (részletesen):</span><span class="lang-sr">🧱 Elementi grananja (detaljno):</span></h3>
+                    <ul>
+                        <li><span class="badge">if</span> – <span class="lang-hu">kulcsszó, ezzel kezdődik az elágazás. Utána egy feltétel (logikai kifejezés).</span><span class="lang-sr">ključna reč, njome počinje grananje. Nakon nje sledi uslov (logički izraz).</span></li>
+                        <li><span class="badge"><span class="lang-hu">feltétel</span><span class="lang-sr">uslov</span></span> – <span class="lang-hu">pl. <code>szám &gt; 0</code>, <code>nev == "Anna"</code>. Ha igaz, a hozzá tartozó blokk fut.</span><span class="lang-sr">npr. <code>broj &gt; 0</code>, <code>ime == "Ana"</code>. Ako je tačan, izvršava se pripadajući blok.</span></li>
+                        <li><span class="badge"><span class="lang-hu">kettőspont :</span><span class="lang-sr">dvotačka :</span></span> – <span class="lang-hu">minden feltétel után kötelező, utána behúzott blokk.</span><span class="lang-sr">obavezna je nakon svakog uslova, nakon nje sledi uvučeni blok.</span></li>
+                        <li><span class="badge">elif</span> – <span class="lang-hu">rövidítés: „else if". További feltételek ellenőrzésére, ha az előző IF hamis volt.</span><span class="lang-sr">skraćeno od „else if". Za proveru dodatnih uslova ako je prethodni IF bio netačan.</span></li>
+                        <li><span class="badge">else</span> – <span class="lang-hu">opcionális ág, ha egyik feltétel sem volt igaz, ez fut le.</span><span class="lang-sr">opciona grana, ako nijedan uslov nije tačan, izvršava se ova.</span></li>
+                    </ul>
+
+                    <h3 style="color:#2c577c">📋 <span class="lang-hu">Egyszerű példák:</span><span class="lang-sr">Jednostavni primeri:</span></h3>
+                    <div class="code-block">
+<span class="comment lang-hu"># 1. Egyszerű if</span><span class="comment lang-sr"># 1. Jednostavan if</span>
+<span class="lang-hu">eletkor</span><span class="lang-sr">godine</span> = 17
+<span class="keyword">if</span> <span class="lang-hu">eletkor</span><span class="lang-sr">godine</span> &gt;= 18:
+    <span class="lang-hu">print("Beléphetsz a felnőtt oldalra")</span><span class="lang-sr">print("Možeš ući na stranicu za odrasle")</span>
+<span class="keyword">else</span>:
+    <span class="lang-hu">print("Várnod kell még pár évet")</span><span class="lang-sr">print("Moraš sačekati još nekoliko godina")</span>
+
+<span class="comment lang-hu"># 2. if-elif-else (érdemjegy értékelése)</span><span class="comment lang-sr"># 2. if-elif-else (ocenjivanje)</span>
+<span class="lang-hu">pontszam</span><span class="lang-sr">bodovi</span> = 85
+<span class="keyword">if</span> <span class="lang-hu">pontszam</span><span class="lang-sr">bodovi</span> &gt;= 90:
+    <span class="lang-hu">print("Jeles (5)")</span><span class="lang-sr">print("Odličan (5)")</span>
+<span class="keyword">elif</span> <span class="lang-hu">pontszam</span><span class="lang-sr">bodovi</span> &gt;= 75:
+    <span class="lang-hu">print("Jó (4)")</span><span class="lang-sr">print("Vrlo dobar (4)")</span>
+<span class="keyword">elif</span> <span class="lang-hu">pontszam</span><span class="lang-sr">bodovi</span> &gt;= 60:
+    <span class="lang-hu">print("Közepes (3)")</span><span class="lang-sr">print("Dobar (3)")</span>
+<span class="keyword">elif</span> <span class="lang-hu">pontszam</span><span class="lang-sr">bodovi</span> &gt;= 40:
+    <span class="lang-hu">print("Elégséges (2)")</span><span class="lang-sr">print("Dovoljan (2)")</span>
+<span class="keyword">else</span>:
+    <span class="lang-hu">print("Elégtelen (1)")</span><span class="lang-sr">print("Nedovoljan (1)")</span>
+
+<span class="comment lang-hu"># 3. Összetett feltétel (and, or)</span><span class="comment lang-sr"># 3. Složeni uslov (and, or)</span>
+<span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> = 22
+<span class="keyword">if</span> <span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> &gt; 25 <span class="keyword">and</span> <span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> &lt; 30:
+    <span class="lang-hu">print("Kellemes meleg van")</span><span class="lang-sr">print("Prijatno je toplo")</span>
+<span class="keyword">elif</span> <span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> &lt; 10 <span class="keyword">or</span> <span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> &gt; 35:
+    <span class="lang-hu">print("Szélsőséges időjárás")</span><span class="lang-sr">print("Ekstremno vreme")</span>
+<span class="keyword">else</span>:
+    <span class="lang-hu">print("Kellemes hőmérséklet")</span><span class="lang-sr">print("Prijatna temperatura")</span>
+                    </div>
+
+                    <h3 style="color:#2c577c; margin-top:1.2rem">🧪 <span class="lang-hu">Hogyan működik lépésről lépésre?</span><span class="lang-sr">Kako radi korak po korak?</span></h3>
+                    <ol>
+                        <li><span class="lang-hu">A program először az <code>if</code> feltételét vizsgálja.</span><span class="lang-sr">Program prvo proverava uslov <code>if</code>.</span></li>
+                        <li><span class="lang-hu">Ha az <strong>igaz</strong>, végrehajtja a hozzá tartozó blokkot, és kihagyja a többi ágat (<code>elif</code>, <code>else</code>).</span><span class="lang-sr">Ako je <strong>tačan</strong>, izvršava pripadajući blok i preskače ostale grane (<code>elif</code>, <code>else</code>).</span></li>
+                        <li><span class="lang-hu">Ha az <code>if</code> hamis, akkor sorban ellenőrzi az <code>elif</code> ágakat (ha vannak).</span><span class="lang-sr">Ako je <code>if</code> netačan, redom proverava <code>elif</code> grane (ako postoje).</span></li>
+                        <li><span class="lang-hu">Az első <strong>igaz</strong> feltételhez tartozó blokk fut le, a többi kimarad.</span><span class="lang-sr">Prvi <strong>tačan</strong> uslov izvršava svoj blok, ostali se preskaču.</span></li>
+                        <li><span class="lang-hu">Ha egyik feltétel sem igaz, akkor az <code>else</code> ág (ha létezik) fut le.</span><span class="lang-sr">Ako nijedan uslov nije tačan, izvršava se <code>else</code> grana (ako postoji).</span></li>
+                    </ol>
+
+                    <div class="highlight-box">
+                        📌 <strong><span class="lang-hu">Fontos:</span><span class="lang-sr">Važno:</span></strong> <span class="lang-hu">A behúzás (indentation) itt is kötelező! Pythonban ez határozza meg, hogy melyik utasítás tartozik az if/elif/else blokkhoz.</span><span class="lang-sr">Uvlačenje (indentacija) je i ovde obavezno! U Pythonu ono određuje koja naredba pripada if/elif/else bloku.</span>
+                    </div>
+
+                    <div class="highlight-box" style="background:#eef3fc">
+                        🧠 <strong><span class="lang-hu">Mikor használjuk?</span><span class="lang-sr">Kada se koristi?</span></strong> <span class="lang-hu">Amikor különböző esetekre más-más választ akarunk adni. Pl. időjárás alapján öltözködési tanács, vagy játékban pontszám alapján szintlépés.</span><span class="lang-sr">Kada želimo da damo različit odgovor za različite slučajeve. Npr. savet za oblačenje na osnovu vremena, ili prelazak na sledeći nivo u igri na osnovu bodova.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Összetett elágazások panel -->
+            <div id="tab-advanced" class="tab-content">
+                <div class="explanation">
+                    <h2>🎯 <span class="lang-hu">Összetett elágazások &amp; trükkök</span><span class="lang-sr">Složena grananja &amp; trikovi</span></h2>
+                    <div class="definition">
+                        <span class="lang-hu">Az <strong>if-elif-else</strong> mellett léteznek <strong>beágyazott elágazások</strong>, a <strong>terner operátor</strong> (egy soros if), valamint a <strong>logikai operátorok (and, or, not)</strong> kombinálása. Ezekkel még rugalmasabb feltételeket készíthetünk.</span>
+                        <span class="lang-sr">Pored <strong>if-elif-else</strong>, postoje <strong>ugnježdena grananja</strong>, <strong>ternarni operator</strong> (if u jednom redu), kao i kombinovanje <strong>logičkih operatora (and, or, not)</strong>. Pomoću njih možemo napraviti još fleksibilnije uslove.</span>
+                    </div>
+
+                    <h3 style="margin-top:1rem; color:#2c577c">🧩 <span class="lang-hu">Beágyazott elágazás (if az if-ben)</span><span class="lang-sr">Ugnježdeno grananje (if unutar if-a)</span></h3>
+                    <div class="code-block">
+<span class="comment lang-hu"># Beágyazott if – kültéri program ajánló</span><span class="comment lang-sr"># Ugnježdeni if – preporuka za aktivnosti na otvorenom</span>
+<span class="lang-hu">ido</span><span class="lang-sr">vreme</span> = <span class="lang-hu">"napos"</span><span class="lang-sr">"sunčano"</span>
+<span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> = 18
+<span class="keyword">if</span> <span class="lang-hu">ido</span><span class="lang-sr">vreme</span> == <span class="lang-hu">"napos"</span><span class="lang-sr">"sunčano"</span>:
+    <span class="keyword">if</span> <span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> &gt; 25:
+        <span class="lang-hu">print("Menj strandra!")</span><span class="lang-sr">print("Idi na plažu!")</span>
+    <span class="keyword">elif</span> <span class="lang-hu">homerseklet</span><span class="lang-sr">temperatura</span> &gt; 15:
+        <span class="lang-hu">print("Tökéletes egy kiránduláshoz")</span><span class="lang-sr">print("Savršeno za izlet")</span>
+    <span class="keyword">else</span>:
+        <span class="lang-hu">print("Napos, de hűvös – vigyél kabátot!")</span><span class="lang-sr">print("Sunčano, ali hladno – ponesi jaknu!")</span>
+<span class="keyword">else</span>:
+    <span class="lang-hu">print("Az idő nem alkalmas kinti programra")</span><span class="lang-sr">print("Vreme nije pogodno za aktivnosti napolju")</span>
+                    </div>
+
+                    <h3 style="color:#2c577c">✨ <span class="lang-hu">Egy soros if (terner operátor)</span><span class="lang-sr">If u jednom redu (ternarni operator)</span></h3>
+                    <div class="code-block">
+<span class="comment lang-hu"># Rövid, egy sorban kiírt if-else</span><span class="comment lang-sr"># Kratak if-else u jednom redu</span>
+<span class="lang-hu">eletkor</span><span class="lang-sr">godine</span> = 20
+<span class="lang-hu">statusz</span><span class="lang-sr">status</span> = <span class="lang-hu">"felnőtt"</span><span class="lang-sr">"odrasla osoba"</span> <span class="keyword">if</span> <span class="lang-hu">eletkor</span><span class="lang-sr">godine</span> &gt;= 18 <span class="keyword">else</span> <span class="lang-hu">"gyerek"</span><span class="lang-sr">"dete"</span>
+<span class="lang-hu">print(statusz)</span><span class="lang-sr">print(status)</span>  <span class="comment lang-hu"># felnőtt</span><span class="comment lang-sr"># odrasla osoba</span>
+
+<span class="comment lang-hu"># Használható függvényekben is</span><span class="comment lang-sr"># Može se koristiti i u funkcijama</span>
+<span class="lang-hu">max_ertek</span><span class="lang-sr">max_vrednost</span> = a <span class="keyword">if</span> a &gt; b <span class="keyword">else</span> b
+                    </div>
+
+                    <h3 style="color:#2c577c">🔗 <span class="lang-hu">Logikai operátorok kombinálása (and, or, not)</span><span class="lang-sr">Kombinovanje logičkih operatora (and, or, not)</span></h3>
+                    <ul>
+                        <li><strong>and</strong> – <span class="lang-hu">mindkét feltételnek igaznak kell lennie: <code>if age &gt;= 18 and has_id:</code></span><span class="lang-sr">oba uslova moraju biti tačna: <code>if age &gt;= 18 and has_id:</code></span></li>
+                        <li><strong>or</strong> – <span class="lang-hu">legalább az egyik feltétel igaz: <code>if nap == "szombat" or nap == "vasárnap":</code></span><span class="lang-sr">bar jedan uslov je tačan: <code>if dan == "subota" or dan == "nedelja":</code></span></li>
+                        <li><strong>not</strong> – <span class="lang-hu">megfordítja a logikai értéket: <code>if not is_raining:</code> (azaz „ha nem esik")</span><span class="lang-sr">obrće logičku vrednost: <code>if not pada_kisa:</code> (tj. „ako ne pada kiša")</span></li>
+                    </ul>
+
+                    <div class="code-block">
+<span class="comment lang-hu"># And, or, not példák</span><span class="comment lang-sr"># Primeri za and, or, not</span>
+<span class="lang-hu">kor</span><span class="lang-sr">uzrast</span> = 16
+<span class="lang-hu">szuloi_engedely</span><span class="lang-sr">roditeljska_dozvola</span> = True
+<span class="keyword">if</span> <span class="lang-hu">kor</span><span class="lang-sr">uzrast</span> &gt;= 18 <span class="keyword">or</span> (<span class="lang-hu">kor</span><span class="lang-sr">uzrast</span> &gt;= 16 <span class="keyword">and</span> <span class="lang-hu">szuloi_engedely</span><span class="lang-sr">roditeljska_dozvola</span>):
+    <span class="lang-hu">print("Megnézheted a filmet")</span><span class="lang-sr">print("Možeš pogledati film")</span>
+<span class="keyword">else</span>:
+    <span class="lang-hu">print("Sajnos túl fiatal vagy")</span><span class="lang-sr">print("Nažalost, previše si mlad/a")</span>
+
+<span class="comment lang-hu"># not használata</span><span class="comment lang-sr"># upotreba not</span>
+<span class="lang-hu">szalloda_tele</span><span class="lang-sr">hotel_pun</span> = False
+<span class="keyword">if</span> <span class="keyword">not</span> <span class="lang-hu">szalloda_tele</span><span class="lang-sr">hotel_pun</span>:
+    <span class="lang-hu">print("Van szabad szoba!")</span><span class="lang-sr">print("Ima slobodnih soba!")</span>
+                    </div>
+
+                    <h3 style="color:#2c577c">⚠️ <span class="lang-hu">Gyakori hibák elágazásoknál</span><span class="lang-sr">Česte greške kod grananja</span></h3>
+                    <ul>
+                        <li><strong><span class="lang-hu">Egyenlőségvizsgálat:</span><span class="lang-sr">Provera jednakosti:</span></strong> <code>if x = 5</code> <span class="lang-hu">(hibás!)</span><span class="lang-sr">(pogrešno!)</span> <span class="lang-hu">helyett</span><span class="lang-sr">umesto</span> <code>if x == 5</code> <span class="lang-hu">(két egyenlőségjel kell).</span><span class="lang-sr">(potrebna su dva znaka jednakosti).</span></li>
+                        <li><strong><span class="lang-hu">Behúzás hiánya:</span><span class="lang-sr">Nedostatak uvlačenja:</span></strong> <span class="lang-hu">Python nem tudja, hogy melyik utasítás tartozik az elágazáshoz.</span><span class="lang-sr">Python ne zna koja naredba pripada grananju.</span></li>
+                        <li><strong><span class="lang-hu">Elfelejtett kettőspont:</span><span class="lang-sr">Zaboravljena dvotačka:</span></strong> <span class="lang-hu">Minden if, elif, else után kell kettőspont.</span><span class="lang-sr">Nakon svakog if, elif, else mora ići dvotačka.</span></li>
+                        <li><strong><span class="lang-hu">Több feltétel rossz sorrendje:</span><span class="lang-sr">Pogrešan redosled više uslova:</span></strong> <span class="lang-hu">Specifikusabb feltételek előrébb legyenek, különben a tágabb feltétel "lenyeli" az eseteket.</span><span class="lang-sr">Specifičniji uslovi treba da budu ispred, inače će opštiji uslov "progutati" slučajeve.</span></li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        💡 <strong><span class="lang-hu">Pro tipp:</span><span class="lang-sr">Pro savet:</span></strong> <span class="lang-hu">Ha sok elif van, néha érdemes lehet <strong>match-case</strong> (Python 3.10+) szerkezetet használni, de az iskolában először az if-elif-else-t tanuld meg alaposan!</span><span class="lang-sr">Ako ima mnogo elif-ova, ponekad je bolje koristiti <strong>match-case</strong> (Python 3.10+) strukturu, ali u školi prvo temeljno nauči if-elif-else!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div style="text-align: center; margin-top: 0.5rem; font-size: 0.85rem; color: #7e8c8d;">
+            💡 <span class="lang-hu">Az elágazásokkal irányíthatod a programod futását – bármilyen döntési helyzetben!</span>
+            <span class="lang-sr">Pomoću grananja možeš kontrolisati tok svog programa – u bilo kojoj situaciji donošenja odluka!</span>
+        </div>
+    </div>
+
+    <script>
+        // Nyelvváltás
+        function switchLang(lang) {
+            document.body.setAttribute('data-lang', lang);
+            document.getElementById('btn-hu').classList.toggle('active', lang === 'hu');
+            document.getElementById('btn-sr').classList.toggle('active', lang === 'sr');
+            localStorage.setItem('preferredLang', lang);
+        }
+
+        // Oldal betöltésekor ellenőrizzük a mentett nyelvet
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferredLang');
+            if (savedLang && (savedLang === 'hu' || savedLang === 'sr')) {
+                switchLang(savedLang);
+            }
+        });
+
+        // Fülváltó funkció
+        function switchTab(tabId, btnElement) {
+            // Összes tartalom elrejtése
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Összes gomb deaktiválása
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Kiválasztott tartalom megjelenítése
+            const targetContent = document.getElementById('tab-' + tabId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+
+            // Kattintott gomb aktiválása
+            if (btnElement) {
+                btnElement.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
