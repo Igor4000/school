@@ -75,7 +75,7 @@
             }
         }
 
-        /* ---- Új navigációs sáv (kisebb, színezett háttér) ---- */
+        /* ---- Navigációs sáv (kisebb, színezett háttér, magasabb z-index) ---- */
         .glass-nav {
             display: flex;
             flex-wrap: wrap;
@@ -84,12 +84,15 @@
             margin: 2.5rem auto 3rem auto;
             padding: 12px 20px;
             max-width: 1000px;
-            background-color: rgba(220, 235, 250, 0.7); /* enyhén kékes színezett háttér */
+            background-color: rgba(220, 235, 250, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 50px;
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(30, 64, 175, 0.08);
+            position: sticky;
+            top: 20px;
+            z-index: 200; /* Fontos: magasabb, mint a tartalmi elemek */
         }
 
         .dropdown {
@@ -207,7 +210,7 @@
             }
         }
 
-        /* ---- Eredeti tartalom stílusai ---- */
+        /* ---- Tartalom stílusai ---- */
         .intro-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -216,7 +219,7 @@
 
         .page-title {
             text-align: center;
-            margin-bottom: 0; /* eltávolítjuk az alsó margót, mert a nav kerül alá */
+            margin-bottom: 0;
         }
 
         .main-title {
@@ -235,7 +238,7 @@
             font-weight: 300;
             opacity: 0.9;
             max-width: 800px;
-            margin: 0 auto 0.5rem auto; /* kicsi alsó margó, hogy ne tapadjon a nav */
+            margin: 0 auto 0.5rem auto;
         }
 
         .content-section {
@@ -243,6 +246,8 @@
             align-items: center;
             gap: 4rem;
             margin-bottom: 5rem;
+            position: relative;   /* Hozzáadva */
+            z-index: 1;          /* Alacsonyabb, mint a nav */
         }
 
         .text-content {
@@ -360,7 +365,7 @@
             </p>
         </div>
 
-        <!-- ===== NAVIGÁCIÓS SÁV KÖZVETLENÜL AZ ALCÍM ALATT ===== -->
+        <!-- Navigációs sáv -->
         <nav class="glass-nav" aria-label="Fő navigáció">
             <!-- 1. Bevezetés és védelem -->
             <div class="dropdown" id="dropdown1">
@@ -369,20 +374,16 @@
                     <span class="lang-sr">🛡️ Uvod i zaštita</span>
                     <i>▼</i>
                 </button>
-                <!-- SVI LINKOVI IDU UNUTAR JEDNOG DROPDOWN-CONTENT-A -->
-        <div class="dropdown-content">
-            <!-- PRVI PODMENI (Vodi na Internetbiztonsag.html) -->
-            <a href="Internetbiztonsag.html">
-                <span class="lang-hu">📘 Internetbiztonság</span>
-                <span class="lang-sr">📘 Bezbednost na internetu</span>
-            </a>
-
-            <!-- DRUGI PODMENI (Vodi na adat_vedelem.html) -->
-            <a href="adat_vedelem.html">
-                <span class="lang-hu">📘 Adatvédelem</span>
-                <span class="lang-sr">📘 Zaštita podataka</span>
-            </a>
-        </div>
+                <div class="dropdown-content">
+                    <a href="Internetbiztonsag.html">
+                        <span class="lang-hu">📘 Internetbiztonság</span>
+                        <span class="lang-sr">📘 Bezbednost na internetu</span>
+                    </a>
+                    <a href="adat_vedelem.html">
+                        <span class="lang-hu">📘 Adatvédelem</span>
+                        <span class="lang-sr">📘 Zaštita podataka</span>
+                    </a>
+                </div>
             </div>
 
             <!-- 2. Programozási alapismeretek -->
@@ -393,24 +394,19 @@
                     <i>▼</i>
                 </button>
                 <div class="dropdown-content">
-        <!-- 1. Opció -->
-        <a href="algoritmus_tipusai.html">
-            <span class="lang-hu">📗 Algoritmus típusai</span>
-            <span class="lang-sr">📗 Tipovi algoritma</span>
-        </a>
-
-        <!-- 2. Opció -->
-        <a href="folyamatabrak.html">
-            <span class="lang-hu">📗 Folyamatábrák</span>
-            <span class="lang-sr">📗 Dijagrami toka</span>
-        </a>
-
-        <!-- 3. Opció -->
-        <a href="programozas_alapjai.html">
-            <span class="lang-hu">📗 Programozási alapok</span>
-            <span class="lang-sr">📗 Osnove programiranja</span>
-        </a>
-    </div>
+                    <a href="algoritmus_tipusai.html">
+                        <span class="lang-hu">📗 Algoritmus típusai</span>
+                        <span class="lang-sr">📗 Tipovi algoritma</span>
+                    </a>
+                    <a href="folyamatabrak.html">
+                        <span class="lang-hu">📗 Folyamatábrák</span>
+                        <span class="lang-sr">📗 Dijagrami toka</span>
+                    </a>
+                    <a href="programozas_alapjai.html">
+                        <span class="lang-hu">📗 Programozási alapok</span>
+                        <span class="lang-sr">📗 Osnove programiranja</span>
+                    </a>
+                </div>
             </div>
 
             <!-- 3. Python programozás -->
