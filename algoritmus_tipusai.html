@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-hu="Algoritmusok Típusai – Interaktív Tananyag" data-sr="Tipovi Algoritama – Interaktivni Materijal">Algoritmusok Típusai – Interaktív Tananyag</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0b0f19;
+            --bg-surface: #111827;
+            --bg-elevated: #1f2937;
+            --bg-glass: rgba(31, 41, 55, 0.65);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-cyan: #22d3ee;
+            --accent-purple: #a78bfa;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #fb7185;
+            --accent-blue: #60a5fa;
+            --code-bg: #0d1117;
+            --code-keyword: #ff7b72;
+            --code-function: #d2a8ff;
+            --code-string: #a5d6ff;
+            --code-number: #79c0ff;
+            --code-comment: #8b949e;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.4);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated mesh gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(at 0% 0%, rgba(34,211,238,0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(167,139,250,0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(52,211,153,0.08) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(251,113,133,0.08) 0px, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        .main-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-bracket {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+
+        .logo-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 50px;
+            padding: 0.25rem;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover { color: var(--text-primary); }
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(34,211,238,0.3);
+        }
+
+        /* Nav buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: #fff;
+            border: none;
+        }
+
+        .nav-btn.primary:hover {
+            box-shadow: 0 8px 20px rgba(34,211,238,0.3);
+        }
+
+        /* Progress */
+        .progress-container {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            margin: 1.5rem auto;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .progress-track {
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-green));
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+            border-radius: 3px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            padding: 1rem 0 3rem;
+        }
+
+        @media (max-width: 991px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+
+        .sidebar-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chapter-list { list-style: none; }
+
+        .chapter-item { margin-bottom: 0.35rem; }
+
+        .chapter-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0.75rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .chapter-link:hover {
+            background: rgba(255,255,255,0.04);
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .chapter-link.active {
+            background: linear-gradient(90deg, rgba(34,211,238,0.1), transparent);
+            color: var(--accent-cyan);
+            border-left-color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .chapter-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .chapter-link.active .chapter-number {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: #fff;
+        }
+
+        /* Page container */
+        .page-container {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-container::before {
+            content: '</>';
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 4rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.02);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header { margin-bottom: 2.5rem; }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 700px;
+        }
+
+        /* Sections */
+        .content-section { margin-bottom: 3rem; }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(34,211,238,0.15), rgba(167,139,250,0.15));
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            color: var(--accent-cyan);
+            font-size: 1rem;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        li { margin-bottom: 0.5rem; }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+            margin-top: 1.25rem;
+        }
+
+        .card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card:hover::before { opacity: 1; }
+
+        .card.selection::before { background: linear-gradient(90deg, var(--accent-amber), var(--accent-rose)); }
+        .card.iteration::before { background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan)); }
+        .card.recursive::before { background: linear-gradient(90deg, var(--accent-purple), var(--accent-rose)); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .card-icon.sequential { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); }
+        .card-icon.selection { background: linear-gradient(135deg, var(--accent-amber), var(--accent-rose)); }
+        .card-icon.iteration { background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan)); }
+        .card-icon.recursive { background: linear-gradient(135deg, var(--accent-purple), var(--accent-rose)); }
+
+        .card h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            line-height: 1.7;
+        }
+
+        /* Code blocks */
+        .example-container {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .example-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            margin: 0.75rem 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .code-block code { color: #c9d1d9; }
+        .code-keyword { color: var(--code-keyword); font-weight: 600; }
+        .code-function { color: var(--code-function); }
+        .code-string { color: var(--code-string); }
+        .code-number { color: var(--code-number); }
+        .code-comment { color: var(--code-comment); font-style: italic; }
+        .code-operator { color: var(--accent-amber); }
+
+        /* Diagrams */
+        .diagram-container {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            min-width: 400px;
+        }
+
+        .flowchart-step {
+            width: 100%;
+            max-width: 320px;
+            padding: 1rem;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .flowchart-step.process {
+            background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(34,211,238,0.1));
+            color: var(--accent-blue);
+            border: 1px solid rgba(96,165,250,0.3);
+        }
+
+        .flowchart-step.decision {
+            background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,113,133,0.1));
+            color: var(--accent-amber);
+            border: 1px solid rgba(251,191,36,0.3);
+            border-radius: 50px;
+        }
+
+        .flowchart-step.start-end {
+            background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.1));
+            color: var(--accent-green);
+            border: 1px solid rgba(52,211,153,0.3);
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .flowchart-arrow {
+            width: 2px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--text-muted), transparent);
+            position: relative;
+        }
+
+        .flowchart-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: -4px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 8px solid var(--text-muted);
+        }
+
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1.25rem 0;
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .comparison-table th {
+            background: rgba(255,255,255,0.03);
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* Toggle / Interactive */
+        .interactive-element {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-element:hover {
+            border-color: rgba(34,211,238,0.3);
+            background: rgba(34,211,238,0.03);
+        }
+
+        .toggle-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.4s ease;
+            opacity: 0;
+        }
+
+        .toggle-content.active {
+            max-height: 800px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34,211,238,0.3);
+        }
+
+        /* Footer */
+        .main-footer {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-glass);
+            padding: 3rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            max-width: 600px;
+            font-size: 0.95rem;
+        }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Bracket decorations */
+        .bracket-decoration {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-cyan);
+            opacity: 0.4;
+            font-weight: 400;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-container { padding: 1.5rem; }
+            .page-title { font-size: 1.5rem; }
+            .card-grid { grid-template-columns: 1fr; }
+            .header-content { flex-wrap: wrap; }
+            .nav-buttons { width: 100%; justify-content: center; margin-top: 0.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 0 1rem; }
+            .nav-btn { padding: 0.5rem 1rem; font-size: 0.85rem; }
+            .page-container::before { font-size: 2.5rem; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 4px; border: 1px solid var(--border-glass); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* Inline nav at bottom of page */
+        .page-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-glass);
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <div class="logo-bracket">{ }</div>
+                    <div class="logo-text">
+                        <h1 data-hu="Algoritmusok Típusai" data-sr="Tipovi Algoritama">Algoritmusok Típusai</h1>
+                        <p data-hu="Interaktív tananyag programozási alapokhoz" data-sr="Interaktivni materijal za osnove programiranja">Interaktív tananyag programozási alapokhoz</p>
+                    </div>
+                </a>
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <div class="lang-switcher">
+                        <button class="lang-btn active" data-lang="hu" onclick="setLanguage('hu')">HU</button>
+                        <button class="lang-btn" data-lang="sr" onclick="setLanguage('sr')">SR</button>
+                    </div>
+                    <div class="nav-buttons">
+                        <button id="prevBtn" class="nav-btn" disabled>
+                            <i class="fas fa-arrow-left"></i> <span data-hu="Előző" data-sr="Prethodna">Előző</span>
+                        </button>
+                        <button id="nextBtn" class="nav-btn primary">
+                            <span data-hu="Következő" data-sr="Sledeća">Következő</span> <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-info">
+                <span data-hu="Tananyag előrehaladása" data-sr="Napredak kursa">Tananyag előrehaladása</span>
+                <span id="progressText">1/8</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width: 12.5%"></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content container">
+        <aside class="sidebar">
+            <h3 class="sidebar-title">
+                <i class="fas fa-book-open"></i>
+                <span data-hu="Tartalomjegyzék" data-sr="Sadržaj">Tartalomjegyzék</span>
+            </h3>
+            <ul class="chapter-list" id="chapterList"></ul>
+        </aside>
+
+        <div class="page-container">
+            <!-- PAGE 1: Introduction -->
+            <div class="page active" id="page1">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="Bevezetés az algoritmusok világába" data-sr="Uvod u svet algoritama">Bevezetés az algoritmusok világába</h2>
+                    <p class="page-subtitle" data-hu="Az algoritmusok a számítástechnika és a programozás alapvető építőkövei. Ismerjük meg, mik azok, mire használjuk őket, és milyen típusok léteznek." data-sr="Algoritmi su osnovni gradivni elementi informatike i programiranja. Upoznajmo ih, saznajmo čemu služe i koje tipove postoje.">Az algoritmusok a számítástechnika és a programozás alapvető építőkövei. Ismerjük meg, mik azok, mire használjuk őket, és milyen típusok léteznek.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-question-circle"></i></div>
+                        <span data-hu="Mi az az algoritmus?" data-sr="Šta je algoritam?">Mi az az algoritmus?</span>
+                    </div>
+                    <p data-hu="Az <strong>algoritmus</strong> egy véges számú lépésből álló, jól definiált utasítások sorozata, amely egy adott probléma megoldására szolgál. Minden algoritmusnak tartalmaznia kell:" data-sr="<strong>Algoritam</strong> je konačan niz dobro definisanih instrukcija koji služi za rešavanje određenog problema. Svaki algoritam mora da sadrži:">Az <strong>algoritmus</strong> egy véges számú lépésből álló, jól definiált utasítások sorozata, amely egy adott probléma megoldására szolgál. Minden algoritmusnak tartalmaznia kell:</p>
+
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon sequential"><i class="fas fa-list-ol"></i></div>
+                                <h4 data-hu="Véges számú lépés" data-sr="Konačan broj koraka">Véges számú lépés</h4>
+                            </div>
+                            <p data-hu="Az algoritmusnak véges időn belül le kell futnia, nem futhat örökké." data-sr="Algoritam mora da se izvrši u konačnom vremenu; ne sme da radi beskonačno.">Az algoritmusnak véges időn belül le kell futnia, nem futhat örökké.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon sequential"><i class="fas fa-check-circle"></i></div>
+                                <h4 data-hu="Egyértelműség" data-sr="Jednoznačnost">Egyértelműség</h4>
+                            </div>
+                            <p data-hu="Minden lépés pontos és egyértelmű legyen, ne jöjjenek létre félreértések." data-sr="Svaki korak mora biti precizan i jednoznačan, bez mogućnosti pogrešnog tumačenja.">Minden lépés pontos és egyértelmű legyen, ne jöjjenek létre félreértések.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon sequential"><i class="fas fa-sign-in-alt"></i></div>
+                                <h4 data-hu="Bemenet" data-sr="Ulaz">Bemenet</h4>
+                            </div>
+                            <p data-hu="Az algoritmus kaphat bemeneti adatokat, de ez nem kötelező." data-sr="Algoritam može da prima ulazne podatke, ali to nije obavezno.">Az algoritmus kaphat bemeneti adatokat, de ez nem kötelező.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon sequential"><i class="fas fa-sign-out-alt"></i></div>
+                                <h4 data-hu="Kimenet" data-sr="Izlaz">Kimenet</h4>
+                            </div>
+                            <p data-hu="Az algoritmusnak kell legyen kimenete, ami a probléma megoldása." data-sr="Algoritam mora da ima izlaz – rezultat rešavanja problema.">Az algoritmusnak kell legyen kimenete, ami a probléma megoldása.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-history"></i></div>
+                        <span data-hu="Az algoritmusok története" data-sr="Istorija algoritama">Az algoritmusok története</span>
+                    </div>
+                    <p data-hu="Az algoritmus szó a 9. századi perzsa matematikus, <strong>Al-Khwarizmi</strong> nevéből származik, aki a modern algebra és algoritmusok egyik megalapozója volt." data-sr="Reč algoritam potiče od imena perzijskog matematičara iz 9. veka, <strong>Al-Horezmija</strong>, koji je bio jedan od osnivača moderne algebre i algoritama.">Az algoritmus szó a 9. századi perzsa matematikus, <strong>Al-Khwarizmi</strong> nevéből származik, aki a modern algebra és algoritmusok egyik megalapozója volt.</p>
+                    <p data-hu="Az algoritmusok mindennapi életünk részét képezik:" data-sr="Algoritmi su deo našeg svakodnevnog života:">Az algoritmusok mindennapi életünk részét képezik:</p>
+                    <ul>
+                        <li data-hu="Receptek a főzéshez" data-sr="Recepti za kuvanje">Receptek a főzéshez</li>
+                        <li data-hu="Útvonaltervezés a navigációs alkalmazásokban" data-sr="Planiranje ruta u navigacionim aplikacijama">Útvonaltervezés a navigációs alkalmazásokban</li>
+                        <li data-hu="Keresési algoritmusok a Google-ban" data-sr="Algoritmi pretrage u Google-u">Keresési algoritmusok a Google-ban</li>
+                        <li data-hu="Ajánló algoritmusok a közösségi médiában" data-sr="Preporučujući algoritmi na društvenim mrežama">Ajánló algoritmusok a közösségi médiában</li>
+                        <li data-hu="Rendezési algoritmusok az adatbázisokban" data-sr="Algoritmi sortiranja u bazama podataka">Rendezési algoritmusok az adatbázisokban</li>
+                    </ul>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-sitemap"></i></div>
+                        <span data-hu="Algoritmusok ábrázolása" data-sr="Predstavljanje algoritama">Algoritmusok ábrázolása</span>
+                    </div>
+                    <p data-hu="Az algoritmusokat többféleképpen is ábrázolhatjuk:" data-sr="Algoritme možemo predstaviti na više načina:">Az algoritmusokat többféleképpen is ábrázolhatjuk:</p>
+                    <div class="example-container">
+                        <div class="example-title"><i class="fas fa-code"></i> <span data-hu="Pszeudokód" data-sr="Pseudokod">Pszeudokód</span></div>
+                        <div class="code-block">
+<code><span class="code-keyword">ALGORITMUS</span> <span class="code-function">AtlagSzamitas</span> / <span class="code-function">IzracunavanjeProseka</span>
+<span class="code-keyword">BEMENET</span> / <span class="code-keyword">ULAZ</span>: szamok / brojevi (lista)
+<span class="code-keyword">KIMENET</span> / <span class="code-keyword">IZLAZ</span>: atlag / prosek (realan broj)
+
+osszeg / zbir ← <span class="code-number">0</span>
+<span class="code-keyword">MINDEN</span> / <span class="code-keyword">ZA SVAKI</span> szam / broj <span class="code-keyword">A</span> / <span class="code-keyword">U</span> szamok / brojevi <span class="code-keyword">KÖZÖTT</span>
+    osszeg / zbir ← osszeg / zbir + szam / broj
+<span class="code-keyword">VÉGE MINDEN</span> / <span class="code-keyword">KRAJ PETLJE</span>
+
+atlag / prosek ← osszeg / zbir / szamok.hossz / duzina(brojevi)
+<span class="code-keyword">VISSZA</span> / <span class="code-keyword">VRATI</span> atlag / prosek
+<span class="code-keyword">VÉGE ALGORITMUS</span> / <span class="code-keyword">KRAJ ALGORITMA</span></code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: Sequential -->
+            <div class="page" id="page2">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="1. Szekvenciális (vonalas) algoritmusok" data-sr="1. Sekvencijalni (linearni) algoritmi">1. Szekvenciális (vonalas) algoritmusok</h2>
+                    <p class="page-subtitle" data-hu="A legegyszerűbb algoritmustípus, ahol az utasítások egymás után, sorrendben hajtódnak végre." data-sr="Najjednostavniji tip algoritma u kojem se instrukcije izvršavaju jedna za drugom, po redosledu.">A legegyszerűbb algoritmustípus, ahol az utasítások egymás után, sorrendben hajtódnak végre.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-arrow-down"></i></div>
+                        <span data-hu="Mi a szekvenciális algoritmus?" data-sr="Šta je sekvencijalni algoritam?">Mi a szekvenciális algoritmus?</span>
+                    </div>
+                    <p data-hu="A <strong>szekvenciális algoritmusok</strong> (vagy vonalas algoritmusok) egyszerű, lineáris utasítássorozatok. Az utasítások egymás után, a megadott sorrendben hajtódnak végre, minden utasítás egyszer fut le." data-sr="<strong>Sekvencijalni algoritmi</strong> (ili linearni algoritmi) su jednostavni, linearni nizovi instrukcija. Instrukcije se izvršavaju jedna za drugom, u zadatom redosledu, i svaka se izvršava tačno jednom.">A <strong>szekvenciális algoritmusok</strong> (vagy vonalas algoritmusok) egyszerű, lineáris utasítássorozatok. Az utasítások egymás után, a megadott sorrendben hajtódnak végre, minden utasítás egyszer fut le.</p>
+
+                    <div class="interactive-element" onclick="toggleFlowchart('seq-flowchart')">
+                        <div class="example-title"><i class="fas fa-project-diagram"></i> <span data-hu="Szekvenciális algoritmus szerkezete" data-sr="Struktura sekvencijalnog algoritma">Szekvenciális algoritmus szerkezete</span></div>
+                        <p data-hu="Kattints a diagram megtekintéséhez!" data-sr="Klikni za prikaz dijagrama!">Kattints a diagram megtekintéséhez!</p>
+                        <button class="toggle-btn" onclick="event.stopPropagation()">
+                            <i class="fas fa-eye"></i> <span data-hu="Diagram megjelenítése" data-sr="Prikaži dijagram">Diagram megjelenítése</span>
+                        </button>
+                        <div class="toggle-content" id="seq-flowchart">
+                            <div class="diagram-container">
+                                <div class="flowchart">
+                                    <div class="flowchart-step start-end">{ START }</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step process" data-hu="1. Lépés végrehajtása" data-sr="1. Izvrši korak">1. Lépés végrehajtása</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step process" data-hu="2. Lépés végrehajtása" data-sr="2. Izvrši korak">2. Lépés végrehajtása</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step process" data-hu="3. Lépés végrehajtása" data-sr="3. Izvrši korak">3. Lépés végrehajtása</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step start-end">{ END }</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-lightbulb"></i></div>
+                        <span data-hu="Példák szekvenciális algoritmusokra" data-sr="Primeri sekvencijalnih algoritama">Példák szekvenciális algoritmusokra</span>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon sequential"><i class="fas fa-calculator"></i></div>
+                            <h4 data-hu="Terület kiszámítása" data-sr="Izračunavanje površine">Terület kiszámítása</h4>
+                        </div>
+                        <p data-hu="Egy egyszerű algoritmus a téglalap területének kiszámítására:" data-sr="Jednostavan algoritam za izračunavanje površine pravougaonika:">Egy egyszerű algoritmus a téglalap területének kiszámítására:</p>
+                        <div class="code-block">
+<code><span class="code-comment"># Téglalap területe / Površina pravougaonika</span>
+<span class="code-keyword">def</span> <span class="code-function">terulet_szamitas</span>(a, b):
+    <span class="code-comment"># Szorzás / Množenje</span>
+    terulet = a * b
+    <span class="code-comment"># Eredmény visszaadása / Vraćanje rezultata</span>
+    <span class="code-keyword">return</span> terulet
+
+<span class="code-comment"># Használat / Upotreba:</span>
+eredmeny = terulet_szamitas(<span class="code-number">5</span>, <span class="code-number">10</span>)
+<span class="code-function">print</span>(<span class="code-string">"Terület:"</span>, eredmeny)  <span class="code-comment"># 50</span></code>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: 1.5rem;">
+                        <div class="card-header">
+                            <div class="card-icon sequential"><i class="fas fa-user"></i></div>
+                            <h4 data-hu="Adatfeldolgozás" data-sr="Obrada podataka">Adatfeldolgozás</h4>
+                        </div>
+                        <p data-hu="Egy felhasználó adatainak feldolgozása:" data-sr="Obrada podataka korisnika:">Egy felhasználó adatainak feldolgozása:</p>
+                        <div class="code-block">
+<code><span class="code-comment"># Felhasználó adatai / Podaci korisnika</span>
+<span class="code-function">print</span>(<span class="code-string">"Kérem a nevét: / Unesite ime:"</span>)
+nev = <span class="code-function">input</span>()
+
+<span class="code-function">print</span>(<span class="code-string">"Születési év: / Godina rođenja:"</span>)
+ev = <span class="code-function">int</span>(<span class="code-function">input</span>())
+
+kor = <span class="code-number">2026</span> - ev
+<span class="code-function">print</span>(<span class="code-string">"Köszönjük,"</span>, nev, <span class="code-string">"Ön / Vi imate"</span>, kor, <span class="code-string">"éves / godina."</span>)</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-check-circle"></i></div>
+                        <span data-hu="Előnyök és hátrányok" data-sr="Prednosti i mane">Előnyök és hátrányok</span>
+                    </div>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-hu="Előnyök" data-sr="Prednosti">Előnyök</th>
+                                    <th data-hu="Hátrányok" data-sr="Mane">Hátrányok</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td data-hu="Egyszerű megérteni és implementálni" data-sr="Jednostavni za razumevanje i implementaciju">Egyszerű megérteni és implementálni</td>
+                                    <td data-hu="Korlátozott, csak egyszerű feladatokra alkalmas" data-sr="Ograničeni, pogodni samo za jednostavne zadatke">Korlátozott, csak egyszerű feladatokra alkalmas</td>
+                                </tr>
+                                <tr>
+                                    <td data-hu="Kiszámítható futási idő" data-sr="Predvidljivo vreme izvršavanja">Kiszámítható futási idő</td>
+                                    <td data-hu="Nem kezel feltételes helyzeteket" data-sr="Ne obrađuju uslovne situacije">Nem kezel feltételes helyzeteket</td>
+                                </tr>
+                                <tr>
+                                    <td data-hu="Könnyen hibakereshető" data-sr="Laki za otklanjanje grešaka">Könnyen hibakereshető</td>
+                                    <td data-hu="Nem hatékony összetett problémákra" data-sr="Nisu efikasni za složene probleme">Nem hatékony összetett problémákra</td>
+                                </tr>
+                                <tr>
+                                    <td data-hu="Minimális memóriahasználat" data-sr="Minimalna potrošnja memorije">Minimális memóriahasználat</td>
+                                    <td data-hu="Nem használja ki a számítógép teljes potenciálját" data-sr="Ne iskorišćavaju pun potencijal računara">Nem használja ki a számítógép teljes potenciálját</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 3: Selection -->
+            <div class="page" id="page3">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="2. Szelekciós (elágazásos) algoritmusok" data-sr="2. Selekcioni (grananje) algoritmi">2. Szelekciós (elágazásos) algoritmusok</h2>
+                    <p class="page-subtitle" data-hu="Az algoritmusok, amelyek feltételek alapján döntenek, és különböző utakat választanak a végrehajtás során." data-sr="Algoritmi koji donose odluke na osnovu uslova i biraju različite puteve tokom izvršavanja.">Az algoritmusok, amelyek feltételek alapján döntenek, és különböző utakat választanak a végrehajtás során.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-code-branch"></i></div>
+                        <span data-hu="Mi a szelekciós algoritmus?" data-sr="Šta je selekcioni algoritam?">Mi a szelekciós algoritmus?</span>
+                    </div>
+                    <p data-hu="A <strong>szelekciós algoritmusok</strong> (vagy elágazásos algoritmusok) tartalmaznak döntési pontokat, ahol a program futása a feltételek alapján elágazik. Ez lehetővé teszi, hogy az algoritmus különböző bemeneti adatokhoz különböző módon viselkedjen." data-sr="<strong>Selekcioni algoritmi</strong> (ili algoritmi sa grananjem) sadrže tačke odlučivanja gde se izvršavanje programa grana na osnovu uslova. To omogućava algoritmu da se različito ponaša u zavisnosti od ulaznih podataka.">A <strong>szelekciós algoritmusok</strong> (vagy elágazásos algoritmusok) tartalmaznak döntési pontokat, ahol a program futása a feltételek alapján elágazik. Ez lehetővé teszi, hogy az algoritmus különböző bemeneti adatokhoz különböző módon viselkedjen.</p>
+
+                    <div class="interactive-element" onclick="toggleFlowchart('sel-flowchart')">
+                        <div class="example-title"><i class="fas fa-project-diagram"></i> <span data-hu="Szelekciós algoritmus szerkezete" data-sr="Struktura selekcionog algoritma">Szelekciós algoritmus szerkezete</span></div>
+                        <p data-hu="Kattints a diagram megtekintéséhez!" data-sr="Klikni za prikaz dijagrama!">Kattints a diagram megtekintéséhez!</p>
+                        <button class="toggle-btn" onclick="event.stopPropagation()">
+                            <i class="fas fa-eye"></i> <span data-hu="Diagram megjelenítése" data-sr="Prikaži dijagram">Diagram megjelenítése</span>
+                        </button>
+                        <div class="toggle-content" id="sel-flowchart">
+                            <div class="diagram-container">
+                                <div class="flowchart">
+                                    <div class="flowchart-step start-end">{ START }</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step process">Lépés 1 / Korak 1</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step decision">FELTÉTEL / USLOV ?</div>
+                                    <div style="display:flex;width:100%;justify-content:space-around;margin-top:0.5rem;">
+                                        <div style="text-align:center;">
+                                            <div style="color:var(--accent-green);font-weight:700;font-size:0.85rem;">IGAZ / TAČNO</div>
+                                            <div class="flowchart-arrow" style="height:30px;"></div>
+                                            <div class="flowchart-step process" data-hu="Lépés (igaz)" data-sr="Korak (tačno)">Lépés (igaz)</div>
+                                        </div>
+                                        <div style="text-align:center;">
+                                            <div style="color:var(--accent-rose);font-weight:700;font-size:0.85rem;">HAMIS / NETAČNO</div>
+                                            <div class="flowchart-arrow" style="height:30px;"></div>
+                                            <div class="flowchart-step process" data-hu="Lépés (hamis)" data-sr="Korak (netačno)">Lépés (hamis)</div>
+                                        </div>
+                                    </div>
+                                    <div class="flowchart-arrow" style="margin-top:0.75rem;"></div>
+                                    <div class="flowchart-step start-end">{ END }</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-lightbulb"></i></div>
+                        <span data-hu="Példák szelekciós algoritmusokra" data-sr="Primeri selekcionih algoritama">Példák szelekciós algoritmusokra</span>
+                    </div>
+
+                    <div class="card selection">
+                        <div class="card-header">
+                            <div class="card-icon selection"><i class="fas fa-balance-scale"></i></div>
+                            <h4 data-hu="Két szám összehasonlítása" data-sr="Poređenje dva broja">Két szám összehasonlítása</h4>
+                        </div>
+                        <p data-hu="Egy algoritmus, amely meghatározza a két szám közül a nagyobbat:" data-sr="Algoritam koji određuje koji je od dva broja veći:">Egy algoritmus, amely meghatározza a két szám közül a nagyobbat:</p>
+                        <div class="code-block">
+<code><span class="code-keyword">def</span> <span class="code-function">nagyobb_szam</span>(a, b):
+    <span class="code-keyword">if</span> a > b:
+        <span class="code-keyword">return</span> a
+    <span class="code-keyword">else</span>:
+        <span class="code-keyword">return</span> b
+
+<span class="code-comment"># Használat / Upotreba:</span>
+eredmeny = nagyobb_szam(<span class="code-number">15</span>, <span class="code-number">8</span>)
+<span class="code-function">print</span>(<span class="code-string">"Nagyobb / Veći:"</span>, eredmeny)  <span class="code-comment"># 15</span></code>
+                        </div>
+                    </div>
+
+                    <div class="card selection" style="margin-top: 1.5rem;">
+                        <div class="card-header">
+                            <div class="card-icon selection"><i class="fas fa-graduation-cap"></i></div>
+                            <h4 data-hu="Értékelési rendszer" data-sr="Sistem ocenjivanja">Értékelési rendszer</h4>
+                        </div>
+                        <p data-hu="Egy algoritmus, amely egy pontszám alapján osztályzatot ad:" data-sr="Algoritam koji daje ocenu na osnovu bodova:">Egy algoritmus, amely egy pontszám alapján osztályzatot ad:</p>
+                        <div class="code-block">
+<code><span class="code-keyword">def</span> <span class="code-function">osztalyzat</span>(pontszam):
+    <span class="code-keyword">if</span> pontszam >= <span class="code-number">90</span>:
+        <span class="code-keyword">return</span> <span class="code-string">"Jeles (5) / Odličan (5)"</span>
+    <span class="code-keyword">elif</span> pontszam >= <span class="code-number">75</span>:
+        <span class="code-keyword">return</span> <span class="code-string">"Jó (4) / Vrlo dobar (4)"</span>
+    <span class="code-keyword">elif</span> pontszam >= <span class="code-number">60</span>:
+        <span class="code-keyword">return</span> <span class="code-string">"Közepes (3) / Dobar (3)"</span>
+    <span class="code-keyword">elif</span> pontszam >= <span class="code-number">40</span>:
+        <span class="code-keyword">return</span> <span class="code-string">"Elégséges (2) / Dovoljan (2)"</span>
+    <span class="code-keyword">else</span>:
+        <span class="code-keyword">return</span> <span class="code-string">"Elégtelen (1) / Nedovoljan (1)"</span></code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-exchange-alt"></i></div>
+                        <span data-hu="Elágazások típusai" data-sr="Tipovi grananja">Elágazások típusai</span>
+                    </div>
+                    <div class="card-grid">
+                        <div class="card selection">
+                            <div class="card-header">
+                                <div class="card-icon selection"><i class="fas fa-check"></i></div>
+                                <h4 data-hu="Egyszerű elágazás" data-sr="Jednostavno grananje">Egyszerű elágazás</h4>
+                            </div>
+                            <p data-hu="Ha egy feltétel igaz, akkor végrehajt egy utasítást, különben nem csinál semmit." data-sr="Ako je uslov tačan, izvršava instrukciju; u suprotnom, ne radi ništa.">Ha egy feltétel igaz, akkor végrehajt egy utasítást, különben nem csinál semmit.</p>
+                            <div class="code-block">
+<code><span class="code-keyword">if</span> uslov / feltetel:
+    instrukcija / utasitas</code>
+                            </div>
+                        </div>
+                        <div class="card selection">
+                            <div class="card-header">
+                                <div class="card-icon selection"><i class="fas fa-random"></i></div>
+                                <h4 data-hu="Kettős elágazás" data-sr="Dvostruko grananje">Kettős elágazás</h4>
+                            </div>
+                            <p data-hu="Ha a feltétel igaz, végrehajt egy utasítást, különben egy másikat." data-sr="Ako je uslov tačan, izvršava jednu instrukciju; u suprotnom, drugu.">Ha a feltétel igaz, végrehajt egy utasítást, különben egy másikat.</p>
+                            <div class="code-block">
+<code><span class="code-keyword">if</span> uslov / feltetel:
+    instrukcija1 / utasitas1
+<span class="code-keyword">else</span>:
+    instrukcija2 / utasitas2</code>
+                            </div>
+                        </div>
+                        <div class="card selection">
+                            <div class="card-header">
+                                <div class="card-icon selection"><i class="fas fa-sitemap"></i></div>
+                                <h4 data-hu="Többszörös elágazás" data-sr="Višestruko grananje">Többszörös elágazás</h4>
+                            </div>
+                            <p data-hu="Több feltételt ellenőriz egymás után, és az első igaz feltételhez tartozó utasítást hajtja végre." data-sr="Proverava više uslova jedan za drugim i izvršava instrukciju koja odgovara prvom tačnom uslovu.">Több feltételt ellenőriz egymás után, és az első igaz feltételhez tartozó utasítást hajtja végre.</p>
+                            <div class="code-block">
+<code><span class="code-keyword">if</span> uslov1 / feltetel1:
+    instrukcija1
+<span class="code-keyword">elif</span> uslov2 / feltetel2:
+    instrukcija2
+<span class="code-keyword">else</span>:
+    instrukcija3</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 4: Iterative -->
+            <div class="page" id="page4">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="3. Iteratív (ciklusos) algoritmusok" data-sr="3. Iterativni (ciklični) algoritmi">3. Iteratív (ciklusos) algoritmusok</h2>
+                    <p class="page-subtitle" data-hu="Az algoritmusok, amelyek egy utasításcsoportot ismételten végrehajtanak, amíg egy feltétel teljesül." data-sr="Algoritmi koji više puta izvršavaju grupu instrukcija sve dok je ispunjen određeni uslov.">Az algoritmusok, amelyek egy utasításcsoportot ismételten végrehajtanak, amíg egy feltétel teljesül.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-redo"></i></div>
+                        <span data-hu="Mi az iteratív algoritmus?" data-sr="Šta je iterativni algoritam?">Mi az iteratív algoritmus?</span>
+                    </div>
+                    <p data-hu="Az <strong>iteratív algoritmusok</strong> (vagy ciklusos algoritmusok) ismétlődő utasításokat tartalmaznak. Ezek lehetővé teszik, hogy ugyanazt a kódrészt többször is végrehajtsuk anélkül, hogy többször leírnánk." data-sr="<strong>Iterativni algoritmi</strong> (ili ciklični algoritmi) sadrže ponavljajuće instrukcije. Oni omogućavaju da isti deo koda izvršimo više puta bez ponavljanog pisanja.">Az <strong>iteratív algoritmusok</strong> (vagy ciklusos algoritmusok) ismétlődő utasításokat tartalmaznak. Ezek lehetővé teszik, hogy ugyanazt a kódrészt többször is végrehajtsuk anélkül, hogy többször leírnánk.</p>
+
+                    <div class="interactive-element" onclick="toggleFlowchart('iter-flowchart')">
+                        <div class="example-title"><i class="fas fa-project-diagram"></i> <span data-hu="Iteratív algoritmus szerkezete" data-sr="Struktura iterativnog algoritma">Iteratív algoritmus szerkezete</span></div>
+                        <p data-hu="Kattints a diagram megtekintéséhez!" data-sr="Klikni za prikaz dijagrama!">Kattints a diagram megtekintéséhez!</p>
+                        <button class="toggle-btn" onclick="event.stopPropagation()">
+                            <i class="fas fa-eye"></i> <span data-hu="Diagram megjelenítése" data-sr="Prikaži dijagram">Diagram megjelenítése</span>
+                        </button>
+                        <div class="toggle-content" id="iter-flowchart">
+                            <div class="diagram-container">
+                                <div class="flowchart">
+                                    <div class="flowchart-step start-end">{ START }</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step process" data-hu="Inicializálás" data-sr="Inicijalizacija">Inicializálás</div>
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-step decision">FELTÉTEL / USLOV ?</div>
+                                    <div style="display:flex;width:100%;justify-content:space-around;margin-top:0.5rem;">
+                                        <div style="text-align:center;">
+                                            <div style="color:var(--accent-green);font-weight:700;font-size:0.85rem;">IGAZ / TAČNO</div>
+                                            <div class="flowchart-arrow" style="height:30px;"></div>
+                                            <div class="flowchart-step process" data-hu="Ciklusmag" data-sr="Telo ciklusa">Ciklusmag</div>
+                                            <div class="flowchart-arrow"></div>
+                                            <div class="flowchart-step process" data-hu="Frissítés" data-sr="Ažuriranje">Frissítés</div>
+                                            <div style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem;">↑ vissza / nazad ↑</div>
+                                        </div>
+                                        <div style="text-align:center;">
+                                            <div style="color:var(--accent-rose);font-weight:700;font-size:0.85rem;">HAMIS / NETAČNO</div>
+                                            <div class="flowchart-arrow" style="height:30px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flowchart-arrow" style="margin-top:0.75rem;"></div>
+                                    <div class="flowchart-step start-end">{ END }</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-lightbulb"></i></div>
+                        <span data-hu="Példák iteratív algoritmusokra" data-sr="Primeri iterativnih algoritama">Példák iteratív algoritmusokra</span>
+                    </div>
+
+                    <div class="card iteration">
+                        <div class="card-header">
+                            <div class="card-icon iteration"><i class="fas fa-list-ol"></i></div>
+                            <h4 data-hu="Számok összege" data-sr="Zbir brojeva">Számok összege</h4>
+                        </div>
+                        <p data-hu="Egy algoritmus, amely összeadja az első N természetes számot:" data-sr="Algoritam koji sabira prvih N prirodnih brojeva:">Egy algoritmus, amely összeadja az első N természetes számot:</p>
+                        <div class="code-block">
+<code><span class="code-keyword">def</span> <span class="code-function">osszeg_elso_n</span>(n):
+    osszeg = <span class="code-number">0</span>
+    i = <span class="code-number">1</span>
+
+    <span class="code-keyword">while</span> i <= n:
+        osszeg = osszeg + i
+        i = i + <span class="code-number">1</span>
+
+    <span class="code-keyword">return</span> osszeg
+
+<span class="code-comment"># Használat / Upotreba:</span>
+eredmeny = osszeg_elso_n(<span class="code-number">10</span>)  <span class="code-comment"># 1+2+...+10 = 55</span>
+<span class="code-function">print</span>(<span class="code-string">"Összeg / Zbir:"</span>, eredmeny)</code>
+                        </div>
+                    </div>
+
+                    <div class="card iteration" style="margin-top: 1.5rem;">
+                        <div class="card-header">
+                            <div class="card-icon iteration"><i class="fas fa-search"></i></div>
+                            <h4 data-hu="Lineáris keresés" data-sr="Linearna pretraga">Lineáris keresés</h4>
+                        </div>
+                        <p data-hu="Egy algoritmus, amely egy listában megkeresi egy érték első előfordulását:" data-sr="Algoritam koji pronalazi prvo pojavljivanje vrednosti u listi:">Egy algoritmus, amely egy listában megkeresi egy érték első előfordulását:</p>
+                        <div class="code-block">
+<code><span class="code-keyword">def</span> <span class="code-function">linearis_kereses</span>(lista, ertek):
+    index = <span class="code-number">0</span>
+
+    <span class="code-keyword">while</span> index < <span class="code-function">len</span>(lista):
+        <span class="code-keyword">if</span> lista[index] == ertek:
+            <span class="code-keyword">return</span> index  <span class="code-comment"># Megtaláltuk / Pronađeno</span>
+        index = index + <span class="code-number">1</span>
+
+    <span class="code-keyword">return</span> -<span class="code-number">1</span>  <span class="code-comment"># Nem találtuk / Nije pronađeno</span>
+
+<span class="code-comment"># Használat / Upotreba:</span>
+szamok = [<span class="code-number">5</span>, <span class="code-number">12</span>, <span class="code-number">8</span>, <span class="code-number">3</span>, <span class="code-number">15</span>]
+pozicio = linearis_kereses(szamok, <span class="code-number">8</span>)
+<span class="code-function">print</span>(<span class="code-string">"Pozíció / Pozicija:"</span>, pozicio)  <span class="code-comment"># 2</span></code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-sync-alt"></i></div>
+                        <span data-hu="Ciklustípusok" data-sr="Tipovi ciklusa">Ciklustípusok</span>
+                    </div>
+                    <div class="card-grid">
+                        <div class="card iteration">
+                            <div class="card-header">
+                                <div class="card-icon iteration"><i class="fas fa-question-circle"></i></div>
+                                <h4 data-hu="Előtesztelő ciklus (while)" data-sr="Ciklus sa preduslovom (while)">Előtesztelő ciklus (while)</h4>
+                            </div>
+                            <p data-hu="Először ellenőrzi a feltételt, és csak akkor hajtja végre a ciklusmagot, ha az igaz." data-sr="Prvo proverava uslov i izvršava telo ciklusa samo ako je uslov tačan.">Először ellenőrzi a feltételt, és csak akkor hajtja végre a ciklusmagot, ha az igaz.</p>
+                            <div class="code-block">
+<code><span class="code-keyword">while</span> uslov / feltetel:
+    instrukcije / utasitasok</code>
+                            </div>
+                        </div>
+                        <div class="card iteration">
+                            <div class="card-header">
+                                <div class="card-icon iteration"><i class="fas fa-redo"></i></div>
+                                <h4 data-hu="Hátultesztelő ciklus (do-while)" data-sr="Ciklus sa postuslovom (do-while)">Hátultesztelő ciklus (do-while)</h4>
+                            </div>
+                            <p data-hu="Először egyszer végrehajtja a ciklusmagot, majd ellenőrzi a feltételt." data-sr="Prvo jednom izvršava telo ciklusa, a zatim proverava uslov.">Először egyszer végrehajtja a ciklusmagot, majd ellenőrzi a feltételt.</p>
+                            <div class="code-block">
+<code><span class="code-comment"># Pythonban nincs beépített do-while</span>
+<span class="code-comment"># U Pythonu ne postoji ugrađeni do-while</span>
+<span class="code-keyword">while</span> <span class="code-keyword">True</span>:
+    instrukcije / utasitasok
+    <span class="code-keyword">if</span> <span class="code-keyword">not</span> uslov / feltetel:
+        <span class="code-keyword">break</span></code>
+                            </div>
+                        </div>
+                        <div class="card iteration">
+                            <div class="card-header">
+                                <div class="card-icon iteration"><i class="fas fa-list-ol"></i></div>
+                                <h4 data-hu="Számlálós ciklus (for)" data-sr="Brojački ciklus (for)">Számlálós ciklus (for)</h4>
+                            </div>
+                            <p data-hu="Egy változó értékét iterálja egy tartományon vagy egy gyűjtemény elemein." data-sr="Iterira promenljivu kroz opseg ili kroz elemente kolekcije.">Egy változó értékét iterálja egy tartományon vagy egy gyűjtemény elemein.</p>
+                            <div class="code-block">
+<code><span class="code-keyword">for</span> i <span class="code-keyword">in</span> <span class="code-function">range</span>(pocetak, kraj, korak):
+    instrukcije / utasitasok</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 5: Recursive -->
+            <div class="page" id="page5">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="4. Rekurzív algoritmusok" data-sr="4. Rekurzivni algoritmi">4. Rekurzív algoritmusok</h2>
+                    <p class="page-subtitle" data-hu="Az algoritmusok, amelyek önmagukat hívják meg egy kisebb problémára, amíg el nem érik az alapvető esetet." data-sr="Algoritmi koji pozivaju sami sebe na manjem problemu, sve dok ne dostignu osnovni slučaj.">Az algoritmusok, amelyek önmagukat hívják meg egy kisebb problémára, amíg el nem érik az alapvető esetet.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-infinity"></i></div>
+                        <span data-hu="Mi a rekurzív algoritmus?" data-sr="Šta je rekurzivni algoritam?">Mi a rekurzív algoritmus?</span>
+                    </div>
+                    <p data-hu="A <strong>rekurzív algoritmusok</strong> olyan algoritmusok, amelyek egy problémát úgy oldanak meg, hogy azt kisebb, önmagához hasonló részproblémákra bontják, majd ezeket ugyanazzal az algoritmussal oldják meg." data-sr="<strong>Rekurzivni algoritmi</strong> su algoritmi koji rešavaju problem tako što ga dele na manje, slične podprobleme, a zatim rešavaju te podprobleme istim algoritmom.">A <strong>rekurzív algoritmusok</strong> olyan algoritmusok, amelyek egy problémát úgy oldanak meg, hogy azt kisebb, önmagához hasonló részproblémákra bontják, majd ezeket ugyanazzal az algoritmussal oldják meg.</p>
+
+                    <div class="card recursive">
+                        <div class="card-header">
+                            <div class="card-icon recursive"><i class="fas fa-snowflake"></i></div>
+                            <h4 data-hu="Faktoriális számítás" data-sr="Izračunavanje faktorijela">Faktoriális számítás</h4>
+                        </div>
+                        <p data-hu="A faktoriális függvény klasszikus példa a rekurzióra:" data-sr="Funkcija faktorijel je klasičan primer rekurzije:">A faktoriális függvény klasszikus példa a rekurzióra:</p>
+                        <div class="code-block">
+<code><span class="code-keyword">def</span> <span class="code-function">faktorialis</span>(n):
+    <span class="code-keyword">if</span> n == <span class="code-number">0</span>:  <span class="code-comment"># Alapeset / Osnovni slučaj</span>
+        <span class="code-keyword">return</span> <span class="code-number">1</span>
+    <span class="code-keyword">else</span>:
+        <span class="code-keyword">return</span> n * faktorialis(n - <span class="code-number">1</span>)  <span class="code-comment"># Rekurzív hívás / Rekurzivni poziv</span>
+
+<span class="code-comment"># Használat / Upotreba:</span>
+eredmeny = faktorialis(<span class="code-number">5</span>)  <span class="code-comment"># 5! = 120</span>
+<span class="code-function">print</span>(<span class="code-string">"5! ="</span>, eredmeny)</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <span data-hu="Rekurzió vs. Iteráció" data-sr="Rekurzija vs. Iteracija">Rekurzió vs. Iteráció</span>
+                    </div>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-hu="Rekurzív algoritmusok" data-sr="Rekurzivni algoritmi">Rekurzív algoritmusok</th>
+                                    <th data-hu="Iteratív algoritmusok" data-sr="Iterativni algoritmi">Iteratív algoritmusok</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td data-hu="Önmagukat hívják meg" data-sr="Pozivaju sami sebe">Önmagukat hívják meg</td>
+                                    <td data-hu="Ciklusokat használnak" data-sr="Koriste cikluse">Ciklusokat használnak</td>
+                                </tr>
+                                <tr>
+                                    <td data-hu="Általában rövidebb és elegánsabb kód" data-sr="Obično kraći i elegantniji kod">Általában rövidebb és elegánsabb kód</td>
+                                    <td data-hu="Általában gyorsabbak és kevesebb memóriát használnak" data-sr="Obično brži i koriste manje memorije">Általában gyorsabbak és kevesebb memóriát használnak</td>
+                                </tr>
+                                <tr>
+                                    <td data-hu="Könnyebb megérteni bizonyos problémáknál (pl. fa bejárás)" data-sr="Lakši za razumevanje kod određenih problema (npr. obilazak stabla)">Könnyebb megérteni bizonyos problémáknál (pl. fa bejárás)</td>
+                                    <td data-hu="Könnyebb hibakeresés" data-sr="Lakše otklanjanje grešaka">Könnyebb hibakeresés</td>
+                                </tr>
+                                <tr>
+                                    <td data-hu="Veszélyeztetheti a veremtúlcsordulást" data-sr="Mogu izazvati prelivanje steka (stack overflow)">Veszélyeztetheti a veremtúlcsordulást</td>
+                                    <td data-hu="Nincs veremtúlcsordulás veszélye" data-sr="Nema opasnosti od prelivanja steka">Nincs veremtúlcsordulás veszélye</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="page-nav">
+                    <button class="nav-btn prev-btn" onclick="goToPage(currentPage-1)">
+                        <i class="fas fa-arrow-left"></i> <span data-hu="Előző oldal" data-sr="Prethodna strana">Előző oldal</span>
+                    </button>
+                    <button class="nav-btn primary next-btn" onclick="goToPage(currentPage+1)">
+                        <span data-hu="Következő oldal" data-sr="Sledeća strana">Következő oldal</span> <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAGE 6: Comparison -->
+            <div class="page" id="page6">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="5. Algoritmusok összehasonlítása" data-sr="5. Poređenje algoritama">5. Algoritmusok összehasonlítása</h2>
+                    <p class="page-subtitle" data-hu="Az algoritmusok hatékonyságának értékelése és összehasonlítása különböző szempontok alapján." data-sr="Procena i poređenje efikasnosti algoritama na osnovu različitih kriterijuma.">Az algoritmusok hatékonyságának értékelése és összehasonlítása különböző szempontok alapján.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-balance-scale"></i></div>
+                        <span data-hu="Hatékonysági szempontok" data-sr="Aspekti efikasnosti">Hatékonysági szempontok</span>
+                    </div>
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon sequential"><i class="fas fa-clock"></i></div>
+                                <h4 data-hu="Időbonyolultság" data-sr="Vremenska složenost">Időbonyolultság</h4>
+                            </div>
+                            <p data-hu="Az algoritmus futási ideje a bemenet méretének függvényében. Jele: O(...)" data-sr="Vreme izvršavanja algoritma u funkciji veličine ulaza. Oznaka: O(...)">Az algoritmus futási ideje a bemenet méretének függvényében. Jele: O(...)</p>
+                            <ul style="margin-top:0.75rem;font-size:0.9rem;">
+                                <li><span class="bracket-decoration">O(1)</span> – <span data-hu="konstans idő" data-sr="konstantno vreme">konstans idő</span></li>
+                                <li><span class="bracket-decoration">O(n)</span> – <span data-hu="lineáris idő" data-sr="linearno vreme">lineáris idő</span></li>
+                                <li><span class="bracket-decoration">O(n²)</span> – <span data-hu="kvadratikus idő" data-sr="kvadratno vreme">kvadratikus idő</span></li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon selection"><i class="fas fa-memory"></i></div>
+                                <h4 data-hu="Tárbonyolultság" data-sr="Prostorna složenost">Tárbonyolultság</h4>
+                            </div>
+                            <p data-hu="Az algoritmus memóriahasználata a bemenet méretének függvényében." data-sr="Potrošnja memorije algoritma u funkciji veličine ulaza.">Az algoritmus memóriahasználata a bemenet méretének függvényében.</p>
+                            <ul style="margin-top:0.75rem;font-size:0.9rem;">
+                                <li><span class="bracket-decoration">O(1)</span> – <span data-hu="konstans tár" data-sr="konstantna memorija">konstans tár</span></li>
+                                <li><span class="bracket-decoration">O(n)</span> – <span data-hu="lineáris tár" data-sr="linearna memorija">lineáris tár</span></li>
+                                <li><span class="bracket-decoration">O(n²)</span> – <span data-hu="kvadratikus tár" data-sr="kvadratna memorija">kvadratikus tár</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-nav">
+                    <button class="nav-btn prev-btn" onclick="goToPage(currentPage-1)">
+                        <i class="fas fa-arrow-left"></i> <span data-hu="Előző oldal" data-sr="Prethodna strana">Előző oldal</span>
+                    </button>
+                    <button class="nav-btn primary next-btn" onclick="goToPage(currentPage+1)">
+                        <span data-hu="Következő oldal" data-sr="Sledeća strana">Következő oldal</span> <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAGE 7: Applications -->
+            <div class="page" id="page7">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="6. Gyakorlati alkalmazások" data-sr="6. Praktične primene">6. Gyakorlati alkalmazások</h2>
+                    <p class="page-subtitle" data-hu="Az algoritmusok gyakorlati alkalmazása a való életben és különböző területeken." data-sr="Praktična primena algoritama u stvarnom životu i na različitim poljima.">Az algoritmusok gyakorlati alkalmazása a való életben és különböző területeken.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <span data-hu="Mobilalkalmazások" data-sr="Mobilne aplikacije">Mobilalkalmazások</span>
+                    </div>
+                    <div class="card-grid">
+                        <div class="card sequential">
+                            <div class="card-header">
+                                <div class="card-icon sequential"><i class="fas fa-map-marked-alt"></i></div>
+                                <h4 data-hu="Navigáció" data-sr="Navigacija">Navigáció</h4>
+                            </div>
+                            <p data-hu="Útvonaltervezési algoritmusok (pl. Dijkstra-algoritmus) a leggyorsabb út megtalálásához." data-sr="Algoritmi za planiranje ruta (npr. Dijkstrin algoritam) za pronalaženje najbržeg puta.">Útvonaltervezési algoritmusok (pl. Dijkstra-algoritmus) a leggyorsabb út megtalálásához.</p>
+                        </div>
+                        <div class="card selection">
+                            <div class="card-header">
+                                <div class="card-icon selection"><i class="fas fa-search"></i></div>
+                                <h4 data-hu="Keresés" data-sr="Pretraga">Keresés</h4>
+                            </div>
+                            <p data-hu="Keresőalgoritmusok a kontaktok, üzenetek vagy fájlok gyors megtalálásához." data-sr="Algoritmi pretrage za brzo pronalaženje kontakata, poruka ili fajlova.">Keresőalgoritmusok a kontaktok, üzenetek vagy fájlok gyors megtalálásához.</p>
+                        </div>
+                        <div class="card iteration">
+                            <div class="card-header">
+                                <div class="card-icon iteration"><i class="fas fa-sort-amount-down"></i></div>
+                                <h4 data-hu="Rendezés" data-sr="Sortiranje">Rendezés</h4>
+                            </div>
+                            <p data-hu="Rendezési algoritmusok a listák és adatok sorba állításához." data-sr="Algoritmi sortiranja za uređivanje lista i podataka.">Rendezési algoritmusok a listák és adatok sorba állításához.</p>
+                        </div>
+                        <div class="card recursive">
+                            <div class="card-header">
+                                <div class="card-icon recursive"><i class="fas fa-image"></i></div>
+                                <h4 data-hu="Képfeldolgozás" data-sr="Obrada slika">Képfeldolgozás</h4>
+                            </div>
+                            <p data-hu="Rekurzív algoritmusok a képek méretezéséhez és szűréséhez." data-sr="Rekurzivni algoritmi za skaliranje i filtriranje slika.">Rekurzív algoritmusok a képek méretezéséhez és szűréséhez.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-nav">
+                    <button class="nav-btn prev-btn" onclick="goToPage(currentPage-1)">
+                        <i class="fas fa-arrow-left"></i> <span data-hu="Előző oldal" data-sr="Prethodna strana">Előző oldal</span>
+                    </button>
+                    <button class="nav-btn primary next-btn" onclick="goToPage(currentPage+1)">
+                        <span data-hu="Következő oldal" data-sr="Sledeća strana">Következő oldal</span> <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAGE 8: Summary -->
+            <div class="page" id="page8">
+                <div class="page-header">
+                    <h2 class="page-title" data-hu="7. Összefoglalás és gyakorlás" data-sr="7. Rezime i vežbanje">7. Összefoglalás és gyakorlás</h2>
+                    <p class="page-subtitle" data-hu="Az algoritmusok típusainak összegzése és gyakorló feladatok a tanultak megerősítéséhez." data-sr="Rezime tipova algoritama i zadaci za vežbanje za utvrđivanje naučenog.">Az algoritmusok típusainak összegzése és gyakorló feladatok a tanultak megerősítéséhez.</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-tasks"></i></div>
+                        <span data-hu="Algoritmustípusok összegzése" data-sr="Rezime tipova algoritama">Algoritmustípusok összegzése</span>
+                    </div>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-hu="Típus" data-sr="Tip">Típus</th>
+                                    <th data-hu="Jellemző" data-sr="Karakteristika">Jellemző</th>
+                                    <th data-hu="Alapvető szerkezet" data-sr="Osnovna struktura">Alapvető szerkezet</th>
+                                    <th data-hu="Példa" data-sr="Primer">Példa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong data-hu="Szekvenciális" data-sr="Sekvencijalni">Szekvenciális</strong></td>
+                                    <td data-hu="Utasítások egymás után" data-sr="Instrukcije jedna za drugom">Utasítások egymás után</td>
+                                    <td><span class="bracket-decoration">A → B → C</span></td>
+                                    <td data-hu="Terület számítás" data-sr="Izračunavanje površine">Terület számítás</td>
+                                </tr>
+                                <tr>
+                                    <td><strong data-hu="Szelekciós" data-sr="Selekcioni">Szelekciós</strong></td>
+                                    <td data-hu="Feltétel alapján dönt" data-sr="Donosi odluku na osnovu uslova">Feltétel alapján dönt</td>
+                                    <td><span class="bracket-decoration">if / else</span></td>
+                                    <td data-hu="Osztályzat meghatározása" data-sr="Određivanje ocene">Osztályzat meghatározása</td>
+                                </tr>
+                                <tr>
+                                    <td><strong data-hu="Iteratív" data-sr="Iterativni">Iteratív</strong></td>
+                                    <td data-hu="Utasítások ismétlése" data-sr="Ponavljanje instrukcija">Utasítások ismétlése</td>
+                                    <td><span class="bracket-decoration">while / for</span></td>
+                                    <td data-hu="Számok összege" data-sr="Zbir brojeva">Számok összege</td>
+                                </tr>
+                                <tr>
+                                    <td><strong data-hu="Rekurzív" data-sr="Rekurzivni">Rekurzív</strong></td>
+                                    <td data-hu="Önmagát hívja" data-sr="Poziva sam sebe">Önmagát hívja</td>
+                                    <td><span class="bracket-decoration">f(n) → f(n-1)</span></td>
+                                    <td data-hu="Faktoriális számítás" data-sr="Izračunavanje faktorijela">Faktoriális számítás</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-lightbulb"></i></div>
+                        <span data-hu="Gyakorló feladat" data-sr="Zadatak za vežbanje">Gyakorló feladat</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon sequential"><i class="fas fa-pencil-alt"></i></div>
+                            <h4 data-hu="Prímszám ellenőrző algoritmus" data-sr="Algoritam za proveru prostog broja">Prímszám ellenőrző algoritmus</h4>
+                        </div>
+                        <p data-hu="Készíts egy algoritmust, amely ellenőrzi, hogy egy adott szám prímszám-e! Az algoritmusnak tartalmaznia kell:" data-sr="Napravi algoritam koji proverava da li je dati broj prost! Algoritam mora da sadrži:">Készíts egy algoritmust, amely ellenőrzi, hogy egy adott szám prímszám-e! Az algoritmusnak tartalmaznia kell:</p>
+                        <ul>
+                            <li data-hu="Szekvenciális részt (bemenet fogadása, eredmény kiírása)" data-sr="Sekvencijalni deo (prihvatanje ulaza, ispis rezultata)">Szekvenciális részt (bemenet fogadása, eredmény kiírása)</li>
+                            <li data-hu="Szelekciós részt (feltételek ellenőrzése)" data-sr="Selekcioni deo (provera uslova)">Szelekciós részt (feltételek ellenőrzése)</li>
+                            <li data-hu="Iteratív részt (oszthatóság vizsgálata)" data-sr="Iterativni deo (ispitivanje deljivosti)">Iteratív részt (oszthatóság vizsgálata)</li>
+                        </ul>
+                        <div class="code-block">
+<code><span class="code-comment"># Prímszám ellenőrző / Provera prostog broja</span>
+<span class="code-keyword">def</span> <span class="code-function">prim_e</span>(n):
+    <span class="code-keyword">if</span> n <= <span class="code-number">1</span>:
+        <span class="code-keyword">return</span> <span class="code-keyword">False</span>
+
+    i = <span class="code-number">2</span>
+    <span class="code-keyword">while</span> i * i <= n:
+        <span class="code-keyword">if</span> n % i == <span class="code-number">0</span>:
+            <span class="code-keyword">return</span> <span class="code-keyword">False</span>
+        i = i + <span class="code-number">1</span>
+
+    <span class="code-keyword">return</span> <span class="code-keyword">True</span></code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-title">
+                        <div class="section-icon"><i class="fas fa-check-circle"></i></div>
+                        <span data-hu="Tananyag vége" data-sr="Kraj nastavnog materijala">Tananyag vége</span>
+                    </div>
+                    <p data-hu="Gratulálunk! Sikeresen elvégezted az algoritmusok típusairól szóló tananyagot. Reméljük, sikerült mélyebb betekintést nyerned az algoritmusok világába, és hogy ezek az ismeretek segíteni fognak a programozási tanulmányaidban." data-sr="Čestitamo! Uspešno ste završili nastavni materijal o tipovima algoritama. Nadamo se da ste stekli dublji uvid u svet algoritama i da će vam ova znanja pomoći u studijama programiranja.">Gratulálunk! Sikeresen elvégezted az algoritmusok típusairól szóló tananyagot. Reméljük, sikerült mélyebb betekintést nyerned az algoritmusok világába, és hogy ezek az ismeretek segíteni fognak a programozási tanulmányaidban.</p>
+
+                    <div class="card" style="border-left-color: var(--accent-green);">
+                        <div class="card-header">
+                            <div class="card-icon sequential" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));"><i class="fas fa-graduation-cap"></i></div>
+                            <h4 data-hu="Következő lépések" data-sr="Sledeći koraci">Következő lépések</h4>
+                        </div>
+                        <p data-hu="Ha szeretnél tovább mélyülni az algoritmusok világában, ajánljuk a következő témaköröket:" data-sr="Ako želite da dublje zaronite u svet algoritama, preporučujemo sledeće teme:">Ha szeretnél tovább mélyülni az algoritmusok világában, ajánljuk a következő témaköröket:</p>
+                        <ul>
+                            <li data-hu="Rendezési algoritmusok (buborékrendezés, gyorsrendezés, stb.)" data-sr="Algoritmi sortiranja (bubble sort, quick sort, itd.)">Rendezési algoritmusok (buborékrendezés, gyorsrendezés, stb.)</li>
+                            <li data-hu="Keresési algoritmusok (bináris keresés, hash táblák)" data-sr="Algoritmi pretrage (binarna pretraga, heš tabele)">Keresési algoritmusok (bináris keresés, hash táblák)</li>
+                            <li data-hu="Gráf algoritmusok (szélességi bejárás, mélységi bejárás)" data-sr="Grafovski algoritmi (BFS, DFS obilazak)">Gráf algoritmusok (szélességi bejárás, mélységi bejárás)</li>
+                            <li data-hu="Dinamikus programozás" data-sr="Dinamičko programiranje">Dinamikus programozás</li>
+                            <li data-hu="Mohó algoritmusok" data-sr="Pohlepni algoritmi (greedy)">Mohó algoritmusok</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="page-nav">
+                    <button class="nav-btn prev-btn" onclick="goToPage(currentPage-1)">
+                        <i class="fas fa-arrow-left"></i> <span data-hu="Előző oldal" data-sr="Prethodna strana">Előző oldal</span>
+                    </button>
+                    <button class="nav-btn" disabled>
+                        <span data-hu="Tananyag vége" data-sr="Kraj materijala">Tananyag vége</span> <i class="fas fa-check"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="bracket-decoration" style="opacity:0.6;">&lt;/&gt;</span>
+                    <span data-hu="Algoritmusok Típusai" data-sr="Tipovi Algoritama">Algoritmusok Típusai</span>
+                </div>
+                <p class="footer-text" data-hu="Ez a tananyag a programozási algoritmusok alapvető típusait mutatja be középiskolás szinten. Minden példa és magyarázat érthető és gyakorlati alkalmazásra kész." data-sr="Ovaj materijal prikazuje osnovne tipove programerskih algoritama na srednjoškolskom nivou. Svaki primer i objašnjenje je razumljivo i spremno za praktičnu primenu.">Ez a tananyag a programozási algoritmusok alapvető típusait mutatja be középiskolás szinten. Minden példa és magyarázat érthető és gyakorlati alkalmazásra kész.</p>
+                <p class="footer-copy">&copy; 2026 – <span data-hu="Interaktív Tananyag – Minden jog fenntartva" data-sr="Interaktivni Materijal – Sva prava zadržana">Interaktív Tananyag – Minden jog fenntartva</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // State
+        const totalPages = 8;
+        let currentPage = 1;
+        let currentLang = 'hu';
+
+        const chapters = [
+            { hu: "Bevezetés az algoritmusok világába", sr: "Uvod u svet algoritama" },
+            { hu: "Szekvenciális algoritmusok", sr: "Sekvencijalni algoritmi" },
+            { hu: "Szelekciós algoritmusok", sr: "Selekcioni algoritmi" },
+            { hu: "Iteratív algoritmusok", sr: "Iterativni algoritmi" },
+            { hu: "Rekurzív algoritmusok", sr: "Rekurzivni algoritmi" },
+            { hu: "Algoritmusok összehasonlítása", sr: "Poređenje algoritama" },
+            { hu: "Gyakorlati alkalmazások", sr: "Praktične primene" },
+            { hu: "Összefoglalás és gyakorlás", sr: "Rezime i vežbanje" }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initNavigation();
+            updateNavigation();
+            applyLanguage(currentLang);
+        });
+
+        function initNavigation() {
+            const chapterList = document.getElementById('chapterList');
+            chapters.forEach((ch, index) => {
+                const li = document.createElement('li');
+                li.className = 'chapter-item';
+                const a = document.createElement('a');
+                a.href = '#';
+                a.className = 'chapter-link' + (index === 0 ? ' active' : '');
+                a.dataset.index = index;
+                a.innerHTML = `<span class="chapter-number">${index + 1}</span><span class="chapter-text">${ch.hu}</span>`;
+                a.addEventListener('click', (e) => { e.preventDefault(); goToPage(index + 1); });
+                li.appendChild(a);
+                chapterList.appendChild(li);
+            });
+
+            document.getElementById('prevBtn').addEventListener('click', () => goToPage(currentPage - 1));
+            document.getElementById('nextBtn').addEventListener('click', () => goToPage(currentPage + 1));
+        }
+
+        function goToPage(pageNum) {
+            if (pageNum < 1 || pageNum > totalPages) return;
+            document.querySelector(`#page${currentPage}`).classList.remove('active');
+            document.querySelectorAll('.chapter-link')[currentPage - 1].classList.remove('active');
+            currentPage = pageNum;
+            document.querySelector(`#page${currentPage}`).classList.add('active');
+            document.querySelectorAll('.chapter-link')[currentPage - 1].classList.add('active');
+            updateNavigation();
+            window.scrollTo({ top: 80, behavior: 'smooth' });
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+            document.getElementById('progressText').textContent = `${currentPage}/${totalPages}`;
+            document.getElementById('progressFill').style.width = `${(currentPage / totalPages) * 100}%`;
+        }
+
+        function toggleFlowchart(id) {
+            const el = document.getElementById(id);
+            const btn = el.parentElement.querySelector('.toggle-btn');
+            if (el.classList.contains('active')) {
+                el.classList.remove('active');
+                btn.innerHTML = '<i class="fas fa-eye"></i> ' + (currentLang === 'hu' ? 'Diagram megjelenítése' : 'Prikaži dijagram');
+            } else {
+                el.classList.add('active');
+                btn.innerHTML = '<i class="fas fa-eye-slash"></i> ' + (currentLang === 'hu' ? 'Diagram elrejtése' : 'Sakrij dijagram');
+            }
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            applyLanguage(lang);
+            // Update chapter list text
+            document.querySelectorAll('.chapter-link').forEach((link, index) => {
+                link.querySelector('.chapter-text').textContent = chapters[index][lang];
+            });
+        }
+
+        function applyLanguage(lang) {
+            document.querySelectorAll('[data-hu][data-sr]').forEach(el => {
+                if (el.tagName === 'TITLE') {
+                    document.title = el.dataset[lang];
+                    return;
+                }
+                // For elements with child elements that also have translations, only update direct text or specific structure
+                if (el.children.length === 0 || (el.children.length > 0 && el.childNodes[0].nodeType === 3 && el.childNodes[0].textContent.trim())) {
+                    el.textContent = el.dataset[lang];
+                } else {
+                    // More complex: update text nodes but preserve icons
+                    // Simple approach: if it has data attrs, set textContent only if no important children
+                    const hasIcons = el.querySelector('i, .bracket-decoration');
+                    if (!hasIcons) {
+                        el.textContent = el.dataset[lang];
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
