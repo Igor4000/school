@@ -75,15 +75,148 @@
             }
         }
 
+        /* ---- Új navigációs sáv (kisebb, színezett háttér) ---- */
+        .glass-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 2.5rem auto 3rem auto;
+            padding: 12px 20px;
+            max-width: 1000px;
+            background-color: rgba(220, 235, 250, 0.7); /* enyhén kékes színezett háttér */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(30, 64, 175, 0.08);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 30px;
+            padding: 10px 22px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+
+        .dropbtn i {
+            font-style: normal;
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .dropbtn:hover {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.12);
+            border-color: rgba(30, 64, 175, 0.4);
+            color: #0f172a;
+            transform: translateY(-1px);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(30, 64, 175, 0.08);
+            z-index: 100;
+            overflow: hidden;
+            padding: 6px 0;
+            animation: dropdownFade 0.25s ease-out;
+        }
+
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 12px 22px;
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(30, 64, 175, 0.07);
+            border-left: 3px solid #1e40af;
+            color: #1e40af;
+            padding-left: 26px;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        .dropdown.active .dropbtn i {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 768px) {
+            .glass-nav {
+                gap: 8px;
+                padding: 10px 14px;
+                border-radius: 36px;
+                margin: 2rem 1rem 2.5rem 1rem;
+            }
+            .dropbtn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                border-radius: 24px;
+            }
+            .dropdown-content {
+                min-width: 170px;
+                left: 0;
+                transform: translateX(0);
+            }
+            @keyframes dropdownFade {
+                from { opacity: 0; transform: translateY(-6px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        }
+
+        /* ---- Eredeti tartalom stílusai ---- */
         .intro-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 4rem 2rem;
+            padding: 2rem 2rem 4rem 2rem;
         }
 
         .page-title {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 0; /* eltávolítjuk az alsó margót, mert a nav kerül alá */
         }
 
         .main-title {
@@ -102,10 +235,9 @@
             font-weight: 300;
             opacity: 0.9;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto 0.5rem auto; /* kicsi alsó margó, hogy ne tapadjon a nav */
         }
 
-        /* Tartalom szekció */
         .content-section {
             display: flex;
             align-items: center;
@@ -153,12 +285,10 @@
             font-weight: 600;
         }
 
-        /* Második szekció (képpel jobb oldalon) */
         .content-section.reverse {
             flex-direction: row-reverse;
         }
 
-        /* Lábléc */
         .page-footer {
             text-align: center;
             margin-top: 5rem;
@@ -181,77 +311,37 @@
             display: none;
         }
 
-        /* Animációk */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .main-title {
-            animation: slideUp 1s ease-out;
-        }
+        .main-title { animation: slideUp 1s ease-out; }
+        .subtitle { animation: slideUp 1s ease-out 0.3s forwards; opacity: 0; }
+        .content-section { animation: fadeIn 1.5s ease-out 0.6s forwards; opacity: 0; }
 
-        .subtitle {
-            animation: slideUp 1s ease-out 0.3s forwards;
-            opacity: 0;
-        }
-
-        .content-section {
-            animation: fadeIn 1.5s ease-out 0.6s forwards;
-            opacity: 0;
-        }
-
-        /* Reszponzív */
         @media (max-width: 992px) {
-            .content-section {
-                flex-direction: column;
-                gap: 2rem;
-            }
-
-            .content-section.reverse {
-                flex-direction: column;
-            }
-
-            .main-title {
-                font-size: 3rem;
-            }
-
-            .subtitle {
-                font-size: 1.5rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .intro-image {
-                height: 350px;
-            }
+            .content-section { flex-direction: column; gap: 2rem; }
+            .content-section.reverse { flex-direction: column; }
+            .main-title { font-size: 3rem; }
+            .subtitle { font-size: 1.5rem; }
+            .section-title { font-size: 2rem; }
+            .intro-image { height: 350px; }
         }
 
         @media (max-width: 768px) {
-            .intro-container {
-                padding: 2rem 1rem;
-            }
-
-            .main-title {
-                font-size: 2.5rem;
-            }
+            .intro-container { padding: 2rem 1rem; }
+            .main-title { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body data-lang="hu">
+
     <!-- Nyelvváltó gombok -->
     <div class="lang-switch">
         <button class="lang-btn active" onclick="switchLang('hu')" id="btn-hu">🇭🇺 Magyar</button>
@@ -270,6 +360,75 @@
             </p>
         </div>
 
+        <!-- ===== NAVIGÁCIÓS SÁV KÖZVETLENÜL AZ ALCÍM ALATT ===== -->
+        <nav class="glass-nav" aria-label="Fő navigáció">
+            <!-- 1. Bevezetés és védelem -->
+            <div class="dropdown" id="dropdown1">
+                <button class="dropbtn" onclick="toggleDropdown('dropdown1')" aria-expanded="false">
+                    <span class="lang-hu">🛡️ Bevezetés és védelem</span>
+                    <span class="lang-sr">🛡️ Uvod i zaštita</span>
+                    <i>▼</i>
+                </button>
+                <div class="dropdown-content">
+                    <!-- IDE ÍRD BE A HTML FÁJL NEVÉT -->
+                    <a href="bevezetes_vedelem.html" class="lang-hu">📘 Bevezetés és védelem</a>
+                    <a href="bevezetes_vedelem.html" class="lang-sr">📘 Uvod i zaštita</a>
+                </div>
+            </div>
+
+            <!-- 2. Programozási alapismeretek -->
+            <div class="dropdown" id="dropdown2">
+                <button class="dropbtn" onclick="toggleDropdown('dropdown2')" aria-expanded="false">
+                    <span class="lang-hu">💻 Programozási alapismeretek</span>
+                    <span class="lang-sr">💻 Osnove programiranja</span>
+                    <i>▼</i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="programozasi_alapismeretek.html" class="lang-hu">📗 Programozási alapismeretek</a>
+                    <a href="programozasi_alapismeretek.html" class="lang-sr">📗 Osnove programiranja</a>
+                </div>
+            </div>
+
+            <!-- 3. Python programozás -->
+            <div class="dropdown" id="dropdown3">
+                <button class="dropbtn" onclick="toggleDropdown('dropdown3')" aria-expanded="false">
+                    <span class="lang-hu">🐍 Python programozás</span>
+                    <span class="lang-sr">🐍 Python programiranje</span>
+                    <i>▼</i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="python_programozas.html" class="lang-hu">📙 Python programozás</a>
+                    <a href="python_programozas.html" class="lang-sr">📙 Python programiranje</a>
+                </div>
+            </div>
+
+            <!-- 4. Excel -->
+            <div class="dropdown" id="dropdown4">
+                <button class="dropbtn" onclick="toggleDropdown('dropdown4')" aria-expanded="false">
+                    <span class="lang-hu">📊 Excel</span>
+                    <span class="lang-sr">📊 Excel</span>
+                    <i>▼</i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="excel.html" class="lang-hu">📓 Excel</a>
+                    <a href="excel.html" class="lang-sr">📓 Excel</a>
+                </div>
+            </div>
+
+            <!-- 5. Python Jupiter -->
+            <div class="dropdown" id="dropdown5">
+                <button class="dropbtn" onclick="toggleDropdown('dropdown5')" aria-expanded="false">
+                    <span class="lang-hu">⭐ Python Jupiter</span>
+                    <span class="lang-sr">⭐ Python Jupiter</span>
+                    <i>▼</i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="python_jupiter.html" class="lang-hu">📕 Python Jupiter</a>
+                    <a href="python_jupiter.html" class="lang-sr">📕 Python Jupiter</a>
+                </div>
+            </div>
+        </nav>
+
         <!-- Első szekció: szöveg balra, kép jobbra -->
         <div class="content-section">
             <div class="text-content">
@@ -278,37 +437,36 @@
                     <span class="lang-sr">Šta je informatika?</span>
                 </h2>
                 <p class="intro-text lang-hu">
-                    Az <span class="highlight">informatika</span> nem csupán a számítógépek használatát jelenti. 
-                    Ez egy modern tudományág, amely az <span class="highlight">információ</span> feldolgozásával, 
+                    Az <span class="highlight">informatika</span> nem csupán a számítógépek használatát jelenti.
+                    Ez egy modern tudományág, amely az <span class="highlight">információ</span> feldolgozásával,
                     tárolásával, továbbításával és alkalmazásával foglalkozik.
                 </p>
                 <p class="intro-text lang-sr">
-                    <span class="highlight">Informatika</span> nije samo korišćenje računara. 
-                    To je moderna naučna disciplina koja se bavi obradom, 
+                    <span class="highlight">Informatika</span> nije samo korišćenje računara.
+                    To je moderna naučna disciplina koja se bavi obradom,
                     skladištenjem, prenosom i primenom <span class="highlight">informacija</span>.
                 </p>
                 <p class="intro-text lang-hu">
-                    Mindennapi életünk szerves részévé vált: okostelefonjainktól az okotthonokig, 
+                    Mindennapi életünk szerves részévé vált: okostelefonjainktól az okotthonokig,
                     a közösségi médiától a mesterséges intelligenciáig mindenhol jelen van.
                 </p>
                 <p class="intro-text lang-sr">
-                    Postala je sastavni deo našeg svakodnevnog života: od pametnih telefona do pametnih domova, 
+                    Postala je sastavni deo našeg svakodnevnog života: od pametnih telefona do pametnih domova,
                     od društvenih medija do veštačke inteligencije, prisutna je svuda.
                 </p>
                 <p class="intro-text lang-hu">
-                    Az informatika legszebb része, hogy <span class="highlight">kreatív problémamegoldást</span> 
-                    és logikus gondolkodást ötvöz, lehetővé téve számunkra, hogy új digitális 
+                    Az informatika legszebb része, hogy <span class="highlight">kreatív problémamegoldást</span>
+                    és logikus gondolkodást ötvöz, lehetővé téve számunkra, hogy új digitális
                     világokat alkossunk.
                 </p>
                 <p class="intro-text lang-sr">
-                    Najlepši deo informatike je to što kombinuje <span class="highlight">kreativno rešavanje problema</span> 
+                    Najlepši deo informatike je to što kombinuje <span class="highlight">kreativno rešavanje problema</span>
                     i logičko razmišljanje, omogućavajući nam da stvaramo nove digitalne svetove.
                 </p>
             </div>
             <div class="image-content">
-                <!-- SAJÁT KÉP IDE: cseréld le a src értékét -->
-                <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1400&q=80" 
-                     alt="Informatika és technológia" 
+                <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1400&q=80"
+                     alt="Informatika és technológia"
                      class="intro-image">
             </div>
         </div>
@@ -316,9 +474,8 @@
         <!-- Második szekció: kép balra, szöveg jobbra -->
         <div class="content-section reverse">
             <div class="image-content">
-                <!-- SAJÁT KÉP IDE: cseréld le a src értékét -->
-                <img src="https://images.unsplash.com/photo-1555255707-c07966088b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-                     alt="Kódolás és programozás" 
+                <img src="https://images.unsplash.com/photo-1555255707-c07966088b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                     alt="Kódolás és programozás"
                      class="intro-image">
             </div>
             <div class="text-content">
@@ -327,27 +484,27 @@
                     <span class="lang-sr">Jezik budućnosti</span>
                 </h2>
                 <p class="intro-text lang-hu">
-                    Ahogy az olvasás és írás alapvető készség, úgy válik az <span class="highlight">alapvető digitális műveltség</span> 
+                    Ahogy az olvasás és írás alapvető készség, úgy válik az <span class="highlight">alapvető digitális műveltség</span>
                     is a 21. században. Az informatika megértése nem csak szakembereknek fontos.
                 </p>
                 <p class="intro-text lang-sr">
-                    Kao što su čitanje i pisanje osnovne veštine, tako i <span class="highlight">osnovna digitalna pismenost</span> 
+                    Kao što su čitanje i pisanje osnovne veštine, tako i <span class="highlight">osnovna digitalna pismenost</span>
                     postaje neophodna u 21. veku. Razumevanje informatike nije važno samo za stručnjake.
                 </p>
                 <p class="intro-text lang-hu">
-                    A <span class="highlight">programozás</span> olyan, mint egy új nyelv megtanulása: 
+                    A <span class="highlight">programozás</span> olyan, mint egy új nyelv megtanulása:
                     lehetővé teszi, hogy kommunikálj a gépekkel, és utasításokat adj nekik.
                 </p>
                 <p class="intro-text lang-sr">
-                    <span class="highlight">Programiranje</span> je poput učenja novog jezika: 
+                    <span class="highlight">Programiranje</span> je poput učenja novog jezika:
                     omogućava ti da komuniciraš sa mašinama i daješ im instrukcije.
                 </p>
                 <p class="intro-text lang-hu">
-                    Ez a készség nemcsak technikai karrierhez vezet, hanem fejleszti a <span class="highlight">kritikus gondolkodást</span>, 
+                    Ez a készség nemcsak technikai karrierhez vezet, hanem fejleszti a <span class="highlight">kritikus gondolkodást</span>,
                     a problémamegoldó képességet és a kreativitást is.
                 </p>
                 <p class="intro-text lang-sr">
-                    Ova veština ne vodi samo ka tehničkoj karijeri, već razvija <span class="highlight">kritičko razmišljanje</span>, 
+                    Ova veština ne vodi samo ka tehničkoj karijeri, već razvija <span class="highlight">kritičko razmišljanje</span>,
                     sposobnost rešavanja problema i kreativnost.
                 </p>
             </div>
@@ -361,22 +518,41 @@
 
     <script>
         function switchLang(lang) {
-            // Body data-lang attribútum frissítése
             document.body.setAttribute('data-lang', lang);
-            
-            // Gombok aktív státuszának frissítése
             document.getElementById('btn-hu').classList.toggle('active', lang === 'hu');
             document.getElementById('btn-sr').classList.toggle('active', lang === 'sr');
-            
-            // Opcionális: nyelv mentése localStorage-ba
             localStorage.setItem('preferredLang', lang);
         }
-        
-        // Oldal betöltésekor ellenőrizzük a mentett nyelvet
+
         document.addEventListener('DOMContentLoaded', function() {
             const savedLang = localStorage.getItem('preferredLang');
             if (savedLang && (savedLang === 'hu' || savedLang === 'sr')) {
                 switchLang(savedLang);
+            }
+        });
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const isActive = dropdown.classList.contains('active');
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+            document.querySelectorAll('.dropbtn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+            if (!isActive) {
+                dropdown.classList.add('active');
+                dropdown.querySelector('.dropbtn').setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+                document.querySelectorAll('.dropbtn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+                document.querySelectorAll('.dropbtn').forEach(b => b.setAttribute('aria-expanded', 'false'));
             }
         });
     </script>
