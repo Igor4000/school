@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="description" content="Programozás alapjai - Oktatási anyag diákoknak két nyelven (magyar-szerb)">
+  <title>Programozás Alapjai 📚 Osnove Programiranja</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #f0f4f8; --surface: #ffffff; --primary: #2563eb; --primary-dark: #1d4ed8;
+      --accent: #f59e0b; --text: #0f172a; --text-light: #475569; --border: #e2e8f0;
+      --radius-xl: 1.8rem; --radius-lg: 1.2rem; --radius-md: 0.9rem;
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.03); --shadow-md: 0 12px 28px rgba(0,0,0,0.06);
+      --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    }
+    body {
+      background: var(--bg); color: var(--text); font-family: var(--font-sans);
+      line-height: 1.7; padding: 1.5rem; max-width: 1400px; margin: 0 auto;
+    }
+    /* Modern nyelvváltó gomb */
+    .lang-pill {
+      position: fixed; top: 1.8rem; right: 2rem; z-index: 1200;
+      background: rgba(15,23,42,0.92); backdrop-filter: blur(16px);
+      padding: 0.35rem; border-radius: 4rem; display: flex; gap: 0.2rem;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.18);
+    }
+    .lang-option {
+      border: none; background: transparent; font-weight: 650; font-size: 0.9rem;
+      padding: 0.65rem 1.5rem; border-radius: 3rem; cursor: pointer;
+      color: #cbd5e1; transition: all 0.25s; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .lang-option.active { background: white; color: #0f172a; box-shadow: 0 8px 20px rgba(255,255,255,0.3); font-weight: 700; }
+    .lang-option i { font-size: 0.85rem; }
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white; padding: 2.2rem 2rem; border-radius: var(--radius-xl);
+      margin-bottom: 2rem; text-align: center;
+    }
+    header h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 750; }
+    header p { opacity: 0.85; margin-top: 0.4rem; font-size: 1.1rem; }
+
+    .page {
+      background: var(--surface); border-radius: var(--radius-lg);
+      padding: 2.2rem 2.2rem 2.5rem; margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+    }
+    .page-header {
+      display: flex; align-items: center; gap: 0.8rem;
+      border-bottom: 2px solid #e0e7ff; padding-bottom: 0.9rem; margin-bottom: 1.8rem;
+    }
+    .page-header i { font-size: 2rem; color: var(--primary); }
+    h2 { font-size: 1.9rem; font-weight: 680; }
+    h3 { margin: 2rem 0 1rem; color: var(--primary); font-size: 1.45rem; font-weight: 650; }
+    h4 { margin: 1.4rem 0 0.6rem; font-size: 1.2rem; color: #1e293b; }
+
+    .card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.4rem; margin: 1.5rem 0;
+    }
+    .card {
+      background: white; border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: 1.5rem; transition: 0.25s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px rgba(0,0,0,0.07); border-color: var(--primary); }
+    .card-title { font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+
+    .code-block {
+      background: #0f172a; color: #e2e8f0; border-radius: 0.8rem; padding: 1.2rem;
+      font-family: var(--font-mono); font-size: 0.88rem; overflow-x: auto;
+      white-space: pre-wrap; margin: 1.2rem 0; line-height: 1.6;
+    }
+    .code-keyword { color: #c084fc; font-weight: 600; }
+    .code-function { color: #60a5fa; font-weight: 600; }
+    .code-string { color: #fbbf24; }
+    .code-comment { color: #94a3b8; font-style: italic; }
+
+    .info-box {
+      background: #f8fafc; border-left: 5px solid var(--primary);
+      padding: 1.2rem 1.5rem; border-radius: 0.8rem; margin: 1.5rem 0;
+    }
+    .warning-box {
+      background: #fffbeb; border-left: 5px solid var(--accent);
+      padding: 1rem 1.3rem; border-radius: 0.8rem; margin: 1.5rem 0;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 1.4rem 0; font-size: 0.92rem; }
+    th { background: #f1f5f9; font-weight: 650; padding: 0.8rem; text-align: left; }
+    td, th { border-bottom: 1px solid var(--border); padding: 0.75rem; }
+    tr:hover td { background: #f8fafc; }
+
+    .diagram { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1.8rem; margin: 2rem 0; }
+    .box-front, .box-back { padding: 1.5rem 2rem; border-radius: 1rem; color: white; text-align: center; font-weight: 600; }
+    .box-front { background: #2563eb; } .box-back { background: #0f172a; }
+
+    .hidden { display: none !important; }
+    footer { margin-top: 2.8rem; text-align: center; color: #64748b; padding: 1rem; }
+
+    @media (max-width: 700px) {
+      body { padding: 0.7rem; } .page { padding: 1.4rem; }
+      .lang-pill { top: 0.9rem; right: 1rem; }
+      .lang-option { padding: 0.5rem 1rem; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NYELVVÁLTÓ -->
+  <div class="lang-pill">
+    <button class="lang-option active" data-lang="hu"><i class="fas fa-language"></i> HU</button>
+    <button class="lang-option" data-lang="sr"><i class="fas fa-globe"></i> SR</button>
+  </div>
+
+  <header>
+    <h1 class="lang hu">📘 Programozás Alapjai</h1>
+    <h1 class="lang sr hidden">📘 Osnove Programiranja</h1>
+    <p class="lang hu">Teljes körű oktatási anyag diákoknak · változók, ciklusok, OOP, adatbázisok, tesztelés</p>
+    <p class="lang sr hidden">Kompletan obrazovni materijal za učenike · promenljive, petlje, OOP, baze, testiranje</p>
+  </header>
+
+  <!-- ========= 1. BEVEZETÉS, VÁLTOZÓK, TÍPUSOK ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-cube"></i><h2 class="lang hu">1. Alapfogalmak, változók, típusok</h2><h2 class="lang sr hidden">1. Osnovni pojmovi, promenljive, tipovi</h2></div>
+    <p class="lang hu">A programozás során az adatokat <strong>változókban</strong> tároljuk. Minden változónak van típusa, amely meghatározza, milyen értékeket vehet fel és milyen műveletek végezhetők vele.</p>
+    <p class="lang sr hidden">U programiranju podatke čuvamo u <strong>promenljivama</strong>. Svaka promenljiva ima tip koji određuje koje vrednosti može da primi i koje operacije su dozvoljene.</p>
+
+    <div class="card-grid">
+      <div class="card"><span class="card-title"><i class="fas fa-hashtag"></i> <span class="lang hu">Egész szám (int)</span><span class="lang sr hidden">Ceo broj (int)</span></span><p class="lang hu">Pl: 42, -7, 0, 2024</p><p class="lang sr hidden">Npr: 42, -7, 0, 2024</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-percent"></i> <span class="lang hu">Lebegőpontos (float)</span><span class="lang sr hidden">Decimalni (float)</span></span><p class="lang hu">Pl: 3.14, -0.5, 2.0</p><p class="lang sr hidden">Npr: 3.14, -0.5, 2.0</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-font"></i> <span class="lang hu">String (szöveg)</span><span class="lang sr hidden">String (tekst)</span></span><p class="lang hu">"Hello", 'A', "👍"</p><p class="lang sr hidden">"Zdravo", 'A', "👍"</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-check-circle"></i> <span class="lang hu">Boolean (logikai)</span><span class="lang sr hidden">Boolean (logički)</span></span><p class="lang hu">true / false</p><p class="lang sr hidden">tačno / netačno</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-list"></i> <span class="lang hu">Tömb / Lista</span><span class="lang sr hidden">Niz / Lista</span></span><p class="lang hu">[1, 2, 3], ["a","b"]</p><p class="lang sr hidden">[1, 2, 3], ["a","b"]</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-key"></i> <span class="lang hu">Objektum / Dict</span><span class="lang sr hidden">Objekat / Rečnik</span></span><p class="lang hu">{"név": "Anna", "kor": 20}</p><p class="lang sr hidden">{"ime": "Ana", "godine": 20}</p></div>
+    </div>
+
+    <div class="code-block">
+<span class="code-comment"># Python: változók deklarálása</span>
+<span class="code-keyword">nev</span> = <span class="code-string">"Péter"</span>        <span class="code-comment"># string</span>
+<span class="code-keyword">kor</span> = 16              <span class="code-comment"># int</span>
+<span class="code-keyword">atlag</span> = 4.35         <span class="code-comment"># float</span>
+<span class="code-keyword">aktiv</span> = <span class="code-keyword">True</span>        <span class="code-comment"># bool</span>
+<span class="code-keyword">jegyek</span> = [5, 4, 3, 5] <span class="code-comment"># lista</span>
+    </div>
+  </div>
+
+  <!-- ========= 2. OPERÁTOROK, KIFEJEZÉSEK ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-calculator"></i><h2 class="lang hu">2. Operátorok és kifejezések</h2><h2 class="lang sr hidden">2. Operatori i izrazi</h2></div>
+    <p class="lang hu">Az operátorok segítségével műveleteket végzünk az adatokon. Lehetnek aritmetikai, összehasonlító és logikai operátorok.</p>
+    <p class="lang sr hidden">Pomoću operatora vršimo operacije nad podacima. Mogu biti aritmetički, relacijski i logički.</p>
+
+    <table>
+      <tr><th class="lang hu">Típus</th><th class="lang sr hidden">Tip</th><th class="lang hu">Operátorok</th><th class="lang sr hidden">Operatori</th><th class="lang hu">Példa</th><th class="lang sr hidden">Primer</th></tr>
+      <tr><td class="lang hu">Aritmetikai</td><td class="lang sr hidden">Aritmetički</td><td>+, -, *, /, %, **</td><td>+, -, *, /, %, **</td><td>5 + 3 = 8, 10 % 3 = 1</td></tr>
+      <tr><td class="lang hu">Összehasonlító</td><td class="lang sr hidden">Relacijski</td><td>==, !=, <, >, <=, >=</td><td>==, !=, <, >, <=, >=</td><td>5 > 3 → true</td></tr>
+      <tr><td class="lang hu">Logikai</td><td class="lang sr hidden">Logički</td><td>&& (and), || (or), ! (not)</td><td>&& (i), || (ili), ! (ne)</td><td>(5>3) && (2<4) → true</td></tr>
+    </table>
+
+    <div class="code-block">
+<span class="code-comment">// JavaScript példa</span>
+<span class="code-keyword">let</span> a = 10, b = 3;
+console.log(a + b);  <span class="code-comment">// 13</span>
+console.log(a % b);  <span class="code-comment">// 1 (maradék)</span>
+console.log(a > b);  <span class="code-comment">// true</span>
+console.log(a > 5 <span class="code-keyword">&&</span> b < 5); <span class="code-comment">// true</span>
+    </div>
+  </div>
+
+  <!-- ========= 3. ELÁGAZÁSOK, FELTÉTELEK ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-code-branch"></i><h2 class="lang hu">3. Elágazások és feltételek</h2><h2 class="lang sr hidden">3. Grananja i uslovi</h2></div>
+    <p class="lang hu">A programok döntéseket hoznak feltételek alapján. Erre szolgálnak az <code>if</code>, <code>else if</code>, <code>else</code> és <code>switch</code> szerkezetek.</p>
+    <p class="lang sr hidden">Programi donose odluke na osnovu uslova. Za to služe <code>if</code>, <code>else if</code>, <code>else</code> i <code>switch</code> strukture.</p>
+
+    <div class="code-block">
+<span class="code-keyword">if</span> (pontszam >= 90) {
+    console.log(<span class="code-string">"Jeles / Odličan"</span>);
+} <span class="code-keyword">else if</span> (pontszam >= 70) {
+    console.log(<span class="code-string">"Jó / Dobar"</span>);
+} <span class="code-keyword">else</span> {
+    console.log(<span class="code-string">"Próbáld újra / Pokušaj ponovo"</span>);
+}
+    </div>
+  </div>
+
+  <!-- ========= 4. CIKLUSOK RÉSZLETESEN ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-redo-alt"></i><h2 class="lang hu">4. Ciklusok (ismétlések)</h2><h2 class="lang sr hidden">4. Petlje (ponavljanja)</h2></div>
+    <div class="card-grid">
+      <div class="card"><span class="card-title"><i class="fas fa-forward"></i> <span class="lang hu">for ciklus</span><span class="lang sr hidden">for petlja</span></span><p class="lang hu">Adott számú ismétléshez. Ismerjük az elemszámot.</p><p class="lang sr hidden">Za poznat broj ponavljanja.</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-spinner"></i> <span class="lang hu">while ciklus</span><span class="lang sr hidden">while petlja</span></span><p class="lang hu">Amíg a feltétel igaz. Előltesztelős.</p><p class="lang sr hidden">Dok je uslov tačan. Predtestna petlja.</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-step-forward"></i> <span class="lang hu">do-while</span><span class="lang sr hidden">do-while</span></span><p class="lang hu">Legalább egyszer lefut. Hátultesztelős.</p><p class="lang sr hidden">Bar jednom se izvrši. Posttestna petlja.</p></div>
+      <div class="card"><span class="card-title"><i class="fas fa-hand-paper"></i> <span class="lang hu">break / continue</span><span class="lang sr hidden">break / continue</span></span><p class="lang hu">Kilépés vagy ugrás a következő iterációra.</p><p class="lang sr hidden">Izlazak ili preskakanje iteracije.</p></div>
+    </div>
+    <div class="code-block">
+<span class="code-comment"># Python: for és while</span>
+<span class="code-keyword">for</span> i <span class="code-keyword">in</span> range(5):
+    print(i)  <span class="code-comment"># 0,1,2,3,4</span>
+
+x = 0
+<span class="code-keyword">while</span> x < 5:
+    print(x)
+    x += 1
+    </div>
+  </div>
+
+  <!-- ========= 5. FÜGGVÉNYEK, REKURZIÓ ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-puzzle-piece"></i><h2 class="lang hu">5. Függvények és rekurzió</h2><h2 class="lang sr hidden">5. Funkcije i rekurzija</h2></div>
+    <p class="lang hu">A függvények újrafelhasználható kódblokkok. Paramétereket fogadhatnak és visszatérési értéket adhatnak. A rekurzió azt jelenti, hogy egy függvény önmagát hívja.</p>
+    <p class="lang sr hidden">Funkcije su blokovi koda koji se mogu ponovo koristiti. Mogu primati parametre i vraćati vrednost. Rekurzija znači da funkcija poziva samu sebe.</p>
+    <div class="code-block">
+<span class="code-comment">-- Haskell (funkcionális stílus) --</span>
+<span class="code-function">factorial</span> 0 = 1
+<span class="code-function">factorial</span> n = n * <span class="code-function">factorial</span> (n - 1)
+    </div>
+    <div class="info-box">
+      <p class="lang hu"><strong>✨ Tipp:</strong> A rekurziónak mindig kell egy alapeset (bázis eset), különben végtelen ciklusba kerül.</p>
+      <p class="lang sr hidden"><strong>✨ Savet:</strong> Rekurzija uvek mora imati bazni slučaj, inače dolazi do beskonačne petlje.</p>
+    </div>
+  </div>
+
+  <!-- ========= 6. ADATSZERKEZETEK MÉLYEBBEN ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-database"></i><h2 class="lang hu">6. Adatszerkezetek részletesen</h2><h2 class="lang sr hidden">6. Strukture podataka detaljno</h2></div>
+    <table>
+      <tr><th class="lang hu">Struktúra</th><th class="lang sr hidden">Struktura</th><th class="lang hu">Működés</th><th class="lang sr hidden">Princip</th><th class="lang hu">Példa</th><th class="lang sr hidden">Primer</th></tr>
+      <tr><td class="lang hu">Tömb</td><td class="lang sr hidden">Niz</td><td class="lang hu">Fix méret, indexelt</td><td class="lang sr hidden">Fiksna veličina</td><td>int[5]</td></tr>
+      <tr><td class="lang hu">Lista</td><td class="lang sr hidden">Lista</td><td class="lang hu">Dinamikus méret</td><td class="lang sr hidden">Dinamička</td><td>ArrayList</td></tr>
+      <tr><td class="lang hu">Verem</td><td class="lang sr hidden">Stek</td><td class="lang hu">LIFO</td><td class="lang sr hidden">LIFO</td><td class="lang hu">Visszavonás</td><td class="lang sr hidden">Undo</td></tr>
+      <tr><td class="lang hu">Sor</td><td class="lang sr hidden">Red</td><td class="lang hu">FIFO</td><td class="lang sr hidden">FIFO</td><td class="lang hu">Nyomtatás</td><td class="lang sr hidden">Štampa</td></tr>
+      <tr><td class="lang hu">Halmaz</td><td class="lang sr hidden">Skup</td><td class="lang hu">Egyedi elemek</td><td class="lang sr hidden">Jedinstveni elementi</td><td>{1,2,3}</td></tr>
+      <tr><td class="lang hu">Szótár</td><td class="lang sr hidden">Rečnik</td><td class="lang hu">Kulcs-érték párok</td><td class="lang sr hidden">Ključ-vrednost</td><td>{"a":1}</td></tr>
+    </table>
+  </div>
+
+  <!-- ========= 7. OOP RÉSZLETESEN ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-boxes"></i><h2 class="lang hu">7. Objektumorientált programozás (OOP)</h2><h2 class="lang sr hidden">7. Objektno orijentisano programiranje</h2></div>
+    <div class="card-grid">
+      <div class="card"><span class="card-title">🔒 <span class="lang hu">Egységbezárás</span><span class="lang sr hidden">Enkapsulacija</span></span><p class="lang hu">Adatok és metódusok egy egységbe zárása.</p><p class="lang sr hidden">Podaci i metode u jednoj celini.</p></div>
+      <div class="card"><span class="card-title">🧬 <span class="lang hu">Öröklődés</span><span class="lang sr hidden">Nasleđivanje</span></span><p class="lang hu">Osztályok közötti hierarchia, kódújrafelhasználás.</p><p class="lang sr hidden">Hijerarhija klasa, ponovno korišćenje koda.</p></div>
+      <div class="card"><span class="card-title">🎭 <span class="lang hu">Polimorfizmus</span><span class="lang sr hidden">Polimorfizam</span></span><p class="lang hu">Többalakúság – azonos interfész, eltérő viselkedés.</p><p class="lang sr hidden">Isti interfejs, različito ponašanje.</p></div>
+      <div class="card"><span class="card-title">🧩 <span class="lang hu">Absztrakció</span><span class="lang sr hidden">Apstrakcija</span></span><p class="lang hu">Lényeges tulajdonságok kiemelése.</p><p class="lang sr hidden">Izdvajanje bitnih karakteristika.</p></div>
+    </div>
+    <div class="code-block">
+<span class="code-keyword">class</span> <span class="code-function">Animal</span>:
+    <span class="code-keyword">def</span> <span class="code-function">speak</span>(self): <span class="code-keyword">pass</span>
+
+<span class="code-keyword">class</span> <span class="code-function">Dog</span>(<span class="code-function">Animal</span>):
+    <span class="code-keyword">def</span> <span class="code-function">speak</span>(self): <span class="code-keyword">return</span> <span class="code-string">"Woof! / Av!"</span>
+    </div>
+  </div>
+
+  <!-- ========= 8. KIVÉTELKEZELÉS, FÁJLKEZELÉS ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-shield-alt"></i><h2 class="lang hu">8. Kivételkezelés és fájlkezelés</h2><h2 class="lang sr hidden">8. Obrada izuzetaka i rad sa fajlovima</h2></div>
+    <p class="lang hu">A programok futás közben hibákba ütközhetnek. A <strong>try-catch</strong> blokkok segítségével kezelhetjük ezeket. A fájlok olvasása/írása alapvető művelet.</p>
+    <p class="lang sr hidden">Programi mogu naići na greške tokom izvršavanja. <strong>try-catch</strong> blokovi služe za njihovu obradu. Čitanje i pisanje fajlova su osnovne operacije.</p>
+    <div class="code-block">
+<span class="code-comment"># Python: kivételkezelés és fájl írás</span>
+<span class="code-keyword">try</span>:
+    <span class="code-keyword">with</span> <span class="code-function">open</span>(<span class="code-string">"diakok.txt"</span>, <span class="code-string">"w"</span>) <span class="code-keyword">as</span> f:
+        f.write(<span class="code-string">"Név, Jegy\n"</span>)
+<span class="code-keyword">except</span> IOError:
+    print(<span class="code-string">"Hiba a fájl írásakor / Greška pri pisanju"</span>)
+    </div>
+  </div>
+
+  <!-- ========= 9. ALGORITMUSOK, BIG O ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-chart-line"></i><h2 class="lang hu">9. Algoritmusok hatékonysága (Big O)</h2><h2 class="lang sr hidden">9. Efikasnost algoritama (Big O)</h2></div>
+    <p class="lang hu">Az algoritmusok hatékonyságát idő- és tárbonyolultsággal mérjük. A Big O jelölés a legrosszabb esetet írja le.</p>
+    <p class="lang sr hidden">Efikasnost algoritama merimo vremenskom i prostornom složenošću. Big O notacija opisuje najgori slučaj.</p>
+    <table>
+      <tr><th>Big O</th><th class="lang hu">Név</th><th class="lang sr hidden">Naziv</th><th class="lang hu">Példa</th><th class="lang sr hidden">Primer</th></tr>
+      <tr><td>O(1)</td><td class="lang hu">Konstans</td><td class="lang sr hidden">Konstantan</td><td class="lang hu">Tömb elem elérése</td><td class="lang sr hidden">Pristup elementu niza</td></tr>
+      <tr><td>O(log n)</td><td class="lang hu">Logaritmikus</td><td class="lang sr hidden">Logaritamski</td><td class="lang hu">Bináris keresés</td><td class="lang sr hidden">Binarna pretraga</td></tr>
+      <tr><td>O(n)</td><td class="lang hu">Lineáris</td><td class="lang sr hidden">Linearan</td><td class="lang hu">Maximum keresés</td><td class="lang sr hidden">Pronalazak maksimuma</td></tr>
+      <tr><td>O(n²)</td><td class="lang hu">Négyzetes</td><td class="lang sr hidden">Kvadratni</td><td class="lang hu">Buborékrendezés</td><td class="lang sr hidden">Bubble sort</td></tr>
+    </table>
+  </div>
+
+  <!-- ========= 10. ADATBÁZISOK, SQL ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-table"></i><h2 class="lang hu">10. Adatbázisok és SQL alapok</h2><h2 class="lang sr hidden">10. Baze podataka i SQL osnove</h2></div>
+    <p class="lang hu">Az adatbázisok strukturált adattárolást tesznek lehetővé. Az SQL nyelvvel lekérdezhetjük, módosíthatjuk az adatokat.</p>
+    <p class="lang sr hidden">Baze podataka omogućavaju strukturirano skladištenje podataka. SQL jezikom ih pretražujemo i menjamo.</p>
+    <div class="code-block">
+<span class="code-comment">-- SQL alap parancsok</span>
+<span class="code-keyword">SELECT</span> nev, jegy <span class="code-keyword">FROM</span> diakok <span class="code-keyword">WHERE</span> jegy >= 3;
+<span class="code-keyword">INSERT INTO</span> diakok (nev, jegy) <span class="code-keyword">VALUES</span> (<span class="code-string">'Krisztina'</span>, 5);
+<span class="code-keyword">UPDATE</span> diakok <span class="code-keyword">SET</span> jegy = 4 <span class="code-keyword">WHERE</span> nev = <span class="code-string">'Péter'</span>;
+    </div>
+  </div>
+
+  <!-- ========= 11. API, HTTP, KLIENS-SZERVER ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-cloud"></i><h2 class="lang hu">11. API-k és HTTP kommunikáció</h2><h2 class="lang sr hidden">11. API i HTTP komunikacija</h2></div>
+    <p class="lang hu">Az API-k lehetővé teszik, hogy különböző rendszerek kommunikáljanak egymással. A HTTP protokoll a web alapja (GET, POST, PUT, DELETE).</p>
+    <p class="lang sr hidden">API-ji omogućavaju komunikaciju između različitih sistema. HTTP protokol je osnova veba.</p>
+    <div class="diagram">
+      <div class="box-front"><i class="fas fa-mobile-alt"></i> Kliens</div>
+      <i class="fas fa-arrow-right fa-2x"></i>
+      <div class="box-back"><i class="fas fa-server"></i> API / Szerver</div>
+    </div>
+    <div class="code-block">
+<span class="code-comment">// JavaScript: fetch API hívás</span>
+<span class="code-function">fetch</span>(<span class="code-string">'https://api.example.com/users'</span>)
+  .then(res => res.json())
+  .then(data => console.log(data));
+    </div>
+  </div>
+
+  <!-- ========= 12. TESZTELÉS, DEBUGGOLÁS ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-bug"></i><h2 class="lang hu">12. Tesztelés és hibakeresés</h2><h2 class="lang sr hidden">12. Testiranje i otklanjanje grešaka</h2></div>
+    <p class="lang hu">A tesztelés biztosítja, hogy a kód helyesen működik. Az egységtesztek (unit test) az apró részeket ellenőrzik. A debuggolás a hibák megtalálásának folyamata.</p>
+    <p class="lang sr hidden">Testiranje osigurava da kod radi ispravno. Jedinični testovi proveravaju male delove. Debuggovanje je proces pronalaženja grešaka.</p>
+    <div class="info-box">
+      <p class="lang hu"><strong>🛠️ Eszközök:</strong> JUnit (Java), pytest (Python), Jest (JS), Chrome DevTools.</p>
+      <p class="lang sr hidden"><strong>🛠️ Alati:</strong> JUnit (Java), pytest (Python), Jest (JS), Chrome DevTools.</p>
+    </div>
+  </div>
+
+  <!-- ========= 13. VERZIÓKEZELÉS (GIT) ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fab fa-git-alt"></i><h2 class="lang hu">13. Verziókezelés Git-tel</h2><h2 class="lang sr hidden">13. Verzionisanje pomoću Git-a</h2></div>
+    <p class="lang hu">A Git követi a fájlok változásait. A GitHub/GitLab platformokon tárolhatjuk és megoszthatjuk a kódot.</p>
+    <p class="lang sr hidden">Git prati promene u fajlovima. Na GitHub/GitLab platformama čuvamo i delimo kod.</p>
+    <div class="code-block">
+<span class="code-comment"># Alap Git parancsok</span>
+git clone &lt;repo_url&gt;
+git pull
+git add .
+git commit -m <span class="code-string">"Üzenet / Poruka"</span>
+git push
+    </div>
+  </div>
+
+  <!-- ========= 14. SZOFTVERFEJLESZTÉSI ÉLETCIKLUS ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-sync-alt"></i><h2 class="lang hu">14. Szoftverfejlesztési életciklus (SDLC)</h2><h2 class="lang sr hidden">14. Životni ciklus razvoja softvera</h2></div>
+    <ol>
+      <li class="lang hu"><strong>Követelményelemzés</strong> – Mit kell tudnia a szoftvernek?</li>
+      <li class="lang sr hidden"><strong>Analiza zahteva</strong> – Šta softver treba da radi?</li>
+      <li class="lang hu"><strong>Tervezés</strong> – Architektúra, adatbázis terv</li>
+      <li class="lang sr hidden"><strong>Dizajn</strong> – Arhitektura, plan baze</li>
+      <li class="lang hu"><strong>Implementálás</strong> – Kódolás</li>
+      <li class="lang sr hidden"><strong>Implementacija</strong> – Kodiranje</li>
+      <li class="lang hu"><strong>Tesztelés</strong> – Hibakeresés, minőségbiztosítás</li>
+      <li class="lang sr hidden"><strong>Testiranje</strong> – Pronalaženje grešaka</li>
+      <li class="lang hu"><strong>Telepítés</strong> – Éles környezetbe helyezés</li>
+      <li class="lang sr hidden"><strong>Isporuka</strong> – Postavljanje u produkciju</li>
+      <li class="lang hu"><strong>Karbantartás</strong> – Frissítések, javítások</li>
+      <li class="lang sr hidden"><strong>Održavanje</strong> – Ažuriranja, ispravke</li>
+    </ol>
+  </div>
+
+  <!-- ========= 15. TERVEZÉSI MINTÁK, CLEAN CODE ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-paint-brush"></i><h2 class="lang hu">15. Tiszta kód és tervezési minták</h2><h2 class="lang sr hidden">15. Čist kod i dizajn obrasci</h2></div>
+    <p class="lang hu">A tiszta kód olvasható, karbantartható. A tervezési minták (pl. Singleton, Factory) bevált megoldások gyakori problémákra.</p>
+    <p class="lang sr hidden">Čist kod je čitljiv i održiv. Dizajn obrasci (npr. Singleton, Factory) su proverena rešenja za česte probleme.</p>
+    <div class="warning-box">
+      <p class="lang hu">⚠️ <strong>Kerüld:</strong> varázsszámok, túl hosszú függvények, ismétlődő kód (copy-paste).</p>
+      <p class="lang sr hidden">⚠️ <strong>Izbegavaj:</strong> magične brojeve, preduge funkcije, ponavljanje koda.</p>
+    </div>
+  </div>
+
+  <!-- ========= 16. ÖSSZEFOGLALÁS, TANULÁSI ÚT ========= -->
+  <div class="page">
+    <div class="page-header"><i class="fas fa-graduation-cap"></i><h2 class="lang hu">16. Tanulási útmutató és összegzés</h2><h2 class="lang sr hidden">16. Vodič za učenje i sažetak</h2></div>
+    <div class="card-grid">
+      <div class="card"><span class="card-title">1️⃣ <span class="lang hu">Válassz nyelvet</span><span class="lang sr hidden">Izaberi jezik</span></span><p class="lang hu">Python vagy JavaScript kezdőknek ideális.</p><p class="lang sr hidden">Python ili JavaScript su idealni za početak.</p></div>
+      <div class="card"><span class="card-title">2️⃣ <span class="lang hu">Alapok</span><span class="lang sr hidden">Osnove</span></span><p class="lang hu">Változók, ciklusok, függvények.</p><p class="lang sr hidden">Promenljive, petlje, funkcije.</p></div>
+      <div class="card"><span class="card-title">3️⃣ <span class="lang hu">Adatszerkezetek</span><span class="lang sr hidden">Strukture</span></span><p class="lang hu">Lista, verem, sor, fa, gráf.</p><p class="lang sr hidden">Lista, stek, red, stablo, graf.</p></div>
+      <div class="card"><span class="card-title">4️⃣ <span class="lang hu">Projektek</span><span class="lang sr hidden">Projekti</span></span><p class="lang hu">Építs kis alkalmazásokat! Pl: számológép, TODO lista.</p><p class="lang sr hidden">Pravi male aplikacije! Npr: kalkulator, TODO lista.</p></div>
+      <div class="card"><span class="card-title">5️⃣ <span class="lang hu">Verziókezelés</span><span class="lang sr hidden">Verzionisanje</span></span><p class="lang hu">Tanuld meg a Git alapjait.</p><p class="lang sr hidden">Nauči osnove Git-a.</p></div>
+      <div class="card"><span class="card-title">6️⃣ <span class="lang hu">Csapatmunka</span><span class="lang sr hidden">Timski rad</span></span><p class="lang hu">Nyílt forráskódú projektekben való részvétel.</p><p class="lang sr hidden">Učestvuj u open-source projektima.</p></div>
+    </div>
+    <div class="info-box" style="text-align: center; font-size: 1.1rem;">
+      <p class="lang hu">🚀 <strong>Minden nagy programozó egyszer kezdő volt. A kitartás a kulcs!</strong></p>
+      <p class="lang sr hidden">🚀 <strong>Svaki veliki programer je nekad bio početnik. Upornost je ključ!</strong></p>
+    </div>
+  </div>
+
+  <footer>
+    <p class="lang hu">📚 Programozás Alapjai · Oktatási anyag diákoknak · Kétnyelvű (HU/SR)</p>
+    <p class="lang sr hidden">📚 Osnove Programiranja · Obrazovni materijal za učenike · Dvojezično (HU/SR)</p>
+  </footer>
+
+  <script>
+    (function() {
+      const btns = document.querySelectorAll('.lang-option');
+      const huAll = document.querySelectorAll('.lang.hu');
+      const srAll = document.querySelectorAll('.lang.sr');
+
+      function setLang(lang) {
+        btns.forEach(b => b.classList.remove('active'));
+        document.querySelector(`.lang-option[data-lang="${lang}"]`).classList.add('active');
+        if (lang === 'hu') {
+          huAll.forEach(el => el.classList.remove('hidden'));
+          srAll.forEach(el => el.classList.add('hidden'));
+        } else {
+          srAll.forEach(el => el.classList.remove('hidden'));
+          huAll.forEach(el => el.classList.add('hidden'));
+        }
+        localStorage.setItem('edu-lang', lang);
+      }
+
+      btns.forEach(btn => {
+        btn.addEventListener('click', (e) => setLang(e.currentTarget.getAttribute('data-lang')));
+      });
+
+      setLang(localStorage.getItem('edu-lang') || 'hu');
+    })();
+  </script>
+</body>
+</html>
