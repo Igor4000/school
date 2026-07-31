@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python · Elágazás</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --c1: #7c3aed;
+  --c2: #06b6d4;
+  --c3: #f472b6;
+  --c4: #10b981;
+  --c5: #f59e0b;
+  --glass: rgba(255,255,255,0.7);
+  --glass-border: rgba(0,0,0,0.08);
+  --glass-hover: rgba(255,255,255,0.9);
+  --text: #1e293b;
+  --muted: rgba(30,41,59,0.6);
+  --dim: rgba(30,41,59,0.4);
+  --bg: #f8fafc;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── ANIMATED BG ── */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.scene canvas { position:absolute; inset:0; width:100%; height:100%; }
+
+/* Blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  animation: blobDrift ease-in-out infinite alternate;
+  opacity: 0.5;
+}
+.b1{width:700px;height:700px;background:radial-gradient(circle,rgba(124,58,237,.5),transparent 70%);top:-200px;left:-150px;animation-duration:18s}
+.b2{width:600px;height:600px;background:radial-gradient(circle,rgba(6,182,212,.4),transparent 70%);bottom:-100px;right:-100px;animation-duration:22s;animation-delay:-8s}
+.b3{width:500px;height:500px;background:radial-gradient(circle,rgba(244,114,182,.35),transparent 70%);top:40%;left:40%;animation-duration:15s;animation-delay:-4s}
+.b4{width:400px;height:400px;background:radial-gradient(circle,rgba(16,185,129,.3),transparent 70%);bottom:20%;left:10%;animation-duration:25s;animation-delay:-12s}
+
+@keyframes blobDrift{
+  0%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(40px,-30px) scale(1.06)}
+  66%{transform:translate(-25px,20px) scale(.96)}
+  100%{transform:translate(20px,35px) scale(1.03)}
+}
+
+/* Grid lines */
+.grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 10%, transparent 100%);
+}
+
+/* Scan line */
+.scanline {
+  position: fixed;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,.8), rgba(6,182,212,.8), transparent);
+  z-index: 1;
+  animation: scan 8s linear infinite;
+  filter: blur(1px);
+}
+@keyframes scan{from{top:-2px}to{top:100vh}}
+
+/* ── LAYOUT ── */
+.page {
+  position: relative;
+  z-index: 2;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 72px 28px 100px;
+}
+
+/* ── PROGRESS ── */
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg,var(--c1),var(--c2),var(--c3));
+  z-index: 200;
+  transform-origin: left;
+  transform: scaleX(0);
+  box-shadow: 0 0 12px rgba(124,58,237,.8);
+}
+
+/* ── GLASS MIXIN ── */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 80px 48px 72px;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.hero::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: linear-gradient(135deg,rgba(124,58,237,.12) 0%,transparent 50%,rgba(6,182,212,.08) 100%);
+  border-radius: 24px;
+}
+
+/* Corner accents */
+.hero::after {
+  content:'';
+  position:absolute;
+  top:16px; left:16px; right:16px; bottom:16px;
+  border-radius:16px;
+  border: 1px solid rgba(0,0,0,0.04);
+  pointer-events:none;
+}
+
+.hero-corner {
+  position:absolute;
+  width:20px; height:20px;
+  pointer-events:none;
+}
+.hero-corner::before,.hero-corner::after {
+  content:'';
+  position:absolute;
+  background:var(--c2);
+  box-shadow: 0 0 8px var(--c2);
+}
+.hero-corner::before{width:100%;height:2px;top:0;left:0}
+.hero-corner::after{width:2px;height:100%;top:0;left:0}
+.corner-tl{top:0;left:0}
+.corner-tr{top:0;right:0;transform:scaleX(-1)}
+.corner-bl{bottom:0;left:0;transform:scaleY(-1)}
+.corner-br{bottom:0;right:0;transform:scale(-1)}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(124,58,237,.15);
+  border: 1px solid rgba(124,58,237,.4);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #7c3aed;
+  margin-bottom: 32px;
+  position: relative;
+  z-index:1;
+  animation: fadeUp .8s ease both;
+}
+
+.badge-dot {
+  width: 6px; height: 6px;
+  background: #7c3aed;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #7c3aed;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+.hero-icon {
+  font-size: 72px;
+  display: block;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+  animation: float 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 24px rgba(124,58,237,.6)) drop-shadow(0 0 48px rgba(6,182,212,.3));
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+.hero h1 {
+  font-size: clamp(42px, 7vw, 80px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -3px;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 16px;
+  animation: fadeUp .8s .1s ease both;
+}
+
+.h1-main { color: #1e293b; display: block; }
+.h1-sub {
+  display: block;
+  background: linear-gradient(90deg,var(--c1),var(--c2),var(--c3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200%;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer{from{background-position:0%}to{background-position:200%}}
+
+.hero-sub {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--muted);
+  position: relative;
+  z-index: 1;
+  letter-spacing: .5px;
+  animation: fadeUp .8s .2s ease both;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 48px;
+  position: relative;
+  z-index: 1;
+  animation: fadeUp .8s .3s ease both;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 480px;
+  margin-left: auto; margin-right: auto;
+}
+
+.stat-item {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+  text-align: center;
+}
+
+.stat-item+.stat-item::before {
+  content:'';
+  position:absolute;
+  left:0; top:20%; bottom:20%;
+  width:1px;
+  background: rgba(0,0,0,0.08);
+}
+
+.stat-val {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+  letter-spacing: -1px;
+}
+
+.sv1{background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sv2{background:linear-gradient(135deg,var(--c2),var(--c4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sv3{background:linear-gradient(135deg,var(--c3),var(--c5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.stat-lbl { font-size: 11px; font-weight: 500; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ── INFO PILL ── */
+.info-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 18px 24px;
+  margin-bottom: 36px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.info-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--c2);
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.info-divider { width: 1px; height: 20px; background: rgba(0,0,0,0.1); flex-shrink:0; }
+
+.chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.1);
+  color: #334155;
+  transition: all .2s;
+}
+.chip:hover { background: rgba(124,58,237,.15); border-color: rgba(124,58,237,.5); color: #7c3aed; }
+
+/* ── TOC ── */
+.toc {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+  margin-bottom: 60px;
+}
+
+.toc-card {
+  padding: 22px;
+  border-radius: 20px;
+  text-decoration: none;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.toc-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  opacity:0;
+  transition:opacity .3s;
+}
+.tc1::before{background:linear-gradient(135deg,rgba(124,58,237,.25),transparent)}
+.tc2::before{background:linear-gradient(135deg,rgba(6,182,212,.25),transparent)}
+.tc3::before{background:linear-gradient(135deg,rgba(244,114,182,.25),transparent)}
+
+.toc-card:hover { transform:translateY(-4px); background: white; }
+.tc1:hover { box-shadow: 0 20px 60px rgba(124,58,237,.3); border-color:rgba(124,58,237,.5); }
+.tc2:hover { box-shadow: 0 20px 60px rgba(6,182,212,.3); border-color:rgba(6,182,212,.5); }
+.tc3:hover { box-shadow: 0 20px 60px rgba(244,114,182,.3); border-color:rgba(244,114,182,.5); }
+.toc-card:hover::before{opacity:1}
+
+.toc-num {
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.tc1 .toc-num{background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tc2 .toc-num{background:linear-gradient(135deg,var(--c2),var(--c4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tc3 .toc-num{background:linear-gradient(135deg,var(--c3),var(--c5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.toc-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: #1e293b; }
+.toc-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.toc-range {
+  margin-top: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+/* ── SECTION ── */
+.section { margin-bottom: 72px; }
+
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 18px 24px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.sec-head::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  opacity:.08;
+}
+.sh1::before{background:linear-gradient(90deg,var(--c1),var(--c2))}
+.sh2::before{background:linear-gradient(90deg,var(--c2),var(--c4))}
+.sh3::before{background:linear-gradient(90deg,var(--c3),var(--c5))}
+
+.sh-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.sh1 .sh-pill{background:rgba(124,58,237,.2);color:#7c3aed;border:1px solid rgba(124,58,237,.4)}
+.sh2 .sh-pill{background:rgba(6,182,212,.2);color:#0891b2;border:1px solid rgba(6,182,212,.4)}
+.sh3 .sh-pill{background:rgba(244,114,182,.2);color:#db2777;border:1px solid rgba(244,114,182,.4)}
+
+.sh-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.5px;
+}
+.sh1 .sh-title{color:#7c3aed}
+.sh2 .sh-title{color:#0891b2}
+.sh3 .sh-title{color:#db2777}
+
+.sh-desc { font-size: 13px; color: var(--muted); margin-left: auto; font-style:italic; }
+
+/* ── TASK CARDS ── */
+.cards { display: flex; flex-direction: column; gap: 12px; }
+
+.card {
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s, border-color .3s;
+  cursor: pointer;
+  position: relative;
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Left accent line via pseudo */
+.card::before {
+  content:'';
+  position:absolute;
+  left:0; top:12px; bottom:12px;
+  width:3px;
+  border-radius:0 3px 3px 0;
+  transition: all .3s;
+}
+.s1 .card::before{background:linear-gradient(180deg,var(--c1),var(--c2))}
+.s2 .card::before{background:linear-gradient(180deg,var(--c2),var(--c4))}
+.s3 .card::before{background:linear-gradient(180deg,var(--c3),var(--c5))}
+
+/* Glow on hover */
+.card:hover { transform: translateY(-2px) translateX(3px); background: white; }
+.s1 .card:hover { box-shadow: 0 16px 48px rgba(124,58,237,.2); border-color: rgba(124,58,237,.4); }
+.s2 .card:hover { box-shadow: 0 16px 48px rgba(6,182,212,.2); border-color: rgba(6,182,212,.4); }
+.s3 .card:hover { box-shadow: 0 16px 48px rgba(244,114,182,.2); border-color: rgba(244,114,182,.4); }
+
+/* Mouse-tracking glow */
+.card::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle 120px at var(--mx,50%) var(--my,50%),rgba(124,58,237,.08),transparent);
+  opacity:0;
+  transition:opacity .3s;
+  pointer-events:none;
+  border-radius:20px;
+}
+.card:hover::after{opacity:1}
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 22px 26px 18px;
+}
+
+.card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+  letter-spacing: .5px;
+  transition: transform .3s, box-shadow .3s;
+}
+.s1 .card-num{background:rgba(124,58,237,.15);color:#7c3aed;border:1px solid rgba(124,58,237,.3)}
+.s2 .card-num{background:rgba(6,182,212,.15);color:#0891b2;border:1px solid rgba(6,182,212,.3)}
+.s3 .card-num{background:rgba(244,114,182,.15);color:#db2777;border:1px solid rgba(244,114,182,.3)}
+.card:hover .card-num { transform:scale(1.1); }
+.s1 .card:hover .card-num{box-shadow:0 0 16px rgba(124,58,237,.5)}
+.s2 .card:hover .card-num{box-shadow:0 0 16px rgba(6,182,212,.5)}
+.s3 .card:hover .card-num{box-shadow:0 0 16px rgba(244,114,182,.5)}
+
+.card-body { flex: 1; min-width: 0; }
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+  letter-spacing: -.2px;
+}
+
+.card-desc {
+  font-size: 13.5px;
+  color: #475569;
+  font-weight: 400;
+  line-height: 1.75;
+}
+.card-desc strong { color: #0f172a; font-weight: 700; }
+
+/* Expand button */
+.expand-btn {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #64748b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color .2s;
+  padding: 0;
+}
+.expand-btn:hover { color: #1e293b; }
+
+.arr { transition: transform .3s ease; display:inline-block; }
+.card.open .arr { transform: rotate(180deg); }
+
+/* Expandable area */
+.card-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s cubic-bezier(.4,0,.2,1);
+}
+.card.open .card-detail { max-height: 260px; }
+
+.card-detail-inner {
+  padding: 0 26px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Code example */
+.example {
+  background: rgba(241,245,249,1);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 2;
+  position: relative;
+  overflow: hidden;
+  color: #1e293b;
+}
+
+.example::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+}
+.s1 .example::before{background:linear-gradient(90deg,transparent,rgba(124,58,237,.6),transparent)}
+.s2 .example::before{background:linear-gradient(90deg,transparent,rgba(6,182,212,.6),transparent)}
+.s3 .example::before{background:linear-gradient(90deg,transparent,rgba(244,114,182,.6),transparent)}
+
+.ex-tag {
+  display: block;
+  font-size: 8.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+.ex-in { color: #0891b2; }
+.ex-out { color: #d97706; }
+
+/* Hint */
+.hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #475569;
+  background: rgba(241,245,249,1);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 10px;
+  padding: 9px 14px;
+}
+.hint::before { content: '□ '; }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 60px 0 0;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+}
+
+.footer::before {
+  content:'';
+  position:absolute;
+  top:0; left:15%; right:15%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--c1),var(--c2),var(--c3),transparent);
+}
+
+.footer-snake {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 20px rgba(124,58,237,.6));
+  animation: float 4s ease-in-out infinite;
+}
+
+.footer-msg {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.footer-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: rgba(241,245,249,1);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 14px 24px;
+  display: inline-block;
+  color: #475569;
+}
+.kw{color:#7c3aed;font-weight:700}
+.fn{color:#0891b2;font-weight:700}
+.st{color:#d97706}
+.co{color:#94a3b8}
+
+/* ── REVEAL ── */
+.rv { opacity:0; transform:translateY(20px); transition:opacity .55s ease,transform .55s ease; }
+.rv.in { opacity:1; transform:none; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .page{padding:48px 18px 72px}
+  .hero{padding:56px 24px 48px}
+  .toc{grid-template-columns:1fr}
+  .sh-desc{display:none}
+  .hero h1{font-size:clamp(36px,10vw,56px)}
+}
+@media(max-width:480px){
+  .hero{padding:40px 18px 36px}
+  .hero-stats{flex-direction:column;max-width:200px}
+  .stat-item+.stat-item::before{display:none}
+  .card-top{padding:18px 20px 14px}
+  .card-detail-inner{padding:0 20px 18px}
+  .hero-badge{font-size:9px;padding:6px 14px}
+  .info-strip{padding:14px 18px}
+  .toc-card{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- BG SCENE -->
+<div class="scene">
+  <canvas id="stars"></canvas>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+</div>
+<div class="grid"></div>
+<div class="scanline"></div>
+<div class="progress" id="prog"></div>
+
+<div class="page">
+
+<!-- ══ HERO ══ -->
+<div class="hero glass rv">
+  <div class="hero-corner corner-tl"></div>
+  <div class="hero-corner corner-tr"></div>
+  <div class="hero-corner corner-bl"></div>
+  <div class="hero-corner corner-br"></div>
+
+  <div class="hero-badge"><span class="badge-dot"></span>Elágazás · Szelekció · 2025</div>
+  <span class="hero-icon">□</span>
+  <h1>
+    <span class="h1-main">Python</span>
+    <span class="h1-sub">Feladatgyűjtemény</span>
+  </h1>
+  <div class="hero-sub">if · elif · else &nbsp;—&nbsp; döntsd el, merre menjen a program!</div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-val sv1">21</div>
+      <div class="stat-lbl">Feladat</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val sv2">3</div>
+      <div class="stat-lbl">Fejezet</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val sv3">∞</div>
+      <div class="stat-lbl">Lehetőség</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INFO ══ -->
+<div class="info-strip glass rv">
+  <span class="info-label">Eszközök</span>
+  <div class="info-divider"></div>
+  <span class="chip">input()</span>
+  <span class="chip">print()</span>
+  <span class="chip">int()</span>
+  <span class="chip">float()</span>
+  <span class="chip">round()</span>
+  <div class="info-divider"></div>
+  <span class="chip">+ - * / // % **</span>
+  <div class="info-divider"></div>
+  <span class="chip">and</span>
+  <span class="chip">or</span>
+  <span class="chip">not</span>
+  <div class="info-divider"></div>
+  <span class="chip">&lt; &gt; &lt;= &gt;= == !=</span>
+</div>
+
+<!-- ══ TOC ══ -->
+<div class="toc rv">
+  <a class="toc-card glass tc1" href="#s1">
+    <div class="toc-num">I.</div>
+    <div class="toc-name">Egyszerű elágazás</div>
+    <div class="toc-desc">Egy feltétel, if-else szerkezet</div>
+    <div class="toc-range">01 — 07</div>
+  </a>
+  <a class="toc-card glass tc2" href="#s2">
+    <div class="toc-num">II.</div>
+    <div class="toc-name">Összetett elágazás</div>
+    <div class="toc-desc">Logikai operátorok, többágú döntés</div>
+    <div class="toc-range">08 — 14</div>
+  </a>
+  <a class="toc-card glass tc3" href="#s3">
+    <div class="toc-num">III.</div>
+    <div class="toc-name">Valós helyzetek</div>
+    <div class="toc-desc">Életszerű problémák döntésekkel</div>
+    <div class="toc-range">15 — 21</div>
+  </a>
+</div>
+
+<!-- ══════ SECTION 1 ══════ -->
+<div class="section s1" id="s1">
+  <div class="sec-head glass sh1 rv">
+    <span class="sh-pill">I.</span>
+    <span class="sh-title">Egyszerű elágazás</span>
+    <span class="sh-desc">Egy feltétel, if-else</span>
+  </div>
+  <div class="cards">
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top">
+        <div class="card-num">01</div>
+        <div class="card-body">
+          <div class="card-title">□ Páros vagy páratlan?</div>
+          <div class="card-desc">Kérd be egy egész számot. Döntsd el, hogy <strong>páros</strong> vagy <strong>páratlan</strong>, és írd ki az eredményt! Használd a <strong>%</strong> operátort!</div>
+          <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+        </div>
+      </div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Szám: 7</span><br><span class="ex-out">→ A 7 páratlan szám.</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top">
+        <div class="card-num">02</div>
+        <div class="card-body">
+          <div class="card-title">□ Beléphet-e a moziba?</div>
+          <div class="card-desc">Kérd be a felhasználó <strong>életkorát</strong>. Ha legalább 18 éves: „Beléphet!". Egyébként: „Sajnos nem léphet be." — és számold ki, hány évet kell még várnia!</div>
+          <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+        </div>
+      </div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Életkor: 15</span><br><span class="ex-out">→ Sajnos nem léphet be. Még 3 évet kell várnod!</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top">
+        <div class="card-num">03</div>
+        <div class="card-body">
+          <div class="card-title">➕ Pozitív, negatív vagy nulla?</div>
+          <div class="card-desc">Kérd be egy számot, és döntsd el, hogy <strong>pozitív</strong>, <strong>negatív</strong> vagy <strong>nulla</strong>! Használj <strong>if-elif-else</strong> szerkezetet!</div>
+          <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+        </div>
+      </div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Szám: -5</span><br><span class="ex-out">→ A szám negatív.</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top">
+        <div class="card-num">04</div>
+        <div class="card-body">
+          <div class="card-title">□ Átment-e a vizsgán?</div>
+          <div class="card-desc">Kérd be a vizsga <strong>pontszámát</strong> (0–100). Ha legalább 50: „Átment!" — mennyivel lépte túl a határt? Ha nem: „Megbukott!" — mennyivel maradt el?</div>
+          <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+        </div>
+      </div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Pontszám: 43</span><br><span class="ex-out">→ Megbukott! 7 pont hiányzott.</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top">
+        <div class="card-num">05</div>
+        <div class="card-body">
+          <div class="card-title">□️ Hőmérséklet-tanácsadó</div>
+          <div class="card-desc">Kérd be a <strong>kültéri hőmérsékletet</strong> (°C). 30° felett: „Nagyon meleg van, igyál sok vizet!". 10° alatt: „Hideg van, öltözz fel melegen!". Egyébként: „Kellemes az idő."</div>
+          <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+        </div>
+      </div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Hőmérséklet: 35°C</span><br><span class="ex-out">→ Nagyon meleg van, igyál sok vizet!</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top">
+        <div class="card-num">06</div>
+        <div class="card-body">
+          <div class="card-title">□️ Kedvezmény a boltban</div>
+          <div class="card-desc">Kérd be a <strong>vásárlás összegét</strong> (Ft). 10 000 Ft felett: <strong>15% kedvezmény</strong>, egyébként: <strong>5%</strong>. Számold ki a kedvezményt és a végösszeget!</div>
+          <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+        </div>
+      </div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Összeg: 12 000 Ft</span><br><span class="ex-out">→ Kedvezmény: 1800 Ft | Fizetendő: 10 200 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top">
+        <div class="card-num">07</div>
+        <div class="card-body">
+          <div class="card-title">⚖️ Melyik szám a nagyobb?</div>
+          <div class="card-desc">Kérd be <strong>két számot</strong>. Írd ki, melyik a nagyobb, vagy ha egyenlőek, jelezd azt! Számold ki a különbséget is!</div>
+          <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+        </div>
+      </div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Szám1: 42 | Szám2: 17</span><br><span class="ex-out">→ Az első szám a nagyobb, 25-tel több.</span></div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════ SECTION 2 ══════ -->
+<div class="section s2" id="s2">
+  <div class="sec-head glass sh2 rv">
+    <span class="sh-pill">II.</span>
+    <span class="sh-title">Összetett elágazások</span>
+    <span class="sh-desc">Logikai operátorok, többágú döntés</span>
+  </div>
+  <div class="cards">
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">08</div><div class="card-body">
+        <div class="card-title">□ Jegy szöveges értékelés</div>
+        <div class="card-desc">Kérd be egy <strong>osztályzatot</strong> (1–5). 5 = jeles, 4 = jó, 3 = közepes, 2 = elégséges, 1 = elégtelen. Hibás értéknél jelezz hibát! Használj <strong>if-elif-else</strong> láncot!</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Osztályzat: 4</span><br><span class="ex-out">→ Jó (4)</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">09</div><div class="card-body">
+        <div class="card-title">□ Szökőév-vizsgálat</div>
+        <div class="card-desc">Kérd be az <strong>évszámot</strong>. Szökőév: osztható 4-gyel, DE ha 100-zal is, akkor NEM, KIVÉVE ha 400-zal is. Használj <strong>and / or / not</strong> operátorokat!</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Évszám: 2024</span><br><span class="ex-out">→ 2024 szökőév.</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">10</div><div class="card-body">
+        <div class="card-title">□ Háromszög szerkeszthető-e?</div>
+        <div class="card-desc">Kérd be <strong>három oldal hosszát</strong>. Ellenőrizd, hogy szerkeszthető-e (bármely két oldal összege nagyobb a harmadiknál). Ha igen, számold ki a <strong>kerületet</strong>!</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Oldalak: 3, 4, 5</span><br><span class="ex-out">→ Szerkeszthető! Kerület: 12</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">11</div><div class="card-body">
+        <div class="card-title">□ Taxi viteldíj</div>
+        <div class="card-desc">Kérd be a <strong>távolságot</strong> (km) és az <strong>időpontot</strong> (0–23). Alapdíj: 700 Ft + 300 Ft/km. Éjszaka (22–06): alapdíj × 2. 20 km felett: −10% a km-díjra.</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Távolság: 15 km | Óra: 23</span><br><span class="ex-out">→ Éjszakai tarifa! Összeg: 5900 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">12</div><div class="card-body">
+        <div class="card-title">□️ BMI kalkulátor</div>
+        <div class="card-desc">Kérd be a <strong>súlyt</strong> (kg) és <strong>magasságot</strong> (cm). BMI = súly / (mag_m²). &lt;18.5: sovány, 18.5–25: normális, 25–30: túlsúlyos, &gt;30: elhízott.</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Súly: 85 kg | Magasság: 180 cm</span><br><span class="ex-out">→ BMI: 26.2 – Túlsúlyos</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">13</div><div class="card-body">
+        <div class="card-title">□ Másodfokú egyenlet</div>
+        <div class="card-desc">Kérd be az <strong>a, b, c</strong> együtthatókat. Diszkrimináns: D = b²−4ac. D&gt;0: két megoldás. D=0: egy megoldás. D&lt;0: nincs valós megoldás.</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">a=1, b=−5, c=6</span><br><span class="ex-out">→ D = 1, két megoldás van.</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">14</div><div class="card-body">
+        <div class="card-title">□ Vizsgaidőszak stresszmérő</div>
+        <div class="card-desc">Kérd be a <strong>vizsgák számát</strong> és az <strong>átlagos készülési időt</strong> (óra). &gt;30 óra: „Kritikus!". 15–30: „Kezelhető, de figyelj magadra!". &lt;15: „Relax, megvan ez."</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Vizsgák: 4 | Készülés: 9 óra/vizsga</span><br><span class="ex-out">→ 36 óra – Kritikus, oszd be jobban az idődet!</span></div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════ SECTION 3 ══════ -->
+<div class="section s3" id="s3">
+  <div class="sec-head glass sh3 rv">
+    <span class="sh-pill">III.</span>
+    <span class="sh-title">Valós helyzetek</span>
+    <span class="sh-desc">Életszerű problémák döntésekkel</span>
+  </div>
+  <div class="cards">
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">15</div><div class="card-body">
+        <div class="card-title">□️ Parkoló automata</div>
+        <div class="card-desc">Kérd be az <strong>érkezési</strong> és <strong>távozási órát</strong>. Az első óra ingyenes, utána 400 Ft/óra. Hétvégén 50% kedvezmény. Számold ki a díjat!</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">9 → 14 óra | hétköznap</span><br><span class="ex-out">→ 4 óra fizetős = 1600 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">16</div><div class="card-body">
+        <div class="card-title">□ Vonatjegy-automata</div>
+        <div class="card-desc">Kérd be az <strong>életkort</strong> és a <strong>távolságot</strong>. Alapár: 15 Ft/km. Gyerek (0–14): −50%. Diák (15–26): −33%. Nyugdíjas (65+): −50%. 100 km felett: mindenki +10% kedvezmény!</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Életkor: 20 | Távolság: 150 km</span><br><span class="ex-out">→ Diák + távolsági kedvezmény: 1507 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">17</div><div class="card-body">
+        <div class="card-title">□ Pizzarendelés szállítás</div>
+        <div class="card-desc">Kérd be a <strong>rendelés összegét</strong> és a <strong>távolságot</strong>. 5000 Ft felett + 5 km-en belül: ingyenes. 5 km felett: +200 Ft/km. 3000 Ft alatt: min. 800 Ft szállítási díj.</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Rendelés: 6500 Ft | Távolság: 3 km</span><br><span class="ex-out">→ Ingyenes szállítás! Összesen: 6500 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">18</div><div class="card-body">
+        <div class="card-title">□ Villany- és gázszámla</div>
+        <div class="card-desc">Kérd be a <strong>villanyfogyasztást</strong> (kWh) és a <strong>gázfogyasztást</strong> (m³). Villany: 0–150 kWh = 36 Ft, felette 55 Ft/kWh. Gáz: 0–50 m³ = 120 Ft, felette 180 Ft/m³.</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Villany: 200 kWh | Gáz: 70 m³</span><br><span class="ex-out">→ Villany: 8150 Ft | Gáz: 9600 Ft | Össz: 17 750 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">19</div><div class="card-body">
+        <div class="card-title">□ Uszodajegy árazó</div>
+        <div class="card-desc">Kérd be az <strong>életkort</strong>, <strong>diákigazolványt</strong> (igen/nem) és a <strong>napot</strong>. Alapár: 2000 Ft. Gyerek −50%, Diák −30%, Nyugdíjas −40%. Hétvégén +20% felár mindenkinek!</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Életkor: 20 | Diák: igen | Hétvége</span><br><span class="ex-out">→ 2000 → −30% = 1400 → +20% = 1680 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">20</div><div class="card-body">
+        <div class="card-title">□ Adomány-kalkulátor</div>
+        <div class="card-desc">Kérd be a <strong>bruttó bért</strong>. Nettó = bruttó − SZJA 15% − TB 18.5%. Ha nettó &lt;300 000 Ft és adomány &gt;10%: figyelmeztess! Számold ki a megmaradó összeget!</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Bruttó: 400 000 Ft | Adomány: 5%</span><br><span class="ex-out">→ Nettó: 266 000 | −13 300 | Marad: 252 700 Ft</span></div>
+      </div></div>
+    </div>
+
+    <div class="card glass rv" onclick="tog(this)">
+      <div class="card-top"><div class="card-num">21</div><div class="card-body">
+        <div class="card-title">□ Ösztöndíj jogosultság</div>
+        <div class="card-desc">Kérd be a <strong>tanulmányi átlagot</strong>, a <strong>kreditszámot</strong> és a <strong>közösségi tevékenységet</strong> (igen/nem). Feltétel: átlag ≥ 4.0 <strong>and</strong> kredit ≥ 27. Közösséginél bónusz +10%. Alap: átlag × 10 000 Ft.</div>
+        <button class="expand-btn" onclick="e(event,this)">Példa megtekintése <span class="arr">▾</span></button>
+      </div></div>
+      <div class="card-detail"><div class="card-detail-inner">
+        <div class="example"><span class="ex-tag">Bemenet → Kimenet</span><span class="ex-in">Átlag: 4.35 | Kredit: 30 | Közösségi: igen</span><br><span class="ex-out">→ Jogosult! Ösztöndíj: 47 850 Ft</span></div>
+        <div class="hint">A feltételt <code style="font-family:'JetBrains Mono',monospace;font-size:11px">and</code> operátorral kombinálhatod!</div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<div class="footer rv">
+  <span class="footer-snake">□</span>
+  <div class="footer-msg">Sok sikert a programozáshoz!</div>
+  <div class="footer-code">
+    <span class="kw">if</span> kész: <span class="fn">print</span>(<span class="st">"Hajrá!"</span>) &nbsp;<span class="co"># □</span>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// ── SCROLL PROGRESS ──
+const prog = document.getElementById('prog');
+window.addEventListener('scroll', () => {
+  prog.style.transform = `scaleX(${scrollY / (document.documentElement.scrollHeight - innerHeight)})`;
+}, {passive:true});
+
+// ── CARD TOGGLE ──
+function tog(card) { card.classList.toggle('open'); }
+function e(ev, btn) {
+  ev.stopPropagation();
+  btn.closest('.card').classList.toggle('open');
+}
+
+// ── MOUSE GLOW ──
+document.querySelectorAll('.card').forEach(c => {
+  c.addEventListener('mousemove', ev => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', ((ev.clientX - r.left)/r.width*100)+'%');
+    c.style.setProperty('--my', ((ev.clientY - r.top)/r.height*100)+'%');
+  });
+});
+
+// ── SCROLL REVEAL ──
+const io = new IntersectionObserver(entries => {
+  entries.forEach((en, i) => {
+    if (en.isIntersecting) {
+      setTimeout(() => en.target.classList.add('in'), en.target.dataset.d || 0);
+      io.unobserve(en.target);
+    }
+  });
+}, {threshold:.08, rootMargin:'0px 0px -30px 0px'});
+
+document.querySelectorAll('.rv').forEach((el, i) => {
+  el.dataset.d = (i % 7) * 55;
+  io.observe(el);
+});
+
+// ── STAR FIELD ──
+(function(){
+  const cv = document.getElementById('stars');
+  const cx = cv.getContext('2d');
+  let W, H, stars;
+
+  function init() {
+    W = cv.width = innerWidth;
+    H = cv.height = innerHeight;
+    stars = Array.from({length: Math.min(180, Math.floor(W*H/5000))}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*1.2+.1,
+      a: Math.random(),
+      da: (Math.random()-.5)*.005,
+      dx: (Math.random()-.5)*.12,
+      dy: (Math.random()-.5)*.08,
+    }));
+  }
+
+  function draw() {
+    cx.clearRect(0,0,W,H);
+    stars.forEach(s => {
+      s.x = (s.x + s.dx + W) % W;
+      s.y = (s.y + s.dy + H) % H;
+      s.a = Math.max(.05, Math.min(1, s.a + s.da));
+      if (s.a <= .05 || s.a >= 1) s.da *= -1;
+      cx.beginPath();
+      cx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      cx.fillStyle = `rgba(100,100,120,${s.a * .3})`;
+      cx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  init(); draw();
+  addEventListener('resize', init);
+})();
+</script>
+</body>
+</html>
