@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Python · Ciklusok · For & Listák</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c1: #800000;
+      --c2: #1a1a1a;
+      --c3: #ff0000;
+      --c1-soft: #b91c1c;
+      --c2-soft: #444444;
+      --c3-soft: #ff3333;
+      --glass: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(0, 0, 0, 0.12);
+      --text: #0f172a;
+      --muted: #334155;
+      --dim: #475569;
+      --bg: #fef9f3;
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f8f6f3;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── ANIMATED BG ── */
+    .scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .scene canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      animation: blobDrift ease-in-out infinite alternate;
+      opacity: 0.55;
+    }
+    .b1 {
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(128, 0, 0, 0.7), transparent 70%);
+      top: -200px;
+      left: -150px;
+      animation-duration: 18s;
+    }
+    .b2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(26, 26, 26, 0.55), transparent 70%);
+      bottom: -100px;
+      right: -100px;
+      animation-duration: 22s;
+      animation-delay: -8s;
+    }
+    .b3 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 0, 0, 0.55), transparent 70%);
+      top: 40%;
+      left: 40%;
+      animation-duration: 15s;
+      animation-delay: -4s;
+    }
+    .b4 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(128, 0, 0, 0.45), transparent 70%);
+      bottom: 20%;
+      left: 10%;
+      animation-duration: 25s;
+      animation-delay: -12s;
+    }
+
+    @keyframes blobDrift {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -30px) scale(1.06); }
+      66% { transform: translate(-25px, 20px) scale(.96); }
+      100% { transform: translate(20px, 35px) scale(1.03); }
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: linear-gradient(rgba(0,0,0,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.06) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 15%, transparent 100%);
+    }
+
+    .scanline {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(128,0,0,.9), rgba(26,26,26,.9), rgba(255,0,0,.9), transparent);
+      z-index: 1;
+      animation: scan 8s linear infinite;
+      filter: blur(1px);
+    }
+    @keyframes scan { from { top: -2px; } to { top: 100vh; } }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 72px 28px 100px;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--c1), var(--c3), var(--c2));
+      z-index: 200;
+      transform-origin: left;
+      transform: scaleX(0);
+      box-shadow: 0 0 18px rgba(255,0,0,.8);
+    }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 80px 48px 72px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid rgba(128,0,0,0.3);
+      box-shadow: 0 12px 40px rgba(128,0,0,0.15);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(128,0,0,0.2) 0%, transparent 50%, rgba(255,0,0,0.15) 100%);
+      border-radius: 24px;
+    }
+
+    .hero-corner {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      pointer-events: none;
+    }
+    .hero-corner::before,
+    .hero-corner::after {
+      content: '';
+      position: absolute;
+      background: var(--c3);
+      box-shadow: 0 0 12px var(--c3);
+    }
+    .hero-corner::before { width: 100%; height: 3px; top: 0; left: 0; }
+    .hero-corner::after { width: 3px; height: 100%; top: 0; left: 0; }
+    .corner-tl { top: 0; left: 0; }
+    .corner-tr { top: 0; right: 0; transform: scaleX(-1); }
+    .corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+    .corner-br { bottom: 0; right: 0; transform: scale(-1); }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(128,0,0,0.9);
+      border: 2px solid #ff0000;
+      border-radius: 100px;
+      padding: 10px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp .8s ease both;
+      box-shadow: 0 4px 15px rgba(255,0,0,0.4);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 14px #ffffff;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.7); } }
+
+    .hero-icon {
+      font-size: 72px;
+      display: block;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      animation: float 5s ease-in-out infinite;
+      filter: drop-shadow(0 0 28px rgba(255,0,0,.8)) drop-shadow(0 0 50px rgba(128,0,0,.5));
+    }
+    @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
+
+    .hero h1 {
+      font-size: clamp(42px, 7vw, 80px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -3px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 16px;
+      animation: fadeUp .8s .1s ease both;
+    }
+    .h1-main { color: #0f172a; display: block; }
+    .h1-sub {
+      display: block;
+      background: linear-gradient(90deg, var(--c1), var(--c3), var(--c2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200%;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes shimmer { from { background-position:0%; } to { background-position:200%; } }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 500;
+      color: #1e293b;
+      position: relative;
+      z-index: 1;
+      letter-spacing: .5px;
+      animation: fadeUp .8s .2s ease both;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-top: 48px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp .8s .3s ease both;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid rgba(128,0,0,0.25);
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .stat-item {
+      flex: 1;
+      padding: 24px 20px;
+      position: relative;
+      text-align: center;
+    }
+    .stat-item+.stat-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 2px;
+      background: rgba(128,0,0,0.3);
+    }
+    .stat-val {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+      letter-spacing: -1px;
+    }
+    .sv1 { color: #800000; }
+    .sv2 { color: #1a1a1a; }
+    .sv3 { color: #ff0000; }
+    .stat-lbl {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+
+    .info-strip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 20px 28px;
+      margin-bottom: 36px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid rgba(26,26,26,0.2);
+    }
+    .info-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #800000;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+    .info-divider { width: 2px; height: 22px; background: rgba(128,0,0,0.4); flex-shrink:0; }
+    .chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(128,0,0,0.1);
+      border: 1px solid rgba(128,0,0,0.5);
+      color: #1e293b;
+      transition: all .2s;
+    }
+    .chip:hover { background: #800000; border-color: #800000; color: #fff; }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 60px;
+    }
+    .toc-card {
+      padding: 28px 22px;
+      border-radius: 20px;
+      text-decoration: none;
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+      transition: transform .3s, box-shadow .3s;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid rgba(0,0,0,0.1);
+    }
+    .toc-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .tc1::before { background: linear-gradient(135deg, rgba(128,0,0,0.5), transparent); }
+    .tc2::before { background: linear-gradient(135deg, rgba(26,26,26,0.5), transparent); }
+    .tc3::before { background: linear-gradient(135deg, rgba(255,0,0,0.5), transparent); }
+
+    .toc-card:hover { transform: translateY(-6px); background: white; }
+    .tc1:hover { box-shadow: 0 20px 60px rgba(128,0,0,.5); border-color:#800000; }
+    .tc2:hover { box-shadow: 0 20px 60px rgba(26,26,26,.5); border-color:#1a1a1a; }
+    .tc3:hover { box-shadow: 0 20px 60px rgba(255,0,0,.5); border-color:#ff0000; }
+    .toc-card:hover::before { opacity:1; }
+
+    .toc-num {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .tc1 .toc-num { color: #800000; }
+    .tc2 .toc-num { color: #1a1a1a; }
+    .tc3 .toc-num { color: #ff0000; }
+    .toc-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+    .toc-desc { font-size: 13px; color: #334155; line-height: 1.5; font-weight: 500; }
+    .toc-range {
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #1e293b;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .section { margin-bottom: 72px; }
+    .sec-head {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+      padding: 22px 28px;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid rgba(0,0,0,0.12);
+    }
+    .sec-head::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: .15;
+    }
+    .sh1::before { background: linear-gradient(90deg, #800000, #1a1a1a); }
+    .sh2::before { background: linear-gradient(90deg, #1a1a1a, #ff0000); }
+    .sh3::before { background: linear-gradient(90deg, #800000, #ff0000); }
+
+    .sh-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .sh1 .sh-pill { background: #800000; color: #fff; border: 2px solid #ff0000; }
+    .sh2 .sh-pill { background: #1a1a1a; color: #fff; border: 2px solid #ff0000; }
+    .sh3 .sh-pill { background: #ff0000; color: #fff; border: 2px solid #800000; }
+
+    .sh-title { font-size: 24px; font-weight: 700; letter-spacing: -.5px; }
+    .sh1 .sh-title { color: #800000; }
+    .sh2 .sh-title { color: #1a1a1a; }
+    .sh3 .sh-title { color: #cc0000; }
+    .sh-desc { font-size: 14px; color: #334155; margin-left: auto; font-style: italic; font-weight: 600; }
+
+    .cards { display: flex; flex-direction: column; gap: 14px; }
+    .card {
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+      cursor: pointer;
+      position: relative;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid rgba(0,0,0,0.1);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 16px; bottom: 16px;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      transition: all .3s;
+    }
+    .s1 .card::before { background: #800000; }
+    .s2 .card::before { background: #1a1a1a; }
+    .s3 .card::before { background: #ff0000; }
+
+    .card:hover { transform: translateY(-3px) translateX(4px); background: #ffffff; }
+    .s1 .card:hover { box-shadow: 0 20px 50px rgba(128,0,0,.35); border-color: #800000; }
+    .s2 .card:hover { box-shadow: 0 20px 50px rgba(26,26,26,.35); border-color: #1a1a1a; }
+    .s3 .card:hover { box-shadow: 0 20px 50px rgba(255,0,0,.35); border-color: #ff0000; }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle 140px at var(--mx,50%) var(--my,50%), rgba(128,0,0,.15), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+      border-radius: 20px;
+    }
+    .card:hover::after { opacity: 1; }
+
+    .card-top { display: flex; align-items: flex-start; gap: 18px; padding: 24px 28px 20px; }
+    .card-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      flex-shrink: 0;
+      letter-spacing: .5px;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .s1 .card-num { background: #800000; color: #fff; border: 2px solid #ff0000; }
+    .s2 .card-num { background: #1a1a1a; color: #fff; border: 2px solid #ff0000; }
+    .s3 .card-num { background: #ff0000; color: #fff; border: 2px solid #800000; }
+    .card:hover .card-num { transform: scale(1.1); }
+    .s1 .card:hover .card-num { box-shadow: 0 0 20px rgba(128,0,0,.7); }
+    .s2 .card:hover .card-num { box-shadow: 0 0 20px rgba(26,26,26,.7); }
+    .s3 .card:hover .card-num { box-shadow: 0 0 20px rgba(255,0,0,.7); }
+
+    .card-body { flex: 1; min-width: 0; }
+    .card-title { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+    .card-desc { font-size: 14px; color: #1e293b; font-weight: 500; line-height: 1.8; }
+    .card-desc strong { color: #800000; font-weight: 700; }
+
+    .expand-btn {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #1e293b;
+      background: rgba(128,0,0,0.1);
+      border: 1px solid rgba(128,0,0,0.4);
+      border-radius: 8px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all .2s;
+      font-weight: 600;
+    }
+    .expand-btn:hover { background: #800000; color: #fff; border-color: #800000; }
+    .arr { transition: transform .3s ease; display:inline-block; }
+    .card.open .arr { transform: rotate(180deg); }
+
+    .card-detail {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s cubic-bezier(.4,0,.2,1);
+    }
+    .card.open .card-detail { max-height: 320px; }
+    .card-detail-inner {
+      padding: 0 28px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .example {
+      background: #f1f5f9;
+      border: 2px solid rgba(128,0,0,0.25);
+      border-radius: 14px;
+      padding: 18px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 2.1;
+      color: #0f172a;
+      font-weight: 500;
+    }
+    .ex-tag {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .ex-in { color: #800000; font-weight: 700; }
+    .ex-out { color: #cc0000; font-weight: 700; }
+
+    .hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #1e293b;
+      background: rgba(255,0,0,0.1);
+      border: 2px solid rgba(255,0,0,0.5);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-weight: 500;
+    }
+    .hint::before { content: '□ '; }
+
+    .footer {
+      text-align: center;
+      padding: 60px 0 0;
+      border-top: 3px solid rgba(128,0,0,0.4);
+      position: relative;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #800000, #ff0000, #1a1a1a, transparent);
+    }
+    .footer-snake {
+      font-size: 52px;
+      display: block;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 0 24px rgba(255,0,0,.8));
+      animation: float 4s ease-in-out infinite;
+    }
+    .footer-msg { font-size: 15px; color: #1e293b; font-weight: 500; margin-bottom: 18px; }
+    .footer-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      background: #1e293b;
+      border: 2px solid #ff0000;
+      border-radius: 12px;
+      padding: 16px 28px;
+      display: inline-block;
+      color: #f1f5f9;
+      font-weight: 500;
+    }
+    .kw { color: #ff6666; font-weight: 700; }
+    .fn { color: #ffffff; font-weight: 700; }
+    .st { color: #ff9999; }
+    .co { color: #94a3b8; }
+
+    .rv { opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+    .rv.in { opacity: 1; transform: none; }
+
+    @media(max-width:768px) {
+      .page { padding: 48px 18px 72px; }
+      .hero { padding: 56px 24px 48px; }
+      .toc { grid-template-columns: 1fr; }
+      .sh-desc { display: none; }
+    }
+    @media(max-width:480px) {
+      .hero { padding: 40px 18px 36px; }
+      .hero-stats { flex-direction: column; max-width: 200px; }
+      .stat-item+.stat-item::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="scene">
+  <canvas id="stars"></canvas>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+</div>
+<div class="grid"></div>
+<div class="scanline"></div>
+<div class="progress" id="prog"></div>
+
+<div class="page">
+  <div class="hero glass rv">
+    <div class="hero-corner corner-tl"></div>
+    <div class="hero-corner corner-tr"></div>
+    <div class="hero-corner corner-bl"></div>
+    <div class="hero-corner corner-br"></div>
+    <div class="hero-badge"><span class="badge-dot"></span>Ciklus · For & Listák</div>
+    <span class="hero-icon">⬜</span>
+    <h1>
+      <span class="h1-main">Python</span>
+      <span class="h1-sub">Ciklusok · Listák</span>
+    </h1>
+    <div class="hero-sub">for ciklus + listák – könnyűtől a középhaladóig</div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-val sv1">16</div><div class="stat-lbl">Könnyű feladat</div></div>
+      <div class="stat-item"><div class="stat-val sv2">5</div><div class="stat-lbl">Középhaladó</div></div>
+      <div class="stat-item"><div class="stat-val sv3">∞</div><div class="stat-lbl">Iteráció</div></div>
+    </div>
+  </div>
+
+  <div class="info-strip glass rv">
+    <span class="info-label">FOR · LIST COMPREHENSION</span>
+    <div class="info-divider"></div>
+    <span class="chip">range()</span> <span class="chip">len()</span> <span class="chip">list.append()</span>
+    <span class="chip">sum()</span> <span class="chip">max()/min()</span> <span class="chip">if in</span>
+  </div>
+
+  <div class="toc rv">
+    <a class="toc-card glass tc1" href="#s1"><div class="toc-num">I.</div><div class="toc-name">Könnyű · for ciklus alapok</div><div class="toc-desc">16 feladat listákkal, egyszerű iteráció</div><div class="toc-range">01 — 16</div></a>
+    <a class="toc-card glass tc2" href="#s2"><div class="toc-num">II.</div><div class="toc-name">Középhaladó · for + algoritmus</div><div class="toc-desc">5 valós, emelt szintű for ciklus</div><div class="toc-range">17 — 21</div></a>
+  </div>
+
+  <!-- I. KÖNNYŰ · 16 FELADAT, for + lista -->
+  <div class="section s1" id="s1">
+    <div class="sec-head glass sh1 rv"><span class="sh-pill">I.</span><span class="sh-title">Könnyű for ciklus · Listák</span><span class="sh-desc">16 feladat</span></div>
+    <div class="cards">
+      <!-- itt 16 könnyű feladat generált lista / egyszerű for -->
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">01</div><div class="card-body"><div class="card-title">➕ Számok összege listában</div><div class="card-desc">Hozz létre egy listát: <strong>[5, 12, 7, 3, 25]</strong>. <strong>for</strong> ciklussal számold ki és írd ki az összegüket!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-tag">kód váz</span><span class="ex-in">lista = [5,12,7,3,25] ; összeg = 0 ; for szam in lista: összeg += szam</span><br><span class="ex-out">→ Összeg: 52</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">02</div><div class="card-body"><div class="card-title">⭐ Csillagok kiírása listából</div><div class="card-desc">Adott a lista: <strong>["alma", "körte", "banán"]</strong>. for ciklussal írd ki a szavakat és melléjük ugyanannyi csillagot, ahány betűből állnak!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-tag">Kimenet</span><span class="ex-out">alma **** | körte ***** | banán *****</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">03</div><div class="card-body"><div class="card-title">□ Páros számok kiválogatása</div><div class="card-desc">Lista: <strong>[3, 8, 11, 14, 20, 27]</strong>. for ciklussal gyűjtsd ki egy új listába a páros számokat, majd írd ki!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-tag">kimenet</span><span class="ex-out">Párosak: [8, 14, 20]</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">04</div><div class="card-body"><div class="card-title">🔢 Lista átlaga</div><div class="card-desc">Kérd be N darab számot (N előre megadott pl.: 5), tárold listában, majd for ciklussal számold ki az átlagot!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-tag">bemenet: 10,20,30,40,50</span><span class="ex-out">Átlag: 30.0</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">05</div><div class="card-body"><div class="card-title">📏 Legkisebb / legnagyobb</div><div class="card-desc">Lista: <strong>[42, 17, 89, 3, 56]</strong>. for ciklussal keresd meg a legkisebb és legnagyobb elemet!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">Min: 3, Max: 89</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">06</div><div class="card-body"><div class="card-title">🔄 Lista megfordítása</div><div class="card-desc">Adott lista: <strong>["Python", "Ciklus", "Lista"]</strong>. for ciklussal (ne használj reverse-t) hozz létre egy fordított listát!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">Eredeti: Python Ciklus Lista → Fordított: Lista Ciklus Python</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">07</div><div class="card-body"><div class="card-title">🔁 Szorzótábla listában</div><div class="card-desc">Kérd be a számot. for ciklussal hozz létre egy listát, amely tartalmazza a szorzótábla eredményeit (1-10). Írd ki a listát!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-in">Szám: 4</span><span class="ex-out">→ [4, 8, 12, 16, 20, 24, 28, 32, 36, 40]</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">08</div><div class="card-body"><div class="card-title">📋 Magánhangzók számlálása</div><div class="card-desc">Kérd be a szöveget, tárold a karaktereket listában, for ciklussal számold meg hány magánhangzó van benne (a, e, i, o, u).</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-in">"almafa"</span><span class="ex-out">Magánhangzók: 3</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">09</div><div class="card-body"><div class="card-title">📊 Pozitív/negatív számláló</div><div class="card-desc">Lista: <strong>[-5, 12, -3, 0, 8, -1, 7]</strong>. for ciklussal számold meg hány pozitív, negatív és nulla van.</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">Pozitív: 3, Negatív: 3, Nulla: 1</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">10</div><div class="card-body"><div class="card-title">🧮 Szorzat számítása</div><div class="card-desc">Lista: <strong>[2, 3, 4, 5]</strong>. for ciklussal számold ki a lista elemeinek szorzatát!</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">2*3*4*5 = 120</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">11</div><div class="card-body"><div class="card-title">🆙 Második hatványok</div><div class="card-desc">Készíts egy listát az első 10 természetes szám négyzetéből for ciklus segítségével (range).</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">12</div><div class="card-body"><div class="card-title">🎲 Kockadobások listája</div><div class="card-desc">Kérj be N dobást, mindegyiket tárold egy listában, majd for ciklussal írd ki a dobások átlagát.</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-in">N: 4 | 3,6,2,5</span><span class="ex-out">Átlag: 4.0</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">13</div><div class="card-body"><div class="card-title">✂️ Részlisták (szeletelés)</div><div class="card-desc">Lista: [10,20,30,40,50,60]. for ciklussal írd ki az első három és utolsó három elem összegét.</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">első 3 összeg: 60, utolsó 3 összeg: 150</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">14</div><div class="card-body"><div class="card-title">🧩 Két lista összefésülése</div><div class="card-desc">Adott két lista: [1,2,3] és [4,5,6]. for ciklussal hozz létre egy új listát, amelyben páronként összeadod az elemeket.</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">[5,7,9]</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">15</div><div class="card-body"><div class="card-title">🔍 Keresés listában</div><div class="card-desc">Lista: ["kék","piros","zöld","sárga"]. for ciklussal keresd meg, hogy a "zöld" hányadik indexen van (első előfordulás).</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">A 'zöld' a 2. indexen található.</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">16</div><div class="card-body"><div class="card-title">🏷️ Névlista kiírása sorszámozva</div><div class="card-desc">Lista: ["Anna","Béla","Cecília","Dávid"]. for ciklussal írd ki: "1. Anna", "2. Béla" ...</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">1. Anna<br>2. Béla<br>3. Cecília<br>4. Dávid</span></div></div></div></div>
+    </div>
+  </div>
+
+  <!-- II. KÖZÉPHALADÓ · 5 FELADAT, for ciklus, reális problémák -->
+  <div class="section s2" id="s2">
+    <div class="sec-head glass sh2 rv"><span class="sh-pill">II.</span><span class="sh-title">Középhaladó · for ciklus</span><span class="sh-desc">5 valós szimuláció</span></div>
+    <div class="cards">
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">17</div><div class="card-body"><div class="card-title">⚡ Napi áramfogyasztás (hónap)</div><div class="card-desc">Kérd be 30 nap fogyasztását (kWh), tárold listában. for ciklussal számold ki a <strong>havi átlagot</strong> és azt, hogy hány napon haladta meg a 20 kWh-t.</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-tag">részleges</span><span class="ex-out">Átlag: 18.2 kWh, 20+ napok száma: 12</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">18</div><div class="card-body"><div class="card-title">💳 Hitelkártya törlesztés szimuláció</div><div class="card-desc">Kezdő tartozás: 200 000 Ft, havi kamat: 1.8%, havi befizetés: 15 000 Ft. for ciklussal modellezd 12 hónapon át, mennyi marad a tartozás év végén.</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-tag">minden hónap: tartozás = tartozás*(1+kamat) - befizetés</span><span class="ex-out">12 hónap után: ~ 51 220 Ft</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">19</div><div class="card-body"><div class="card-title">🏃 Heti lépésszámláló (többcélú)</div><div class="card-desc">Kérd be 7 nap lépésszámát. for ciklussal számold ki: összes lépés, átlag, hány nap volt 8000 felett, és a legtöbb lépés napja.</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-in">[7200, 9400, 8100, 10200, 6600, 11300, 8700]</span><span class="ex-out">átlag: 8728, 8000+ nap: 5, max: 11300</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">20</div><div class="card-body"><div class="card-title">🌡️ Hőmérsékleti anomáliák</div><div class="card-desc">Adott egy havi napi hőmérséklet lista (31 elem). for ciklussal határozd meg, hány fagyos nap volt (0°C alatt), mekkora a legnagyobb napi ingadozás (max-min különbség).</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-tag">minta: -2, 3, 5, -1, 7, ...</span><span class="ex-out">Fagyos: 5 nap | Ingadozás max: 12°C</span></div></div></div></div>
+      <div class="card glass rv" onclick="tog(this)"><div class="card-top"><div class="card-num">21</div><div class="card-body"><div class="card-title">📦 Raktárkészlet optimalizálás</div><div class="card-desc">Kezdő készlet: 500 db. Naponta 30-80 db között véletlenszerűen csökken (import random). for ciklussal 30 nap után hány napon volt a készlet 100 alatt? Átlag napi értékesítés?</div><button class="expand-btn" onclick="e(event,this)">Példa <span class="arr">▾</span></button></div></div><div class="card-detail"><div class="card-detail-inner"><div class="example"><span class="ex-out">100 alatti napok: 4, átlag értékesítés: 54.3 db/nap</span></div></div></div></div>
+    </div>
+  </div>
+
+  <div class="footer rv">
+    <span class="footer-snake">⬜</span>
+    <div class="footer-msg">For ciklus · Listák · Gyakorolj okosan!</div>
+    <div class="footer-code">
+      <span class="kw">for</span> elem <span class="kw">in</span> lista: <span class="fn">print</span>(<span class="st">f"{elem} → master"</span>) &nbsp;<span class="co"># □</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const prog = document.getElementById('prog');
+    window.addEventListener('scroll', () => {
+      prog.style.transform = `scaleX(${scrollY / (document.documentElement.scrollHeight - innerHeight)})`;
+    }, {passive: true});
+
+    window.tog = function(card) { card.classList.toggle('open'); };
+    window.e = function(ev, btn) {
+      ev.stopPropagation();
+      btn.closest('.card').classList.toggle('open');
+    };
+
+    document.querySelectorAll('.card').forEach(c => {
+      c.addEventListener('mousemove', ev => {
+        const r = c.getBoundingClientRect();
+        c.style.setProperty('--mx', ((ev.clientX - r.left)/r.width*100)+'%');
+        c.style.setProperty('--my', ((ev.clientY - r.top)/r.height*100)+'%');
+      });
+    });
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((en, i) => {
+        if (en.isIntersecting) {
+          setTimeout(() => en.target.classList.add('in'), en.target.dataset.d || 0);
+          io.unobserve(en.target);
+        }
+      });
+    }, {threshold:.08, rootMargin:'0px 0px -30px 0px'});
+
+    document.querySelectorAll('.rv').forEach((el, i) => {
+      el.dataset.d = (i % 7) * 55;
+      io.observe(el);
+    });
+
+    const cv = document.getElementById('stars');
+    const cx = cv.getContext('2d');
+    let W, H, stars;
+    function initStars() {
+      W = cv.width = innerWidth;
+      H = cv.height = innerHeight;
+      stars = Array.from({length: Math.min(180, Math.floor(W*H/5000))}, () => ({
+        x: Math.random()*W, y: Math.random()*H,
+        r: Math.random()*1.2+.1,
+        a: Math.random(),
+        da: (Math.random()-.5)*.005,
+        dx: (Math.random()-.5)*.12,
+        dy: (Math.random()-.5)*.08,
+      }));
+    }
+    function drawStars() {
+      cx.clearRect(0,0,W,H);
+      stars.forEach(s => {
+        s.x = (s.x + s.dx + W) % W;
+        s.y = (s.y + s.dy + H) % H;
+        s.a = Math.max(.05, Math.min(1, s.a + s.da));
+        if (s.a <= .05 || s.a >= 1) s.da *= -1;
+        cx.beginPath();
+        cx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        cx.fillStyle = `rgba(100,100,120,${s.a * .35})`;
+        cx.fill();
+      });
+      requestAnimationFrame(drawStars);
+    }
+    initStars(); drawStars();
+    addEventListener('resize', initStars);
+  })();
+</script>
+</body>
+</html>
