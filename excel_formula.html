@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Excel Képletek menü / Formule meni</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Egyedi finomhangolások -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* ============ EXCEL TEMA ============ */
+    :root {
+      --xl-green: #217346;
+      --xl-green-dark: #185c36;
+      --xl-green-light: #e7f0ea;
+      --xl-amber: #ffb900;
+      --xl-border: #d4d4d4;
+      --xl-grid: #e3e3e3;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f3f3f3;
+      background-image:
+        linear-gradient(var(--xl-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--xl-grid) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    /* Excel-style traka (ribbon) */
+    .xl-ribbon { background: #217346; }
+    .xl-tab {
+      position: relative;
+      padding: 8px 16px;
+      font-weight: 500;
+      color: #ffffffcc;
+      cursor: default;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.15s ease;
+    }
+    .xl-tab:hover { color: #fff; background: #1d653d; }
+    .xl-tab.active {
+      color: var(--xl-green);
+      background: #ffffff;
+      font-weight: 600;
+    }
+    .xl-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 3px;
+      background: var(--xl-amber);
+    }
+
+    /* Kartice alata */
+    .tool-section {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-left: 4px solid var(--xl-green);
+      border-radius: 8px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .tool-section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -10px rgba(33, 115, 70, 0.25);
+      border-left-color: var(--xl-amber);
+    }
+
+    /* Broj ćelije stilizovan kao Excel zaglavlje */
+    .group-badge {
+      background: linear-gradient(135deg, #217346, #185c36);
+      box-shadow: 0 2px 8px -2px rgba(33, 115, 70, 0.5);
+    }
+
+    .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #217346; border-radius: 10px; }
+
+    @media print {
+      body { background: white; }
+      .tool-section { break-inside: avoid; box-shadow: none; border-left: 4px solid #217346; }
+      .xl-ribbon, .no-print { display: none !important; }
+    }
+
+    /* Višejezičnost */
+    .lang-hu-section, .lang-sr-section { display: none; }
+    body[data-lang="hu"] .lang-hu-section { display: revert; }
+    body[data-lang="sr"] .lang-sr-section { display: revert; }
+
+    .lang-btn {
+      background: white;
+      border: 1px solid var(--xl-border);
+      color: #475569;
+    }
+    .lang-btn:hover { border-color: var(--xl-green); color: var(--xl-green); }
+    body[data-lang="hu"] #btn-hu,
+    body[data-lang="sr"] #btn-sr {
+      background: var(--xl-green);
+      color: white;
+      border-color: var(--xl-green);
+    }
+
+    /* Animacija ulaza kartica */
+    @keyframes xlFadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tool-section { animation: xlFadeUp 0.4s ease both; }
+
+    /* Glavna ikona u kartici – puna Excel zelena */
+    .tool-section > .flex.items-start > span:first-child {
+      background: var(--xl-green) !important;
+      color: #fff !important;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px -3px rgba(33, 115, 70, 0.45);
+      transition: transform 0.18s ease;
+    }
+    .tool-section:hover > .flex.items-start > span:first-child {
+      transform: scale(1.06) rotate(-3deg);
+    }
+
+    /* Navigacione pilule */
+    .nav-pill {
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #217346;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      transition: all 0.15s ease;
+    }
+    .nav-pill:hover {
+      background: var(--xl-green);
+      color: #fff;
+      border-color: var(--xl-green);
+    }
+
+    code {
+      background-color: #f0fdf4;
+      color: #065f46;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col" data-lang="hu">
+
+  <!-- Excel-stil naslovna traka (title bar) -->
+  <div class="xl-ribbon text-white sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Gornji red: logo + naslov + jezik -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 pb-2">
+        <div class="flex items-center gap-3">
+          <div class="bg-white/15 backdrop-blur p-2.5 rounded-lg ring-1 ring-white/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight leading-tight">
+              <span class="lang-hu-section">Excel Képletek menü</span>
+              <span class="lang-sr-section">Excel Formule meni</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-emerald-100/90">
+              <span class="lang-hu-section">Részletes magyarázat és gyakorlati példák középiskolásoknak</span>
+              <span class="lang-sr-section">Detaljno objašnjenje i praktični primeri za srednjoškolce</span>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 bg-white/15 rounded-lg p-1 ring-1 ring-white/20">
+            <button id="btn-hu" onclick="setLang('hu')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Magyar</button>
+            <button id="btn-sr" onclick="setLang('sr')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Srpski</button>
+          </div>
+        </div>
+      </div>
+      <!-- Ribbon tabovi (izgled kao Excel) -->
+      <div class="flex items-end gap-1 -mb-px overflow-x-auto scrollbar-thin">
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Kezdőlap</span>
+          <span class="lang-sr-section">Početni</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Beszúrás</span>
+          <span class="lang-sr-section">Umetanje</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Lap elrendezés</span>
+          <span class="lang-sr-section">Raspored stranice</span>
+        </span>
+        <span class="xl-tab active">
+          <span class="lang-hu-section">Képletek</span>
+          <span class="lang-sr-section">Formule</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Adatok</span>
+          <span class="lang-sr-section">Podaci</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Szemrevételezés</span>
+          <span class="lang-sr-section">Pregled</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula traka (Name box + formula bar izgled) -->
+  <div class="bg-white border-b border-slate-200 hidden sm:block no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center gap-3 text-sm">
+      <div class="flex items-center border border-slate-300 rounded px-2 py-0.5 font-mono text-xs text-slate-600 bg-slate-50">
+        <span class="text-emerald-700 font-bold">A1</span>
+      </div>
+      <span class="text-slate-300">fx</span>
+      <div class="flex-1 text-xs text-slate-400 italic">
+        <span class="lang-hu-section">=OKTATÓ_ÚTMUTATÓ("Képletek menü")</span>
+        <span class="lang-sr-section">=NASTAVNI_VODIČ("Formule meni")</span>
+      </div>
+      <div class="hidden md:flex items-center gap-1.5 text-xs text-slate-500">
+        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+        <span class="lang-hu-section">függvények és képletek</span>
+        <span class="lang-sr-section">funkcije i formule</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fő tartalom -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- MAGYAR TARTALOM -->
+    <div class="lang-hu-section">
+
+      <!-- Tartalomjegyzék -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold text-slate-600 mr-1">Ugrás:</span>
+          <a href="#functionlibrary-hu" class="nav-pill">Függvénykönyvtár</a>
+          <a href="#definednames-hu" class="nav-pill">Definiált nevek</a>
+          <a href="#formulaauditing-hu" class="nav-pill">Képletvizsgálat</a>
+          <a href="#calculation-hu" class="nav-pill">Számítás</a>
+        </div>
+      </div>
+
+      <!-- Bevezető -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span class="text-2xl">🔢</span>
+          Mit tud a Képletek menü?
+        </h2>
+        <p class="text-slate-700 leading-relaxed mb-3">
+          Az Excel <strong class="text-emerald-700">Képletek (Formulas)</strong> menüje a program
+          <strong>matematikai és logikai agya</strong>. Itt találhatók a beépített függvények
+          (SZUM, ÁTLAG, HA, FKERES és több száz másik), a névkezelő, a képletek ellenőrzésére
+          szolgáló eszközök és a számítási beállítások.
+        </p>
+        <p class="text-slate-700 leading-relaxed">
+          Az alábbi útmutatóban a Képletek menü <strong>összes fontos csoportját</strong> részletesen bemutatjuk:
+          megtudhatod, mire valók, hogyan működnek, és ami a legfontosabb –
+          <strong>valós, iskolai példákon</strong> keresztül megértheted, mikor érdemes használni őket.
+        </p>
+      </div>
+
+      <!-- ==================== FÜGGVÉNYKÖNYVTÁR ==================== -->
+      <section id="functionlibrary-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Függvénykönyvtár</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <!-- SZUM függvény -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 12 12 3 19 12"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">SZUM (AutoSum)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Függvénykönyvtár · Matematikai</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A <code>=SZUM()</code> függvény az Excel <strong>leggyakrabban használt függvénye</strong>, amely összeadja a megadott cellákban lévő számokat. Az AutoSum gomb (Σ) a Kezdőlap és a Képletek menüben is megtalálható, és automatikusan felismeri, mely cellákat szeretnéd összeadni. Használat: <code>=SZUM(A1:A10)</code>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Dolgozatpontok összesítése:</strong> <code>=SZUM(B2:B16)</code> – add össze az összes tanuló dolgozatpontját egy oszlopban.</p>
+                <p><strong>2. Büfé napi bevétele:</strong> <code>=SZUM(C2:C8)</code> – összegezd a büfé napi forgalmát tételenként.</p>
+                <p><strong>3. Félévi költés:</strong> <code>=SZUM(D2:D50)</code> – számold ki a féléves összes kiadásodat.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ÁTLAG függvény -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">ÁTLAG (Average)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Függvénykönyvtár · Matematikai</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Az <code>=ÁTLAG()</code> függvény <strong>kiszámítja a megadott számok számtani átlagát</strong>. Összeadja az értékeket, majd elosztja az értékek számával. Használata: <code>=ÁTLAG(A1:A10)</code>. Az üres cellákat és a szöveges értékeket figyelmen kívül hagyja.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Osztályátlag:</strong> <code>=ÁTLAG(C2:C31)</code> – számold ki egy osztály átlagát egy adott dolgozatra.</p>
+                <p><strong>2. Napi hőmérséklet:</strong> <code>=ÁTLAG(B2:B32)</code> – számold ki a havi átlaghőmérsékletet a napi adatokból.</p>
+                <p><strong>3. Sportteljesítmény:</strong> <code>=ÁTLAG(D2:D10)</code> – átlagold a futóidőket több edzés alapján.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MIN és MAX -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 6 20 10 16 14"/><polyline points="8 18 4 14 8 10"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">MIN és MAX</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Függvénykönyvtár · Matematikai</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A <code>=MIN()</code> függvény a megadott tartomány <strong>legkisebb</strong> értékét, a <code>=MAX()</code> függvény pedig a <strong>legnagyobb</strong> értékét adja vissza. Rendkívül hasznosak, ha gyorsan meg akarod tudni, ki érte el a legjobb vagy leggyengébb eredményt. Használatuk: <code>=MIN(A1:A10)</code>, <code>=MAX(A1:A10)</code>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Legjobb jegy:</strong> <code>=MAX(B2:B31)</code> – mutasd meg a legmagasabb dolgozatpontot az osztályban.</p>
+                <p><strong>2. Legalacsonyabb hőmérséklet:</strong> <code>=MIN(C2:C32)</code> – keresd meg a hónap leghidegebb napjának hőmérsékletét.</p>
+                <p><strong>3. Leggyorsabb idő:</strong> <code>=MIN(E2:E20)</code> – a legjobb futóidő megkeresése a testnevelési mérésekből.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DARAB és DARABTELI -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">DARAB és DARABTELI</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Függvénykönyvtár · Statisztikai</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A <code>=DARAB()</code> függvény megszámolja, hány <strong>számot</strong> tartalmaz a megadott tartomány. A <code>=DARABTELI()</code> függvény pedig azokat a cellákat számolja meg, amelyek <strong>megfelelnek egy feltételnek</strong>. Használatuk: <code>=DARAB(A1:A20)</code>, <code>=DARABTELI(A1:A20;">=5")</code>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Dolgozatot írt tanulók:</strong> <code>=DARAB(B2:B31)</code> – számold meg, hányan írták meg a dolgozatot (ha üres cella = hiányzó).</p>
+                <p><strong>2. Kitűnő jegyek:</strong> <code>=DARABTELI(C2:C31;">=5")</code> – számold meg, hány ötös született a dolgozatban.</p>
+                <p><strong>3. Hiányzások:</strong> <code>=DARABTELI(D2:D31;">10")</code> – számold meg, hány tanulónak van 10-nél több hiányzása.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HA függvény -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">HA (IF) függvény</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Függvénykönyvtár · Logikai</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A <code>=HA()</code> függvény az Excel <strong>legfontosabb logikai függvénye</strong>. Egy feltételt vizsgál, és ha a feltétel IGAZ, az egyik értéket adja vissza, ha HAMIS, akkor a másikat. Használata: <code>=HA(feltétel; érték_ha_igaz; érték_ha_hamis)</code>. A HA függvények egymásba is ágyazhatók bonyolultabb feltételekhez.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Megfelelt / Nem felelt meg:</strong> <code>=HA(B2>=50;"Megfelelt";"Nem felelt meg")</code> – automatikus értékelés a ponthatár alapján.</p>
+                <p><strong>2. Jeles / Nem jeles:</strong> <code>=HA(C2>=90;"Jeles";"")</code> – jelöld meg a 90% feletti dolgozatokat.</p>
+                <p><strong>3. Hiányzás figyelmeztetés:</strong> <code>=HA(D2>10;"FIGYELEM!";"Rendben")</code> – automatikus figyelmeztetés a sok hiányzásra.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FKERES függvény -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">FKERES (VLOOKUP)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Függvénykönyvtár · Kereső</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Az <code>=FKERES()</code> (függőleges keresés) függvény egy táblázat <strong>első oszlopában keres egy értéket</strong>, majd visszaadja a táblázat egy másik oszlopában lévő hozzá tartozó értéket. Használata: <code>=FKERES(keresett_érték; tábla; oszlop_szám; [pontos_e])</code>. A legtöbb esetben a HAMIS (pontos egyezés) paramétert érdemes használni.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Név → Jegy:</strong> <code>=FKERES("Kovács";A2:B31;2;HAMIS)</code> – keresd meg Kovács tanuló jegyét a névsorban.</p>
+                <p><strong>2. Termékkód → Ár:</strong> <code>=FKERES(E2;A2:C50;3;HAMIS)</code> – egy termékkód alapján keresd ki a termék árát.</p>
+                <p><strong>3. Osztály → Osztályfőnök:</strong> <code>=FKERES("10.A";A2:C20;3;HAMIS)</code> – keresd ki, ki az osztályfőnöke a 10.A osztálynak.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SZUMHA függvény -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 12 12 3 19 12"/><circle cx="18" cy="18" r="3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">SZUMHA (SUMIF)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Függvénykönyvtár · Matematikai</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A <code>=SZUMHA()</code> függvény <strong>feltételes összesítést</strong> végez: csak azokat a cellákat adja össze, amelyek megfelelnek egy adott feltételnek. Használata: <code>=SZUMHA(tartomány; feltétel; [összeg_tartomány])</code>. Ha az összeg_tartományt nem adod meg, a tartományban lévő értékeket összegzi.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Osztálypénz befizetés:</strong> <code>=SZUMHA(B2:B31;"Igen";C2:C31)</code> – add össze csak azoknak a tanulóknak a befizetését, akik már fizettek.</p>
+                <p><strong>2. Tantárgyankénti pontok:</strong> <code>=SZUMHA(D2:D100;"Matematika";E2:E100)</code> – összegezd a matematika dolgozatok pontjait.</p>
+                <p><strong>3. Költség kategóriánként:</strong> <code>=SZUMHA(F2:F50;"Étkezés";G2:G50)</code> – számold ki, mennyit költöttél étkezésre.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== DEFINIÁLT NEVEK ==================== -->
+      <section id="definednames-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Definiált nevek</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Névkezelő (Name Manager)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Definiált nevek csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Névkezelővel <strong>saját neveket adhatsz</strong> celláknak, cellatartományoknak vagy akár képleteknek is. Ahelyett, hogy <code>=SZUM(A1:A50)</code>-et írnál, írhatod azt, hogy <code>=SZUM(DolgozatPontok)</code>. A nevek könnyebben megjegyezhetők és olvashatóbbá teszik a képleteket. A Névkezelőben létrehozhatsz, szerkeszthetsz és törölhetsz neveket.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Tartomány elnevezése:</strong> Nevezd el a dolgozatpontok oszlopát <code>Pontok</code>-nak, és használd így: <code>=ÁTLAG(Pontok)</code>.</p>
+                <p><strong>2. Adókulcs:</strong> Egy fix értéket (pl. ÁFA = 27%) nevezz el <code>AFA</code>-nak, és használd a képletekben: <code>=B2*AFA</code>.</p>
+                <p><strong>3. Osztálynévsor:</strong> Nevezd el a 10.A osztály névsorát <code>Osztaly_10A</code>-nak, és hivatkozz rá más munkalapokról.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== KÉPLETVIZSGÁLAT ==================== -->
+      <section id="formulaauditing-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Képletvizsgálat</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Képlet kiértékelése (Evaluate Formula)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Képletvizsgálat csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Képlet kiértékelése eszköz <strong>lépésről lépésre megmutatja</strong>, hogyan számolja ki az Excel a képletet. Ez különösen hasznos, ha egy bonyolult, egymásba ágyazott képlet nem a várt eredményt adja. Az eszköz kiemeli az aktuális részkifejezést, és megmutatja annak részeredményét.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Hibakeresés:</strong> Ha egy <code>=HA(SZUM(A1:A10)>100;...)</code> képlet hibát ad, a kiértékelővel megnézheted, mennyi a SZUM részeredménye.</p>
+                <p><strong>2. Tanulás:</strong> Kezdőként használd a kiértékelőt, hogy lásd, milyen sorrendben számolja ki az Excel a műveleteket.</p>
+                <p><strong>3. Bonyolult képlet:</strong> Egy sok FKERES-t és HA-t tartalmazó képletnél a kiértékelővel követheted nyomon az adatáramlást.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Nyomkövetés (Trace Precedents/Dependents)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Képletvizsgálat csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Nyomkövetés eszközök <strong>vizuálisan mutatják a cellák közötti kapcsolatokat</strong>. Az "Előzmények nyomkövetése" kék nyilakkal jelzi, mely cellákból származnak a képlet adatai. A "Függőségek nyomkövetése" megmutatja, mely más cellák függnek a kijelölt cellától. A nyilak a munkalapon maradnak, amíg el nem távolítod őket.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Képlet megértése:</strong> Ha egy kész táblázatot kapsz, a nyomkövetéssel gyorsan megértheted, mely cellákból számolódik egy érték.</p>
+                <p><strong>2. Hibakeresés:</strong> Ha egy összegző cella értéke gyanús, az előzmények nyomkövetésével ellenőrizheted, hogy a megfelelő cellákat tartalmazza-e a képlet.</p>
+                <p><strong>3. Módosítás előtt:</strong> Mielőtt kitörölnél egy cellát, a függőségek nyomkövetésével ellenőrizheted, hogy van-e más cella, ami hivatkozik rá.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SZÁMÍTÁS ==================== -->
+      <section id="calculation-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Számítás</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Számítási beállítások</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Számítás csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Az Excel <strong>alapértelmezés szerint automatikusan</strong> újraszámolja a képleteket, ha bármilyen adat megváltozik. A Számítási beállításoknál ezt <strong>kikapcsolhatod</strong> ("Kézi" mód), ami nagy, sok képletet tartalmazó fájloknál gyorsítja a munkát. Ilyenkor csak a "Számítás most" (F9) gombra frissülnek a képletek. A "Munkalap számítása" (Shift+F9) csak az aktuális munkalapot számolja újra.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Nagy fájl:</strong> Ha egy iskolai statisztikai fájlban több ezer képlet van, kapcsold ki az automatikus számítást munka közben, és csak a végén frissítsd.</p>
+                <p><strong>2. Feltételes formázás teszt:</strong> Mielőtt véglegesítenél egy HA függvénnyel működő formázást, kézi számítással gyorsabban tesztelheted.</p>
+                <p><strong>3. Véletlenszám rögzítése:</strong> A <code>=VÉL()</code> függvény minden újraszámításnál változik – kézi számításra állítva rögzítheted a véletlen értékeket.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Összefoglalás -->
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white mt-8">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3">📌 Összefoglalás</h2>
+        <p class="text-emerald-50 leading-relaxed">
+          A Képletek menü az Excel <strong>matematikai motorja</strong>. Itt találhatók az összes beépített függvény a SZUM-tól kezdve az FKERES-en át a bonyolult logikai HA függvényekig. A definiált nevekkel olvashatóbbá teheted a képleteidet, a képletvizsgáló eszközökkel pedig könnyen megtalálhatod a hibákat. A számítási beállításokkal nagy fájloknál gyorsíthatod a munkát. Használd bátran ezeket az eszközöket a tanulmányaid során!
+        </p>
+      </div>
+
+    </div>
+
+    <!-- SRPSKI SADRŽAJ -->
+    <div class="lang-sr-section">
+
+      <!-- Navigacija -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold text-slate-600 mr-1">Skoči na:</span>
+          <a href="#functionlibrary-sr" class="nav-pill">Biblioteka funkcija</a>
+          <a href="#definednames-sr" class="nav-pill">Definisana imena</a>
+          <a href="#formulaauditing-sr" class="nav-pill">Provera formula</a>
+          <a href="#calculation-sr" class="nav-pill">Izračunavanje</a>
+        </div>
+      </div>
+
+      <!-- Uvod -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span class="text-2xl">🔢</span>
+          Šta je meni Formule?
+        </h2>
+        <p class="text-slate-700 leading-relaxed mb-3">
+          Excel <strong class="text-emerald-700">Formule (Formulas)</strong> meni je <strong>matematički i logički mozak</strong> programa.
+          Ovde se nalaze ugrađene funkcije (SUM, AVERAGE, IF, VLOOKUP i stotine drugih), upravljalac imenima, alati za proveru formula i podešavanja izračunavanja.
+        </p>
+        <p class="text-slate-700 leading-relaxed">
+          U narednom uputstvu <strong>detaljno su prikazane sve važne grupe</strong> ovog menija: saznaćeš čemu služe,
+          kako rade, i što je najvažnije – <strong>na realnim, školskim primerima</strong> shvatićeš kada ih je najbolje koristiti.
+        </p>
+      </div>
+
+      <!-- ==================== BIBLIOTEKA FUNKCIJA ==================== -->
+      <section id="functionlibrary-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Biblioteka funkcija</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 12 12 3 19 12"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">SUM (AutoSum)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Biblioteka funkcija · Matematičke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcija <code>=SUM()</code> je <strong>najčešće korišćena funkcija u Excelu</strong> koja sabira brojeve u zadanim ćelijama. Dugme AutoSum (Σ) nalazi se i u Početnom meniju i u meniju Formule, a automatski prepoznaje koje ćelije želiš da sabiraš. Upotreba: <code>=SUM(A1:A10)</code>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Zbir poena sa testa:</strong> <code>=SUM(B2:B16)</code> – saberi poene svih učenika u jednoj koloni.</p>
+                <p><strong>2. Dnevni prihod kafeterije:</strong> <code>=SUM(C2:C8)</code> – zbroj dnevni promet kafeterije po stavkama.</p>
+                <p><strong>3. Polugodišnji troškovi:</strong> <code>=SUM(D2:D50)</code> – izračunaj svoje ukupne troškove za polugodište.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">AVERAGE (Prosek)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Biblioteka funkcija · Matematičke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcija <code>=AVERAGE()</code> izračunava <strong>aritmetičku sredinu zadatih brojeva</strong>. Sabira vrednosti, a zatim ih deli brojem vrednosti. Upotreba: <code>=AVERAGE(A1:A10)</code>. Prazne ćelije i tekstualne vrednosti ignoriše.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Prosek odeljenja:</strong> <code>=AVERAGE(C2:C31)</code> – izračunaj prosek odeljenja iz određenog testa.</p>
+                <p><strong>2. Dnevna temperatura:</strong> <code>=AVERAGE(B2:B32)</code> – izračunaj mesečni prosek temperatura na osnovu dnevnih podataka.</p>
+                <p><strong>3. Sportski učinak:</strong> <code>=AVERAGE(D2:D10)</code> – izračunaj prosek vremena trčanja na osnovu više treninga.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 6 20 10 16 14"/><polyline points="8 18 4 14 8 10"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">MIN i MAX</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Biblioteka funkcija · Matematičke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcija <code>=MIN()</code> vraća <strong>najmanju</strong> vrednost u zadatom opsegu, dok <code>=MAX()</code> vraća <strong>najveću</strong> vrednost. Izuzetno su korisne kada želiš brzo da saznaš ko je postigao najbolji ili najslabiji rezultat. Upotreba: <code>=MIN(A1:A10)</code>, <code>=MAX(A1:A10)</code>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Najbolja ocena:</strong> <code>=MAX(B2:B31)</code> – prikaži najveći broj poena u odeljenju.</p>
+                <p><strong>2. Najniža temperatura:</strong> <code>=MIN(C2:C32)</code> – pronađi temperaturu najhladnijeg dana u mesecu.</p>
+                <p><strong>3. Najbrže vreme:</strong> <code>=MIN(E2:E20)</code> – pronađi najbolje vreme trčanja iz testa iz fizičkog.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">COUNT i COUNTIF</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Biblioteka funkcija · Statističke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcija <code>=COUNT()</code> broji koliko <strong>brojeva</strong> se nalazi u zadatom opsegu. Funkcija <code>=COUNTIF()</code> broji ćelije koje <strong>ispunjavaju određeni uslov</strong>. Upotreba: <code>=COUNT(A1:A20)</code>, <code>=COUNTIF(A1:A20;">=5")</code>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Učenici koji su pisali test:</strong> <code>=COUNT(B2:B31)</code> – izbroj koliko je učenika pisalo test (ako je prazna ćelija = odsutan).</p>
+                <p><strong>2. Odlične ocene:</strong> <code>=COUNTIF(C2:C31;">=5")</code> – izbroj koliko je petica bilo na testu.</p>
+                <p><strong>3. Izostanci:</strong> <code>=COUNTIF(D2:D31;">10")</code> – izbroj koliko učenika ima više od 10 izostanaka.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">IF (AKO) funkcija</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Biblioteka funkcija · Logičke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcija <code>=IF()</code> je <strong>najvažnija logička funkcija u Excelu</strong>. Ispituje uslov, i ako je uslov TAČAN, vraća jednu vrednost, a ako je NETAČAN, vraća drugu. Upotreba: <code>=IF(uslov; vrednost_ako_tačno; vrednost_ako_netačno)</code>. IF funkcije mogu se ugnežđivati za složenije uslove.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Položio / Nije položio:</strong> <code>=IF(B2>=50;"Položio";"Nije položio")</code> – automatsko ocenjivanje na osnovu graničnog broja poena.</p>
+                <p><strong>2. Odličan / Nije odličan:</strong> <code>=IF(C2>=90;"Odličan";"")</code> – označi testove sa preko 90%.</p>
+                <p><strong>3. Upozorenje na izostanke:</strong> <code>=IF(D2>10;"PAZNJA!";"U redu")</code> – automatsko upozorenje za veliki broj izostanaka.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">VLOOKUP</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Biblioteka funkcija · Pretraga</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcija <code>=VLOOKUP()</code> (vertikalna pretraga) traži vrednost u <strong>prvoj koloni tabele</strong>, a zatim vraća vrednost iz druge kolone u istom redu. Upotreba: <code>=VLOOKUP(trazena_vrednost; tabela; broj_kolone; [tacno_e])</code>. U većini slučajeva preporučuje se korišćenje parametra FALSE (tačno podudaranje).
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Ime -> Ocena:</strong> <code>=VLOOKUP("Petrović";A2:B31;2;FALSE)</code> – pronađi ocenu učenika Petrovića u imeniku.</p>
+                <p><strong>2. Šifra proizvoda -> Cena:</strong> <code>=VLOOKUP(E2;A2:C50;3;FALSE)</code> – na osnovu šifre izvuci cenu proizvoda.</p>
+                <p><strong>3. Odeljenje -> Razredni staresina:</strong> <code>=VLOOKUP("III-1";A2:C20;3;FALSE)</code> – pronađi ko je razredni staresina odeljenja III-1.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 12 12 3 19 12"/><circle cx="18" cy="18" r="3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">SUMIF</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Biblioteka funkcija · Matematičke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcija <code>=SUMIF()</code> vrši <strong>uslovno sabiranje</strong>: sabira samo one ćelije koje ispunjavaju zadati uslov. Upotreba: <code>=SUMIF(opseg; uslov; [opseg_zbira])</code>. Ako se opseg zbira ne zada, sabiraju se vrednosti u opsegu pretrage.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Uplata za odeljenje:</strong> <code>=SUMIF(B2:B31;"Da";C2:C31)</code> – saberi samo uplate učenika koji su već platili.</p>
+                <p><strong>2. Poeni po predmetu:</strong> <code>=SUMIF(D2:D100;"Matematika";E2:E100)</code> – zbroj poena iz matematičkih testova.</p>
+                <p><strong>3. Troškovi po kategoriji:</strong> <code>=SUMIF(F2:F50;"Ishrana";G2:G50)</code> – izračunaj koliko si potrošio na ishranu.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== DEFINISANA IMENA ==================== -->
+      <section id="definednames-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Definisana imena</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Menadžer imena (Name Manager)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Definisana imena</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Pomoću Menadžera imena možeš <strong>dodeliti svoja imena</strong> ćelijama, opsezima ćelija ili čak formulama. Umesto <code>=SUM(A1:A50)</code>, možeš napisati <code>=SUM(PoeniTesta)</code>. Imena su lakša za pamćenje i čine formule čitljivijim. U Menadžeru imena možeš kreirati, menjati i brisati imena.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Imenovanje opsega:</strong> Imenuj kolonu sa poenima <code>Poeni</code> i koristi je ovako: <code>=AVERAGE(Poeni)</code>.</p>
+                <p><strong>2. Poreska stopa:</strong> Fiksnu vrednost (npr. PDV = 20%) imenuj <code>PDV</code> i koristi u formulama: <code>=B2*PDV</code>.</p>
+                <p><strong>3. Imenik odeljenja:</strong> Imenuj imenik odeljenja III-1 kao <code>Odeljenje_III1</code> i pozivaj se na njega sa drugih radnih listova.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== PROVERA FORMULA ==================== -->
+      <section id="formulaauditing-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Provera formula</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Izračunavanje formule (Evaluate Formula)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Provera formula</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Alat za izračunavanje formula <strong>korak po korak prikazuje</strong> kako Excel izračunava formulu. Posebno je koristan kada složena, ugnežđena formula ne daje očekivani rezultat. Alat ističe trenutni deo izraza i prikazuje njegov međurezultat.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Traženje grešaka:</strong> Ako formula <code>=IF(SUM(A1:A10)>100;...)</code> prijavljuje grešku, pomoću ovog alata možeš proveriti koliki je međurezultat funkcije SUM.</p>
+                <p><strong>2. Učenje:</strong> Kao početnik, koristi ovaj alat da vidiš redosled kojim Excel izvršava operacije.</p>
+                <p><strong>3. Složena formula:</strong> Kod formula sa mnogo VLOOKUP i IF funkcija, alatom za izračunavanje možeš pratiti tok podataka.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Praćenje veza (Trace Precedents/Dependents)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Provera formula</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Alati za praćenje veza <strong>vizuelno prikazuju odnose između ćelija</strong>. "Praćenje prethodnika" plavim strelicama pokazuje iz kojih ćelija formula crpi podatke. "Praćenje zavisnih ćelija" prikazuje koje druge ćelije zavise od izabrane ćelije. Strelice ostaju na radnom listu dok ih ne ukloniš.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Razumevanje formule:</strong> Ako dobiješ gotovu tabelu, praćenjem veza brzo možeš razumeti iz kojih ćelija se izračunava neka vrednost.</p>
+                <p><strong>2. Traženje grešaka:</strong> Ako je vrednost zbirne ćelije sumnjiva, praćenjem prethodnika možeš proveriti da li formula obuhvata prave ćelije.</p>
+                <p><strong>3. Pre izmene:</strong> Pre nego što obrišeš neku ćeliju, praćenjem zavisnih ćelija proveri da li u drugoj ćeliji postoji formula koja se poziva na nju.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== IZRAČUNAVANJE ==================== -->
+      <section id="calculation-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Izračunavanje</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Opcije izračunavanja</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Izračunavanje</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Excel <strong>podrazumevano automatski</strong> ponovo izračunava formule kada se podaci promene. U Opcijama izračunavanja to možeš <strong>isključiti</strong> ("Ručni" režim), što ubrzava rad kod velikih fajlova sa mnogo formula. Tada se formule ažuriraju samo kada pritisneš dugme "Izračunaj sada" (F9). Opcija "Izračunaj radni list" (Shift+F9) ponovo izračunava samo trenutni radni list.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Veliki fajl:</strong> Ako školski statistički fajl ima nekoliko hiljada formula, isključi automatsko izračunavanje tokom rada, a ažuriraj ga tek na kraju.</p>
+                <p><strong>2. Testiranje uslovnog oblikovanja:</strong> Pre nego što finalizuješ oblikovanje zasnovano na IF funkciji, ručnim izračunavanjem ga brže testiraj.</p>
+                <p><strong>3. Zadržavanje nasumičnog broja:</strong> Funkcija <code>=RAND()</code> se menja pri svakom izračunavanju – prelaskom na ručno izračunavanje možete zadržati iste nasumične vrednosti.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Zaključak -->
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white mt-8">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3">📌 Zaključak</h2>
+        <p class="text-emerald-50 leading-relaxed">
+          Meni Formule je <strong>matematički motor</strong> Excela. Ovde se nalaze sve ugrađene funkcije, od SUM, preko VLOOKUP, do složenih logičkih IF funkcija. Definisanim imenima možeš učiniti formule čitljivijim, alatima za proveru formula lako otkriti greške, a opcijama izračunavanja ubrzati rad sa velikim fajlovima. Slobodno ih koristi tokom učenja!
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Lábléc -->
+  <footer class="bg-white border-t border-slate-200 mt-8 py-5 text-center text-sm text-slate-500">
+    <span class="lang-hu-section">Excel Képletek menü – részletes útmutató középiskolásoknak · Készült tanulási céllal, interaktív elemek nélkül, sok példával</span>
+    <span class="lang-sr-section">Excel Formule meni – detaljno uputstvo za srednjoškolce · Napravljeno u edukativne svrhe, bez interaktivnih elemenata, sa mnogo primera</span>
+  </footer>
+
+  <script>
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.documentElement.lang = (lang === 'hu') ? 'hu' : 'sr';
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Excel Adatok menü / Podaci meni</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Egyedi finomhangolások -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* ============ EXCEL TEMA ============ */
+    :root {
+      --xl-green: #217346;
+      --xl-green-dark: #185c36;
+      --xl-green-light: #e7f0ea;
+      --xl-amber: #ffb900;
+      --xl-border: #d4d4d4;
+      --xl-grid: #e3e3e3;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f3f3f3;
+      background-image:
+        linear-gradient(var(--xl-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--xl-grid) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    /* Excel-style traka (ribbon) */
+    .xl-ribbon { background: #217346; }
+    .xl-tab {
+      position: relative;
+      padding: 8px 16px;
+      font-weight: 500;
+      color: #ffffffcc;
+      cursor: default;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.15s ease;
+    }
+    .xl-tab:hover { color: #fff; background: #1d653d; }
+    .xl-tab.active {
+      color: var(--xl-green);
+      background: #ffffff;
+      font-weight: 600;
+    }
+    .xl-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 3px;
+      background: var(--xl-amber);
+    }
+
+    /* Kartice alata */
+    .tool-section {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-left: 4px solid var(--xl-green);
+      border-radius: 8px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .tool-section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -10px rgba(33, 115, 70, 0.25);
+      border-left-color: var(--xl-amber);
+    }
+
+    /* Broj ćelije stilizovan kao Excel zaglavlje */
+    .group-badge {
+      background: linear-gradient(135deg, #217346, #185c36);
+      box-shadow: 0 2px 8px -2px rgba(33, 115, 70, 0.5);
+    }
+
+    .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #217346; border-radius: 10px; }
+
+    @media print {
+      body { background: white; }
+      .tool-section { break-inside: avoid; box-shadow: none; border-left: 4px solid #217346; }
+      .xl-ribbon, .no-print { display: none !important; }
+    }
+
+    /* Višejezičnost */
+    .lang-hu-section, .lang-sr-section { display: none; }
+    body[data-lang="hu"] .lang-hu-section { display: revert; }
+    body[data-lang="sr"] .lang-sr-section { display: revert; }
+
+    .lang-btn {
+      background: white;
+      border: 1px solid var(--xl-border);
+      color: #475569;
+    }
+    .lang-btn:hover { border-color: var(--xl-green); color: var(--xl-green); }
+    body[data-lang="hu"] #btn-hu,
+    body[data-lang="sr"] #btn-sr {
+      background: var(--xl-green);
+      color: white;
+      border-color: var(--xl-green);
+    }
+
+    /* Animacija ulaza kartica */
+    @keyframes xlFadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tool-section { animation: xlFadeUp 0.4s ease both; }
+
+    /* Glavna ikona u kartici – puna Excel zelena */
+    .tool-section > .flex.items-start > span:first-child {
+      background: var(--xl-green) !important;
+      color: #fff !important;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px -3px rgba(33, 115, 70, 0.45);
+      transition: transform 0.18s ease;
+    }
+    .tool-section:hover > .flex.items-start > span:first-child {
+      transform: scale(1.06) rotate(-3deg);
+    }
+
+    /* Navigacione pilule */
+    .nav-pill {
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #217346;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      transition: all 0.15s ease;
+    }
+    .nav-pill:hover {
+      background: var(--xl-green);
+      color: #fff;
+      border-color: var(--xl-green);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col" data-lang="hu">
+
+  <!-- Excel-stil naslovna traka (title bar) -->
+  <div class="xl-ribbon text-white sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Gornji red: logo + naslov + jezik -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 pb-2">
+        <div class="flex items-center gap-3">
+          <div class="bg-white/15 backdrop-blur p-2.5 rounded-lg ring-1 ring-white/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight leading-tight">
+              <span class="lang-hu-section">Excel Adatok menü</span>
+              <span class="lang-sr-section">Excel Podaci meni</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-emerald-100/90">
+              <span class="lang-hu-section">Részletes magyarázat és gyakorlati példák középiskolásoknak</span>
+              <span class="lang-sr-section">Detaljno objašnjenje i praktični primeri za srednjoškolce</span>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 bg-white/15 rounded-lg p-1 ring-1 ring-white/20">
+            <button id="btn-hu" onclick="setLang('hu')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Magyar</button>
+            <button id="btn-sr" onclick="setLang('sr')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Srpski</button>
+          </div>
+        </div>
+      </div>
+      <!-- Ribbon tabovi (izgled kao Excel) -->
+      <div class="flex items-end gap-1 -mb-px overflow-x-auto scrollbar-thin">
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Kezdőlap</span>
+          <span class="lang-sr-section">Početni</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Beszúrás</span>
+          <span class="lang-sr-section">Umetanje</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Lap elrendezés</span>
+          <span class="lang-sr-section">Raspored stranice</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Képletek</span>
+          <span class="lang-sr-section">Formule</span>
+        </span>
+        <span class="xl-tab active">
+          <span class="lang-hu-section">Adatok</span>
+          <span class="lang-sr-section">Podaci</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Szemrevételezés</span>
+          <span class="lang-sr-section">Pregled</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula traka (Name box + formula bar izgled) -->
+  <div class="bg-white border-b border-slate-200 hidden sm:block no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center gap-3 text-sm">
+      <div class="flex items-center border border-slate-300 rounded px-2 py-0.5 font-mono text-xs text-slate-600 bg-slate-50">
+        <span class="text-emerald-700 font-bold">A1</span>
+      </div>
+      <span class="text-slate-300">fx</span>
+      <div class="flex-1 text-xs text-slate-400 italic">
+        <span class="lang-hu-section">=OKTATÓ_ÚTMUTATÓ("Adatok menü")</span>
+        <span class="lang-sr-section">=NASTAVNI_VODIČ("Podaci meni")</span>
+      </div>
+      <div class="hidden md:flex items-center gap-1.5 text-xs text-slate-500">
+        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+        <span class="lang-hu-section">adatkezelés és elemzés</span>
+        <span class="lang-sr-section">upravljanje i analiza podataka</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fő tartalom -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- MAGYAR TARTALOM -->
+    <div class="lang-hu-section">
+
+      <!-- Tartalomjegyzék -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold text-slate-600 mr-1">Ugrás:</span>
+          <a href="#getdata-hu" class="nav-pill">Adatok lekérése</a>
+          <a href="#queries-hu" class="nav-pill">Lekérdezések</a>
+          <a href="#sortfilter-hu" class="nav-pill">Rendezés és szűrés</a>
+          <a href="#datatools-hu" class="nav-pill">Adateszközök</a>
+          <a href="#outline-hu" class="nav-pill">Szerkezet</a>
+        </div>
+      </div>
+
+      <!-- Bevezető -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span class="text-2xl">📊</span>
+          Mit tud az Adatok menü?
+        </h2>
+        <p class="text-slate-700 leading-relaxed mb-3">
+          Az Excel <strong class="text-emerald-700">Adatok (Data)</strong> menüje a program
+          <strong>adatkezelési és elemzési központja</strong>. Itt találhatók az adatok
+          importálására, rendezésére, szűrésére, érvényesítésére és elemzésére szolgáló
+          eszközök, valamint a csoportosítási és részösszegző funkciók.
+        </p>
+        <p class="text-slate-700 leading-relaxed">
+          Az alábbi útmutatóban az Adatok menü <strong>összes fontos csoportját</strong> részletesen bemutatjuk:
+          megtudhatod, mire valók, hogyan működnek, és ami a legfontosabb –
+          <strong>valós, iskolai példákon</strong> keresztül megértheted, mikor érdemes használni őket.
+        </p>
+      </div>
+
+      <!-- ==================== ADATOK LEKÉRÉSE ==================== -->
+      <section id="getdata-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Adatok lekérése és átalakítása</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <!-- Külső adatok importálása -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Külső adatok importálása</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Adatok lekérése és átalakítása csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Az Adatok lekérése funkcióval <strong>külső forrásokból</strong> importálhatsz adatokat az Excelbe. Támogatott források: szövegfájlok (CSV, TXT), adatbázisok (Access, SQL Server), weboldalak, JSON fájlok, PDF-ek és más Excel fájlok. A Power Query (Beépített lekérdező) segítségével az importálás közben <strong>tisztíthatod és átalakíthatod</strong> az adatokat.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. KSH adatok:</strong> Tölts le népességi adatokat a KSH honlapjáról CSV formátumban, és importáld Excelbe elemzéshez.</p>
+                <p><strong>2. Webes adatgyűjtés:</strong> Importálj egy HTML táblázatot (pl. Wikipédia oldalról) közvetlenül az Excelbe.</p>
+                <p><strong>3. Iskolai adatbázis:</strong> Csatlakozz az iskola Access adatbázisához, és hozd be a tanulói adatokat elemzésre.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Szövegből oszlopok -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Szövegből oszlopok (Text to Columns)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Adatok lekérése és átalakítása csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Szövegből oszlopok varázsló egy cella tartalmát <strong>több oszlopra bontja szét</strong> egy elválasztó karakter (pl. vessző, pontosvessző, tabulátor, szóköz) vagy fix szélesség alapján. Ez az egyik <strong>leggyakrabban használt adattisztítási eszköz</strong>, különösen CSV fájlok megnyitásakor.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Teljes név szétválasztása:</strong> A "Kovács János" cellát bontsd szét "Kovács" (vezetéknév) és "János" (keresztnév) oszlopokra.</p>
+                <p><strong>2. Cím feldolgozása:</strong> A "Budapest, Kossuth utca 12." cellát bontsd szét város, utca és házszám oszlopokra.</p>
+                <p><strong>3. Dátum szabványosítása:</strong> A "2025.03.15" formátumú szöveget bontsd szét év, hónap, nap oszlopokra.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== LEKÉRDEZÉSEK ==================== -->
+      <section id="queries-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Lekérdezések és kapcsolatok</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Lekérdezések szerkesztése (Power Query)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Lekérdezések és kapcsolatok csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Power Query szerkesztő egy <strong>hatékony adatátalakító eszköz</strong>, amelyben lépésről lépésre tisztíthatod, alakíthatod és kombinálhatod az adatokat. Minden művelet rögzítésre kerül, így a folyamat <strong>automatikusan megismételhető</strong>, ha friss adatok érkeznek. Olyan műveletek végezhetők, mint: szűrés, rendezés, oszlopok törlése, adattípus módosítása, pivotálás, csoportosítás.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Havonkénti jelentés:</strong> Minden hónapban töltsd le a büfé forgalmi adatait, és a Power Query automatikusan tisztítsa és formázza őket ugyanúgy.</p>
+                <p><strong>2. Több fájl egyesítése:</strong> Ha minden osztály külön Excel fájlban küldi el a létszámadatokat, a Power Query-vel egyesítheted őket egy táblázatba.</p>
+                <p><strong>3. Adattisztítás:</strong> Távolítsd el az üres sorokat, javítsd a következetlen elnevezéseket, és alakítsd át a szöveges számokat valódi számokká.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Adatmodell és kapcsolatok</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Lekérdezések és kapcsolatok csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Az Adatmodell lehetővé teszi, hogy <strong>több táblázatot kapcsolj össze</strong> közös mezők (pl. azonosító, név, kód) alapján, hasonlóan egy adatbázishoz. A kapcsolatok létrehozásával elkerülheted az FKERES függvények tömegét, és a kimutatások több táblából is dolgozhatnak egyszerre. Ez az Excel egyik <strong>legfejlettebb adatkezelési funkciója</strong>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Tanulók és jegyek:</strong> Kapcsold össze a "Tanulók" táblát (tanuló_id, név, osztály) a "Jegyek" táblával (tanuló_id, tantárgy, jegy) a tanuló_id mezőn keresztül.</p>
+                <p><strong>2. Termékek és rendelések:</strong> Kapcsold össze a termék katalógust a rendelési adatokkal a termékkód alapján.</p>
+                <p><strong>3. Hiányzások:</strong> Kapcsold össze a tanulói alapadatokat a hiányzási naplóval a tanuló azonosítója alapján.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== RENDEZÉS ÉS SZŰRÉS ==================== -->
+      <section id="sortfilter-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Rendezés és szűrés</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="12" x2="12" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/><polyline points="20 15 16 19 20 23"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Speciális rendezés</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Rendezés és szűrés csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Speciális rendezés (Custom Sort) lehetővé teszi, hogy <strong>több szempont szerint, egyéni sorrendben</strong> rendezd az adatokat. Meghatározhatod a rendezés irányát (növekvő/csökkenő), a rendezési szinteket (elsődleges, másodlagos), és akár egyéni listák (pl. hónapok, napok) szerint is rendezhetsz.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Osztályonkénti rendezés:</strong> Rendezd a tanulókat először osztály szerint (10.A, 10.B, 10.C), majd azonos osztályon belül név szerint ABC-sorrendbe.</p>
+                <p><strong>2. Dátum szerinti rendezés:</strong> Rendezd a beadott házifeladatokat határidő szerint növekvő sorrendbe.</p>
+                <p><strong>3. Egyéni sorrend:</strong> Rendezd a tantárgyakat egyéni sorrendbe (Magyar, Matek, Töri, Angol...) a hivatalos órarend szerint.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Speciális szűrés (Advanced Filter)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Rendezés és szűrés csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Speciális szűrés (Advanced Filter) az automatikus szűrőnél <strong>sokkal összetettebb feltételek</strong> megadását teszi lehetővé. Egy külön feltételtartományban határozhatod meg a szűrési kritériumokat, amelyeket ÉS/VAGY kapcsolattal kombinálhatsz. A szűrt eredményt <strong>más helyre is másolhatod</strong>, nem csak elrejti a sorokat.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Összetett szűrés:</strong> Szűrd ki azokat a 10.A-s tanulókat, akiknek a matematika jegye 4 vagy 5, ÉS a hiányzásuk kevesebb, mint 5 óra.</p>
+                <p><strong>2. VAGY feltétel:</strong> Listázd ki azokat a diákokat, akik VAGY matematikából, VAGY magyarból értek el 90% felett.</p>
+                <p><strong>3. Eredmény másolása:</strong> Szűrd ki a kitűnő tanulókat, és másold őket egy új munkalapra további feldolgozáshoz.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ADATESZKÖZÖK ==================== -->
+      <section id="datatools-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Adateszközök</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Adatérvényesítés (Data Validation)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Adateszközök csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Az Adatérvényesítés (Data Validation) segítségével <strong>korlátozhatod</strong>, milyen típusú adatot lehet beírni egy cellába. Beállíthatsz legördülő listákat, számhatárokat, dátumkorlátokat, szöveghossz-korlátozást, és egyéni hibaüzeneteket, ha valaki érvénytelen adatot próbál bevinni. Ez kiváló eszköz űrlapok és adatbázisok készítéséhez.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Osztályzatok:</strong> A jegyek cellájában csak 1 és 5 közötti számot engedj meg, más értéknél jelenjen meg hibaüzenet.</p>
+                <p><strong>2. Legördülő lista:</strong> A "Tantárgy" oszlopban legördülő listából válaszd ki a tantárgyat (Magyar, Matek, Töri...).</p>
+                <p><strong>3. Dátumkorlát:</strong> A "Születési dátum" mezőben csak 2000.01.01 és 2010.12.31 közötti dátumot engedj meg.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Duplikátumok eltávolítása</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Adateszközök csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Duplikátumok eltávolítása eszköz <strong>megkeresi és törli az azonos sorokat</strong> a táblázatból. Kiválaszthatod, mely oszlopokat vegye figyelembe a duplikáció ellenőrzésekor. Az első előfordulás megmarad, a többi törlődik. Az eszköz visszajelzi, hány duplikátumot talált és hány egyedi érték maradt.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Dupla beírás:</strong> Ha egy tanuló véletlenül kétszer szerepel a névsorban, a duplikátum eltávolításával tisztíthatod a listát.</p>
+                <p><strong>2. E-mail lista:</strong> Egy hírlevél listából távolítsd el a dupla e-mail címeket, hogy mindenki csak egyszer kapjon levelet.</p>
+                <p><strong>3. Termékkódok:</strong> Egy terméklistából távolítsd el a dupla termékkódokat, hogy minden termék csak egyszer szerepeljen.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Gyorskitöltés (Flash Fill)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Adateszközök csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Gyorskitöltés (Flash Fill) az Excel <strong>intelligens mintaillesztő eszköze</strong>. Ha elkezded gépelni, hogyan szeretnéd átalakítani az adatokat, az Excel felismeri a mintát, és <strong>automatikusan kitölti</strong> a többi cellát. Nincs szükség képletekre vagy szövegfüggvényekre – elég egy példát mutatni.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Vezetéknév kiemelése:</strong> A "Kovács János" oszlopból gépeld be a "Kovács" szót, és a Gyorskitöltés automatikusan kiemeli az összes vezetéknevet.</p>
+                <p><strong>2. Dátumformázás:</strong> A "20250315" szövegből gépeld be a "2025.03.15" formátumot, és az Excel átalakítja a többit.</p>
+                <p><strong>3. Iniciálék:</strong> A "Kovács János" oszlopból gépeld be a "KJ" iniciálét, és a Gyorskitöltés elvégzi a többinél is.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Mi lenne ha elemzés (What-If Analysis)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Adateszközök csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Mi lenne ha elemzés (What-If Analysis) három hatékony eszközt tartalmaz: a <strong>Célérték-keresést</strong> (egy cella értékének beállításával visszaszámolja a bemeneti értéket), az <strong>Adattáblát</strong> (több változó együttes hatásának modellezése), és a <strong>Forgatókönyv-kezelőt</strong> (különböző forgatókönyvek mentése és összehasonlítása).
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Célérték-keresés:</strong> "Hány pontot kell szereznem a következő dolgozaton, hogy az átlagom 4,5 legyen?" – az Excel kiszámolja.</p>
+                <p><strong>2. Hitelszámítás:</strong> "Ha 5% a kamat, mennyi a törlesztő? És ha 7%?" – az Adattáblával összehasonlíthatod.</p>
+                <p><strong>3. Forgatkönyv:</strong> Ments el három forgatókönyvet a költségvetéshez: "Optimista", "Valószínű" és "Pesszimista" változatok.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SZERKEZET ==================== -->
+      <section id="outline-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Szerkezet</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Csoportosítás (Group)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Szerkezet csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Csoportosítás (Group) eszközzel <strong>sorokat vagy oszlopokat csoportosíthatsz</strong>, amelyeket aztán egy kattintással összecsukhatsz vagy kinyithatsz. Ez különösen hasznos nagy táblázatoknál, ahol a részletes adatokat elrejtheted, és csak az összegzéseket szeretnéd látni. A bal oldalon (sorok) vagy felül (oszlopok) megjelenő +/- gombokkal vezérelheted a nézetet.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Félévek csoportosítása:</strong> Csoportosítsd a havi jegyeket félévenként, hogy összecsukva csak a félévi összegzéseket lásd.</p>
+                <p><strong>2. Költségvetési tételek:</strong> Csoportosítsd a kiadásokat kategóriánként (étkezés, utazás, szórakozás), hogy részletezve is megnézhesd, de alapértelmezetten csak a főösszegek látszódjanak.</p>
+                <p><strong>3. Oszlopok elrejtése:</strong> Csoportosítsd a segédszámításokat tartalmazó oszlopokat, és csukd össze őket, hogy a táblázat áttekinthetőbb legyen.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 12 12 3 19 12"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Részösszeg (Subtotal)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Szerkezet csoport</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Mi ez?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                A Részösszeg (Subtotal) eszköz <strong>automatikusan beszúr összegző sorokat</strong> a táblázatba, amikor egy csoportosító oszlop értéke változik. Használhatsz SZUM, ÁTLAG, DARAB, MIN, MAX és más függvényeket a részösszegzéshez. Az eszköz automatikusan létrehozza a csoportosítási szinteket is, így a részletek összecsukhatók.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Gyakorlati példák
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Osztályonkénti átlag:</strong> Az osztályok szerint rendezett jegyeknél a Részösszeg eszközzel automatikusan számíttasd ki minden osztály átlagát.</p>
+                <p><strong>2. Kategóriánkénti összeg:</strong> A büfés tételeknél kategóriánként (ital, szendvics, édesség) számíttasd ki a részösszeget.</p>
+                <p><strong>3. Havi bontás:</strong> A éves kiadásoknál hónaponként számíttasd ki a havi részösszegeket a Részösszeg eszközzel.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Összefoglalás -->
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white mt-8">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3">📌 Összefoglalás</h2>
+        <p class="text-emerald-50 leading-relaxed">
+          Az Adatok menü az Excel <strong>adatkezelési és elemzési központja</strong>. Itt találhatók az adatok importálására, tisztítására, rendezésére, szűrésére és érvényesítésére szolgáló eszközök. A Power Query segítségével automatizálhatod az adattisztítást, a Mi lenne ha elemzéssel modellezheted a különböző forgatókönyveket, a Részösszeg és Csoportosítás eszközökkel pedig áttekinthetőbbé teheted a nagy táblázatokat. Használd bátran ezeket az eszközöket a tanulmányaid során!
+        </p>
+      </div>
+
+    </div>
+
+    <!-- SRPSKI SADRŽAJ -->
+    <div class="lang-sr-section">
+
+      <!-- Navigacija -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold text-slate-600 mr-1">Skoči na:</span>
+          <a href="#getdata-sr" class="nav-pill">Dobavljanje podataka</a>
+          <a href="#queries-sr" class="nav-pill">Upiti</a>
+          <a href="#sortfilter-sr" class="nav-pill">Sortiranje i filter</a>
+          <a href="#datatools-sr" class="nav-pill">Alati za podatke</a>
+          <a href="#outline-sr" class="nav-pill">Struktura</a>
+        </div>
+      </div>
+
+      <!-- Uvod -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span class="text-2xl">📊</span>
+          Šta je meni Podaci?
+        </h2>
+        <p class="text-slate-700 leading-relaxed mb-3">
+          Excel <strong class="text-emerald-700">Podaci (Data)</strong> meni je <strong>centar za upravljanje i analizu podataka</strong> u programu.
+          Ovde se nalaze alati za uvoz, sortiranje, filtriranje, validaciju i analizu podataka, kao i funkcije za grupisanje i međuzbirove.
+        </p>
+        <p class="text-slate-700 leading-relaxed">
+          U narednom uputstvu <strong>detaljno su prikazane sve važne grupe</strong> ovog menija: saznaćeš čemu služe,
+          kako rade, i što je najvažnije – <strong>na realnim, školskim primerima</strong> shvatićeš kada ih je najbolje koristiti.
+        </p>
+      </div>
+
+      <!-- ==================== DOBAVLJANJE PODATAKA ==================== -->
+      <section id="getdata-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Dobavljanje i transformacija podataka</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Uvoz spoljnih podataka</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Dobavljanje i transformacija podataka</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcijom za dobavljanje podataka možeš uvoziti podatke iz <strong>spoljnih izvora</strong> u Excel. Podržani izvori: tekstualni fajlovi (CSV, TXT), baze podataka (Access, SQL Server), veb-stranice, JSON fajlovi, PDF-ovi i drugi Excel fajlovi. Pomoću Power Query-ja možeš <strong>očistiti i transformisati</strong> podatke tokom uvoza.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Podaci sa portala:</strong> Preuzmi podatke o stanovništvu sa sajta statističkog zavoda u CSV formatu i uvezi ih u Excel na analizu.</p>
+                <p><strong>2. Prikupljanje sa weba:</strong> Uvezi HTML tabelu (npr. sa Vikipedije) direktno u Excel.</p>
+                <p><strong>3. Školska baza:</strong> Poveži se sa školskom Access bazom podataka i uvezi podatke o učenicima na obradu.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Tekst u kolone (Text to Columns)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Dobavljanje i transformacija podataka</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Alat Tekst u kolone <strong>razdvaja sadržaj jedne ćelije na više kolona</strong> na osnovu znaka razdvajača (npr. zarez, tačka-zarez, tabulator, razmak) ili fiksne širine. Ovo je jedan od <strong>najčešće korišćenih alata za čišćenje podataka</strong>, posebno pri otvaranju CSV fajlova.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Razdvajanje imena:</strong> Ćeliju "Petar Petrović" podeli na kolone "Petar" (ime) i "Petrović" (prezime).</p>
+                <p><strong>2. Obrada adrese:</strong> Ćeliju "Beograd, Knez Mihajlova 5" podeli na kolone za grad, ulicu i broj.</p>
+                <p><strong>3. Standardizacija datuma:</strong> Tekst "20250315" podeli na kolone za godinu, mesec i dan.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== UPITI I VEZE ==================== -->
+      <section id="queries-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Upiti i veze</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Uređivanje upita (Power Query)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Upiti i veze</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Power Query editor je <strong>moćan alat za transformaciju podataka</strong> u kojem korak po korak čistiš, oblikuješ i kombinuješ podatke. Svaka operacija se snima, pa se proces <strong>automatski ponavlja</strong> kada stignu novi podaci. Moguće su operacije poput: filtriranje, sortiranje, brisanje kolona, promena tipa podataka, pivotiranje i grupisanje.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Mesečni izveštaj:</strong> Svakog meseca preuzmi podatke o prometu kafeterije, a Power Query neka ih automatski očisti i formatira na isti način.</p>
+                <p><strong>2. Spajanje fajlova:</strong> Ako svako odeljenje šalje brojno stanje u posebnom Excel fajlu, Power Query-jem ih spoji u jednu tabelu.</p>
+                <p><strong>3. Čišćenje podataka:</strong> Ukloni prazne redove, ispravi nedosledna imena i pretvori tekstualne brojeve u prave brojeve.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Model podataka i veze</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Upiti i veze</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Model podataka omogućava ti da <strong>povežeš više tabela</strong> na osnovu zajedničkih polja (npr. identifikator, ime, šifra), slično kao u bazi podataka. Kreiranjem veza izbegavaš gomilu funkcija za pretragu, a pivot tabele mogu istovremeno da koriste podatke iz više tabela. Ovo je jedna od <strong>najnaprednijih funkcija za upravljanje podacima</strong> u Excelu.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Učenici i ocene:</strong> Poveži tabelu "Učenici" (ucenik_id, ime, odeljenje) sa tabelom "Ocene" (ucenik_id, predmet, ocena) preko polja ucenik_id.</p>
+                <p><strong>2. Proizvodi i porudžbine:</strong> Poveži katalog proizvoda sa podacima o porudžbinama preko šifre proizvoda.</p>
+                <p><strong>3. Odsustva:</strong> Poveži osnovne podatke o učenicima sa dnevnikom odsustva preko jedinstvenog ID-a učenika.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SORTIRANJE I FILTER ==================== -->
+      <section id="sortfilter-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Sortiranje i filter</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="12" x2="12" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/><polyline points="20 15 16 19 20 23"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Napredno sortiranje</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Sortiranje i filter</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Napredno sortiranje (Custom Sort) omogućava ti da sortiraš podatke <strong>prema više kriterijuma i po custom redosledu</strong>. Možeš odrediti smer sortiranja (rastući/opadajući), nivoe sortiranja (primarni, sekundarni) i sortirati čak i po prilagođenim listama (npr. meseci, dani).
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Sortiranje po odeljenjima:</strong> Sortiraj učenike prvo po odeljenju (III-1, III-2, III-3), a zatim unutar istog odeljenja po abecedi.</p>
+                <p><strong>2. Sortiranje po datumu:</strong> Sortiraj predate domaće zadatke po roku u rastućem redosledu.</p>
+                <p><strong>3. Prilagođeni redosled:</strong> Sortiraj predmete po custom redosledu (Jezik, Matematika, Istorija, Engleski...) prema zvaničnom rasporedu.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Napredni filter (Advanced Filter)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Sortiranje i filter</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Napredni filter omogućava zadavanje <strong>mnogo složenijih uslova</strong> nego običan filter. U posebnom opsegu uslova definišeš kriterijume za filtriranje, koje možeš kombinovati sa I/ILI logikom. Rezultat filtriranja možeš <strong>kopirati na drugu lokaciju</strong>, umesto samo da sakrivaš redove.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Složeno filtriranje:</strong> Izdvoji učenike iz III-1 čija je ocena iz matematike 4 ili 5, I koji imaju manje od 5 časova izostanka.</p>
+                <p><strong>2. ILI uslov:</strong> Izlistaj učenike koji su ILI iz matematike ILI iz jezika ostvarili preko 90%.</p>
+                <p><strong>3. Kopiranje rezultata:</strong> Filtriraj odlične učenike i kopiraj ih na novi radni list za dalju obradu.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ALATI ZA PODATKE ==================== -->
+      <section id="datatools-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Alati za podatke</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Provera podataka (Data Validation)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Alati za podatke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Provera podataka omogućava ti da <strong>ograničiš</strong> kakav tip podatka se sme uneti u ćeliju. Možeš postaviti padajuće liste, brojčane granice, datumske granice, ograničenje dužine teksta i prilagođene poruke o grešci ako neko pokuša da unese nevažeći podatak. Odličan alat za izradu formulara i baza podataka.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Ocene:</strong> U ćeliji za ocene dozvoli samo brojeve od 1 do 5, a za ostale vrednosti prikaži poruku o grešci.</p>
+                <p><strong>2. Padajuća lista:</strong> U koloni "Predmet" izaberi predmet iz padajuće liste (Jezik, Matematika, Istorija...).</p>
+                <p><strong>3. Datumsko ograničenje:</strong> U polje "Datum rođenja" dozvoli upis datuma samo između 01.01.2000. i 31.12.2010.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Uklanjanje duplikata</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Alati za podatke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Alat za uklanjanje duplikata <strong>pronalazi i briše identične redove</strong> u tabeli. Možeš izabrati koje kolone će uzeti u obzir pri proveri duplikata. Prvo pojavljivanje se zadržava, ostali se brišu. Alat javlja koliko je duplikata pronađeno, a koliko jedinstvenih vrednosti ostalo.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Dupli upis:</strong> Ako je učenik slučajno upisan dva puta u imenik, uklanjanjem duplikata očisti listu.</p>
+                <p><strong>2. Lista e-mailova:</strong> Iz liste za newsletter ukloni duplirane adrese kako bi svako dobio samo jedan mail.</p>
+                <p><strong>3. Šifre proizvoda:</strong> Iz liste proizvoda ukloni duplirane šifre kako bi svaki proizvod bio zastupljen samo jednom.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Brzo popunjavanje (Flash Fill)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Alati za podatke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Brzo popunjavanje je Excel-ov <strong>alat za inteligentno prepoznavanje šablona</strong>. Ako počneš da kucaš kako želiš da transformišeš podatke, Excel prepoznaje obrazac i <strong>automatski popunjava</strong> ostale ćelije. Nema potrebe za formulama ili tekstualnim funkcijama – dovoljno je pokazati jedan primer.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Izdvajanje prezimena:</strong> Iz kolone "Petar Petrović" otkucaj "Petrović", a Brzo popunjavanje će automatski izdvojiti sva prezimena.</p>
+                <p><strong>2. Formatiranje datuma:</strong> Iz teksta "20250315" otkucaj "15.03.2025.", a Excel će transformisati i ostale.</p>
+                <p><strong>3. Inicijali:</strong> Iz kolone "Petar Petrović" otkucaj "PP", a Brzo popunjavanje će to uraditi i za ostale.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Šta-ako analiza (What-If Analysis)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Alati za podatke</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Šta-ako analiza sadrži tri moćna alata: <strong>Pretragu cilja</strong> (podešavanjem vrednosti jedne ćelije izračunava ulaznu vrednost), <strong>Tabelu podataka</strong> (modeliranje uticaja više promenljivih) i <strong>Menadžer scenarija</strong> (čuvanje i upoređivanje različitih scenarija).
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Pretraga cilja:</strong> "Koliko poena moram da osvojim na sledećem testu da bi mi prosek bio 4,5?" – Excel izračunava.</p>
+                <p><strong>2. Izračunavanje kredita:</strong> "Ako je kamata 5%, kolika je rata? Ako je 7%?" – Uporedi pomoću Tabele podataka.</p>
+                <p><strong>3. Scenariji:</strong> Sačuvaj tri scenarija za budžet: "Optimističan", "Verovatan" i "Pesimističan".</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== STRUKTURA ==================== -->
+      <section id="outline-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Struktura</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Grupisanje (Group)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Struktura</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Alatom za Grupisanje možeš <strong>grupisati redove ili kolone</strong> koje zatim jednim klikom skupljaš ili širiš. Posebno je korisno kod velikih tabela gde možeš sakriti detaljne podatke, a prikazati samo sumarno. Dugmićima +/- koji se pojavljuju sa leve (redovi) ili gornje strane (kolone) upravljaš prikazom.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Grupisanje polugodišta:</strong> Grupiši mesečne ocene po polugodištima kako bi, kada ih skupiš, video samo zbir polugodišta.</p>
+                <p><strong>2. Budžetske stavke:</strong> Grupiši troškove po kategorijama (ishrana, putovanje, izlasci), kako bi mogao da ih raširiš za detalje, ali inače da videš samo glavne iznose.</p>
+                <p><strong>3. Sakrivanje kolona:</strong> Grupiši kolone koje sadrže pomoćna izračunavanja i skupi ih kako bi tabela bila preglednija.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 12 12 3 19 12"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Međuzbir (Subtotal)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Struktura</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Alat Međuzbir <strong>automatski ubacuje redove sa zbirovima</strong> u tabelu kada se promeni vrednost u koloni po kojoj se grupiše. Možeš koristiti SUM, AVERAGE, COUNT, MIN, MAX i druge funkcije za međuzbire. Alat automatski kreira i nivoe grupisanja, pa se detalji mogu skupljati.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Prosek po odeljenjima:</strong> Kod ocena sortiranih po odeljenjima, automatski izračunaj proseke za svako odeljenje pomoću Međuzbira.</p>
+                <p><strong>2. Zbir po kategorijama:</strong> Kod artikala u kafeteriji, automatski izračunaj međuzbire po kategorijama (piće, sendvič, slatkiš).</p>
+                <p><strong>3. Mesečna raspodela:</strong> Kod godišnjih troškova automatski izračunaj mesečne međuzbirove.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Zaključak -->
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white mt-8">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3">📌 Zaključak</h2>
+        <p class="text-emerald-50 leading-relaxed">
+          Meni Podaci je <strong>centar za upravljanje i analizu podataka</strong> u Excelu. Ovde se nalaze alati za uvoz, čišćenje, sortiranje, filtriranje i validaciju podataka. Pomoću Power Query-ja možeš automatizovati čišćenje podataka, Šta-ako analizom modelovati različite scenarije, a alatima za Međuzbir i Grupisanje učiniti velike tabele preglednijim. Slobodno ih koristi tokom učenja!
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Lábléc -->
+  <footer class="bg-white border-t border-slate-200 mt-8 py-5 text-center text-sm text-slate-500">
+    <span class="lang-hu-section">Excel Adatok menü – részletes útmutató középiskolásoknak · Készült tanulási céllal, interaktív elemek nélkül, sok példával</span>
+    <span class="lang-sr-section">Excel Podaci meni – detaljno uputstvo za srednjoškolce · Napravljeno u edukativne svrhe, bez interaktivnih elemenata, sa mnogo primera</span>
+  </footer>
+
+  <script>
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.documentElement.lang = (lang === 'hu') ? 'hu' : 'sr';
+    }
+  </script>
+
+</body>
+</html>

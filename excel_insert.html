@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Excel Beszúrás menü / Umetanje meni</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Egyedi finomhangolások -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* ============ EXCEL TEMA ============ */
+    :root {
+      --xl-green: #217346;
+      --xl-green-dark: #185c36;
+      --xl-green-light: #e7f0ea;
+      --xl-amber: #ffb900;
+      --xl-border: #d4d4d4;
+      --xl-grid: #e3e3e3;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f3f3f3;
+      background-image:
+        linear-gradient(var(--xl-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--xl-grid) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    /* Excel-style traka (ribbon) */
+    .xl-ribbon { background: #217346; }
+    .xl-tab {
+      position: relative;
+      padding: 8px 16px;
+      font-weight: 500;
+      color: #ffffffcc;
+      cursor: default;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.15s ease;
+    }
+    .xl-tab:hover { color: #fff; background: #1d653d; }
+    .xl-tab.active {
+      color: var(--xl-green);
+      background: #ffffff;
+      font-weight: 600;
+    }
+    .xl-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 3px;
+      background: var(--xl-amber);
+    }
+
+    /* Kartice alata */
+    .tool-section {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-left: 4px solid var(--xl-green);
+      border-radius: 8px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .tool-section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -10px rgba(33, 115, 70, 0.25);
+      border-left-color: var(--xl-amber);
+    }
+
+    /* Broj ćelije stilizovan kao Excel zaglavlje */
+    .group-badge {
+      background: linear-gradient(135deg, #217346, #185c36);
+      box-shadow: 0 2px 8px -2px rgba(33, 115, 70, 0.5);
+    }
+
+    .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #217346; border-radius: 10px; }
+
+    @media print {
+      body { background: white; }
+      .tool-section { break-inside: avoid; box-shadow: none; border-left: 4px solid #217346; }
+      .xl-ribbon, .no-print { display: none !important; }
+    }
+
+    /* Višejezičnost */
+    .lang-hu-section, .lang-sr-section { display: none; }
+    body[data-lang="hu"] .lang-hu-section { display: revert; }
+    body[data-lang="sr"] .lang-sr-section { display: revert; }
+
+    .lang-btn {
+      background: white;
+      border: 1px solid var(--xl-border);
+      color: #475569;
+    }
+    .lang-btn:hover { border-color: var(--xl-green); color: var(--xl-green); }
+    body[data-lang="hu"] #btn-hu,
+    body[data-lang="sr"] #btn-sr {
+      background: var(--xl-green);
+      color: white;
+      border-color: var(--xl-green);
+    }
+
+    /* Animacija ulaza kartica */
+    @keyframes xlFadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tool-section { animation: xlFadeUp 0.4s ease both; }
+
+    /* Glavna ikona u kartici – puna Excel zelena */
+    .tool-section > .flex.items-start > span:first-child {
+      background: var(--xl-green) !important;
+      color: #fff !important;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px -3px rgba(33, 115, 70, 0.45);
+      transition: transform 0.18s ease;
+    }
+    .tool-section:hover > .flex.items-start > span:first-child {
+      transform: scale(1.06) rotate(-3deg);
+    }
+
+    /* Navigacione pilule */
+    .nav-pill {
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #217346;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      transition: all 0.15s ease;
+    }
+    .nav-pill:hover {
+      background: var(--xl-green);
+      color: #fff;
+      border-color: var(--xl-green);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col" data-lang="hu">
+
+  <!-- Excel-stil naslovna traka (title bar) -->
+  <div class="xl-ribbon text-white sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Gornji red: logo + naslov + jezik -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 pb-2">
+        <div class="flex items-center gap-3">
+          <div class="bg-white/15 backdrop-blur p-2.5 rounded-lg ring-1 ring-white/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight leading-tight">
+              <span class="lang-hu-section">Excel Beszúrás menü</span>
+              <span class="lang-sr-section">Excel Umetanje meni</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-emerald-100/90">
+              <span class="lang-hu-section">Részletes magyarázat és gyakorlati példák középiskolásoknak</span>
+              <span class="lang-sr-section">Detaljno objašnjenje i praktični primeri za srednjoškolce</span>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 bg-white/15 rounded-lg p-1 ring-1 ring-white/20">
+            <button id="btn-hu" onclick="setLang('hu')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Magyar</button>
+            <button id="btn-sr" onclick="setLang('sr')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Srpski</button>
+          </div>
+        </div>
+      </div>
+      <!-- Ribbon tabovi (izgled kao Excel) -->
+      <div class="flex items-end gap-1 -mb-px overflow-x-auto scrollbar-thin">
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Kezdőlap</span>
+          <span class="lang-sr-section">Početni</span>
+        </span>
+        <span class="xl-tab active">
+          <span class="lang-hu-section">Beszúrás</span>
+          <span class="lang-sr-section">Umetanje</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Lap elrendezés</span>
+          <span class="lang-sr-section">Raspored stranice</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Képletek</span>
+          <span class="lang-sr-section">Formule</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Adatok</span>
+          <span class="lang-sr-section">Podaci</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Szemrevételezés</span>
+          <span class="lang-sr-section">Pregled</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula traka (Name box + formula bar izgled) -->
+  <div class="bg-white border-b border-slate-200 hidden sm:block no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center gap-3 text-sm">
+      <div class="flex items-center border border-slate-300 rounded px-2 py-0.5 font-mono text-xs text-slate-600 bg-slate-50">
+        <span class="text-emerald-700 font-bold">A1</span>
+      </div>
+      <span class="text-slate-300">fx</span>
+      <div class="flex-1 text-xs text-slate-400 italic">
+        <span class="lang-hu-section">=OKTATÓ_ÚTMUTATÓ("Beszúrás menü")</span>
+        <span class="lang-sr-section">=NASTAVNI_VODIČ("Umetanje meni")</span>
+      </div>
+      <div class="hidden md:flex items-center gap-1.5 text-xs text-slate-500">
+        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+        <span class="lang-hu-section">minden eszköz egy helyen</span>
+        <span class="lang-sr-section">svi alati na jednom mestu</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fő tartalom -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- MAGYAR TARTALOM -->
+    <div class="lang-hu-section">
+
+  <!-- Tartalomjegyzék -->
+  <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+    <div class="flex flex-wrap items-center gap-2 text-sm">
+      <span class="font-semibold text-slate-600 mr-1">Ugrás:</span>
+      <a href="#tables-hu" class="nav-pill">Táblázatok</a>
+      <a href="#illustrations-hu" class="nav-pill">Illusztrációk</a>
+      <a href="#charts-hu" class="nav-pill">Diagramok</a>
+      <a href="#sparklines-hu" class="nav-pill">Sparkline-ok</a>
+      <a href="#filters-hu" class="nav-pill">Szűrők</a>
+      <a href="#text-hu" class="nav-pill">Szöveg</a>
+      <a href="#symbols-hu" class="nav-pill">Szimbólumok</a>
+    </div>
+  </div>
+    
+    <!-- Bevezető -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+        <span class="text-2xl">🎓</span>
+        Mit tud a Beszúrás menü?
+      </h2>
+      <p class="text-slate-700 leading-relaxed mb-3">
+        Az Excel <strong class="text-emerald-700">Beszúrás (Insert)</strong> menüje az egyik leggazdagabb eszköztár a programban. 
+        Itt találhatók azok a parancsok, amelyekkel <strong>táblázatokat, képeket, diagramokat, szűrőket és speciális szimbólumokat</strong> 
+        adhatsz a munkalapjaidhoz. Ahelyett, hogy csak számokat látnál, ezekkel az elemekkel <strong>látványossá és érthetővé</strong> 
+        teheted az adataidat.
+      </p>
+      <p class="text-slate-700 leading-relaxed">
+        Az alábbi útmutatóban a Beszúrás menü <strong>összes fontos elemét</strong> részletesen bemutatjuk: megtudhatod, 
+        mire valók, hogyan működnek, és ami a legfontosabb – <strong>valós, iskolai példákon</strong> keresztül 
+        megértheted, mikor érdemes használni őket.
+      </p>
+    </div>
+
+    <!-- ==================== TÁBLÁZATOK ==================== -->
+    <section id="tables-hu" class="mb-12 scroll-mt-28">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Táblázatok</span>
+        <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+      </div>
+
+      <!-- Kimutatás -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/><path d="M3 12h18"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Kimutatás (PivotTable)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Táblázatok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A kimutatás (PivotTable) az Excel egyik <strong>legerősebb elemzőeszköze</strong>. Segítségével nagy adattáblákból 
+              készíthetsz összesítéseket, átlagokat, darabszámokat anélkül, hogy bonyolult képleteket kellene írnod. 
+              A kimutatás automatikusan <strong>csoportosítja, szűri és összegzi</strong> az adatokat, így pillanatok alatt 
+              választ kaphatsz olyan kérdésekre, amelyeket kézzel hosszú percekig számolnál.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Iskolai példa:</strong> Van egy táblázatod 200 tanuló adataival (név, osztály, tantárgy, érdemjegy). 
+              Egy kimutatással <strong>két kattintással</strong> megjelenítheted, hogy a 10.A osztály átlaga matematikából 
+              mennyivel jobb, mint a 10.B osztályé.</p>
+              <p><strong>2. Sport példa:</strong> Egy sportverseny eredményeit (versenyző, sportág, pontszám) kimutatásba 
+              rendezve azonnal látod, melyik sportágban született a legtöbb pont.</p>
+              <p><strong>3. Pénzügyi példa:</strong> Iskolai büfé forgalmának elemzése: kimutatással csoportosíthatod 
+              a bevételt napok és termékkategóriák szerint.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Táblázat -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Táblázat (Table)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Táblázatok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A Táblázat (Table) formázás az Excel egyik alapvető, mégis <strong>rendkívül hasznos</strong> funkciója. 
+              Amikor egy adattartományt táblázattá alakítasz, az Excel automatikusan <strong>szűrőket, váltakozó 
+              színsorokat és rendezési lehetőségeket</strong> ad hozzá. A táblázat formátum megkönnyíti az adatok 
+              kezelését, és ha új sort adsz hozzá, a formázás automatikusan kiterjed rá.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Osztálynévsor:</strong> Készíts egy névsort (vezetéknév, keresztnév, érdemjegy) és formázd 
+              táblázatként. Ezután egy kattintással rendezheted ABC-sorrendbe, vagy kiszűrheted csak a hármasnál 
+              jobb jegyeket.</p>
+              <p><strong>2. Könyvtári nyilvántartás:</strong> Könyvek listáját (cím, szerző, kiadás éve) táblázatként 
+              tárolva könnyen szűrhetsz egy adott szerzőre vagy időszakra.</p>
+              <p><strong>3. Hiányzások:</strong> Vezesd táblázatban a hiányzásokat (dátum, tanuló neve, igazolt-e). 
+              A szűrővel azonnal látod egy adott tanuló összes hiányzását.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ILLUSZTRÁCIÓK ==================== -->
+    <section id="illustrations-hu" class="mb-12 scroll-mt-28">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Illusztrációk</span>
+        <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+      </div>
+
+      <!-- Képek -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Képek (Pictures)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Illusztrációk csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A Képek funkcióval a számítógépeden tárolt vagy internetről származó képeket illeszthetsz be 
+              közvetlenül az Excel munkalapra. A beillesztett kép <strong>szabadon mozgatható, méretezhető 
+              és formázható</strong>. Ez különösen hasznos, ha prezentáció-szerű dokumentumokat készítesz, 
+              ahol a vizuális elemek segítik a megértést.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Földrajz bemutató:</strong> Készíts táblázatot Magyarország megyéiről, és minden megye 
+              mellé szúrj be egy képet a megyeszékhely nevezetességéről.</p>
+              <p><strong>2. Biológia gyűjtőmunka:</strong> Növényhatározó készítésekor a növények neve mellé 
+              tedd be a róluk készült fotókat, így a táblázat vizuálisan is informatív lesz.</p>
+              <p><strong>3. Iskolaújság:</strong> Az iskolaújság következő számának tördelésekor a cikkek 
+              mellé képeket is beszúrhatsz, és Excelben állíthatod össze az oldaltervet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alakzatok -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><circle cx="17" cy="6" r="4"/><polygon points="12 21 16 14 20 21"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Alakzatok (Shapes)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Illusztrációk csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              Az Alakzatok segítségével <strong>téglalapokat, köröket, nyilakat, csillagokat, szalagokat</strong> 
+              és még sok más formát rajzolhatsz a munkalapra. Ezekkel kiemelhetsz fontos adatokat, egyszerű 
+              folyamatábrákat vagy akár szervezeti diagramokat is készíthetsz. Az alakzatok színezhetők, 
+              árnyékolhatók, és szöveget is írhatsz beléjük.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Kiemelés:</strong> Egy osztályátlagokat tartalmazó táblázatban piros karikával 
+              jelöld meg a leggyengébb eredményt, zölddel a legjobbat.</p>
+              <p><strong>2. Folyamatábra:</strong> Informatika órán rajzolj folyamatábrát egy algoritmushoz 
+              téglalapok, rombuszok és nyilak segítségével.</p>
+              <p><strong>3. Poszterkészítés:</strong> Iskolai rendezvény plakátjának megtervezésekor 
+              színes szalagokkal és csillagokkal díszítheted a szövegdobozokat.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ikonok -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Ikonok (Icons)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Illusztrációk csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              Az Excel beépített ikonkészlete <strong>több ezer modern, méretezhető piktogramot</strong> tartalmaz. 
+              Ezekkel az ikonokkal vizuálisan gazdagíthatod a táblázataidat, órarendeket, posztereket. 
+              Az ikonok előnye, hogy tetszőlegesen nagyíthatók anélkül, hogy pixelessé válnának, 
+              és a színük is szabadon változtatható.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Órarend:</strong> Készíts órarendet, ahol a tantárgyak mellett kis ikonok 
+              jelzik a tárgy típusát (könyv, számológép, paletta, futball-labda).</p>
+              <p><strong>2. Időjárásnapló:</strong> Vezess időjárási naplót, és minden naphoz 
+              szúrj be egy időjárás ikont (napocska, felhő, esőcsepp).</p>
+              <p><strong>3. Teendőlista:</strong> Készíts teendőlistát, ahol az egyes feladatok 
+              melletti ikonok (telefon, boríték, naptár) jelzik a teendő jellegét.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== DIAGRAMOK ==================== -->
+    <section id="charts-hu" class="mb-12 scroll-mt-28">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Diagramok</span>
+        <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+      </div>
+
+      <!-- Oszlopdiagram -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="9" width="4" height="12" rx="1"/><rect x="17" y="5" width="4" height="16" rx="1"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Oszlopdiagram (Column Chart)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Diagramok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              Az oszlopdiagram <strong>függőleges oszlopokkal</strong> jeleníti meg az adatokat, ahol 
+              az oszlopok magassága arányos az ábrázolt értékkel. Ez a diagramtípus <strong>kategóriák 
+              összehasonlítására</strong> a legalkalmasabb. Minél magasabb egy oszlop, annál nagyobb 
+              az adott kategória értéke. Az oszlopok színe, szélessége testreszabható.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Büfé forgalom:</strong> Ábrázold oszlopdiagramon, hogy az iskolai büfében 
+              melyik nap hány szendvics fogyott. Azonnal látszik a legforgalmasabb nap.</p>
+              <p><strong>2. Osztályok összehasonlítása:</strong> Hasonlítsd össze a párhuzamos osztályok 
+              átlagait egy-egy tantárgyból – az oszlopok egymás mellett jól mutatják a különbséget.</p>
+              <p><strong>3. Sportnap:</strong> Sportnapon a váltók eredményeit oszlopdiagramon ábrázolva 
+              azonnal látni, melyik csapat futotta a legjobb időt.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vonaldiagram -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 17 9 11 13 15 21 3"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Vonaldiagram (Line Chart)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Diagramok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A vonaldiagram az adatpontokat <strong>folytonos vonallal köti össze</strong>, így 
+              elsősorban <strong>időbeli trendek, folyamatok</strong> megjelenítésére használjuk. 
+              A vonal emelkedése növekedést, lejtése csökkenést jelez. Több adatsor is ábrázolható 
+              egy diagramon, különböző színű vonalakkal.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Hőmérséklet:</strong> Vezesd egy hónapon át a napi középhőmérsékletet, 
+              és vonaldiagramon kövesd nyomon a felmelegedést vagy lehűlést.</p>
+              <p><strong>2. Javuló jegyek:</strong> Ábrázold egy tanuló évközi jegyeit vonaldiagramon 
+              – jól látható, ha folyamatosan javul vagy romlik a teljesítménye.</p>
+              <p><strong>3. Növény növekedése:</strong> Biológiai kísérletben a növény magasságát 
+              naponta megmérve a vonaldiagram szépen mutatja a növekedési ütemet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kördiagram -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10H12Z"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Kördiagram (Pie Chart)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Diagramok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A kördiagram egy <strong>kört szeletekre osztva</strong> jeleníti meg, hogy az egyes 
+              részek milyen arányban járulnak hozzá az egészhez (100%-hoz). Minél nagyobb egy 
+              körcikk, annál nagyobb az adott rész aránya. Kiváló eszköz <strong>százalékos 
+              megoszlások</strong> szemléltetésére.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Osztálypénz:</strong> Mutasd meg kördiagramon, hogy az osztálypénz 
+              hány százalékát költöttétek színházjegyre, pizzára és dekorációra.</p>
+              <p><strong>2. Év végi jegyek:</strong> Ábrázold, hogy egy osztályban a tanulók 
+              hány százaléka kapott jelest, jót, közepest, elégségest.</p>
+              <p><strong>3. Időmérleg:</strong> Mérd fel, hogy egy átlagos napodon hány százalék 
+              jut alvásra, tanulásra, sportra és szórakozásra, majd ábrázold kördiagramon.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SPARKLINE-OK ==================== -->
+    <section id="sparklines-hu" class="mb-12 scroll-mt-28">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Sparkline-ok</span>
+        <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+      </div>
+
+      <!-- Miniatűr vonal -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 18 8 12 12 14 16 6 21 10"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Miniatűr vonal (Sparkline)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Sparkline-ok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A Sparkline egy <strong>egyetlen cellába zárt miniatűr diagram</strong>. A vonal típusú 
+              Sparkline egy apró vonaldiagramot rajzol a cellába, amely az adott sor adatainak 
+              trendjét mutatja. Rendkívül hasznos, ha <strong>sok adatsor trendjét</strong> szeretnéd 
+              egyszerre látni anélkül, hogy nagy diagramokat kellene készítened.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Tanulói teljesítmény:</strong> Egy osztálynaplóban minden tanuló neve 
+              melletti cellában egy Sparkline mutatja a féléves jegyek alakulását.</p>
+              <p><strong>2. Részvényárfolyam:</strong> Gazdasági ismeretek órán kövesd nyomon 
+              néhány részvény árfolyamának változását – minden részvényhez egy Sparkline tartozik.</p>
+              <p><strong>3. Heti lépésszám:</strong> Fitnesznaplóban a napi lépésszámok heti 
+              trendjét Sparkline mutatja az utolsó cellában.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Miniatűr oszlop -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="14" width="3" height="7" rx="0.5"/><rect x="10.5" y="10" width="3" height="11" rx="0.5"/><rect x="17" y="6" width="3" height="15" rx="0.5"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Miniatűr oszlop (Sparkline)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Sparkline-ok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              Az oszlop típusú Sparkline <strong>apró oszlopokat</strong> rajzol egy cellába, 
+              minden adatponthoz egy-egy oszlopot. Az oszlopok magassága az értékekkel arányos, 
+              így egy pillantással láthatók a <strong>kiugróan magas vagy alacsony értékek</strong>. 
+              Kiválóan alkalmas arra, hogy egy adatsor értékeit vizuálisan összehasonlítsd.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Dolgozatpontok:</strong> A diákok dolgozatpontjait (5 dolgozat) 
+              oszlop Sparkline-nal jelenítsd meg – azonnal látszik, ki melyik dolgozatban 
+              teljesített kiemelkedően.</p>
+              <p><strong>2. Havi költés:</strong> Zsebpénz nyilvántartásban a havi kiadások 
+              mellett egy Sparkline oszlop mutatja, melyik héten költöttél legtöbbet.</p>
+              <p><strong>3. Könyvtári kölcsönzések:</strong> A könyvtár havi statisztikájában 
+              minden hónap adata mellett egy oszlop Sparkline jelzi a kölcsönzések számát.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SZŰRŐK ==================== -->
+    <section id="filters-hu" class="mb-12 scroll-mt-28">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Szűrők</span>
+        <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+      </div>
+
+      <!-- Szeletelő -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Szeletelő (Slicer)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Szűrők csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A Szeletelő (Slicer) egy <strong>vizuális szűrőeszköz</strong>, amely gombok 
+              formájában jeleníti meg a kategóriákat. Egyetlen kattintással szűrheted a 
+              táblázat vagy kimutatás adatait. A Szeletelő <strong>mindig látható</strong> 
+              marad a munkalapon, így azonnal látod, éppen milyen szűrés van érvényben.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Osztálynapló:</strong> Egy összevont osztálynaplóban a Szeletelővel 
+              válaszd ki, hogy csak a 10.A, vagy csak a 10.B tanulóit lásd – egy kattintással.</p>
+              <p><strong>2. Büfé termékek:</strong> A büfés táblázatban a Szeletelővel szűrj 
+              termékkategóriára (ital, szendvics, édesség), és azonnal lásd az adott kategória 
+              forgalmát.</p>
+              <p><strong>3. Hiányzások:</strong> A hiányzási naplóban a Szeletelővel szűrhetsz 
+              hónapokra vagy igazolási státuszra (igazolt/igazolatlan).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SZÖVEG ==================== -->
+    <section id="text-hu" class="mb-12 scroll-mt-28">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Szöveg</span>
+        <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+      </div>
+
+      <!-- Szövegdoboz -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="15" y2="13"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Szövegdoboz (Text Box)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Szöveg csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A Szövegdoboz egy <strong>lebegő szövegmező</strong>, amelyet a munkalap bármely 
+              pontjára elhelyezhetsz, függetlenül a cellák rácsától. A benne lévő szöveg 
+              <strong>szabadon formázható</strong> (betűtípus, méret, szín, igazítás), és 
+              a doboz mérete, pozíciója tetszőlegesen változtatható.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Poszter cím:</strong> Egy rendezvényplakáton a főcím ("Iskolanap 2025") 
+              szövegdobozban van, nagy méretű, félkövér betűkkel, középre igazítva.</p>
+              <p><strong>2. Magyarázat:</strong> Egy bonyolultabb diagram mellé szövegdobozban 
+              fűzhetsz magyarázatot, hogy a nézők értelmezni tudják az adatokat.</p>
+              <p><strong>3. Lábjegyzet:</strong> A munkalap alján elhelyezett szövegdobozban 
+              feltüntetheted a forrásokat, megjegyzéseket.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fejléc és lábléc -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="16" x2="21" y2="16"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Fejléc és lábléc</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Szöveg csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A Fejléc és lábléc a <strong>nyomtatott oldal tetején és alján</strong> ismétlődő 
+              szövegmező. A fejlécben általában a dokumentum címe, a szerző neve vagy dátum 
+              szerepel, míg a láblécben az oldalszám vagy fájlnév. Csak nyomtatáskor vagy 
+              nyomtatási nézetben látszik.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Házi dolgozat:</strong> A fejlécben: "Kiss Péter – 10.A – Matematika 
+              házi dolgozat". A láblécben: oldalszám (1/3).</p>
+              <p><strong>2. Iskolaújság:</strong> A fejlécben az újság neve és a megjelenés 
+              dátuma, a láblécben a szerkesztő neve.</p>
+              <p><strong>3. Hivatalos levél:</strong> A fejlécben az iskola logója és címe, 
+              a láblécben az elérhetőségek.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SZIMBÓLUMOK ==================== -->
+    <section id="symbols-hu" class="mb-12 scroll-mt-28">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Szimbólumok</span>
+        <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+      </div>
+
+      <!-- Egyenlet -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7h16"/><path d="M6 12h12"/><path d="M8 17h8"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Egyenlet (Equation)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Szimbólumok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              Az Egyenlet szerkesztő egy <strong>professzionális képletszerkesztő</strong>, 
+              amellyel matematikai, fizikai vagy kémiai képleteket írhatsz le, tökéletes 
+              tipográfiával. Támogatja a törteket, gyökjeleket, integrálokat, szummákat, 
+              mátrixokat, alsó és felső indexeket.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Pitagorasz-tétel:</strong> Írd fel az a² + b² = c² képletet 
+              az egyenletszerkesztővel, a kitevők tökéletesen felülre kerülnek.</p>
+              <p><strong>2. Másodfokú egyenlet:</strong> A megoldóképlet x = (-b ± √(b² - 4ac)) / 2a 
+              felírása törtvonallal, gyökjellel és kitevőkkel.</p>
+              <p><strong>3. Kémiai egyenlet:</strong> Reakcióegyenletek (pl. 2H₂ + O₂ → 2H₂O) 
+              alsó indexekkel való precíz ábrázolása.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Szimbólum -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+        <div class="flex items-start gap-4 mb-5">
+          <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><text x="7" y="16" font-size="12" font-weight="bold" fill="currentColor">Ω</text>
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Szimbólum (Symbol)</h3>
+            <p class="text-sm text-emerald-600 font-medium mt-0.5">Szimbólumok csoport</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Mi ez?
+            </h4>
+            <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+              A Szimbólum eszközzel olyan <strong>speciális karaktereket</strong> illeszthetsz be, 
+              amelyek nem találhatók a billentyűzeten. Ilyenek a <strong>görög betűk 
+              (α, β, γ, Δ, Ω), matematikai jelek (∞, ±, √, ∑), pénznemek (€, £, ¥)</strong> 
+              és egyéb speciális karakterek.
+            </p>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gyakorlati példák
+            </h4>
+            <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+              <p><strong>1. Fizika jegyzőkönyv:</strong> Használj görög betűket: α (alfa) a 
+              szög jelölésére, Ω (omega) az ellenállásra, Δ (delta) a változásra.</p>
+              <p><strong>2. Pénzügyi táblázat:</strong> A termékek áránál használd a 
+              megfelelő pénznemjelet: €, £ vagy ¥.</p>
+              <p><strong>3. Matematika:</strong> Írd be a fok (°) jelet szögekhez, 
+              vagy a ± (plusz-mínusz) jelet a hibahatár jelölésére.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Összefoglalás -->
+    <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white mt-8">
+      <h2 class="text-xl sm:text-2xl font-bold mb-3">📌 Összefoglalás</h2>
+      <p class="text-emerald-50 leading-relaxed">
+        A Beszúrás menü az Excel egyik legfontosabb eszköztára. Akár egy <strong>egyszerű 
+        táblázatot</strong>, akár egy <strong>látványos diagramot</strong>, akár egy 
+        <strong>kimutatást</strong> szeretnél készíteni, itt megtalálod a szükséges 
+        parancsokat. A fenti példák mutatják, hogy ezek az eszközök nem csak "színesítik" 
+        a munkalapot, hanem <strong>megkönnyítik az adatok értelmezését</strong> és 
+        <strong>látványosabbá teszik a bemutatókat, házi dolgozatokat</strong>. 
+        Használd bátran őket a tanulmányaid során!
+      </p>
+    </div>
+
+    </div>
+
+    <!-- SRPSKI SADRŽAJ -->
+    <div class="lang-sr-section">
+
+      <!-- Navigacija -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold text-slate-600 mr-1">Skoči na:</span>
+          <a href="#tables-sr" class="nav-pill">Tabele</a>
+          <a href="#illustrations-sr" class="nav-pill">Ilustracije</a>
+          <a href="#charts-sr" class="nav-pill">Dijagrami</a>
+          <a href="#sparklines-sr" class="nav-pill">Sparkline</a>
+          <a href="#filters-sr" class="nav-pill">Filteri</a>
+          <a href="#text-sr" class="nav-pill">Tekst</a>
+          <a href="#symbols-sr" class="nav-pill">Simboli</a>
+        </div>
+      </div>
+
+      <!-- Uvod -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span class="text-2xl">🎓</span>
+          Šta je Umetanje meni?
+        </h2>
+        <p class="text-slate-700 leading-relaxed mb-3">
+          Excel <strong class="text-emerald-700">Umetanje (Insert) meni</strong> je jedan od najbogatijih setova alata u programu.
+          Ovde se nalaze komande pomoću kojih u radni list možeš dodati <strong>tabele, slike, dijagrame, filtere i specijalne simbole</strong>.
+          Umesto da vidiš samo brojeve, ovim elementima možeš učiniti podatke <strong>vizuelno privlačnim i razumljivim</strong>.
+        </p>
+        <p class="text-slate-700 leading-relaxed">
+          U narednom uputstvu <strong>detaljno su prikazani svi važni elementi</strong> Umetanja menija: saznaćeš čemu služe,
+          kako rade, i što je najvažnije – <strong>na realnim, školskim primerima</strong> shvatićeš kada ih je najbolje koristiti.
+        </p>
+      </div>
+
+      <!-- TABELE -->
+      <section id="tables-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Tabele</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/><path d="M3 12h18"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Pivot tabela (PivotTable)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Tabele</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Pivot tabela (PivotTable) je jedan od <strong>najmoćnijih alata za analizu</strong> u Excelu. Pomoću nje iz velikih tabela
+                možeš praviti zbirne prikaze, proseke i brojeve bez pisanja složenih formula. Pivot tabela automatski
+                <strong>grupiše, filtrira i sabira</strong> podatke, pa u trenu dobijaš odgovore na pitanja za koja bi ručno računanje
+                trajalo dugo.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Školski primer:</strong> Imaš tabelu sa podacima o 200 učenika (ime, odeljenje, predmet, ocena).
+                Pivot tabelom <strong>u dva klika</strong> možeš prikazati koliko je prosečna ocena iz matematike u odeljenju III-1
+                bolja od III-2.</p>
+                <p><strong>2. Sportski primer:</strong> Rezultate takmičenja (takmičar, sport, poeni) u pivot tabeli odmah pokazuju
+                u kom sportu je postignuto najviše poena.</p>
+                <p><strong>3. Finansijski primer:</strong> Analiza prometa školske kafeterije: pivot tabelom grupišeš prihod po danima
+                i kategorijama proizvoda.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Tabela (Table)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Tabele</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Format tabele (Table) je osnovna, ali <strong>izuzetno korisna</strong> Excel funkcija. Kada opseg podataka
+                pretvoriš u tabelu, Excel automatski dodaje <strong>filtere, naizmenične boje redova i mogućnost sortiranja</strong>.
+                Format tabele olakšava rad sa podacima, a ako dodaš novi red, formatiranje se automatski primenjuje i na njega.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Spisak odeljenja:</strong> Napravi spisak učenika (prezime, ime, ocena) i formatiraj ga kao tabelu.
+                Zatim jednim klikom sortiraj po abecedi ili filtriraj samo ocene bolje od trojke.</p>
+                <p><strong>2. Bibliotečka evidencija:</strong> Listu knjiga (naslov, autor, godina) čuvaš kao tabelu i lako filtriraš
+                po autoru ili periodu.</p>
+                <p><strong>3. Odsustva:</strong> Vodi evidenciju odsustva (datum, ime učenika, opravdano) – filterom odmah vidiš
+                sva odsustva jednog učenika.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ILUSTRACIJE -->
+      <section id="illustrations-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Ilustracije</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Slike (Pictures)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Ilustracije</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Funkcijom Slike u Excel radni list možeš umetnuti fotografije sa računara ili interneta.
+                Umetnuta slika je <strong>slobodno pomerljiva, promenljive veličine i formatabilna</strong>. Posebno je korisna
+                kada praviš dokumente nalik prezentacijama, gde vizuelni elementi pomažu razumevanju.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Geografska prezentacija:</strong> Napravi tabelu o okruzima Srbije i pored svakog umetni sliku
+                znamenitosti glavnog grada.</p>
+                <p><strong>2. Biološki rad:</strong> Kod određivanja biljaka pored imena umetni fotografije, pa tabela postaje
+                vizuelno informativna.</p>
+                <p><strong>3. Školski list:</strong> Pri pripremi brošure umetni slike pored članaka i u Excelu složi izgled stranice.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/><circle cx="17" cy="6" r="4"/><polygon points="12 21 16 14 20 21"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Oblici (Shapes)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Ilustracije</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Pomoću Oblika možeš crtati <strong>pravougaonike, krugove, strelice, zvezde, trake</strong> i mnoge druge forme
+                na radnom listu. Njima ističeš važne podatke, praviš jednostavne blok-dijagrame ili čak organizacione šeme.
+                Oblici se mogu bojiti, senčiti i u njih možeš upisati tekst.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Isticanje:</strong> U tabeli sa prosekom odeljenja crvenim krugom označi najslabiji rezultat,
+                zelenim najbolji.</p>
+                <p><strong>2. Blok-dijagram:</strong> Na informatičkom času nacrtaj algoritam pomoću pravougaonika, rombova i strelica.</p>
+                <p><strong>3. Poster:</strong> Pri dizajnu plakata za školsku manifestaciju ukrasi tekstualna polja šarenim trakama i zvezdama.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Ikonice (Icons)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Ilustracije</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Ugrađena biblioteka ikonica sadrži <strong>hiljade modernih, skalabilnih piktograma</strong>. Ikonice vizuelno
+                obogaćuju tabele, rasporede časova i postere. Mogu se uvećavati bez gubitka kvaliteta, a boja im se slobodno menja.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Raspored časova:</strong> Pored predmeta stavi male ikonice koje označavaju tip (knjiga, kalkulator, paleta, lopta).</p>
+                <p><strong>2. Dnevnik vremena:</strong> Vodi evidenciju vremena i svakom danu dodeli ikonicu (sunce, oblak, kap kiše).</p>
+                <p><strong>3. Lista zadataka:</strong> Pored zadataka ikonice (telefon, koverta, kalendar) pokazuju vrstu obaveze.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIJAGRAMI -->
+      <section id="charts-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Dijagrami</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="9" width="4" height="12" rx="1"/><rect x="17" y="5" width="4" height="16" rx="1"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Stubičasti dijagram (Column Chart)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Dijagrami</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Stubičasti dijagram prikazuje podatke <strong>vertikalnim stubovima</strong> čija visina odgovara vrednosti.
+                Ovaj tip dijagrama najbolje služi za <strong>upoređivanje kategorija</strong>. Što je stub viši, veća je vrednost
+                te kategorije. Boja i širina stubova se mogu prilagoditi.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Promet kafeterije:</strong> Stubićima prikaži koliko sendviča je prodata svakog dana – odmah se vidi najprometniji dan.</p>
+                <p><strong>2. Upoređivanje odeljenja:</strong> Uporedi proseke paralelnih odeljenja iz jednog predmeta – stubovi jedan pored drugog jasno pokazuju razliku.</p>
+                <p><strong>3. Sportski dan:</strong> Rezultate štafeta stubičastim dijagramom odmah pokazuju koji tim je imao najbolje vreme.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 17 9 11 13 15 21 3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Linijski dijagram (Line Chart)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Dijagrami</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Linijski dijagram povezuje tačke podataka <strong>neprekidnom linijom</strong>, pa se prvenstveno koristi za
+                prikaz <strong>trendova kroz vreme</strong>. Uspon linije znači rast, pad znači smanjenje. Više serija podataka
+                može biti prikazano različitim bojama linija.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Temperatura:</strong> Mesec dana vodi dnevnu prosečnu temperaturu i linijskim dijagramom prati zagrevanje ili hlađenje.</p>
+                <p><strong>2. Poboljšanje ocena:</strong> Prikaži ocene učenika tokom godine – jasno se vidi da li se uspeh poboljšava ili pogoršava.</p>
+                <p><strong>3. Rast biljke:</strong> U biološkom eksperimentu meri visinu biljke svakog dana – linija lepo pokazuje tempo rasta.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10H12Z"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Kružni dijagram (Pie Chart)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Dijagrami</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Kružni dijagram <strong>deli krug na isečke</strong> i pokazuje koliki procenat čini svaki deo celini (100%).
+                Što je isečak veći, veći je udeo te kategorije. Odličan je za prikaz <strong>procentualne podele</strong>.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Odeljenska kasa:</strong> Kružnim dijagramom prikaži koliki procenat novca je potrošen za karte, picu i dekoraciju.</p>
+                <p><strong>2. Ocene na kraju godine:</strong> Prikaži koliki procenat učenika je dobio petice, četvorke, trojke i dvojke.</p>
+                <p><strong>3. Raspodela vremena:</strong> Izmeri koliko prosečnog dana ide na spavanje, učenje, sport i zabavu, pa prikaži kružnim dijagramom.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SPARKLINE -->
+      <section id="sparklines-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Sparkline</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 18 8 12 12 14 16 6 21 10"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Mini linijski dijagram (Sparkline)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Sparkline</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Sparkline je <strong>mini dijagram unutar jedne ćelije</strong>. Linijski tip crta mali linijski dijagram trenda
+                podataka u redu. Izuzetno je koristan kada želiš videti <strong>trendove mnogih serija podataka</strong> odjednom,
+                bez pravljenja velikih dijagrama.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Uspeh učenika:</strong> U dnevniku pored imena svakog učenika Sparkline pokazuje kretanje ocena tokom polugodišta.</p>
+                <p><strong>2. Cena akcija:</strong> Na času ekonomije prati promenu cena akcija – svakoj akciji pripada jedan Sparkline.</p>
+                <p><strong>3. Nedeljni broj koraka:</strong> U fitnes dnevniku nedeljni trend dnevnog broja koraka Sparkline prikazuje u poslednjoj ćeliji.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="14" width="3" height="7" rx="0.5"/><rect x="10.5" y="10" width="3" height="11" rx="0.5"/><rect x="17" y="6" width="3" height="15" rx="0.5"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Mini stubičasti dijagram (Sparkline)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Sparkline</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Stubičasti Sparkline crta <strong>male stubove</strong> u ćeliji – po jedan za svaku vrednost. Visina stubova
+                odgovara vrednostima, pa jednim pogledom vidiš <strong>izrazito visoke ili niske vrednosti</strong>. Odličan je za
+                vizuelno upoređivanje vrednosti u jednom nizu podataka.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Bodovi na kontrolnom:</strong> Bodove sa 5 kontrolnih prikaži stubičastim Sparkline-om – odmah se vidi ko je najbolje uradio koji test.</p>
+                <p><strong>2. Mesečna potrošnja:</strong> U evidenciji džeparca stubičasti Sparkline pored mesečnih troškova pokazuje u kom nedelju si najviše potrošio.</p>
+                <p><strong>3. Pozajmice u biblioteci:</strong> U mesečnoj statistici pored svakog meseca stubičasti Sparkline označava broj pozajmljenih knjiga.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FILTERI -->
+      <section id="filters-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Filteri</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Segmentator (Slicer)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Filteri</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Segmentator (Slicer) je <strong>vizuelni alat za filtriranje</strong> koji kategorije prikazuje kao dugmad.
+                Jednim klikom filtriraš podatke u tabeli ili pivot tabeli. Segmentator <strong>ostaje uvek vidljiv</strong>
+                na radnom listu, pa odmah vidiš koji filter je aktivan.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Dnevnik:</strong> U zajedničkom dnevniku segmentatorom izaberi da vidiš samo učenike III-1 ili III-2 – jednim klikom.</p>
+                <p><strong>2. Proizvodi kafeterije:</strong> U tabeli prometa segmentatorom filtriraj kategoriju (piće, sendvič, slatkiš) i odmah vidi promet te kategorije.</p>
+                <p><strong>3. Odsustva:</strong> U evidenciji odsustva segmentatorom filtriraj po mesecu ili statusu (opravdano/neopravdano).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEKST -->
+      <section id="text-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Tekst</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="14" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="15" y2="13"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Tekstualno polje (Text Box)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Tekst</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Tekstualno polje je <strong>slobodno tekstualno polje</strong> koje možeš postaviti bilo gde na radnom listu,
+                nezavisno od mreže ćelija. Tekst unutra možeš <strong>slobodno formatirati</strong> (font, veličina, boja, poravnanje),
+                a veličinu i položaj polja možeš menjati po želji.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Naslov postera:</strong> Na plakatu događaja glavni naslov („Dan škole 2025”) stoji u tekstualnom polju,
+                velikim podebljanim slovima, centriran.</p>
+                <p><strong>2. Objašnjenje:</strong> Pored složenijeg dijagrama u tekstualnom polju dodaš objašnjenje da gledaoci mogu
+                razumeti podatke.</p>
+                <p><strong>3. Fusnota:</strong> Na dnu radnog lista u tekstualnom polju navedeš izvore i napomene.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="16" x2="21" y2="16"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Zaglavlje i podnožje</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Tekst</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Zaglavlje i podnožje su tekstualna polja koja se <strong>ponavljaju na vrhu i dnu štampane stranice</strong>.
+                U zaglavlju obično stoje naslov dokumenta, ime autora ili datum, a u podnožju broj stranice ili ime fajla.
+                Vidljiva su samo pri štampi ili u prikazu za štampu.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Domaci rad:</strong> U zaglavlju: „Petar Petrović – III-1 – Matematika domaci“. U podnožju: broj stranice (1/3).</p>
+                <p><strong>2. Školski list:</strong> U zaglavlju naziv lista i datum izdanja, u podnožju ime urednika.</p>
+                <p><strong>3. Zvanično pismo:</strong> U zaglavlju logo i adresa škole, u podnožju kontakt podaci.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIMBOLI -->
+      <section id="symbols-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Simboli</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 7h16"/><path d="M6 12h12"/><path d="M8 17h8"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Jednačina (Equation)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Simboli</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Uređivač jednačina je <strong>profesionalni alat za formule</strong> pomoću kojeg pišeš matematičke, fizičke
+                ili hemijske formule sa savršenom tipografijom. Podržava razlomke, korene, integrale, sume, matrice,
+                donje i gornje indekse.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Pitagorina teorema:</strong> Upiši formulu a² + b² = c² u uređivaču jednačina – stepeni se lepo postavljaju iznad.</p>
+                <p><strong>2. Kvadratna jednačina:</strong> Formulu x = (-b ± √(b² - 4ac)) / 2a napiši sa razlomcima, korenom i stepenima.</p>
+                <p><strong>3. Hemijska jednačina:</strong> Precizno prikaži reakcije (npr. 2H₂ + O₂ → 2H₂O) sa donjim indeksima.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5">
+            <span class="text-emerald-600 bg-emerald-50 p-3 rounded-xl flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><text x="7" y="16" font-size="12" font-weight="bold" fill="currentColor">Ω</text>
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Simbol (Symbol)</h3>
+              <p class="text-sm text-emerald-600 font-medium mt-0.5">Grupa Simboli</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Šta je ovo?
+              </h4>
+              <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">
+                Alat Simbol omogućava umetanje <strong>specijalnih znakova</strong> koji nisu na tastaturi. To su
+                <strong>grčka slova (α, β, γ, Δ, Ω), matematički simboli (∞, ±, √, ∑), valute (€, £, ¥)</strong>
+                i drugi posebni karakteri.
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-slate-700 flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-600"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Praktični primeri
+              </h4>
+              <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-4 border border-emerald-100 text-slate-700 space-y-2">
+                <p><strong>1. Fizički izveštaj:</strong> Koristi grčka slova: α (alfa) za ugao, Ω (omega) za otpor, Δ (delta) za promenu.</p>
+                <p><strong>2. Finansijska tabela:</strong> Pored cena proizvoda stavi odgovarajući simbol valute: €, £ ili ¥.</p>
+                <p><strong>3. Matematika:</strong> Unesi stepen (°) za uglove ili znak ± (plus-minus) za granicu greške.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Zaključak -->
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white mt-8">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3">📌 Zaključak</h2>
+        <p class="text-emerald-50 leading-relaxed">
+          Umetanje meni je jedan od najvažnijih setova alata u Excelu. Bilo da želiš napraviti <strong>jednostavnu tabelu</strong>,
+          <strong>upečatljiv dijagram</strong> ili <strong>pivot tabelu</strong>, ovde ćeš pronaći potrebne komande. Gornji primeri
+          pokazuju da ovi alati ne samo da „oboje" radni list, već i <strong>olakšavaju razumevanje podataka</strong> i
+          <strong>čine prezentacije i domaće radove privlačnijim</strong>. Slobodno ih koristi tokom učenja!
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Lábléc -->
+  <footer class="bg-white border-t border-slate-200 mt-8 py-5 text-center text-sm text-slate-500">
+    <span class="lang-hu-section">Excel Beszúrás menü – részletes útmutató középiskolásoknak · Készült tanulási céllal, interaktív elemek nélkül, sok példával</span>
+    <span class="lang-sr-section">Excel Umetanje meni – detaljno uputstvo za srednjoškolce · Napravljeno u edukativne svrhe, bez interaktivnih elemenata, sa mnogo primera</span>
+  </footer>
+
+  <script>
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.documentElement.lang = (lang === 'hu') ? 'hu' : 'sr';
+    }
+  </script>
+
+</body>
+</html>
