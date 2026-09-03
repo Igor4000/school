@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DB Browser for SQLite – Lépésről lépésre / Korak po korak</title>
+<style>
+:root{
+  --bg:#fdfbf7; --card:#ffffff; --ink:#26221c; --muted:#7a7264;
+  --teal:#0d9488; --teal-soft:#ccfbf1; --coral:#f97066; --coral-soft:#ffe4e0;
+  --amber:#d97706; --amber-soft:#fef3c7; --border:#ece5d8; --code:#1c1917;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75}
+.container{max-width:1000px;margin:0 auto;padding:24px 18px 100px}
+header{position:relative;text-align:center;padding:80px 20px 60px;
+  background:linear-gradient(135deg,#ccfbf1 0%,#fef3c7 55%,#ffe4e0 100%);
+  border-radius:0 0 48px 48px;overflow:hidden}
+header::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 15% 20%,rgba(13,148,136,.18),transparent 40%),
+             radial-gradient(circle at 85% 80%,rgba(249,112,102,.18),transparent 40%)}
+header>*{position:relative;z-index:1}
+header h1{font-size:2.6rem;color:var(--teal);margin-bottom:12px}
+header p.sub{color:#57534e;font-size:1.12rem;max-width:720px;margin:0 auto}
+.nav-pills{display:inline-flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+.nav-pills a{background:rgba(255,255,255,.75);border:1px solid var(--border);color:var(--ink);
+  padding:8px 18px;border-radius:30px;text-decoration:none;font-weight:600;font-size:.9rem;transition:.2s}
+.nav-pills a:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+.lang-switch{position:absolute;top:20px;right:20px;z-index:2;display:flex;background:#fff;
+  border:1px solid var(--border);border-radius:30px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+.lang-switch button{background:transparent;border:none;color:var(--muted);padding:9px 20px;cursor:pointer;font-weight:600;font-size:.95rem;transition:.2s}
+.lang-switch button.active{background:var(--teal);color:#fff}
+section{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:34px 36px;
+  margin:30px 0;box-shadow:0 6px 24px rgba(38,34,28,.06)}
+section h2{color:var(--teal);font-size:1.6rem;margin-bottom:16px;padding-bottom:10px;border-bottom:3px solid var(--teal-soft)}
+section h3{color:var(--coral);margin:22px 0 10px;font-size:1.15rem}
+p{margin-bottom:12px}
+ul,ol{margin:0 0 12px 22px}
+li{margin-bottom:7px}
+b{color:#1c1917}
+kbd{background:var(--code);color:#fef3c7;padding:2px 10px;border-radius:6px;font-family:Consolas,monospace;font-size:.88em}
+code,pre{font-family:Consolas,monospace;background:var(--code);color:#99f6e4;border-radius:8px}
+code{padding:2px 8px;font-size:.92em}
+pre{padding:16px 20px;overflow-x:auto;margin:14px 0}
+pre .kw{color:#fdba74;font-weight:700}pre .st{color:#a7f3d0}pre .cm{color:#a8a29e;font-style:italic}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.95rem;display:block;overflow-x:auto}
+thead th{background:var(--teal);color:#fff;padding:12px 14px;text-align:left;white-space:nowrap}
+tbody td{padding:11px 14px;border:1px solid var(--border);vertical-align:top}
+tbody tr:nth-child(even){background:#fafaf7}
+.tip{background:var(--amber-soft);border-left:5px solid var(--amber);border-radius:10px;padding:16px 20px;margin:16px 0}
+.tip .label{color:var(--amber);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:1px}
+.note{background:var(--teal-soft);border-left:5px solid var(--teal);border-radius:10px;padding:16px 20px;margin:16px 0}
+.note .label{color:var(--teal);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:1px}
+.steps{counter-reset:st;margin:18px 0}
+.step{display:flex;gap:16px;margin-bottom:18px;background:#fafaf7;border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.step::before{counter-increment:st;content:counter(st);flex-shrink:0;width:38px;height:38px;border-radius:50%;
+  background:var(--coral);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.step b{color:var(--teal)}
+/* interaktív képernyő-utánzat */
+.mock{background:#fafaf7;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin:18px 0}
+.mock-bar{background:var(--code);color:#e7e5e4;padding:8px 14px;font-size:.85rem;display:flex;gap:8px;align-items:center}
+.mock-bar span.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.mock-tabs{display:flex;gap:4px;background:#f5f5f4;padding:8px 10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.mock-tabs button{border:1px solid var(--border);border-bottom:none;background:#fff;padding:8px 16px;border-radius:10px 10px 0 0;cursor:pointer;font-weight:600;color:var(--muted);font-size:.9rem}
+.mock-tabs button.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.mock-body{padding:18px;min-height:120px}
+/* SQL játszótér */
+.play{background:var(--code);border-radius:16px;padding:18px;margin:18px 0;color:#e7e5e4}
+.play textarea{width:100%;background:#292524;color:#99f6e4;border:1px solid #44403c;border-radius:10px;
+  padding:12px 14px;font-family:Consolas,monospace;font-size:.95rem;min-height:70px;resize:vertical}
+.play .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.play button{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer}
+.play button.sec{background:#44403c}
+.play .out{background:#fff;color:var(--ink);border-radius:10px;margin-top:12px;padding:14px;overflow-x:auto}
+.play .out table{margin:0;display:table}
+.play .err{color:var(--coral);font-weight:700}
+.quiz{background:#fafaf7;border:2px dashed var(--coral);border-radius:14px;padding:20px;margin:18px 0}
+.quiz button{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);border:1px solid var(--border);
+  border-radius:10px;padding:12px 16px;margin:8px 0;cursor:pointer;transition:.15s;font-size:.98rem}
+.quiz button:hover{border-color:var(--teal);background:var(--teal-soft)}
+.quiz button.correct{background:#d1fae5;border-color:#059669}
+.quiz button.wrong{background:var(--coral-soft);border-color:var(--coral)}
+.quiz .feedback{font-weight:600;margin-top:8px;min-height:26px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;background:#fafaf7;border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;margin:8px 0;cursor:pointer;transition:.2s}
+.checklist input{margin-top:5px;accent-color:var(--teal);transform:scale(1.2)}
+.checklist label.done{background:var(--teal-soft);border-color:var(--teal);text-decoration:line-through;color:var(--muted)}
+footer{text-align:center;color:var(--muted);margin-top:44px;font-size:.9rem}
+footer a{color:var(--teal)}
+@media(max-width:640px){header h1{font-size:1.8rem}.lang-switch{position:static;margin-bottom:18px;display:inline-flex}section{padding:22px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="lang-switch">
+    <button id="btn-hu" class="active" onclick="setLang('hu')">🇭🇺 Magyar</button>
+    <button id="btn-sr" onclick="setLang('sr')">🇷🇸 Српски</button>
+  </div>
+  <h1 data-i18n="title"></h1>
+  <p class="sub" data-i18n="subtitle"></p>
+  <div class="nav-pills" id="nav"></div>
+</header>
+
+<div class="container">
+
+<section id="d1">
+  <h2 data-i18n="d1h"></h2>
+  <p data-i18n="d1p1"></p>
+  <p data-i18n="d1p2"></p>
+  <ul id="d1list"></ul>
+  <div class="tip"><span class="label" data-i18n="tipLabel"></span><p data-i18n="d1tip"></p></div>
+</section>
+
+<section id="d2">
+  <h2 data-i18n="d2h"></h2>
+  <p data-i18n="d2p"></p>
+  <div class="steps" id="d2steps"></div>
+  <div class="note"><span class="label" data-i18n="noteLabel"></span><p data-i18n="d2note"></p></div>
+</section>
+
+<section id="d3">
+  <h2 data-i18n="d3h"></h2>
+  <p data-i18n="d3p"></p>
+  <div class="mock">
+    <div class="mock-bar">
+      <span class="dot" style="background:#f97066"></span>
+      <span class="dot" style="background:#fbbf24"></span>
+      <span class="dot" style="background:#34d399"></span>
+      <span style="margin-left:8px">DB Browser for SQLite</span>
+    </div>
+    <div class="mock-tabs" id="mock-tabs"></div>
+    <div class="mock-body" id="mock-body"></div>
+  </div>
+  <p data-i18n="d3hint" style="color:var(--muted);font-size:.9rem"></p>
+</section>
+
+<section id="d4">
+  <h2 data-i18n="d4h"></h2>
+  <p data-i18n="d4p"></p>
+  <div class="steps" id="d4steps"></div>
+  <h3 data-i18n="d4h3"></h3>
+  <pre id="d4sql"></pre>
+</section>
+
+<section id="d5">
+  <h2 data-i18n="d5h"></h2>
+  <p data-i18n="d5p"></p>
+  <div class="steps" id="d5steps"></div>
+  <div class="tip"><span class="label" data-i18n="tipLabel"></span><p data-i18n="d5tip"></p></div>
+</section>
+
+<section id="d6">
+  <h2 data-i18n="d6h"></h2>
+  <p data-i18n="d6p"></p>
+  <div id="d6table"></div>
+  <h3 data-i18n="d6playh"></h3>
+  <p data-i18n="d6playp"></p>
+  <div class="play">
+    <textarea id="sql-input" spellcheck="false">SELECT nev, atlag FROM diakok WHERE atlag &gt;= 4.5 ORDER BY atlag DESC;</textarea>
+    <div class="row">
+      <button onclick="runSQL()" id="run-btn"></button>
+      <button class="sec" onclick="preset(0)" id="pr0"></button>
+      <button class="sec" onclick="preset(1)" id="pr1"></button>
+      <button class="sec" onclick="preset(2)" id="pr2"></button>
+    </div>
+    <div class="out" id="sql-out"></div>
+  </div>
+</section>
+
+<section id="d7">
+  <h2 data-i18n="d7h"></h2>
+  <p data-i18n="d7p"></p>
+  <div class="checklist" id="tasks"></div>
+</section>
+
+<section id="d8">
+  <h2 data-i18n="d8h"></h2>
+  <p data-i18n="d8p"></p>
+  <div id="quiz-wrap"></div>
+</section>
+
+<footer><span data-i18n="footer"></span> · <a href="index.html" data-i18n="backlink"></a></footer>
+</div>
+
+<script>
+const T = {
+hu: {
+  title: "🛠️ DB Browser for SQLite",
+  subtitle: "Részletes, lépésről lépésre haladó útmutató középiskolásoknak: telepítéstől a saját adatbázis létrehozásáig és az SQL-lekérdezésekig.",
+  tipLabel: "Tipp",
+  noteLabel: "Jó tudni",
+  footer: "Készült középiskolai informatika órákra – DB Browser for SQLite gyakorlati útmutató",
+  backlink: "← Vissza az adatbázis-elmélethez",
+  nav: [["#d1","Mi ez?"],["#d2","Telepítés"],["#d3","Felület"],["#d4","Új adatbázis"],["#d5","Adatrögzítés"],["#d6","SQL-lekérdezések"],["#d7","Feladatok"],["#d8","Kvíz"]],
+  d1h: "1. Mi a DB Browser for SQLite?",
+  d1p1: "A <b>DB Browser for SQLite</b> (röviden DB4S) egy <b>ingyenes, nyílt forráskódú grafikus program</b>, amellyel SQLite adatbázisokat hozhatunk létre, nézhetünk meg és szerkeszthetünk – anélkül, hogy parancssort kellene használnunk.",
+  d1p2: "Az <b>SQLite</b> a világ legelterjedtebb adatbázis-kezelője: benne van a telefonodban, a böngésződben és szinte minden programban. Egyetlen fájl az egész adatbázis – ezért tökéletes tanulásra és kisebb projektekre.",
+  d1list: [
+    "<b>Ingyenes és nyílt forráskódú</b> – bárki letöltheti, akár iskolai gépekre is.",
+    "<b>Grafikus felület</b> – kattintgatva is dolgozhatsz, nem kell mindent begépelni.",
+    "<b>SQL-támogatás</b> – a beépített SQL-szerkesztőben valódi lekérdezéseket írhatsz.",
+    "<b>Windows, macOS és Linux</b> – minden rendszeren fut.",
+    "<b>Ideális oktatásra</b> – a tanult SQL azonnal kipróbálható benne."
+  ],
+  d1tip: "Az SQLite adatbázis egyetlen <code>.db</code> vagy <code>.sqlite</code> kiterjesztésű fájl – e-mailben is elküldheted a tanárodnak házi feladatként!",
+  d2h: "2. Letöltés és telepítés",
+  d2p: "A telepítés pár perc alatt kész:",
+  d2steps: [
+    "Nyisd meg a hivatalos oldalt: <b>sqlitebrowser.org</b>",
+    "Kattints a <b>Download</b> gombra, és válaszd ki a rendszeredet (Windows / macOS / Linux).",
+    "Windows-on töltsd le a <b>.msi</b> telepítőt (ha nem telepíthetsz, a <b>Portable</b> verzió telepítés nélkül is működik!).",
+    "Futtasd a telepítőt, és kattints végig a <b>Next → Next → Finish</b> gombokra.",
+    "Indítsd el a programot – máris használható, regisztráció nélkül."
+  ],
+  d2note: "Iskolai gépen nincs jogod telepíteni? Töltsd le a <b>Portable</b> (hordozható) verziót – csak csomagold ki és futtasd, nem kér rendszergazdai jogot!",
+  d3h: "3. A program felülete – ismerkedj meg a fülekkel!",
+  d3p: "A program négy fő fülre oszlik. <b>Kattints a fülekre</b>, és nézd meg, mi rejlik mindegyik mögött:",
+  d3tabs: [
+    ["Database Structure","<b>Adatbázis-szerkezet</b><br>Itt látod a táblákat, mezőket és indexeket fa-struktúrában. Itt hozol létre új táblát a <b>Create Table</b> gombbal, és itt módosítod a meglévőket."],
+    ["Browse Data","<b>Adatok böngészése</b><br>Táblázatos nézet, mint az Excel: sorokat adhatsz hozzá, szerkeszthetsz és törölhetsz. Felül választod ki, melyik táblát nézed."],
+    ["Edit Pragmas","<b>Beállítások</b><br>Az adatbázis műszaki beállításai (pl. titkosítás, gyorsítótár) – kezdőknek ritkán kell, de jó tudni, hogy itt van."],
+    ["Execute SQL","<b>SQL végrehajtása</b><br>Itt írhatod a saját SQL-utasításaidat! A <b>▶ Run</b> gomb futtatja a lekérdezést, alul pedig megjelenik az eredmény."]
+  ],
+  d3hint: "💡 Kattints a fenti fülekre – mindegyikhez rövid magyarázat tartozik!",
+  d4h: "4. Saját adatbázis és tábla létrehozása",
+  d4p: "Hozzuk létre együtt az iskolai példa-adatbázist:",
+  d4steps: [
+    "Kattints a <b>New Database</b> gombra (bal felső sarok), és mentsd el a fájlt <code>iskola.db</code> néven.",
+    "Azonnal megnyílik a <b>Create Table</b> ablak – nevezd el a táblát: <code>diakok</code>.",
+    "Kattints az <b>Add field</b> gombra, és add hozzá a mezőket: <code>azonosito</code> (INTEGER, jelöld be <b>PK</b> = elsődleges kulcs!), <code>nev</code> (TEXT), <code>osztaly</code> (TEXT), <code>atlag</code> (REAL).",
+    "Kattints az <b>OK</b> gombra – kész a tábla!",
+    "Ne felejtsd el: <b>Write Changes</b> (💾) gomb – ezzel mented el véglegesen a módosításokat a fájlba!"
+  ],
+  d4h3: "Ugyanez SQL-ben:",
+  d4sql: `<span class="kw">CREATE TABLE</span> diakok (
+  azonosito <span class="kw">INTEGER PRIMARY KEY</span>,
+  nev       <span class="kw">TEXT</span>,
+  osztaly   <span class="kw">TEXT</span>,
+  atlag     <span class="kw">REAL</span>
+);`,
+  d5h: "5. Adatok felvitele és szerkesztése",
+  d5p: "Töltsük fel a táblát adatokkal a <b>Browse Data</b> fülön:",
+  d5steps: [
+    "Válts a <b>Browse Data</b> fülre, és válaszd ki felül a <code>diakok</code> táblát.",
+    "Kattints a <b>New Record</b> (új sor) gombra – megjelenik egy üres sor.",
+    "Kattints bele a cellákba, és gépeld be az adatokat (pl. 1, Kovács Anna, 10.A, 4.6).",
+    "Töröléshez jelöld ki a sort, és kattints a <b>Delete Record</b> gombra.",
+    "Mentsd el: <b>Write Changes</b> (💾)."
+  ],
+  d5tip: "Figyelem! Az SQLite a tizedes számokat <b>ponttal</b> írja: <code>4.6</code>, nem <code>4,6</code> – különben szövegnek veszi!",
+  d6h: "6. SQL-lekérdezések futtatása",
+  d6p: "Az <b>Execute SQL</b> fülön írhatod és futtathatod a lekérdezéseket. Íme a minta-adatbázisunk, amellyel dolgozni fogunk:",
+  d6tableHead: ["azonosito","nev","osztaly","atlag"],
+  d6table: [
+    ["1","Kovács Anna","10.A","4.6"],
+    ["2","Nagy Péter","10.A","4.2"],
+    ["3","Szabó Réka","11.B","3.8"],
+    ["4","Tóth Gábor","10.A","3.4"],
+    ["5","Kiss Luca","11.B","4.9"],
+    ["6","Fekete Bence","11.B","2.7"]
+  ],
+  d6playh: "Próbáld ki! – Interaktív SQL-gyakorlópálya",
+  d6playp: "Írj be egy lekérdezést (vagy használd a kész mintákat), és kattints a <b>Futtatás</b> gombra – pontosan úgy működik, mint a DB Browser <b>Execute SQL</b> füle:",
+  run: "▶ Futtatás",
+  presets: ["Minta: minden diák","Minta: jelesek (≥ 4.5)","Minta: 10.A osztály"],
+  presetsSQL: [
+    "SELECT * FROM diakok;",
+    "SELECT nev, atlag FROM diakok WHERE atlag >= 4.5 ORDER BY atlag DESC;",
+    "SELECT nev, osztaly FROM diakok WHERE osztaly = '10.A';"
+  ],
+  err: "Hiba a lekérdezésben – ellenőrizd az SQL-t! (pl. SELECT nev FROM diakok WHERE atlag > 4)",
+  empty: "A lekérdezés nem adott vissza egyetlen sort sem.",
+  d7h: "7. Önálló feladatok – pipáld ki őket!",
+  d7p: "Hajtsd végre a feladatokat a DB Browserben (vagy a fenti gyakorlópályán), és pipáld ki, ha kész:",
+  d7tasks: [
+    "Hozz létre egy <code>iskola.db</code> nevű adatbázist!",
+    "Készítsd el a <code>diakok</code> táblát a 4 mezővel (azonosito, nev, osztaly, atlag)!",
+    "Vigyél fel legalább 6 diákot a <b>Browse Data</b> fülön!",
+    "Futtass egy lekérdezést, amely kilistázza az összes diákot (<code>SELECT *</code>)!",
+    "Kérdezd le a 4.5 feletti átlagú tanulókat csökkenő sorrendben!",
+    "Szúrj be egy új diákot SQL-lel: <code>INSERT INTO diakok VALUES (7, 'Saját Neved', '10.A', 4.8);</code>",
+    "Módosíts egy átlagot: <code>UPDATE diakok SET atlag = 3.9 WHERE azonosito = 6;</code>",
+    "Mentsd el az adatbázist a <b>Write Changes</b> gombbal!"
+  ],
+  d8h: "8. Kvíz – ellenőrizd a tudásod! 🧠",
+  d8p: "Válaszolj a kérdésekre:",
+  quizzes: [
+    {
+      q: "Melyik fülön írhatunk SQL-lekérdezéseket a DB Browserben?",
+      a: ["Browse Data","Execute SQL","Edit Pragmas"],
+      correct: 1,
+      good: "✅ Helyes! Az Execute SQL fülön írjuk és futtatjuk a lekérdezéseket.",
+      bad: "❌ Nem egészen – a lekérdezéseket az Execute SQL fülön futtatjuk."
+    },
+    {
+      q: "Melyik gombbal mented el véglegesen a módosításokat a fájlba?",
+      a: ["New Record","Open Database","Write Changes"],
+      correct: 2,
+      good: "✅ Így van! A Write Changes (💾) írja bele a változásokat a .db fájlba.",
+      bad: "❌ Nem – a Write Changes gomb menti el a változtatásokat."
+    },
+    {
+      q: "Milyen adattípust választasz az átlag (pl. 4.6) mezőhöz?",
+      a: ["INTEGER","REAL","TEXT"],
+      correct: 1,
+      good: "✅ Tökéletes! A REAL tárolja a tizedes számokat.",
+      bad: "❌ Nem – a tizedes számokhoz a REAL típus kell (az INTEGER egész szám)."
+    }
+  ]
+},
+sr: {
+  title: "🛠️ DB Browser for SQLite",
+  subtitle: "Detaljno uputstvo korak po korak za srednjoškolce: od instalacije do pravljenja sopstvene baze i SQL upita.",
+  tipLabel: "Savet",
+  noteLabel: "Dobro je znati",
+  footer: "Napravljeno za časove informatike u srednjoj školi – praktično uputstvo za DB Browser for SQLite",
+  backlink: "← Nazad na teoriju o bazama podataka",
+  nav: [["#d1","Šta je to?"],["#d2","Instalacija"],["#d3","Interfejs"],["#d4","Nova baza"],["#d5","Unos podataka"],["#d6","SQL upiti"],["#d7","Zadaci"],["#d8","Kviz"]],
+  d1h: "1. Šta je DB Browser for SQLite?",
+  d1p1: "<b>DB Browser for SQLite</b> (skraćeno DB4S) je <b>besplatan program otvorenog koda sa grafičkim interfejsom</b> kojim kreiramo, pregledamo i menjamo SQLite baze podataka – bez kucanja u komandnu liniju.",
+  d1p2: "<b>SQLite</b> je najrasprostranjeniji sistem za upravljanje bazama na svetu: nalazi se u tvom telefonu, pretraživaču i skoro svakom programu. Cela baza je jedan jedini fajl – zato je savršena za učenje i manje projekte.",
+  d1list: [
+    "<b>Besplatan i otvorenog koda</b> – svako može da ga preuzme, i na školske računare.",
+    "<b>Grafički interfejs</b> – možeš da radiš mišem, ne mora sve da se kuca.",
+    "<b>Podrška za SQL</b> – u ugrađenom editoru pišeš prave SQL upite.",
+    "<b>Windows, macOS i Linux</b> – radi na svim sistemima.",
+    "<b>Idealan za nastavu</b> – naučeni SQL odmah možeš da isprobaš."
+  ],
+  d1tip: "SQLite baza je jedan fajl sa ekstenzijom <code>.db</code> ili <code>.sqlite</code> – možeš je čak i mejlom poslati nastavniku kao domaći zadatak!",
+  d2h: "2. Preuzimanje i instalacija",
+  d2p: "Instalacija je gotova za par minuta:",
+  d2steps: [
+    "Otvori zvaničnu stranicu: <b>sqlitebrowser.org</b>",
+    "Klikni na dugme <b>Download</b> i izaberi svoj sistem (Windows / macOS / Linux).",
+    "Na Windows-u preuzmi <b>.msi</b> instalaciju (ako ne smeš da instaliraš, <b>Portable</b> verzija radi i bez instalacije!).",
+    "Pokreni instalaciju i klikni redom <b>Next → Next → Finish</b>.",
+    "Pokreni program – odmah je spreman za rad, bez registracije."
+  ],
+  d2note: "Na školskom računaru nemaš prava za instalaciju? Preuzmi <b>Portable</b> (prenosivu) verziju – samo je raspakuj i pokreni, ne traži administratorska prava!",
+  d3h: "3. Interfejs programa – upoznaj kartice!",
+  d3p: "Program je podeljen na četiri glavne kartice. <b>Klikni na kartice</b> i pogledaj šta se krije iza svake:",
+  d3tabs: [
+    ["Database Structure","<b>Struktura baze</b><br>Ovde vidiš tabele, polja i indekse u vidu stabla. Dugmetom <b>Create Table</b> praviš nove tabele, a ovde menjaš i postojeće."],
+    ["Browse Data","<b>Pregled podataka</b><br>Tabelarni prikaz kao u Excel-u: dodaješ, menjaš i brišeš redove. Na vrhu biraš koju tabelu gledaš."],
+    ["Edit Pragmas","<b>Podešavanja</b><br>Tehnička podešavanja baze (npr. šifrovanje, keš) – početnicima retko treba, ali dobro je znati da postoji."],
+    ["Execute SQL","<b>Izvršavanje SQL-a</b><br>Ovde pišeš svoje SQL naredbe! Dugme <b>▶ Run</b> pokreće upit, a ispod se pojavljuje rezultat."]
+  ],
+  d3hint: "💡 Klikni na kartice iznad – svaka ima kratak opis!",
+  d4h: "4. Pravljenje sopstvene baze i tabele",
+  d4p: "Hajde da zajedno napravimo školsku bazu za primer:",
+  d4steps: [
+    "Klikni na dugme <b>New Database</b> (gore levo) i sačuvaj fajl pod imenom <code>iskola.db</code>.",
+    "Odmah se otvara prozor <b>Create Table</b> – tabelu nazovi <code>diakok</code> (učenici).",
+    "Klikni na <b>Add field</b> i dodaj polja: <code>azonosito</code> (INTEGER, štikliraj <b>PK</b> = primarni ključ!), <code>nev</code> (TEXT), <code>osztaly</code> (TEXT), <code>atlag</code> (REAL).",
+    "Klikni <b>OK</b> – tabela je gotova!",
+    "Ne zaboravi: dugme <b>Write Changes</b> (💾) – njime trajno upisuješ izmene u fajl!"
+  ],
+  d4h3: "Isto to u SQL-u:",
+  d4sql: `<span class="kw">CREATE TABLE</span> diakok (
+  azonosito <span class="kw">INTEGER PRIMARY KEY</span>,
+  nev       <span class="kw">TEXT</span>,
+  osztaly   <span class="kw">TEXT</span>,
+  atlag     <span class="kw">REAL</span>
+);`,
+  d5h: "5. Unos i izmena podataka",
+  d5p: "Napunimo tabelu podacima na kartici <b>Browse Data</b>:",
+  d5steps: [
+    "Pređi na karticu <b>Browse Data</b> i na vrhu izaberi tabelu <code>diakok</code>.",
+    "Klikni na dugme <b>New Record</b> (novi red) – pojaviće se prazan red.",
+    "Klikni u ćelije i ukucaj podatke (npr. 1, Kovács Anna, 10.A, 4.6).",
+    "Za brisanje označi red i klikni <b>Delete Record</b>.",
+    "Sačuvaj: <b>Write Changes</b> (💾)."
+  ],
+  d5tip: "Pažnja! SQLite decimalne brojeve piše sa <b>tačkom</b>: <code>4.6</code>, a ne <code>4,6</code> – inače će ih shvatiti kao tekst!",
+  d6h: "6. Pokretanje SQL upita",
+  d6p: "Na kartici <b>Execute SQL</b> pišeš i pokrećeš upite. Evo naše baze za primer sa kojom ćemo raditi:",
+  d6tableHead: ["azonosito","nev","osztaly","atlag"],
+  d6table: [
+    ["1","Kovács Anna","10.A","4.6"],
+    ["2","Nagy Péter","10.A","4.2"],
+    ["3","Szabó Réka","11.B","3.8"],
+    ["4","Tóth Gábor","10.A","3.4"],
+    ["5","Kiss Luca","11.B","4.9"],
+    ["6","Fekete Bence","11.B","2.7"]
+  ],
+  d6playh: "Probaj sam! – Interaktivni SQL trening",
+  d6playp: "Ukucaj upit (ili iskoristi gotove primere) i klikni na <b>Pokreni</b> – radi tačno kao kartica <b>Execute SQL</b> u DB Browseru:",
+  run: "▶ Pokreni",
+  presets: ["Primer: svi učenici","Primer: odlični (≥ 4.5)","Primer: odeljenje 10.A"],
+  presetsSQL: [
+    "SELECT * FROM diakok;",
+    "SELECT nev, atlag FROM diakok WHERE atlag >= 4.5 ORDER BY atlag DESC;",
+    "SELECT nev, osztaly FROM diakok WHERE osztaly = '10.A';"
+  ],
+  err: "Greška u upitu – proveri SQL! (npr. SELECT nev FROM diakok WHERE atlag > 4)",
+  empty: "Upit nije vratio nijedan red.",
+  d7h: "7. Samostalni zadaci – štikliraj ih!",
+  d7p: "Uradi zadatke u DB Browseru (ili u treningu iznad) i štikliraj kad završiš:",
+  d7tasks: [
+    "Napravi bazu pod imenom <code>iskola.db</code>!",
+    "Napravi tabelu <code>diakok</code> sa 4 polja (azonosito, nev, osztaly, atlag)!",
+    "Unesi bar 6 učenika na kartici <b>Browse Data</b>!",
+    "Pokreni upit koji izlistava sve učenike (<code>SELECT *</code>)!",
+    "Izvuci učenike sa prosekom iznad 4.5 u opadajućem redosledu!",
+    "Dodaj novog učenika SQL-om: <code>INSERT INTO diakok VALUES (7, 'Tvoje Ime', '10.A', 4.8);</code>",
+    "Izmeni jedan prosek: <code>UPDATE diakok SET atlag = 3.9 WHERE azonosito = 6;</code>",
+    "Sačuvaj bazu dugmetom <b>Write Changes</b>!"
+  ],
+  d8h: "8. Kviz – proveri znanje! 🧠",
+  d8p: "Odgovori na pitanja:",
+  quizzes: [
+    {
+      q: "Na kojoj kartici pišemo SQL upite u DB Browseru?",
+      a: ["Browse Data","Execute SQL","Edit Pragmas"],
+      correct: 1,
+      good: "✅ Tačno! Na kartici Execute SQL pišemo i pokrećemo upite.",
+      bad: "❌ Ne baš – upiti se pokreću na kartici Execute SQL."
+    },
+    {
+      q: "Kojim dugmetom trajno čuvaš izmene u fajlu?",
+      a: ["New Record","Open Database","Write Changes"],
+      correct: 2,
+      good: "✅ Tako je! Write Changes (💾) upisuje promene u .db fajl.",
+      bad: "❌ Ne – dugme Write Changes čuva izmene."
+    },
+    {
+      q: "Koji tip podatka biraš za polje proseka (npr. 4.6)?",
+      a: ["INTEGER","REAL","TEXT"],
+      correct: 1,
+      good: "✅ Odlično! REAL čuva decimalne brojeve.",
+      bad: "❌ Ne – za decimalne brojeve treba REAL (INTEGER je ceo broj)."
+    }
+  ]
+}
+};
+
+let lang = 'hu';
+let activeTab = 0;
+
+// ---- mini SQL motor a játszótérhez ----
+const DATA = [
+  {azonosito:1, nev:"Kovács Anna", osztaly:"10.A", atlag:4.6},
+  {azonosito:2, nev:"Nagy Péter", osztaly:"10.A", atlag:4.2},
+  {azonosito:3, nev:"Szabó Réka", osztaly:"11.B", atlag:3.8},
+  {azonosito:4, nev:"Tóth Gábor", osztaly:"10.A", atlag:3.4},
+  {azonosito:5, nev:"Kiss Luca", osztaly:"11.B", atlag:4.9},
+  {azonosito:6, nev:"Fekete Bence", osztaly:"11.B", atlag:2.7}
+];
+
+function runSQL(){
+  const t = T[lang];
+  const sql = document.getElementById('sql-input').value.trim();
+  const out = document.getElementById('sql-out');
+  try{
+    let m = sql.match(/^select\s+(.+?)\s+from\s+diakok\s*(?:where\s+(.+?))?\s*(?:order\s+by\s+(\w+)(?:\s+(asc|desc))?)?\s*;?$/i);
+    if(!m) throw 0;
+    let cols = m[1].trim();
+    let rows = DATA.slice();
+    if(m[2]){
+      let w = m[2].trim();
+      let wm = w.match(/^(\w+)\s*(=|>=|<=|>|<)\s*('([^']*)'|([\d.]+))$/);
+      if(!wm) throw 0;
+      let col = wm[1].toLowerCase(), op = wm[2], raw = wm[4] !== undefined ? wm[4] : parseFloat(wm[5]);
+      rows = rows.filter(r=>{
+        let v = r[col];
+        if(v === undefined) throw 0;
+        let a = (typeof v === 'number') ? v : String(v);
+        let b = (typeof v === 'number') ? raw : String(raw);
+        switch(op){
+          case '=': return a == b;
+          case '>': return a > b;
+          case '<': return a < b;
+          case '>=': return a >= b;
+          case '<=': return a <= b;
+        }
+      });
+    }
+    let keys;
+    if(cols === '*') keys = ['azonosito','nev','osztaly','atlag'];
+    else {
+      keys = cols.split(',').map(s=>s.trim().toLowerCase());
+      if(keys.some(k=>!(k in DATA[0]))) throw 0;
+    }
+    if(m[3]){
+      let oc = m[3].toLowerCase(), dir = (m[4]||'asc').toLowerCase();
+      if(!(oc in DATA[0])) throw 0;
+      rows.sort((a,b)=> a[oc] > b[oc] ? 1 : a[oc] < b[oc] ? -1 : 0);
+      if(dir === 'desc') rows.reverse();
+    }
+    if(!rows.length){ out.innerHTML = `<span class="err">${t.empty}</span>`; return; }
+    out.innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r=>`<tr>${keys.map(k=>`<td>${r[k]}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  }catch(e){
+    out.innerHTML = `<span class="err">⚠ ${t.err}</span>`;
+  }
+}
+
+function preset(i){
+  document.getElementById('sql-input').value = T[lang].presetsSQL[i];
+  runSQL();
+}
+
+function showTab(i){
+  activeTab = i;
+  const t = T[lang];
+  document.querySelectorAll('#mock-tabs button').forEach((b,j)=>b.classList.toggle('active', j===i));
+  document.getElementById('mock-body').innerHTML = t.d3tabs[i][1];
+}
+
+function render(){
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(t[k] !== undefined) el.innerHTML = t[k];
+  });
+  document.getElementById('btn-hu').classList.toggle('active', lang==='hu');
+  document.getElementById('btn-sr').classList.toggle('active', lang==='sr');
+
+  document.getElementById('nav').innerHTML = t.nav.map(n=>`<a href="${n[0]}">${n[1]}</a>`).join('');
+  document.getElementById('d1list').innerHTML = t.d1list.map(x=>`<li>${x}</li>`).join('');
+  document.getElementById('d2steps').innerHTML = t.d2steps.map(x=>`<div class="step"><div>${x}</div></div>`).join('');
+  document.getElementById('d4steps').innerHTML = t.d4steps.map(x=>`<div class="step"><div>${x}</div></div>`).join('');
+  document.getElementById('d5steps').innerHTML = t.d5steps.map(x=>`<div class="step"><div>${x}</div></div>`).join('');
+  document.getElementById('d4sql').innerHTML = t.d4sql;
+
+  document.getElementById('mock-tabs').innerHTML =
+    t.d3tabs.map((tb,i)=>`<button class="${i===activeTab?'active':''}" onclick="showTab(${i})">${tb[0]}</button>`).join('');
+  document.getElementById('mock-body').innerHTML = t.d3tabs[activeTab][1];
+
+  document.getElementById('d6table').innerHTML = `<table>
+    <thead><tr>${t.d6tableHead.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${t.d6table.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('run-btn').textContent = t.run;
+  [0,1,2].forEach(i=>document.getElementById('pr'+i).textContent = t.presets[i]);
+
+  document.getElementById('tasks').innerHTML = t.d7tasks.map((x,i)=>
+    `<label><input type="checkbox" onchange="this.parentElement.classList.toggle('done',this.checked)"><span>${x}</span></label>`).join('');
+
+  document.getElementById('quiz-wrap').innerHTML = t.quizzes.map((q,qi)=>`
+    <div class="quiz" id="quiz${qi}">
+      <p><b>${qi+1}. ${q.q}</b></p>
+      ${q.a.map((a,i)=>`<button onclick="answer(${qi},${i},this)">${a}</button>`).join('')}
+      <div class="feedback"></div>
+    </div>`).join('');
+
+  runSQL();
+}
+
+function answer(qi, i, btn){
+  const q = T[lang].quizzes[qi];
+  const wrap = document.getElementById('quiz'+qi);
+  wrap.querySelectorAll('button').forEach(b=>b.classList.remove('correct','wrong'));
+  const fb = wrap.querySelector('.feedback');
+  if(i === q.correct){
+    btn.classList.add('correct');
+    fb.style.color = '#059669';
+    fb.textContent = q.good;
+  } else {
+    btn.classList.add('wrong');
+    fb.style.color = '#f97066';
+    fb.textContent = q.bad;
+  }
+}
+
+function setLang(l){ lang = l; render(); }
+
+render();
+</script>
+</body>
+</html>
