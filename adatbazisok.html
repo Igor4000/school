@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adatbázisok – Interaktív tananyag / Baze podataka – Interaktivna nastava</title>
+<style>
+:root{
+  --bg:#f6f8fc; --card:#ffffff; --accent:#2563eb; --accent2:#7c3aed;
+  --text:#1e293b; --muted:#64748b; --good:#16a34a; --warn:#d97706;
+  --border:#e2e8f0; --soft:#eef4ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;min-height:100vh}
+.container{max-width:980px;margin:0 auto;padding:24px 18px 90px}
+header{position:relative;text-align:center;padding:70px 20px 50px;
+  background:linear-gradient(120deg,#dbeafe 0%,#ede9fe 60%,#fce7f3 100%);
+  border-radius:0 0 40px 40px}
+header h1{font-size:2.6rem;color:var(--accent);margin-bottom:12px}
+header p.sub{color:var(--muted);font-size:1.15rem;max-width:700px;margin:0 auto}
+.lang-switch{position:absolute;top:20px;right:20px;display:flex;background:#fff;border:1px solid var(--border);border-radius:30px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.lang-switch button{background:transparent;border:none;color:var(--muted);padding:9px 20px;cursor:pointer;font-weight:600;font-size:.95rem;transition:.2s}
+.lang-switch button.active{background:var(--accent);color:#fff}
+section{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px 34px;margin:28px 0;box-shadow:0 4px 20px rgba(30,41,59,.06)}
+section h2{color:var(--accent);margin-bottom:16px;font-size:1.55rem;border-bottom:3px solid var(--soft);padding-bottom:10px}
+section h3{color:var(--accent2);margin:20px 0 10px;font-size:1.15rem}
+p{margin-bottom:12px}
+ul,ol{margin:0 0 12px 22px}
+li{margin-bottom:7px}
+b{color:#0f172a}
+.example{background:var(--soft);border-left:5px solid var(--good);border-radius:10px;padding:16px 20px;margin:16px 0}
+.example .label{color:var(--good);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:1px}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.95rem;display:block;overflow-x:auto}
+thead th{background:var(--accent);color:#fff;padding:12px 14px;text-align:left;border:1px solid var(--accent);white-space:nowrap}
+tbody td{padding:11px 14px;border:1px solid var(--border);vertical-align:top}
+tbody tr:nth-child(even){background:#f8fafc}
+tbody tr:hover{background:var(--soft)}
+code,pre{font-family:'Consolas',monospace;background:#0f172a;color:#7dd3fc;border-radius:8px}
+code{padding:2px 8px;font-size:.92em}
+pre{padding:16px 20px;overflow-x:auto;margin:14px 0}
+pre .kw{color:#c084fc;font-weight:700}pre .st{color:#4ade80}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:16px 0}
+.card{background:#f8fafc;border:1px solid var(--border);border-radius:14px;padding:18px;transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(37,99,235,.12);border-color:var(--accent)}
+.card h4{color:var(--accent);margin-bottom:6px;font-size:1.05rem}
+.card p{font-size:.92rem;color:var(--muted)}
+.card p.free{color:var(--good);font-weight:700}
+.quiz{background:#f8fafc;border:2px dashed var(--accent2);border-radius:14px;padding:20px;margin:18px 0}
+.quiz button{display:block;width:100%;text-align:left;background:#fff;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin:8px 0;cursor:pointer;transition:.15s;font-size:.98rem}
+.quiz button:hover{border-color:var(--accent);background:var(--soft)}
+.quiz button.correct{background:#dcfce7;border-color:var(--good)}
+.quiz button.wrong{background:#fee2e2;border-color:#ef4444}
+.quiz .feedback{font-weight:600;margin-top:8px;min-height:26px}
+footer{text-align:center;color:var(--muted);margin-top:40px;font-size:.9rem}
+@media(max-width:640px){header h1{font-size:1.8rem}.lang-switch{position:static;margin-bottom:18px;display:inline-flex}section{padding:22px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="lang-switch">
+    <button id="btn-hu" class="active" onclick="setLang('hu')">🇭🇺 Magyar</button>
+    <button id="btn-sr" onclick="setLang('sr')">🇷🇸 Српски</button>
+  </div>
+  <h1 data-i18n="title"></h1>
+  <p class="sub" data-i18n="subtitle"></p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2 data-i18n="s1h"></h2>
+  <p data-i18n="s1p1"></p>
+  <p data-i18n="s1p2"></p>
+  <h3 data-i18n="s1h3"></h3>
+  <ul id="terms-list"></ul>
+  <div class="example">
+    <span class="label" data-i18n="example"></span>
+    <p data-i18n="s1ex"></p>
+  </div>
+</section>
+
+<section>
+  <h2 data-i18n="s2h"></h2>
+  <p data-i18n="s2p"></p>
+  <div class="cards" id="usage-cards"></div>
+</section>
+
+<section>
+  <h2 data-i18n="s3h"></h2>
+  <ul id="why-list"></ul>
+  <div class="example">
+    <span class="label" data-i18n="example"></span>
+    <p data-i18n="s3ex"></p>
+  </div>
+</section>
+
+<section>
+  <h2 data-i18n="s4h"></h2>
+  <p data-i18n="s4p"></p>
+  <div id="types-table"></div>
+  <h3 data-i18n="s4sqlh"></h3>
+  <p data-i18n="s4sqlp"></p>
+  <div id="full-table"></div>
+  <p data-i18n="s4q1p"></p>
+  <pre id="sql-code1"></pre>
+  <p data-i18n="s4sqlr"></p>
+  <div id="sql-result1"></div>
+  <p data-i18n="s4q2p"></p>
+  <pre id="sql-code2"></pre>
+  <div id="sql-result2"></div>
+</section>
+
+<section>
+  <h2 data-i18n="s5h"></h2>
+  <p data-i18n="s5p"></p>
+  <div class="cards" id="tools-cards"></div>
+  <h3 data-i18n="s5h3"></h3>
+  <div id="tools-table"></div>
+</section>
+
+<section>
+  <h2 data-i18n="s6h"></h2>
+  <p data-i18n="s6p"></p>
+  <div id="quiz-wrap"></div>
+</section>
+
+<footer data-i18n="footer"></footer>
+</div>
+
+<script>
+const T = {
+hu: {
+  title: "🗄️ Adatbázisok világa",
+  subtitle: "Interaktív tananyag középiskolásoknak – tanuld meg, mik az adatbázisok, hol használjuk őket, és milyen programokkal kezeljük őket!",
+  example: "Példa",
+  footer: "Készült középiskolai informatika órákra – Adatbázisok tananyag",
+  s1h: "1. Mi az az adatbázis?",
+  s1p1: "Az <b>adatbázis</b> adatok rendszerezett, tartós gyűjteménye, amelyet számítógéppel tárolunk és kezelünk. Olyan, mint egy hatalmas, digitális kártyatár, ahol minden információ a maga helyén van, és bármikor másodpercek alatt megtalálható.",
+  s1p2: "Az adatbázisokat speciális programok, az úgynevezett <b>adatbázis-kezelő rendszerek</b> (angolul DBMS – Database Management System) kezelik: ezek gondoskodnak a tárolásról, a keresésről, a módosításról és a védelemről.",
+  s1h3: "Alapfogalmak, amelyeket érdemes tudni:",
+  terms: [
+    "<b>Tábla:</b> az adatok tárolásának alapegysége – sorokból és oszlopokból áll, mint egy Excel-táblázat.",
+    "<b>Rekord (sor):</b> egy konkrét dolog adatai, például egy tanuló összes adata.",
+    "<b>Mező (oszlop):</b> egy tulajdonság, például név, születési dátum vagy átlag.",
+    "<b>Elsődleges kulcs:</b> egyedi azonosító, amely minden rekordot megkülönböztet (pl. diákigazolvány-szám).",
+    "<b>Lekérdezés (query):</b> kérés az adatbázis felé, például „add meg az összes kitűnő tanulót\"."
+  ],
+  s1ex: "Gondolj az iskolai naplóra! Régen papíron vezették a jegyeket. Ma ez egy adatbázis: minden tanulónak saját rekordja van, minden tantárgy egy mező, és a tanár egy kattintással megnézi bárki átlagát.",
+  s2h: "2. Hol használjuk az adatbázisokat?",
+  s2p: "Szinte mindenhol! Ha a telefonodat használod, óránként több tucat adatbázishoz kapcsolódsz anélkül, hogy észrevennéd. Néhány példa:",
+  usage: [
+    ["📱 Közösségi média","A TikTok, Instagram és Facebook a bejegyzéseket, like-okat, üzeneteket és felhasználókat adatbázisokban tárolja."],
+    ["🏦 Bankok","A bankszámlád egyenlegét és minden tranzakciódat egy rendkívül biztonságos adatbázis őrzi – ezért is olyan megbízható az internetbank."],
+    ["🛒 Webáruházak","Termékek, árak, raktárkészlet, rendelések, vásárlói vélemények – mind adatbázisban vannak."],
+    ["🏥 Egészségügy","A betegkartonok, laboreredmények és a gyógyszer-előírások elektronikus adatbázisokban tárolódnak."],
+    ["🎮 Játékok","Az eredményeid, a ranglisták, a játékbeli tárgyaid és a mentett állásaid mind egy adatbázisban élnek."],
+    ["🚌 Közlekedés","A menetrendek, jegyeladási rendszerek és a repülőtéri járatadatok is adatbázisokra épülnek."],
+    ["🎵 Streaming","A Spotify és a YouTube a zenéket, videókat, lejátszási listákat és a nézési előzményeket adatbázisokból szolgálja ki."],
+    ["🏫 Iskola","A tanulmányi rendszer az osztályzatokat, hiányzásokat és órarendeket adatbázisban kezeli."]
+  ],
+  s3h: "3. Miért hasznosak az adatbázisok?",
+  why: [
+    "<b>Gyorsaság:</b> milliónyi adat között is másodpercek alatt találjuk meg, amit keresünk – ez papíron órákig tartana.",
+    "<b>Rendezettség:</b> az adatok szabályos szerkezetben, táblázatokban tárolódnak, nem kaotikus fájlokban.",
+    "<b>Biztonság:</b> jogosultságokkal szabályozható, ki mit láthat vagy módosíthat – a jelszavadat például senki sem olvashatja ki nyersen.",
+    "<b>Redundancia-mentesség:</b> ugyanazt az adatot nem kell többször tárolni – ha egy helyen javítjuk, mindenhol helyes lesz.",
+    "<b>Egyidejű hozzáférés:</b> akár több ezer felhasználó dolgozhat vele egyszerre, ütközés és adatvesztés nélkül.",
+    "<b>Biztonsági mentés:</b> az adatok elvesztése ellen rendszeres mentésekkel könnyű védekezni.",
+    "<b>Adatintegritás:</b> szabályokkal megakadályozható a hibás adat bevitele – például nem létezhet „13. hónap\" a születési dátumban."
+  ],
+  s3ex: "Képzeld el, hogy egy könyvtár a könyveket ömlesztve tárolná a padláson! Keresésre alkalmatlan lenne. Az adatbázis olyan, mint a jól rendezett könyvtári polcrendszer katalógussal – pontosan tudod, mi hol van, és azonnal megtalálod.",
+  s4h: "4. Milyen típusú adatbázisok léteznek?",
+  s4p: "Több fajtájuk van, az adatok jellegétől és a felhasználástól függően. A legfontosabbak:",
+  typesHead: ["Típus","Hogyan tárol","Példa rendszer","Mire jó?"],
+  types: [
+    ["Relációs (SQL)","Táblázatokban, sorokban és oszlopokban, kapcsolatokkal","MySQL, PostgreSQL, Oracle","Bankok, webáruházak, iskolai rendszerek"],
+    ["Dokumentumorientált (NoSQL)","JSON-szerű dokumentumokban","MongoDB, CouchDB","Közösségi média, gyorsan változó adatok"],
+    ["Kulcs-érték","Egyszerű kulcs → érték párok","Redis, DynamoDB","Gyorsítótárak, bevásárlókosarak"],
+    ["Gráfadatbázis","Csomópontok és kapcsolatok hálózata","Neo4j","Ismeretségi hálózatok, ajánlórendszerek"],
+    ["Objektumorientált","Programozási objektumokként","db4o, ObjectDB","Komplex mérnöki és tudományos adatok"]
+  ],
+  s4sqlh: "Így néz ki egy relációs adatbázis – konkrét SQL példa",
+  s4sqlp: "A relációs adatbázisokban az adatokat az <b>SQL</b> (Structured Query Language) nyelven kérdezzük le. Nézzünk egy teljes, kis adatbázist! Ez az iskola <code>diakok</code> táblája:",
+  tableHead: ["Azonosító","Név","Osztály","Átlag"],
+  tableRows: [
+    ["1","Kovács Anna","10.A","4,6"],
+    ["2","Nagy Péter","10.A","4,2"],
+    ["3","Szabó Réka","11.B","3,8"],
+    ["4","Tóth Gábor","10.A","3,4"],
+    ["5","Kiss Luca","11.B","4,9"],
+    ["6","Fekete Bence","11.B","2,7"]
+  ],
+  s4q1p: "<b>1. lekérdezés:</b> kiemelkedő (4,0 feletti átlagú) tanulók, átlag szerint csökkenő sorrendben:",
+  s4q2p: "<b>2. lekérdezés:</b> a 10.A osztály tanulói:",
+  s4sqlr: "Az eredmény:",
+  sqlResult1Head: ["Név","Átlag"],
+  sqlResult1: [["Kiss Luca","4,9"],["Kovács Anna","4,6"],["Nagy Péter","4,2"]],
+  sqlResult2Head: ["Név","Osztály"],
+  sqlResult2: [["Kovács Anna","10.A"],["Nagy Péter","10.A"],["Tóth Gábor","10.A"]],
+  s5h: "5. Milyen programokkal kezeljük az adatbázisokat?",
+  s5p: "Az adatbázis-kezelő rendszerek (DBMS) a legnépszerűbb szoftverek közé tartoznak. Íme a legismertebbek:",
+  tools: [
+    ["🐬 MySQL","A világ legnépszerűbb nyílt forráskódú relációs adatbázisa. A legtöbb weboldal (pl. a WordPress oldalak) mögött ez fut.","Ingyenes"],
+    ["🐘 PostgreSQL","Haladó, nagyon megbízható, ingyenes rendszer – nagyvállalatok és kutatók is szeretik.","Ingyenes"],
+    ["🏢 Oracle Database","A nagyvállalati világ klasszikusa: bankok és állami rendszerek használják. Fizetős, de nagyon erős.","Fizetős"],
+    ["🪟 Microsoft SQL Server","A Microsoft megoldása, a Windows-os céges környezetek kedvence.","Fizetős / ingyenes Express"],
+    ["🍃 MongoDB","A legismertebb NoSQL adatbázis – dokumentumokban tárol, rugalmas szerkezettel.","Ingyenes"],
+    ["📦 SQLite","Apró, beágyazható adatbázis: a telefonodon, a böngésződben és szinte minden alkalmazásban ott lapul.","Ingyenes"],
+    ["📋 Microsoft Access","Kezdőbarát, grafikus felületű adatbázis-program az Office-csomagból – iskolában gyakran ezzel ismerkedtek meg.","Fizetős (Office)"],
+    ["🔥 Firebase","A Google felhőalapú megoldása mobilappokhoz – valós időben frissülő adatokkal.","Ingyenes szint"]
+  ],
+  s5h3: "Melyiket érdemes tanulni?",
+  toolsTableHead: ["Cél","Ajánlott program","Miért?"],
+  toolsTable: [
+    ["Iskolai tanulmányok, alapok","Microsoft Access, SQLite","Egyszerű, grafikus, nem kell szerver"],
+    ["Webfejlesztés","MySQL vagy PostgreSQL","Ingyenes, minden tárhely támogatja"],
+    ["Modern appok, NoSQL","MongoDB, Firebase","Rugalmas, jól illik a JavaScripthez"],
+    ["Nagyvállalati karrier","Oracle, MS SQL Server","A legkeresettebb a céges világban"]
+  ],
+  s6h: "6. Ellenőrizzük a tudásod! 🧠",
+  s6p: "Válaszolj a kérdésekre – kattints a helyes válaszra:",
+  quizzes: [
+    {
+      q: "Melyik adatbázis-típus tárolja az adatokat táblázatokban, sorokban és oszlopokban?",
+      a: ["Gráfadatbázis","Relációs adatbázis","Kulcs-érték adatbázis"],
+      correct: 1,
+      good: "✅ Helyes! A relációs adatbázisok táblázatokban tárolnak, és SQL-lel kérdezhetők le.",
+      bad: "❌ Nem egészen... Gondolj az Excel-táblázatra: sorok és oszlopok – ez a relációs modell!"
+    },
+    {
+      q: "Melyik program egy ingyenes, nyílt forráskódú adatbázis-kezelő?",
+      a: ["Oracle Database","Microsoft Access","MySQL"],
+      correct: 2,
+      good: "✅ Így van! A MySQL ingyenes és nyílt forráskódú, ezért a legnépszerűbb webes adatbázis.",
+      bad: "❌ Nem egészen – az Oracle és az Access fizetős. A MySQL az, ami ingyenes és nyílt."
+    },
+    {
+      q: "Mi az elsődleges kulcs szerepe?",
+      a: ["Jelszót ad az adatbázishoz","Egyedileg azonosít minden rekordot","Gyorsabbá teszi a számítógépet"],
+      correct: 1,
+      good: "✅ Tökéletes! Az elsődleges kulcs garantálja, hogy minden rekord egyedi legyen.",
+      bad: "❌ Nem – az elsődleges kulcs az egyedi azonosító, mint a diákigazolvány-szám."
+    }
+  ]
+},
+sr: {
+  title: "🗄️ Свет база података",
+  subtitle: "Интерактивно наставно градиво за средњошколце – научи шта су базе података, где се користе и којим програмима се управљају!",
+  example: "Пример",
+  footer: "Направљено за часове информатике у средњој школи – градиво о базама података",
+  s1h: "1. Шта је база података?",
+  s1p1: "<b>База података</b> је организована, трајна колекција података коју чувамо и обрађујемо рачунаром. То је као огроман дигитални каталог у ком је свака информација на свом месту и проналази се за пар секунди.",
+  s1p2: "Базама података управљају посебни програми – <b>системи за управљање базама података</b> (енгл. DBMS – Database Management System): они брину о чувању, претрази, изменама и заштити података.",
+  s1h3: "Основни појмови које треба знати:",
+  terms: [
+    "<b>Табела:</b> основна јединица за чување података – састоји се од редова и колона, као Excel табела.",
+    "<b>Запис (ред):</b> подаци о једној конкретној ствари, на пример сви подаци о једном ученику.",
+    "<b>Поље (колона):</b> једно својство, на пример име, датум рођења или просек.",
+    "<b>Примарни кључ:</b> јединствени идентификатор који разликује сваки запис (нпр. број ученичке легитимације).",
+    "<b>Упит (query):</b> захтев упућен бази, на пример „прикажи све одличне ученике\"."
+  ],
+  s1ex: "Сети се школског дневника! Некада су се оцене водиле на папиру. Данас је то база података: сваки ученик има свој запис, сваки предмет је поље, а наставник једним кликом види просек било ког ученика.",
+  s2h: "2. Где се користе базе података?",
+  s2p: "Скоро свуда! Када користиш телефон, сваког сата се повезујеш са десетинама база података, а да тога и ниси свестан. Неколико примера:",
+  usage: [
+    ["📱 Друштвене мреже","TikTok, Instagram и Facebook чувају објаве, лајкове, поруке и кориснике у базама података."],
+    ["🏦 Банке","Станје твог рачуна и све трансакције чувају се у изузетно безбедним базама – зато је електронско банкарство толико поуздано."],
+    ["🛒 Онлајн продавнице","Производи, цене, залихе, поруџбине, рецензије купаца – све је у базама података."],
+    ["🏥 Здравство","Картони пацијената, лабораторијски налази и рецепти се чувају у електронским базама."],
+    ["🎮 Видео-игре","Твоји резултати, ранг-листе, предмети у игри и снимљене позиције – све живи у бази података."],
+    ["🚌 Саобраћај","Редови вожње, системи за продају карата и подаци о летовима ослањају се на базе података."],
+    ["🎵 Стриминг","Spotify и YouTube музику, видее, плејлисте и историју гледања сервирају из база података."],
+    ["🏫 Школа","Школски информациони систем у бази чува оцене, изостанке и распоред часова."]
+  ],
+  s3h: "3. Зашто су базе података корисне?",
+  why: [
+    "<b>Брзина:</b> међу милионима података пронађемо оно што тражимо за делић секунде – на папиру би то трајало сатима.",
+    "<b>Уређеност:</b> подаци се чувају у правилној структури, у табелама, а не у хаотичним фајловима.",
+    "<b>Безбедност:</b> дозволама се одређује ко шта може да види или мења – нико не може слободно да прочита твоју лозинку.",
+    "<b>Без дуплирања:</b> исти податак не морамо чувати више пута – исправимо на једном месту и свуда је тачно.",
+    "<b>Истовремени приступ:</b> и хиљаде корисника може радити истовремено, без сукоба и губитка података.",
+    "<b>Резервне копије:</b> редовним бекапима се лако штитимо од губитка података.",
+    "<b>Интегритет података:</b> правилима се спречава унос погрешних података – нпр. не може постојати „13. месец\" у датуму рођења."
+  ],
+  s3ex: "Замисли библиотеку у којој су књиге бачене у гомилу на таван! Претрага би била немогућа. База података је као уређен систем полица са каталогом – тачно знаш где се шта налази и одмах то пронађеш.",
+  s4h: "4. Које врсте база података постоје?",
+  s4p: "Постоји више врста, у зависности од природе података и намене. Најважније су:",
+  typesHead: ["Врста","Како чува податке","Пример система","За шта је добра?"],
+  types: [
+    ["Релациона (SQL)","У табелама, редовима и колонама, са везама","MySQL, PostgreSQL, Oracle","Банке, продавнице, школски системи"],
+    ["Документна (NoSQL)","У документима сличним JSON-у","MongoDB, CouchDB","Друштвене мреже, подаци који се брзо мењају"],
+    ["Кључ-вредност","Једноставни парови кључ → вредност","Redis, DynamoDB","Кеш меморије, корпе за куповину"],
+    ["Граф-база","Мрежа чворова и веза","Neo4j","Мреже познанстава, системи препорука"],
+    ["Објектно-оријентисана","Као програмски објекти","db4o, ObjectDB","Сложени инжењерски и научни подаци"]
+  ],
+  s4sqlh: "Како изгледа релациона база – конкретан SQL пример",
+  s4sqlp: "У релационим базама подаци се преузимају језиком <b>SQL</b> (Structured Query Language). Погледајмо једну целу, мању базу података! Ово је школска табела <code>diakok</code> (ученици):",
+  tableHead: ["ИД","Име","Одељење","Просек"],
+  tableRows: [
+    ["1","Kovács Anna","10.A","4,6"],
+    ["2","Nagy Péter","10.A","4,2"],
+    ["3","Szabó Réka","11.B","3,8"],
+    ["4","Tóth Gábor","10.A","3,4"],
+    ["5","Kiss Luca","11.B","4,9"],
+    ["6","Fekete Bence","11.B","2,7"]
+  ],
+  s4q1p: "<b>1. упит:</b> ученици са просеком изнад 4,0, поредани од највећег просека:",
+  s4q2p: "<b>2. упит:</b> ученици одељења 10.A:",
+  s4sqlr: "Резултат:",
+  sqlResult1Head: ["Име","Просек"],
+  sqlResult1: [["Kiss Luca","4,9"],["Kovács Anna","4,6"],["Nagy Péter","4,2"]],
+  sqlResult2Head: ["Име","Одељење"],
+  sqlResult2: [["Kovács Anna","10.A"],["Nagy Péter","10.A"],["Tóth Gábor","10.A"]],
+  s5h: "5. Којим програмима се управља базама података?",
+  s5p: "Системи за управљање базама података (DBMS) спадају у најпопуларнији софтвер на свету. Ево најпознатијих:",
+  tools: [
+    ["🐬 MySQL","Најпопуларнија релациона база отвореног кода на свету. Изa већине веб-сајтова (нпр. WordPress страница) ради управо она.","Бесплатна"],
+    ["🐘 PostgreSQL","Напредан, веома поуздан и бесплатан систем – воле га и велике компаније и научници.","Бесплатан"],
+    ["🏢 Oracle Database","Класика пословног света: користе је банке и државни системи. Плaћена, али веома моћна.","Плаћена"],
+    ["🪟 Microsoft SQL Server","Мајкрософтово решење, омиљено у Windows пословним окружењима.","Плаћен / бесплатан Express"],
+    ["🍃 MongoDB","Најпознатија NoSQL база – чува документе флексибилне структуре.","Бесплатна"],
+    ["📦 SQLite","Ситна, уградна база података: крије се у твом телефону, претраживачу и скоро свакој апликацији.","Бесплатна"],
+    ["📋 Microsoft Access","Програм за почетнике са графичким окружењем из Office пакета – у школи се често прво са њим упознајемо.","Плаћен (Office)"],
+    ["🔥 Firebase","Гуглово решење у облаку за мобилне апликације – подаци се освежавају у реалном времену.","Бесплатан ниво"]
+  ],
+  s5h3: "Који програм вреди учити?",
+  toolsTableHead: ["Циљ","Препоручени програм","Зашто?"],
+  toolsTable: [
+    ["Школа, основе","Microsoft Access, SQLite","Једноставни, графички, није потребан сервер"],
+    ["Веб-програмирање","MySQL или PostgreSQL","Бесплатни, подржава их сваки хостинг"],
+    ["Модерне апликације, NoSQL","MongoDB, Firebase","Флексибилни, одлично иду уз JavaScript"],
+    ["Пословна каријера","Oracle, MS SQL Server","Најтраженији у великим компанијама"]
+  ],
+  s6h: "6. Провери своје знање! 🧠",
+  s6p: "Одговори на питања – кликни на тачан одговор:",
+  quizzes: [
+    {
+      q: "Која врста базе података чува податке у табелама, редовима и колонама?",
+      a: ["Граф-база","Релациона база података","База кључ-вредност"],
+      correct: 1,
+      good: "✅ Тачно! Релационе базе чувају податке у табелама и преузимају се SQL-ом.",
+      bad: "❌ Не баш... Сети се Excel табеле: редови и колоне – то је релациони модел!"
+    },
+    {
+      q: "Који програм је бесплатан систем за управљање базама отвореног кода?",
+      a: ["Oracle Database","Microsoft Access","MySQL"],
+      correct: 2,
+      good: "✅ Тако је! MySQL је бесплатан и отвореног кода, зато је најпопуларнија веб база.",
+      bad: "❌ Не баш – Oracle и Access се плаћају. MySQL је тај који је бесплатан и отворен."
+    },
+    {
+      q: "Која је улога примарног кључа?",
+      a: ["Даје лозинку бази података","Јединствено идентификује сваки запис","Убрзава рачунар"],
+      correct: 1,
+      good: "✅ Одлично! Примарни кључ гарантује да је сваки запис јединствен.",
+      bad: "❌ Не – примарни кључ је јединствени идентификатор, попут броја ученичке легитимације."
+    }
+  ]
+}
+};
+
+let lang = 'hu';
+
+function render(){
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(t[k]) el.innerHTML = t[k];
+  });
+  document.getElementById('btn-hu').classList.toggle('active', lang==='hu');
+  document.getElementById('btn-sr').classList.toggle('active', lang==='sr');
+
+  document.getElementById('terms-list').innerHTML = t.terms.map(x=>`<li>${x}</li>`).join('');
+  document.getElementById('usage-cards').innerHTML =
+    t.usage.map(u=>`<div class="card"><h4>${u[0]}</h4><p>${u[1]}</p></div>`).join('');
+  document.getElementById('why-list').innerHTML = t.why.map(w=>`<li>${w}</li>`).join('');
+
+  document.getElementById('types-table').innerHTML = `<table>
+    <thead><tr>${t.typesHead.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${t.types.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('full-table').innerHTML = `<table>
+    <thead><tr>${t.tableHead.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${t.tableRows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('sql-code1').innerHTML =
+`<span class="kw">SELECT</span> nev, atlag
+<span class="kw">FROM</span> diakok
+<span class="kw">WHERE</span> atlag &gt; 4.0
+<span class="kw">ORDER BY</span> atlag <span class="kw">DESC</span>;`;
+
+  document.getElementById('sql-result1').innerHTML = `<table>
+    <thead><tr>${t.sqlResult1Head.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${t.sqlResult1.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('sql-code2').innerHTML =
+`<span class="kw">SELECT</span> nev, osztaly
+<span class="kw">FROM</span> diakok
+<span class="kw">WHERE</span> osztaly = <span class="st">'10.A'</span>;`;
+
+  document.getElementById('sql-result2').innerHTML = `<table>
+    <thead><tr>${t.sqlResult2Head.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${t.sqlResult2.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('tools-cards').innerHTML =
+    t.tools.map(x=>`<div class="card"><h4>${x[0]}</h4><p>${x[1]}</p><p class="free">${x[2]}</p></div>`).join('');
+
+  document.getElementById('tools-table').innerHTML = `<table>
+    <thead><tr>${t.toolsTableHead.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${t.toolsTable.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('quiz-wrap').innerHTML = t.quizzes.map((q,qi)=>`
+    <div class="quiz" id="quiz${qi}">
+      <p><b>${qi+1}. ${q.q}</b></p>
+      ${q.a.map((a,i)=>`<button onclick="answer(${qi},${i},this)">${a}</button>`).join('')}
+      <div class="feedback"></div>
+    </div>`).join('');
+}
+
+function answer(qi, i, btn){
+  const q = T[lang].quizzes[qi];
+  const wrap = document.getElementById('quiz'+qi);
+  const btns = wrap.querySelectorAll('button');
+  const fb = wrap.querySelector('.feedback');
+  btns.forEach(b=>{b.classList.remove('correct','wrong');});
+  if(i === q.correct){
+    btn.classList.add('correct');
+    fb.style.color = '#16a34a';
+    fb.textContent = q.good;
+  } else {
+    btn.classList.add('wrong');
+    fb.style.color = '#ef4444';
+    fb.textContent = q.bad;
+  }
+}
+
+function setLang(l){ lang = l; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+render();
+</script>
+</body>
+</html>
