@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Gyakorlati feladatok: Kezdőlap menü / Praktični zadaci: Početni meni</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --xl-green: #217346;
+      --xl-green-dark: #185c36;
+      --xl-green-light: #e7f0ea;
+      --xl-amber: #ffb900;
+      --xl-border: #d4d4d4;
+      --xl-grid: #e3e3e3;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f3f3f3;
+      background-image:
+        linear-gradient(var(--xl-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--xl-grid) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    .xl-ribbon { background: #217346; }
+    .xl-tab {
+      position: relative;
+      padding: 8px 16px;
+      font-weight: 500;
+      color: #ffffffcc;
+      cursor: default;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.15s ease;
+    }
+    .xl-tab:hover { color: #fff; background: #1d653d; }
+    .xl-tab.active {
+      color: var(--xl-green);
+      background: #ffffff;
+      font-weight: 600;
+    }
+    .xl-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 3px;
+      background: var(--xl-amber);
+    }
+
+    .tool-section {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-left: 4px solid var(--xl-green);
+      border-radius: 8px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .tool-section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -10px rgba(33, 115, 70, 0.25);
+      border-left-color: var(--xl-amber);
+    }
+
+    .group-badge {
+      background: linear-gradient(135deg, #217346, #185c36);
+      box-shadow: 0 2px 8px -2px rgba(33, 115, 70, 0.5);
+    }
+
+    .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #217346; border-radius: 10px; }
+
+    @media print {
+      body { background: white; }
+      .tool-section { break-inside: avoid; box-shadow: none; border-left: 4px solid #217346; }
+      .xl-ribbon, .no-print { display: none !important; }
+    }
+
+    .lang-hu-section, .lang-sr-section { display: none; }
+    body[data-lang="hu"] .lang-hu-section { display: block; }
+    body[data-lang="sr"] .lang-sr-section { display: block; }
+
+    .lang-btn {
+      background: white;
+      border: 1px solid var(--xl-border);
+      color: #475569;
+    }
+    .lang-btn:hover { border-color: var(--xl-green); color: var(--xl-green); }
+    body[data-lang="hu"] #btn-hu,
+    body[data-lang="sr"] #btn-sr {
+      background: var(--xl-green);
+      color: white;
+      border-color: var(--xl-green);
+    }
+
+    @keyframes xlFadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tool-section { animation: xlFadeUp 0.4s ease both; }
+
+    .tool-section > .flex.items-start > span:first-child {
+      background: var(--xl-green) !important;
+      color: #fff !important;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px -3px rgba(33, 115, 70, 0.45);
+      transition: transform 0.18s ease;
+    }
+    .tool-section:hover > .flex.items-start > span:first-child {
+      transform: scale(1.06) rotate(-3deg);
+    }
+
+    .nav-pill {
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #217346;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      transition: all 0.15s ease;
+    }
+    .nav-pill:hover {
+      background: var(--xl-green);
+      color: #fff;
+      border-color: var(--xl-green);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Consolas', monospace;
+      font-size: 0.85rem;
+      background: #fff;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #d4d4d4;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    .data-table th {
+      background: #e7f0ea;
+      color: #185c36;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col" data-lang="hu">
+
+  <div class="xl-ribbon text-white sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 pb-2">
+        <div class="flex items-center gap-3">
+          <div class="bg-white/15 backdrop-blur p-2.5 rounded-lg ring-1 ring-white/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight leading-tight">
+              <span class="lang-hu-section">Gyakorlati feladatok: Kezdőlap menü</span>
+              <span class="lang-sr-section">Praktični zadaci: Početni meni</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-emerald-100/90">
+              <span class="lang-hu-section">Fedezd fel a Kezdőlap menü funkcióit három nehézségi szinten!</span>
+              <span class="lang-sr-section">Otkrij funkcije Početnog menija kroz tri nivoa težine!</span>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 bg-white/15 rounded-lg p-1 ring-1 ring-white/20">
+            <button id="btn-hu" onclick="setLang('hu')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Magyar</button>
+            <button id="btn-sr" onclick="setLang('sr')" class="lang-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Srpski</button>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-end gap-1 -mb-px overflow-x-auto scrollbar-thin">
+        <span class="xl-tab active">
+          <span class="lang-hu-section">Kezdőlap</span>
+          <span class="lang-sr-section">Početni</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Beszúrás</span>
+          <span class="lang-sr-section">Umetanje</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Lap elrendezés</span>
+          <span class="lang-sr-section">Raspored stranice</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Képletek</span>
+          <span class="lang-sr-section">Formule</span>
+        </span>
+        <span class="xl-tab opacity-70">
+          <span class="lang-hu-section">Adatok</span>
+          <span class="lang-sr-section">Podaci</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white border-b border-slate-200 hidden sm:block no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center gap-3 text-sm">
+      <div class="flex items-center border border-slate-300 rounded px-2 py-0.5 font-mono text-xs text-slate-600 bg-slate-50">
+        <span class="text-emerald-700 font-bold">A1</span>
+      </div>
+      <span class="text-slate-300">fx</span>
+      <div class="flex-1 text-xs text-slate-400 italic">
+        <span class="lang-hu-section">=GYAKORLÁS("Kezdőlap menü")</span>
+        <span class="lang-sr-section">=VEŽBA("Početni meni")</span>
+      </div>
+      <div class="hidden md:flex items-center gap-1.5 text-xs text-slate-500">
+        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+        <span class="lang-hu-section">Feladatok: könnyű, közepes, nehéz</span>
+        <span class="lang-sr-section">Zadaci: lako, srednje, teško</span>
+      </div>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- ============ MAGYAR TARTALOM ============ -->
+    <div class="lang-hu-section">
+
+      <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span class="text-2xl">📋</span> Kiinduló adatok (Másold be az Excelbe!)
+        </h2>
+        <p class="text-slate-700 leading-relaxed mb-4">A feladatok megoldásához először másold be az alábbi táblázatot egy üres Excel munkalapba, az A1 cellától kezdve!</p>
+        <div class="overflow-x-auto shadow-sm rounded-lg border border-slate-200">
+          <table class="data-table">
+            <thead><tr><th>Név</th><th>Tantárgy</th><th>Pontszám</th><th>Kategória</th></tr></thead>
+            <tbody>
+              <tr><td>Kovács Anna</td><td>Matematika</td><td>85</td><td>Közép</td></tr>
+              <tr><td>Nagy Péter</td><td>Történelem</td><td>92</td><td>Magas</td></tr>
+              <tr><td>Szabó Kiss Éva</td><td>Matematika</td><td>45</td><td>Alacsony</td></tr>
+              <tr><td>Tóth Miklós</td><td>Fizika</td><td>78</td><td>Közép</td></tr>
+              <tr><td>Varga Eszter</td><td>Történelem</td><td>88</td><td>Magas</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold text-slate-600 mr-1">Ugrás:</span>
+          <a href="#easy-hu" class="nav-pill">Könnyű</a>
+          <a href="#medium-hu" class="nav-pill">Közepes</a>
+          <a href="#hard-hu" class="nav-pill">Nehéz</a>
+        </div>
+      </div>
+
+      <!-- 1. KÖNNYŰ -->
+      <section id="easy-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Szint: Könnyű 🟢</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">1</span></span><div><h3 class="text-xl font-bold">Címsor formázása</h3><p class="text-sm text-emerald-600">Betűtípus csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki az A1:D1 cellákat (a fejlécet). Alkalmazz <strong>Félkövér</strong> (Bold) formázást. Állítsd be a betűméretet 14-re, és válaszd a betűszínt sötétkéknek.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">2</span></span><div><h3 class="text-xl font-bold">Cella egyesítése és középre zárt</h3><p class="text-sm text-emerald-600">Igazítás csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Mivel a fejléc adatai rövidek, egyesítsd az A1:D1 cellákat a <strong>"Cellák egyesítése és középre"</strong> (Merge & Center) gombbal.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">3</span></span><div><h3 class="text-xl font-bold">Oszlopszélesség és sormagasság</h3><p class="text-sm text-emerald-600">Cellák csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Az A oszlop (Név) szélessége legyen 20. A 2. sor (az első adatsor) magassága legyen 25.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">4</span></span><div><h3 class="text-xl font-bold">Dőlt betűs kiemelés</h3><p class="text-sm text-emerald-600">Betűtípus csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki a D oszlopban lévő adatokat (D2:D6) és állítsd őket <strong>Dőlt</strong> (Italic) betűtípusra.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">5</span></span><div><h3 class="text-xl font-bold">Szöveg vízszintes igazítása</h3><p class="text-sm text-emerald-600">Igazítás csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki a "Pontszám" oszlop adatait (C2:C6) és igazítsd őket <strong>Középre</strong> (Center) vízszintesen.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">6</span></span><div><h3 class="text-xl font-bold">Aláhúzás beállítása</h3><p class="text-sm text-emerald-600">Betűtípus csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki újra a fejlécsort (A1:D1) és húzd alá a szöveget az <strong>Aláhúzás</strong> (Underline) gombbal.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">7</span></span><div><h3 class="text-xl font-bold">Betűtípus megváltoztatása</h3><p class="text-sm text-emerald-600">Betűtípus csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki az egész táblázatot (A1:D6) és változtasd meg a betűtípust <strong>Calibri</strong>-ról <strong>Arial</strong>-ra.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">8</span></span><div><h3 class="text-xl font-bold">Szöveg tördelése (Wrap Text)</h3><p class="text-sm text-emerald-600">Igazítás csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Képzeld el, hogy a tantárgyak neve hosszú. Jelöld ki a B2:B6 cellákat és kapcsold be a <strong>Szöveg tördelése</strong> (Wrap Text) funkciót, majd növelj a sor magasságán, hogy lássd az eredményt.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">9</span></span><div><h3 class="text-xl font-bold">Betűszín módosítása</h3><p class="text-sm text-emerald-600">Betűtípus csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki a "Név" oszlop adatait (A2:A6) és állítsd be a betűszínt <strong>sötétszürkére</strong> (Automatikus helyett).</p>
+        </div>
+      </section>
+
+      <!-- 2. KÖZEPES -->
+      <section id="medium-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Szint: Közepes 🟡</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">1</span></span><div><h3 class="text-xl font-bold">Háttérszín és szegélyek</h3><p class="text-sm text-emerald-600">Betűtípus és Igazítás</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki az A1:D6 területet. Állíts be vékony külső és belső szegélyt ("Minden szegély"). A fejlécsor (A1:D1) háttérszíne legyen halványzöld.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">2</span></span><div><h3 class="text-xl font-bold">Számformátum: Pénznem</h3><p class="text-sm text-emerald-600">Szám csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Képzeld el, hogy a "Pontszám" oszlop valójában egy ösztöndíj összege Ft-ban. Jelöld ki a C2:C6 cellákat, és formázd őket pénznemre (Ft) 0 tizedesjegyessé.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">3</span></span><div><h3 class="text-xl font-bold">Feltételes formázás</h3><p class="text-sm text-emerald-600">Stílusok csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki a pontszámokat (C2:C6). Használd a Feltételes formázást: a 80 feletti értékek legyenek zöld háttérrel, az 50 alattiak piros háttérrel.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">4</span></span><div><h3 class="text-xl font-bold">Formátum: Táblázat</h3><p class="text-sm text-emerald-600">Stílusok csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki az A1:D6 területet, és alkalmazz rá egy <strong>Táblázatstílust</strong> (Format as Table) a Stílusok csoportból (pl. kék közepes). Ne felejtsd el bejelölni, hogy a táblázatban vannak fejlécek!</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">5</span></span><div><h3 class="text-xl font-bold">Felső/Alsó szabály (Top/Bottom Rules)</h3><p class="text-sm text-emerald-600">Stílusok csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki a C2:C6 cellákat. A Feltételes formázás menüben válaszd a <strong>"Legjobb 10 elem"</strong> (Top 10 Items) opciót, és állítsd be, hogy a legmagasabb 2 érték kerüljön kiemelésre zöld szöveggel.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">6</span></span><div><h3 class="text-xl font-bold">Tizedesjegyek növelése</h3><p class="text-sm text-emerald-600">Szám csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Változtasd meg a C2:C6 cellák formátumát "Általános"-ról (General) "Szám"-ra (Number), majd a <strong>Tizedesjegyek növelése</strong> gombbal adj hozzá 2 tizedesjegyet minden pontszámhoz.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">7</span></span><div><h3 class="text-xl font-bold">Cellastílus (Cell Styles) alkalmazása</h3><p class="text-sm text-emerald-600">Stílusok csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki az A2 cellát (Kovács Anna). A Stílusok csoport Cellastílusok menüjéből alkalmazz rá egy "Kiemelt" (Bad) piros stílust.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">8</span></span><div><h3 class="text-xl font-bold">Áthúzás (Strikethrough)</h3><p class="text-sm text-emerald-600">Betűtípus csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Képzeld el, hogy Szabó Kiss Éva visszalépett a versenytől. Jelöld ki a 4. sort (A4:D4), és a Betűtípus csoport beállításaiból (Ctrl+1 vagy a kis nyíl) kapcsold be az <strong>Áthúzás</strong> (Strikethrough) effektust.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">9</span></span><div><h3 class="text-xl font-bold">Dátumformátum</h3><p class="text-sm text-emerald-600">Szám csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Írj az E1 cellába "Dátum" szót, az E2-be pedig "2025.03.15"-t. Másold le az E2-t E3-ig. Jelöld ki ezeket a cellákat, és a Szám csoportban formázd őket <strong>Hosszú dátum</strong> (Long Date) formátumra.</p>
+        </div>
+      </section>
+
+      <!-- 3. NEHÉZ -->
+      <section id="hard-hu" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Szint: Nehéz 🔴</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">1</span></span><div><h3 class="text-xl font-bold">Formátummásoló</h3><p class="text-sm text-emerald-600">Vágólap csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Formázd ki a D2-es cellát (Kovács Anna kategóriája) vastag, dőlt, narancssárga betűvel. Használd a <strong>Formátummásoló</strong> ecsetet, hogy ezt a stílust másold rá a D3:D6 cellákra is.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">2</span></span><div><h3 class="text-xl font-bold">Rendezés és Szűrés</h3><p class="text-sm text-emerald-600">Szerkesztés csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Kapcsold be a Rendezés és Szűrés funkciót a táblázaton. Rendezd az adatokat először a "Tantárgy" szerint növekvő sorrendbe (A-Z), majd a "Pontszám" szerint csökkenő sorrendbe (Z-A).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">3</span></span><div><h3 class="text-xl font-bold">AutoSum és Törlés</h3><p class="text-sm text-emerald-600">Szerkesztés csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Írj a C7-es cellába "Összesen" feliratot. C8-as cellába használd az <strong>AutoSum</strong> (Σ) gombot, hogy összegezd a pontszámokat. Végül töröld az összes formázást a táblázatból a "Törlés > Formátumok törlése" paranccsal.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">4</span></span><div><h3 class="text-xl font-bold">Keresés és csere (Find & Replace)</h3><p class="text-sm text-emerald-600">Szerkesztés csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Használd a Keresés és csere funkciót (Ctrl+H). Keresd meg az összes "Történelem" szót a táblázatban, és cseréld le "Történelem (T)" formátumra.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">5</span></span><div><h3 class="text-xl font-bold">Oszlop beszúrása (Insert Column)</h3><p class="text-sm text-emerald-600">Cellák csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki a B oszlopot (Tantárgy), és a Cellák csoport Beszúrás gombjával <strong>vegyél fel egy új oszlopot</strong> balra. Nevezd el "Osztály"-nak, és töltsd ki mindenkinél "10.A"-val.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">6</span></span><div><h3 class="text-xl font-bold">Oszlop törlése (Delete Column)</h3><p class="text-sm text-emerald-600">Cellák csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki az újonnan létrehozott "Osztály" oszlopot (most már ez a B oszlop), és a Cellák csoport Törlés gombjával <strong>Töröld az oszlopot</strong> (Delete Sheet Columns).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">7</span></span><div><h3 class="text-xl font-bold">Sorszám generálás (Fill Series)</h3><p class="text-sm text-emerald-600">Szerkesztés csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki az A oszlopot, és szúrj be egy új oszlopot balra. Írj az A1-be "Sorszám", az A2-be "1", az A3-ba "2". Jelöld ki A2:A3-at, és a <strong>Szerkesztés</strong> csoport Kitöltés (Fill) > <strong>Sorozat</strong> (Series) funkciójával töltsd ki a sorszámokat 5-ig (lefelé húzással vagy a menüvel).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">8</span></span><div><h3 class="text-xl font-bold">Oszlop elrejtése (Hide Column)</h3><p class="text-sm text-emerald-600">Cellák csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Jelöld ki a C oszlopot (Tantárgy). A Cellák csoport Formátum > Rejtés és felfedés menüjében válaszd az <strong>Oszlopok elrejtése</strong> (Hide Columns) opciót.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">9</span></span><div><h3 class="text-xl font-bold">Sor törlése (Delete Row)</h3><p class="text-sm text-emerald-600">Cellák csoport</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Tegyük fel, hogy a 45 pontos tanuló (3. adatsor) érvénytelen dolgozatot írt. Jelöld ki a 4. sort (ahol az adatok vannak), és a Cellák csoport Törlés gombjával <strong>Töröld a sort</strong> (Delete Sheet Rows).</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ SRPSKI SADRŽAJ ============ -->
+    <div class="lang-sr-section">
+
+      <div class="bg-white rounded-2xl p-6 sm:p-8 mb-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#217346] to-[#185c36]"></div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span class="text-2xl">📋</span> Početni podaci (Prekopiraj u Excel!)
+        </h2>
+        <p class="text-slate-700 leading-relaxed mb-4">Za rešavanje zadataka, prvo prekopiraj sledeću tabelu u prazan Excel radni list, počevši od ćelije A1!</p>
+        <div class="overflow-x-auto shadow-sm rounded-lg border border-slate-200">
+          <table class="data-table">
+            <thead><tr><th>Ime</th><th>Predmet</th><th>Bodovi</th><th>Kategorija</th></tr></thead>
+            <tbody>
+              <tr><td>Petar Petrović</td><td>Matematika</td><td>85</td><td>Srednje</td></tr>
+              <tr><td>Ana Nikolić</td><td>Istorija</td><td>92</td><td>Visoko</td></tr>
+              <tr><td>Milica Jovanović</td><td>Matematika</td><td>45</td><td>Nisko</td></tr>
+              <tr><td>Nikola Marković</td><td>Fizika</td><td>78</td><td>Srednje</td></tr>
+              <tr><td>Jelena Stanković</td><td>Istorija</td><td>88</td><td>Visoko</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-3 px-4 mb-6 no-print">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold text-slate-600 mr-1">Skoči na:</span>
+          <a href="#easy-sr" class="nav-pill">Lako</a>
+          <a href="#medium-sr" class="nav-pill">Srednje</a>
+          <a href="#hard-sr" class="nav-pill">Teško</a>
+        </div>
+      </div>
+
+      <!-- 1. LAKO -->
+      <section id="easy-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Nivo: Lako 🟢</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">1</span></span><div><h3 class="text-xl font-bold">Formatiranje naslova</h3><p class="text-sm text-emerald-600">Grupa Font</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi ćelije A1:D1 (zaglavlje). Primeni <strong>Podebljano</strong> (Bold). Podesi veličinu fonta na 14 i izaberi boju fonta tamno plavu.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">2</span></span><div><h3 class="text-xl font-bold">Spajanje i centriranje</h3><p class="text-sm text-emerald-600">Grupa Poravnanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Pošto su podaci u zaglavlju kratki, spoji ćelije A1:D1 pomoću dugmeta <strong>"Spoji i centriraj"</strong> (Merge & Center).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">3</span></span><div><h3 class="text-xl font-bold">Širina kolone i visina reda</h3><p class="text-sm text-emerald-600">Grupa Ćelije</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Širina kolone A (Ime) neka bude 20. Visina drugog reda (prvi red podataka) neka bude 25.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">4</span></span><div><h3 class="text-xl font-bold">Kurziv (iskošeno)</h3><p class="text-sm text-emerald-600">Grupa Font</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi podatke u koloni D (D2:D6) i postavi ih na <strong>Kurziv</strong> (Italic).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">5</span></span><div><h3 class="text-xl font-bold">Vodoravno poravnanje</h3><p class="text-sm text-emerald-600">Grupa Poravnanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi podatke u koloni "Bodovi" (C2:C6) i poravnaj ih <strong>Na sredinu</strong> (Center) vodoravno.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">6</span></span><div><h3 class="text-xl font-bold">Podvlačenje</h3><p class="text-sm text-emerald-600">Grupa Font</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi ponovo red zaglavlja (A1:D1) i podvuci tekst pomoću dugmeta <strong>Podvučeno</strong> (Underline).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">7</span></span><div><h3 class="text-xl font-bold">Promena fonta</h3><p class="text-sm text-emerald-600">Grupa Font</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi celu tabelu (A1:D6) i promeni font iz <strong>Calibri</strong> u <strong>Arial</strong>.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">8</span></span><div><h3 class="text-xl font-bold">Prelamanje teksta (Wrap Text)</h3><p class="text-sm text-emerald-600">Grupa Poravnanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Zamisli da su nazivi predmeta dugački. Označi ćelije B2:B6 i uključi <strong>Prelomi tekst</strong> (Wrap Text), a zatim povećaj visinu reda da vidiš efekat.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">9</span></span><div><h3 class="text-xl font-bold">Promena boje fonta</h3><p class="text-sm text-emerald-600">Grupa Font</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi podatke u koloni "Ime" (A2:A6) i promeni boju fonta u <strong>tamno sivu</strong> (umesto Automatski).</p>
+        </div>
+      </section>
+
+      <!-- 2. SREDNJE -->
+      <section id="medium-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Nivo: Srednje 🟡</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">1</span></span><div><h3 class="text-xl font-bold">Boja pozadine i ivice</h3><p class="text-sm text-emerald-600">Font i Poravnanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi opseg A1:D6. Postavi tanke spoljašnje i unutrašnje ivice ("Sve ivice"). Boja pozadine reda zaglavlja (A1:D1) neka bude svetlo zelena.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">2</span></span><div><h3 class="text-xl font-bold">Format broja: Valuta</h3><p class="text-sm text-emerald-600">Grupa Broj</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Zamisli da je kolona "Bodovi" zapravo iznos stipendije u RSD. Označi ćelije C2:C6 i formatiraj ih kao valutu (RSD) sa 0 decimala.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">3</span></span><div><h3 class="text-xl font-bold">Uslovno formatiranje</h3><p class="text-sm text-emerald-600">Grupa Stilovi</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi bodove (C2:C6). Koristi Uslovno formatiranje: vrednosti preko 80 neka budu sa zelenom pozadinom, a ispod 50 sa crvenom pozadinom.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">4</span></span><div><h3 class="text-xl font-bold">Formatiranje kao tabelu</h3><p class="text-sm text-emerald-600">Grupa Stilovi</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi opseg A1:D6 i iz grupe Stilovi primeni <strong>Formatiraj kao tabelu</strong> (Format as Table) – npr. plavu srednju. Označi da tabela ima zaglavlje.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">5</span></span><div><h3 class="text-xl font-bold">Pravila gornjih/donjih vrednosti</h3><p class="text-sm text-emerald-600">Grupa Stilovi</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi C2:C6. U Uslovnom formatiranju izaberi <strong>"Prvih 10 stavki"</strong> (Top 10 Items) i podesi da se istaknu 2 najveće vrednosti zelenom bojom teksta.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">6</span></span><div><h3 class="text-xl font-bold">Povećavanje decimala</h3><p class="text-sm text-emerald-600">Grupa Broj</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Promeni format ćelija C2:C6 iz "Opšte" (General) u "Broj" (Number), a zatim pomoću dugmeta <strong>Povećaj decimale</strong> dodaj 2 decimale svakom broju bodova.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">7</span></span><div><h3 class="text-xl font-bold">Stilovi ćelija (Cell Styles)</h3><p class="text-sm text-emerald-600">Grupa Stilovi</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi ćeliju A2 (Petar Petrović). Iz grupe Stilovi, pod Stilovi ćelija, primeni crveni "Loš" (Bad) stil na ovu ćeliju.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">8</span></span><div><h3 class="text-xl font-bold">Precrtavanje (Strikethrough)</h3><p class="text-sm text-emerald-600">Grupa Font</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Zamisli da je Milica Jovanović odustala od takmičenja. Označi 4. red (A4:D4), otvori opcije fonta (Ctrl+1 ili mala strelica) i uključi <strong>Precrtaj</strong> (Strikethrough) efekat.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">9</span></span><div><h3 class="text-xl font-bold">Format datuma</h3><p class="text-sm text-emerald-600">Grupa Broj</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Upiši u ćeliju E1 "Datum", a u E2 "15.03.2025". Kopiraj E2 u E3. Označi ove ćelije i u grupi Broj ih formatiraj kao <strong>Dugi datum</strong> (Long Date).</p>
+        </div>
+      </section>
+
+      <!-- 3. TEŠKO -->
+      <section id="hard-sr" class="mb-12 scroll-mt-28">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="group-badge text-white px-4 py-1.5 rounded-full text-sm font-semibold">Nivo: Teško 🔴</span>
+          <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">1</span></span><div><h3 class="text-xl font-bold">Kopiranje formata</h3><p class="text-sm text-emerald-600">Grupa Clipboard</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Formatiraj ćeliju D2 (kategorija Petra Petrovića) tako da bude podebljano, ukošeno (italic) i narandžasta bojom fonta. Koristi <strong>Kopiranje formata</strong> (Format Painter) četkicu da taj stil prebaciš i na ćelije D3:D6.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">2</span></span><div><h3 class="text-xl font-bold">Sortiranje i Filter</h3><p class="text-sm text-emerald-600">Grupa Uređivanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Uključi Sortiranje i Filter na tabeli. Sortiraj podatke prvo po koloni "Predmet" rastuće (A-Z), a zatim po koloni "Bodovi" opadajuće (Z-A).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">3</span></span><div><h3 class="text-xl font-bold">AutoSum i Brisanje</h3><p class="text-sm text-emerald-600">Grupa Uređivanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Upiši u ćeliju C7 tekst "Ukupno". U ćeliju C8 iskoristi dugme <strong>AutoSum</strong> (Σ) da izračunaš zbir bodova. Na kraju, obriši sva formatiranja iz tabele pomoću opcije "Obriši > Obriši formate".</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">4</span></span><div><h3 class="text-xl font-bold">Pronalaženje i zamena (Find & Replace)</h3><p class="text-sm text-emerald-600">Grupa Uređivanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Iskoristi funkciju Pronalaženje i zamena (Ctrl+H). Pronađi svaku reč "Istorija" u tabeli i zameni je sa "Istorija (I)".</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">5</span></span><div><h3 class="text-xl font-bold">Umetanje kolone (Insert Column)</h3><p class="text-sm text-emerald-600">Grupa Ćelije</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi kolonu B (Predmet), a iz grupe Ćelije pomoću dugmeta Umetni <strong>dodaj novu kolonu levo</strong>. Imenuj je "Odeljenje" i popuni sve ćelije sa "III-1".</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">6</span></span><div><h3 class="text-xl font-bold">Brisanje kolone (Delete Column)</h3><p class="text-sm text-emerald-600">Grupa Ćelije</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi novonastalu kolonu "Odeljenje" (sada je to kolona B), a iz grupe Ćelije pomoću dugmeta Obriši <strong>obriši celu kolonu</strong> (Delete Sheet Columns).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">7</span></span><div><h3 class="text-xl font-bold">Generisanje rednih brojeva (Fill Series)</h3><p class="text-sm text-emerald-600">Grupa Uređivanje</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi kolonu A i umetni novu kolonu levo. U A1 upiši "Redni broj", u A2 "1", u A3 "2". Označi A2:A3 i iz grupe <strong>Uređivanje</strong> (Editing) -> Popuni (Fill) -> <strong>Serija</strong> (Series) popuni redne brojeve do 5 (možeš i povlačenjem kvadratića u desnom donjem uglu).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section mb-6">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">8</span></span><div><h3 class="text-xl font-bold">Sakrivanje kolone (Hide Column)</h3><p class="text-sm text-emerald-600">Grupa Ćelije</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Označi kolonu C (Predmet). U grupi Ćelije, pod Format -> Sakrij i otkrij, izaberi <strong>Sakrij kolone</strong> (Hide Columns).</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 tool-section">
+          <div class="flex items-start gap-4 mb-5"><span class="p-3 rounded-xl flex-shrink-0"><span class="text-2xl font-bold">9</span></span><div><h3 class="text-xl font-bold">Brisanje reda (Delete Row)</h3><p class="text-sm text-emerald-600">Grupa Ćelije</p></div></div>
+          <p class="text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-4 border border-slate-100">Pretpostavimo da učenik sa 45 bodova (3. red podataka) nije pravilno pristupio testu. Označi taj red i iz grupe Ćelije pomoću dugmeta Obriši <strong>obriši čitav red</strong> (Delete Sheet Rows).</p>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-8 py-5 text-center text-sm text-slate-500">
+    <span class="lang-hu-section">Gyakorlati feladatok a Kezdőlap menühöz · Készült tanulási céllal</span>
+    <span class="lang-sr-section">Praktični zadaci za Početni meni · Napravljeno u edukativne svrhe</span>
+  </footer>
+
+  <script>
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.documentElement.lang = (lang === 'hu') ? 'hu' : 'sr';
+    }
+  </script>
+</body>
+</html>
