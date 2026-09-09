@@ -129,6 +129,71 @@
             }
         }
 
+        /* OSZTÁLY-MENÜSOR */
+        .glass-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 auto 3rem auto;
+            padding: 12px 20px;
+            max-width: 1000px;
+            background-color: rgba(224, 242, 254, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(26, 86, 219, 0.08);
+            position: sticky;
+            top: 20px;
+            z-index: 200;
+        }
+
+        .grade-link {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 30px;
+            padding: 10px 26px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: inline-block;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+
+        .grade-link:hover {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 16px rgba(26, 86, 219, 0.15);
+            border-color: rgba(26, 86, 219, 0.4);
+            color: var(--primary-blue);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .glass-nav {
+                gap: 8px;
+                padding: 10px 14px;
+                border-radius: 36px;
+                margin: 0 1rem 2.5rem 1rem;
+            }
+            .grade-link {
+                padding: 8px 18px;
+                font-size: 0.85rem;
+                border-radius: 24px;
+            }
+        }
+
+        /* Nyelvi elemek elrejtése/megjelenítése (a menüsorhoz) */
+        body[data-lang="hu"] .lang-sr { display: none; }
+        body[data-lang="sr"] .lang-hu { display: none; }
+
         /* KONTAINER ÉS ÁLTALÁNOS */
         .physics-container {
             max-width: 1200px;
@@ -439,24 +504,12 @@
         }
     </style>
 </head>
-<body>
+<body data-lang="hu">
     <!-- NYELVVÁLASZTÓ GOMBOK -->
     <div class="lang-switcher" aria-label="Nyelvválasztó / Izbor jezika">
         <button class="lang-btn active" data-lang="hu" aria-pressed="true" aria-label="Magyar nyelv">Magyar</button>
         <button class="lang-btn" data-lang="sr" aria-pressed="false" aria-label="Srpski jezik">Srpski</button>
     </div>
-
-     <!-- Navigációs sáv -->
-        <nav class="glass-nav" aria-label="Fő navigáció">
-            <!-- 1. Bevezetés és védelem -->
-            <div class="dropdown" id="dropdown1">
-                <button class="dropbtn" onclick="toggleDropdown('dropdown1')" aria-expanded="false">
-                    <span class="lang-hu"> 1. osztály</span>
-                    <span class="lang-hu"> 2. osztály</span>
-                    <i>▼</i>
-                </button>
-                </div>
-            </div>
 
     <div class="physics-container">
         <!-- FEJLÉC -->
@@ -464,6 +517,26 @@
             <h1 class="main-title" data-translate-key="main-title">Fizikai Bevezető</h1>
             <p class="subtitle" data-translate-key="subtitle">Az univerzum nyelvének megértése – a legkisebb részecskétől a legnagyobb galaxisokig</p>
         </header>
+
+        <!-- OSZTÁLY-MENÜSOR -->
+        <nav class="glass-nav" aria-label="Osztályok navigáció">
+            <a class="grade-link" href="1_osztaly.html">
+                <span class="lang-hu">1. osztály</span>
+                <span class="lang-sr">1. razred</span>
+            </a>
+            <a class="grade-link" href="2_osztaly.html">
+                <span class="lang-hu">2. osztály</span>
+                <span class="lang-sr">2. razred</span>
+            </a>
+            <a class="grade-link" href="3_osztaly.html">
+                <span class="lang-hu">3. osztály</span>
+                <span class="lang-sr">3. razred</span>
+            </a>
+            <a class="grade-link" href="4_osztaly.html">
+                <span class="lang-hu">4. osztály</span>
+                <span class="lang-sr">4. razred</span>
+            </a>
+        </nav>
 
         <!-- ELSŐ SZEKCIÓ -->
         <section class="content-section section-spacing">
@@ -602,6 +675,9 @@
                 // HTML lang attribútum
                 htmlElement.setAttribute('lang', lang);
 
+                // A menüsor (és minden lang-hu/lang-sr elem) nyelvváltása
+                document.body.setAttribute('data-lang', lang);
+
                 // Oldal cím
                 document.title = translations['page-title'][lang];
 
@@ -674,7 +750,6 @@
 
                 // Ha van tárolt szerb preferencia, alkalmazzuk
                 if (storedLang === 'sr') {
-                    // Frissítjük a gombokat és a tartalmat közvetlenül
                     currentLang = 'sr';
                     langBtns.forEach(btn => {
                         const isActive = btn.getAttribute('data-lang') === 'sr';
@@ -682,6 +757,7 @@
                         btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
                     });
                     htmlElement.setAttribute('lang', 'sr');
+                    document.body.setAttribute('data-lang', 'sr');
                     document.title = translations['page-title']['sr'];
 
                     translateElements.forEach(el => {
