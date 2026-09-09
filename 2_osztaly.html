@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="page-title">II. osztály – Hő és elektromosság | TECHSCIENCE</title>
+    <style>
+        /* RESET ÉS ALAPSTÍLUSOK */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-blue: #2dd4bf;
+            --primary-deep: #0d9488;
+            --accent-2: #f59e0b;
+            --light-bg: #f0fdfa;
+            --card-bg: #ffffff;
+            --text-dark: #334155;
+            --text-medium: #64748b;
+            --text-light: #94a3b8;
+            --shadow-sm: 0 2px 4px rgba(13,148,136,0.06);
+            --shadow-md: 0 4px 12px rgba(13,148,136,0.10);
+            --shadow-lg: 0 10px 25px rgba(13,148,136,0.16);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-soft: rgba(153,246,228,0.9);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            background-image: radial-gradient(circle at 15% 20%, rgba(45,212,191,0.10), transparent 40%), radial-gradient(circle at 85% 15%, rgba(245,158,11,0.08), transparent 40%), radial-gradient(circle at 80% 85%, rgba(20,184,166,0.10), transparent 40%), radial-gradient(circle at 15% 85%, rgba(251,191,36,0.08), transparent 40%);
+            color: var(--text-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* NYELVVÁLASZTÓ */
+        .lang-switcher {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 6px; border-radius: 50px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-soft);
+            transition: var(--transition);
+        }
+
+        .lang-btn {
+            padding: 10px 18px; border: none; border-radius: 40px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 600; font-family: inherit;
+            transition: var(--transition); background: transparent; color: var(--text-medium);
+            white-space: nowrap; user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+
+        .lang-btn:hover { color: var(--text-dark); background: rgba(148, 163, 184, 0.15); }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-deep));
+            color: #ffffff; box-shadow: var(--shadow-md);
+        }
+
+        /* FŐ TÁROLÓ */
+        .physics-container { max-width: 1100px; margin: 0 auto; padding: 100px 24px 60px; }
+
+        /* FEJLÉC */
+        .page-header { text-align: center; margin-bottom: 56px; }
+
+        .main-title {
+            font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-deep), var(--accent-2));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px; letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.15rem; color: var(--text-medium);
+            max-width: 640px; margin: 0 auto 36px;
+        }
+
+        /* CENTRÍROZOTT LECKE-MENÜK a fejléc alatt */
+        .lesson-menus {
+            display: flex; justify-content: center; align-items: flex-start;
+            flex-wrap: wrap; gap: 14px;
+        }
+
+        .dropdown { position: relative; }
+
+        .dropbtn {
+            padding: 12px 22px; border: 1px solid var(--border-soft); border-radius: 40px;
+            cursor: pointer; font-size: 0.95rem; font-weight: 600; font-family: inherit;
+            letter-spacing: 0.02em; transition: var(--transition);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-md); color: var(--text-medium);
+            white-space: nowrap; user-select: none; -webkit-tap-highlight-color: transparent;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .dropbtn:hover {
+            color: var(--primary-deep); border-color: var(--primary-blue);
+            box-shadow: var(--shadow-lg); transform: translateY(-2px);
+        }
+
+        .dropbtn i { font-style: normal; font-size: 0.7rem; transition: transform 0.3s ease; }
+        .dropdown.open .dropbtn i { transform: rotate(180deg); }
+
+        .dropdown-content {
+            position: absolute; top: calc(100% + 10px); left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            min-width: 230px; background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--border-radius); box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-soft); padding: 8px;
+            opacity: 0; visibility: hidden; transition: var(--transition); z-index: 500;
+        }
+
+        .dropdown.open .dropdown-content {
+            opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-content a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px; border-radius: 12px; color: var(--text-medium);
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .dropdown-content a:hover { background: rgba(148, 163, 184, 0.12); color: var(--primary-deep); }
+
+        .dropdown-content a .lesson-badge {
+            background: rgba(251, 191, 36, 0.18); color: #b45309;
+            font-size: 0.7rem; font-weight: 700; padding: 2px 8px;
+            border-radius: 20px; margin-left: auto;
+        }
+
+        /* TARTALMI SZEKCIÓK */
+        .content-section {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+            background: var(--card-bg); border-radius: var(--border-radius); padding: 48px;
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-soft);
+        }
+
+        .section-spacing { margin-bottom: 48px; }
+
+        .section-title {
+            font-size: 1.8rem; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 20px; letter-spacing: -0.01em;
+        }
+
+        .physics-text { color: var(--text-medium); margin-bottom: 16px; font-size: 1.02rem; }
+
+        .highlight { color: var(--primary-deep); font-weight: 600; }
+        .highlight-warm { color: var(--accent-2); font-weight: 600; }
+
+        .image-wrapper { border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+        .physics-image { width: 100%; height: auto; display: block; transition: transform 0.5s ease; }
+        .image-wrapper:hover .physics-image { transform: scale(1.03); }
+
+        /* LÁBLÉC */
+        .page-footer {
+            text-align: center; color: var(--text-light); font-size: 0.9rem;
+            padding-top: 20px; border-top: 1px solid var(--border-soft);
+        }
+
+        /* RESZPONZÍV */
+        @media (max-width: 768px) {
+            .content-section { grid-template-columns: 1fr; padding: 28px; gap: 28px; }
+            .lang-switcher { position: static; margin: 16px auto 0; width: fit-content; }
+            .physics-container { padding-top: 24px; }
+            .lesson-menus { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NYELVVÁLASZTÓ GOMBOK -->
+    <div class="lang-switcher" aria-label="Nyelvválasztó / Izbor jezika">
+        <button class="lang-btn active" data-lang="hu" aria-pressed="true" aria-label="Magyar nyelv">Magyar</button>
+        <button class="lang-btn" data-lang="sr" aria-pressed="false" aria-label="Srpski jezik">Srpski</button>
+    </div>
+
+    <div class="physics-container">
+        <!-- FEJLÉC -->
+        <header class="page-header">
+            <h1 class="main-title" data-translate-key="main-title">II. osztály – Hő és elektromosság</h1>
+            <p class="subtitle" data-translate-key="subtitle">A gázok láthatatlan mozgásától a kristályok rendjéig és az elektromos áram erejéig – a fizika második lépcsőfoka</p>
+
+            <!-- CENTRÍROZOTT LECKE-MENÜK – ide jöhetnek további dropdownok -->
+            <div class="lesson-menus">
+                <div class="dropdown" id="dropdown1">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown1')" aria-expanded="false">
+                        <span data-translate-key="nav-grade">II. osztály leckéi</span>
+                        <i>▼</i>
+                    </button>
+                    <div class="dropdown-content">
+                        <!-- PRÓBA LECKE – később kerül ide a valódi lecke neve -->
+                        <a href="#" data-translate-key="nav-lesson1">
+                            Próba lecke
+                            <span class="lesson-badge">DEMO</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+                <section class="content-section section-spacing">
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section1-title">A gázmolekulák mozgása</h2>
+                <p class="physics-text" data-translate-key="section1-p1">A gázok molekulái szüntelenül, rendezetlenül mozognak: repülnek, ütköznek, visszapattannak. Ebből a <span class="highlight">láthatatlan táncból</span> születik a <span class="highlight">nyomás</span> – ezért feszíti ki a levegő a lufit.</p>
+                <p class="physics-text" data-translate-key="section1-p2">A hőmérséklet valójában a molekulák <span class="highlight">átlagos mozgási energiáját</span> méri: minél melegebb egy gáz, annál gyorsabban száguldanak a részecskéi.</p>
+            </div>
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Laboratóriumi vizsgálatok" class="physics-image">
+            </div>
+        </section>
+
+        <section class="content-section section-spacing">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Hőerőgép – belsőégésű motor" class="physics-image">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section2-title">A termodinamika törvényei</h2>
+                <p class="physics-text" data-translate-key="section2-p1">A hő nem más, mint <span class="highlight">energia áramlása</span> a melegebb testtől a hidegebb felé. A hőerőgépek – a gőzgéptől az autómotorjáig – ezt az áramlást alakítják <span class="highlight">hasznos munkává</span>.</p>
+                <p class="physics-text" data-translate-key="section2-p2">Megismerjük az <span class="highlight">entrópia</span> fogalmát is: a természet a rendezetlenség növekedése felé tart, és ez ad irányt minden folyamatnak.</p>
+            </div>
+        </section>
+
+        <section class="content-section section-spacing">
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section3-title">A kristályok rendje</h2>
+                <p class="physics-text" data-translate-key="section3-p1">A kristályokban az atomok és molekulák <span class="highlight">szigorú, ismétlődő rácsba</span> rendeződnek. A konyhasó, a kvarc és a jégkristályok is így épülnek fel – formai tökéletességük a belső rend tükre.</p>
+                <p class="physics-text" data-translate-key="section3-p2">Megtanuljuk, hogyan határozza meg a <span class="highlight">kristályszerkezet</span> az anyag tulajdonságait: keménységét, olvadáspontját és fénytörését.</p>
+            </div>
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1483664852095-d6cc6870702d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Csillogó jégkristályok" class="physics-image">
+            </div>
+        </section>
+
+        <section class="content-section section-spacing">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Plazmagömb – elektrosztatikus kisülések" class="physics-image">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section4-title">Elektrosztatika és áram</h2>
+                <p class="physics-text" data-translate-key="section4-p1">Ha hajadhoz dörzsölöd a lufit, a hajad felé áll – ez az <span class="highlight">elektrosztatikus töltés</span> műve. Megismerjük a pozitív és negatív töltéseket, és hogy az <span class="highlight">ellenkező töltések vonzzák</span> egymást.</p>
+                <p class="physics-text" data-translate-key="section4-p2">Amikor a töltések rendezetten mozognak, <span class="highlight">elektromos áram</span> jön létre. Megtanuljuk, mi kell egy áramkörhöz, és hogyan világít meg egy égő.</p>
+            </div>
+        </section>
+
+
+        <!-- LÁBLÉC -->
+        <footer class="page-footer">
+            <p data-translate-key="footer-text">TECHSCIENCE • II. osztály – Hő és elektromosság • Középiskolások számára</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // --- FORDÍTÁSI ADATBÁZIS ---
+            const translations = {
+                'page-title': {
+                    hu: 'II. osztály – Hő és elektromosság | TECHSCIENCE',
+                    sr: 'II razred – Toplota i elektricitet | TECHSCIENCE'
+                },
+                'nav-grade': {
+                    hu: 'II. osztály leckéi',
+                    sr: 'Lekcije II razreda'
+                },
+                'nav-lesson1': {
+                    hu: 'Próba lecke',
+                    sr: 'Probna lekcija'
+                },
+                'main-title': {
+                    hu: 'II. osztály – Hő és elektromosság',
+                    sr: 'II razred – Toplota i elektricitet'
+                },
+                'subtitle': {
+                    hu: 'A gázok láthatatlan mozgásától a kristályok rendjéig és az elektromos áram erejéig – a fizika második lépcsőfoka',
+                    sr: 'Od nevidljivog kretanja gasova do reda kristala i snage električne struje – drugi stepenik fizike'
+                },
+                'section1-title': {
+                    hu: 'A gázmolekulák mozgása',
+                    sr: 'Kretanje molekula gasa'
+                },
+                'section1-p1': {
+                    hu: 'A gázok molekulái szüntelenül, rendezetlenül mozognak: repülnek, ütköznek, visszapattannak. Ebből a <span class="highlight">láthatatlan táncból</span> születik a <span class="highlight">nyomás</span> – ezért feszíti ki a levegő a lufit.',
+                    sr: 'Molekuli gasova neprestano i neuredno se kreću: lete, sudaraju se i odbijaju. Iz te <span class="highlight">nevidljive igre</span> nastaje <span class="highlight">pritisak</span> – zato vazduh napinje balon.'
+                },
+                'section1-p2': {
+                    hu: 'A hőmérséklet valójában a molekulák <span class="highlight">átlagos mozgási energiáját</span> méri: minél melegebb egy gáz, annál gyorsabban száguldanak a részecskéi.',
+                    sr: 'Temperatura je zapravo mera <span class="highlight">prosečne energije kretanja</span> molekula: što je gas topliji, to njegove čestice brže jure.'
+                },
+                'section2-title': {
+                    hu: 'A termodinamika törvényei',
+                    sr: 'Zakoni termodinamike'
+                },
+                'section2-p1': {
+                    hu: 'A hő nem más, mint <span class="highlight">energia áramlása</span> a melegebb testtől a hidegebb felé. A hőerőgépek – a gőzgéptől az autómotorjáig – ezt az áramlást alakítják <span class="highlight">hasznos munkává</span>.',
+                    sr: 'Toplota je <span class="highlight">protok energije</span> sa toplijeg tela na hladnije. Toplotne mašine – od parnih lokomotiva do automobilskih motora – taj protok pretvaraju u <span class="highlight">koristan rad</span>.'
+                },
+                'section2-p2': {
+                    hu: 'Megismerjük az <span class="highlight">entrópia</span> fogalmát is: a természet a rendezetlenség növekedése felé tart, és ez ad irányt minden folyamatnak.',
+                    sr: 'Upoznajemo i pojam <span class="highlight">entropije</span>: priroda teži sve većem neredu, i to daje smer svakom procesu.'
+                },
+                'section3-title': {
+                    hu: 'A kristályok rendje',
+                    sr: 'Red kristala'
+                },
+                'section3-p1': {
+                    hu: 'A kristályokban az atomok és molekulák <span class="highlight">szigorú, ismétlődő rácsba</span> rendeződnek. A konyhasó, a kvarc és a jégkristályok is így épülnek fel – formai tökéletességük a belső rend tükre.',
+                    sr: 'U kristalima atomi i molekuli se slažu u <span class="highlight">strogu, ponavljajuću rešetku</span>. Tako nastaju so, kvarc i kristali leda – njihova savršena forma odraz je unutrašnjeg reda.'
+                },
+                'section3-p2': {
+                    hu: 'Megtanuljuk, hogyan határozza meg a <span class="highlight">kristályszerkezet</span> az anyag tulajdonságait: keménységét, olvadáspontját és fénytörését.',
+                    sr: 'Učimo kako <span class="highlight">kristalna struktura</span> određuje svojstva materijala: tvrdoću, tačku topljenja i prelamanje svetlosti.'
+                },
+                'section4-title': {
+                    hu: 'Elektrosztatika és áram',
+                    sr: 'Elektrostatika i struja'
+                },
+                'section4-p1': {
+                    hu: 'Ha hajadhoz dörzsölöd a lufit, a hajad felé áll – ez az <span class="highlight">elektrosztatikus töltés</span> műve. Megismerjük a pozitív és negatív töltéseket, és hogy az <span class="highlight">ellenkező töltések vonzzák</span> egymást.',
+                    sr: 'Kada balon utrljaš o kosu, kosa se diže ka njemu – to je delo <span class="highlight">elektrostatičkog naelektrisanja</span>. Upoznajemo pozitivna i negativna naelektrisanja i to da se <span class="highlight">suprotna naelektrisanja privlače</span>.'
+                },
+                'section4-p2': {
+                    hu: 'Amikor a töltések rendezetten mozognak, <span class="highlight">elektromos áram</span> jön létre. Megtanuljuk, mi kell egy áramkörhöz, és hogyan világít meg egy égő.',
+                    sr: 'Kada se naelektrisanja uređeno kreću, nastaje <span class="highlight">električna struja</span>. Učimo šta je potrebno za strujno kolo i kako sijalica zasvetli.'
+                },
+                'footer-text': {
+                    hu: 'TECHSCIENCE • II. osztály – Hő és elektromosság • Középiskolások számára',
+                    sr: 'TECHSCIENCE • II razred – Toplota i elektricitet • Za učenike srednje škole'
+                }
+            };
+
+            let currentLang = 'hu';
+
+            function applyTranslations(lang) {
+                currentLang = lang;
+                document.documentElement.lang = lang;
+                document.querySelectorAll('[data-translate-key]').forEach(function(el) {
+                    const key = el.getAttribute('data-translate-key');
+                    if (translations[key] && translations[key][lang]) {
+                        el.innerHTML = translations[key][lang];
+                    }
+                });
+                document.querySelectorAll('.lang-btn').forEach(function(btn) {
+                    const isActive = btn.getAttribute('data-lang') === lang;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-pressed', isActive);
+                });
+            }
+
+            document.querySelectorAll('.lang-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    applyTranslations(btn.getAttribute('data-lang'));
+                });
+            });
+
+            // --- LENYÍLÓ MENÜ ---
+            window.toggleDropdown = function(id) {
+                const dd = document.getElementById(id);
+                const btn = dd.querySelector('.dropbtn');
+                const isOpen = dd.classList.toggle('open');
+                btn.setAttribute('aria-expanded', isOpen);
+            };
+
+            // Kattintás a menün kívülre -> bezárás
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('.dropdown.open').forEach(function(dd) {
+                    if (!dd.contains(e.target)) {
+                        dd.classList.remove('open');
+                        dd.querySelector('.dropbtn').setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

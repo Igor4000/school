@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="page-title">I. osztály – Mozgás | TECHSCIENCE</title>
+    <style>
+        /* RESET ÉS ALAPSTÍLUSOK */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #38bdf8;
+            --primary-deep: #0ea5e9;
+            --secondary-yellow: #fbbf24;
+            --accent-green: #34d399;
+            --accent-pink: #f9a8d4;
+            --light-bg: #f0f9ff;
+            --card-bg: #ffffff;
+            --text-dark: #334155;
+            --text-medium: #64748b;
+            --text-light: #94a3b8;
+            --shadow-sm: 0 2px 4px rgba(14, 165, 233, 0.06);
+            --shadow-md: 0 4px 12px rgba(14, 165, 233, 0.10);
+            --shadow-lg: 0 10px 25px rgba(14, 165, 233, 0.14);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.10), transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(251, 191, 36, 0.10), transparent 40%),
+                radial-gradient(circle at 80% 85%, rgba(52, 211, 153, 0.10), transparent 40%),
+                radial-gradient(circle at 15% 85%, rgba(249, 168, 212, 0.10), transparent 40%);
+            color: var(--text-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* NYELVVÁLASZTÓ */
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 6px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.15);
+            border: 1px solid rgba(186, 230, 253, 0.9);
+            transition: var(--transition);
+        }
+
+        .lang-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: var(--transition);
+            background: transparent;
+            color: var(--text-medium);
+            white-space: nowrap;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .lang-btn:hover {
+            color: var(--text-dark);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-deep));
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35);
+        }
+
+        /* FŐ TÁROLÓ */
+        .physics-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 100px 24px 60px;
+        }
+
+        /* FEJLÉC */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .main-title {
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-deep), var(--accent-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-medium);
+            max-width: 640px;
+            margin: 0 auto 36px;
+        }
+
+        /* CENTRÍROZOTT LECKE-MENÜK a fejléc alatt */
+        .lesson-menus {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropbtn {
+            padding: 12px 22px;
+            border: 1px solid rgba(186, 230, 253, 0.9);
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            letter-spacing: 0.02em;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-md);
+            color: var(--text-medium);
+            white-space: nowrap;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropbtn:hover {
+            color: var(--primary-deep);
+            border-color: var(--primary-blue);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .dropbtn i {
+            font-style: normal;
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown.open .dropbtn i {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            min-width: 230px;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(186, 230, 253, 0.9);
+            padding: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 500;
+        }
+
+        .dropdown.open .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            color: var(--text-medium);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--primary-deep);
+        }
+
+        .dropdown-content a .lesson-badge {
+            background: rgba(251, 191, 36, 0.18);
+            color: #b45309;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: auto;
+        }
+
+        /* TARTALMI SZEKCIÓK */
+        .content-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 48px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(186, 230, 253, 0.7);
+        }
+
+        .section-spacing {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+        }
+
+        .physics-text {
+            color: var(--text-medium);
+            margin-bottom: 16px;
+            font-size: 1.02rem;
+        }
+
+        .highlight {
+            color: var(--primary-deep);
+            font-weight: 600;
+        }
+
+        .highlight-warm {
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        .image-wrapper {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .physics-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .image-wrapper:hover .physics-image {
+            transform: scale(1.03);
+        }
+
+        /* LÁBLÉC */
+        .page-footer {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(186, 230, 253, 0.8);
+        }
+
+        /* RESZPONZÍV */
+        @media (max-width: 768px) {
+            .content-section {
+                grid-template-columns: 1fr;
+                padding: 28px;
+                gap: 28px;
+            }
+
+            .lang-switcher {
+                position: static;
+                margin: 16px auto 0;
+                width: fit-content;
+            }
+
+            .physics-container {
+                padding-top: 24px;
+            }
+
+            .lesson-menus {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NYELVVÁLASZTÓ GOMBOK -->
+    <div class="lang-switcher" aria-label="Nyelvválasztó / Izbor jezika">
+        <button class="lang-btn active" data-lang="hu" aria-pressed="true" aria-label="Magyar nyelv">Magyar</button>
+        <button class="lang-btn" data-lang="sr" aria-pressed="false" aria-label="Srpski jezik">Srpski</button>
+    </div>
+
+    <div class="physics-container">
+        <!-- FEJLÉC -->
+        <header class="page-header">
+            <h1 class="main-title" data-translate-key="main-title">I. osztály – A mozgás világa</h1>
+            <p class="subtitle" data-translate-key="subtitle">Fedezd fel, hogyan mozognak a dolgok körülötted – guruló labdától a hintázásig, az első lépések a fizika világában</p>
+
+            <!-- CENTRÍROZOTT LECKE-MENÜK – ide jöhetnek további dropdownok -->
+            <div class="lesson-menus">
+                <div class="dropdown" id="dropdown1">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown1')" aria-expanded="false">
+                        <span data-translate-key="nav-grade">I. osztály leckéi</span>
+                        <i>▼</i>
+                    </button>
+                    <div class="dropdown-content">
+                        <!-- PRÓBA LECKE – később kerül ide a valódi lecke neve -->
+                        <a href="#" data-translate-key="nav-lesson1">
+                            Próba lecke
+                            <span class="lesson-badge">DEMO</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ELSŐ SZEKCIÓ: MOZGÁS -->
+        <section class="content-section section-spacing">
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section1-title">Minden mozog körülöttünk</h2>
+                <p class="physics-text" data-translate-key="section1-p1">
+                    Nézz körül! A labda <span class="highlight">gurul</span>, a madár repül, a hinta ide-oda leng. Az első osztályban megtanuljuk, hogyan írhatjuk le a <span class="highlight">mozgást</span>: mi mozog gyorsan, mi lassan, és mi mozdul egyáltalán nem.
+                </p>
+                <p class="physics-text" data-translate-key="section1-p2">
+                    Megfigyeljük, hogy a testek <span class="highlight">egyenes vonalban</span> gurulnak, vagy <span class="highlight">körbe-körbe</span> forognak – mint a hintaló a körhintán vagy a pörgettyű a tenyerünkben.
+                </p>
+            </div>
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Guruló labda mozgásban"
+                class="physics-image">
+            </div>
+        </section>
+
+        <!-- MÁSODIK SZEKCIÓ: FORGÁS -->
+        <section class="content-section section-spacing">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Körhinta forgása"
+                class="physics-image">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section2-title">Forgás és pörgés</h2>
+                <p class="physics-text" data-translate-key="section2-p1">
+                    A <span class="highlight-warm">forgás</span> különleges mozgás: a test egy pont körül kering. A kerék, a ventilátor lapátjai és a körhinta is így mozog. Megtanuljuk észrevenni, mi forog, és mi csak előre halad.
+                </p>
+                <p class="physics-text" data-translate-key="section2-p2">
+                    Azt is felfedezzük, hogy a Föld is <span class="highlight-warm">forog</span> – ezért van nap és éjszaka!
+                </p>
+            </div>
+        </section>
+
+        <!-- HARMADIK SZEKCIÓ: ERŐK -->
+        <section class="content-section section-spacing">
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section3-title">Erők: lökés és húzás</h2>
+                <p class="physics-text" data-translate-key="section3-p1">
+                    Hogyan indul el egy álló labda? <span class="highlight">Lökjük</span> vagy <span class="highlight">húzzuk</span> meg! Az erők változtatják meg a mozgást: gyorsítanak, lassítanak, vagy irányt változtatnak. Ezt hívjuk majd később <span class="highlight">dinamikának</span>.
+                </p>
+                <p class="physics-text" data-translate-key="section3-p2">
+                    Játékos kísérletekkel megnézzük, mi történik, ha erősebben vagy gyengébben lökünk meg egy kisautót – és miért áll meg végül minden mozgó játék.
+                </p>
+            </div>
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1515703407324-5f753afd8be8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Gyermek lök egy labdát"
+                class="physics-image">
+            </div>
+        </section>
+
+        <!-- NEGYEDIK SZEKCIÓ: GRAVITÁCIÓ ÉS MEGMARADÁS -->
+        <section class="content-section section-spacing">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="A Föld és a gravitáció"
+                class="physics-image">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section4-title">Miért esik le minden?</h2>
+                <p class="physics-text" data-translate-key="section4-p1">
+                    Dobj fel egy labdát – mindig visszaesik! Ez a <span class="highlight-warm">gravitáció</span>: a Föld minden dolgot magához húz. Megtanuljuk, hogy az alma, az esőcsepp és a labda is ezért esik le.
+                </p>
+                <p class="physics-text" data-translate-key="section4-p2">
+                    És egy nagy titkot is megtudunk: amit felgurítunk a dombra, annak <span class="highlight-warm">energiája</span> nem vész el – csak átalakul. Ez a <span class="highlight-warm">megmaradás törvénye</span>, a fizika egyik legfontosabb gondolata, amelyet játékosan ismerünk meg.
+                </p>
+            </div>
+        </section>
+
+        <!-- LÁBLÉC -->
+        <footer class="page-footer">
+            <p data-translate-key="footer-text">TECHSCIENCE • I. osztály – A mozgás világa • Középiskolások számára</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // --- FORDÍTÁSI ADATBÁZIS ---
+            const translations = {
+                'page-title': {
+                    hu: 'I. osztály – Mozgás | TECHSCIENCE',
+                    sr: 'I razred – Kretanje | TECHSCIENCE'
+                },
+                'nav-grade': {
+                    hu: 'I. osztály leckéi',
+                    sr: 'Lekcije I razreda'
+                },
+                'nav-lesson1': {
+                    hu: 'Próba lecke',
+                    sr: 'Probna lekcija'
+                },
+                'main-title': {
+                    hu: 'I. osztály – A mozgás világa',
+                    sr: 'I razred – Svet kretanja'
+                },
+                'subtitle': {
+                    hu: 'Fedezd fel, hogyan mozognak a dolgok körülötted – guruló labdától a hintázásig, az első lépések a fizika világában',
+                    sr: 'Otkrij kako se stvari kreću oko tebe – od lopte koja se kotrlja do ljuljanja, prvi koraci u svetu fizike'
+                },
+                'section1-title': {
+                    hu: 'Minden mozog körülöttünk',
+                    sr: 'Sve se kreće oko nas'
+                },
+                'section1-p1': {
+                    hu: 'Nézz körül! A labda gurul, a madár repül, a hinta ide-oda leng. Az első osztályban megtanuljuk, hogyan írhatjuk le a mozgást: mi mozog gyorsan, mi lassan, és mi mozdul egyáltalán nem.',
+                    sr: 'Pogledaj oko sebe! Lopta se kotrlja, ptica leti, ljuljaška se ljulja. U prvom razredu učimo kako da opišemo kretanje: šta se kreće brzo, šta sporo, a šta se uopšte ne pomera.'
+                },
+                'section1-p2': {
+                    hu: 'Megfigyeljük, hogy a testek egyenes vonalban gurulnak, vagy körbe-körbe forognak – mint a hintaló a körhintán vagy a pörgettyű a tenyerünkben.',
+                    sr: 'Posmatramo kako se tela kotrljaju pravom linijom ili se vrte u krug – poput konjića na vrtuljku ili zvrka u našoj šaci.'
+                },
+                'section2-title': {
+                    hu: 'Forgás és pörgés',
+                    sr: 'Rotacija i obrtanje'
+                },
+                'section2-p1': {
+                    hu: 'A forgás különleges mozgás: a test egy pont körül kering. A kerék, a ventilátor lapátjai és a körhinta is így mozog. Megtanuljuk észrevenni, mi forog, és mi csak előre halad.',
+                    sr: 'Rotacija je posebno kretanje: telo kruži oko jedne tačke. Tako se kreću točak, elise ventilatora i vrtuljak. Učimo da primetimo šta se okreće, a šta samo ide napred.'
+                },
+                'section2-p2': {
+                    hu: 'Azt is felfedezzük, hogy a Föld is forog – ezért van nap és éjszaka!',
+                    sr: 'Otkrivamo i da se Zemlja okreće – zato postoje dan i noć!'
+                },
+                'section3-title': {
+                    hu: 'Erők: lökés és húzás',
+                    sr: 'Sile: guranje i povlačenje'
+                },
+                'section3-p1': {
+                    hu: 'Hogyan indul el egy álló labda? Lökjük vagy húzzuk meg! Az erők változtatják meg a mozgást: gyorsítanak, lassítanak, vagy irányt változtatnak. Ezt hívjuk majd később dinamikának.',
+                    sr: 'Kako se pokreće lopta koja miruje? Gurnemo je ili povučemo! Sile menjaju kretanje: ubrzavaju, usporavaju ili menjaju pravac. To ćemo kasnije nazvati dinamikom.'
+                },
+                'section3-p2': {
+                    hu: 'Játékos kísérletekkel megnézzük, mi történik, ha erősebben vagy gyengébben lökünk meg egy kisautót – és miért áll meg végül minden mozgó játék.',
+                    sr: 'Kroz zabavne eksperimente gledamo šta se dešava kad jače ili slabije gurnemo autić – i zašto se na kraju svaka igračka koja se kreće zaustavi.'
+                },
+                'section4-title': {
+                    hu: 'Miért esik le minden?',
+                    sr: 'Zašto sve pada?'
+                },
+                'section4-p1': {
+                    hu: 'Dobj fel egy labdát – mindig visszaesik! Ez a gravitáció: a Föld minden dolgot magához húz. Megtanuljuk, hogy az alma, az esőcsepp és a labda is ezért esik le.',
+                    sr: 'Baci loptu uvis – uvek se vrati! To je gravitacija: Zemlja sve privlači k sebi. Učimo da zato padaju i jabuka, i kišna kap, i lopta.'
+                },
+                'section4-p2': {
+                    hu: 'És egy nagy titkot is megtudunk: amit felgurítunk a dombra, annak energiája nem vész el – csak átalakul. Ez a megmaradás törvénye, a fizika egyik legfontosabb gondolata, amelyet játékosan ismerünk meg.',
+                    sr: 'A otkrivamo i jednu veliku tajnu: ono što u kotrljamo uz brdo, njegova energija se ne gubi – samo se pretvara. To je zakon održanja, jedna od najvažnijih misli fizike, koju upoznajemo kroz igru.'
+                },
+                'footer-text': {
+                    hu: 'TECHSCIENCE • I. osztály – A mozgás világa • Középiskolások számára',
+                    sr: 'TECHSCIENCE • I razred – Svet kretanja • Za učenike srednje škole'
+                }
+            };
+
+            let currentLang = 'hu';
+
+            function applyTranslations(lang) {
+                currentLang = lang;
+                document.documentElement.lang = lang;
+                document.querySelectorAll('[data-translate-key]').forEach(function(el) {
+                    const key = el.getAttribute('data-translate-key');
+                    if (translations[key] && translations[key][lang]) {
+                        el.textContent = translations[key][lang];
+                    }
+                });
+                document.querySelectorAll('.lang-btn').forEach(function(btn) {
+                    const isActive = btn.getAttribute('data-lang') === lang;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-pressed', isActive);
+                });
+            }
+
+            document.querySelectorAll('.lang-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    applyTranslations(btn.getAttribute('data-lang'));
+                });
+            });
+
+            // --- LENYÍLÓ MENÜ ---
+            window.toggleDropdown = function(id) {
+                const dd = document.getElementById(id);
+                const btn = dd.querySelector('.dropbtn');
+                const isOpen = dd.classList.toggle('open');
+                btn.setAttribute('aria-expanded', isOpen);
+            };
+
+            // Kattintás a menün kívülre -> bezárás
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('.dropdown.open').forEach(function(dd) {
+                    if (!dd.contains(e.target)) {
+                        dd.classList.remove('open');
+                        dd.querySelector('.dropbtn').setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

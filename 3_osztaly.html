@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="page-title">III. osztály – Mágnesek, rezgések és hullámok | TECHSCIENCE</title>
+    <style>
+        /* RESET ÉS ALAPSTÍLUSOK */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-blue: #a78bfa;
+            --primary-deep: #7c3aed;
+            --accent-2: #f472b6;
+            --light-bg: #faf5ff;
+            --card-bg: #ffffff;
+            --text-dark: #334155;
+            --text-medium: #64748b;
+            --text-light: #94a3b8;
+            --shadow-sm: 0 2px 4px rgba(124,58,237,0.06);
+            --shadow-md: 0 4px 12px rgba(124,58,237,0.10);
+            --shadow-lg: 0 10px 25px rgba(124,58,237,0.16);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-soft: rgba(221,214,254,0.9);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            background-image: radial-gradient(circle at 15% 20%, rgba(167,139,250,0.12), transparent 40%), radial-gradient(circle at 85% 15%, rgba(244,114,182,0.10), transparent 40%), radial-gradient(circle at 80% 85%, rgba(139,92,246,0.10), transparent 40%), radial-gradient(circle at 15% 85%, rgba(196,181,253,0.12), transparent 40%);
+            color: var(--text-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* NYELVVÁLASZTÓ */
+        .lang-switcher {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 6px; border-radius: 50px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-soft);
+            transition: var(--transition);
+        }
+
+        .lang-btn {
+            padding: 10px 18px; border: none; border-radius: 40px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 600; font-family: inherit;
+            transition: var(--transition); background: transparent; color: var(--text-medium);
+            white-space: nowrap; user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+
+        .lang-btn:hover { color: var(--text-dark); background: rgba(148, 163, 184, 0.15); }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-deep));
+            color: #ffffff; box-shadow: var(--shadow-md);
+        }
+
+        /* FŐ TÁROLÓ */
+        .physics-container { max-width: 1100px; margin: 0 auto; padding: 100px 24px 60px; }
+
+        /* FEJLÉC */
+        .page-header { text-align: center; margin-bottom: 56px; }
+
+        .main-title {
+            font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-deep), var(--accent-2));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px; letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.15rem; color: var(--text-medium);
+            max-width: 640px; margin: 0 auto 36px;
+        }
+
+        /* CENTRÍROZOTT LECKE-MENÜK a fejléc alatt */
+        .lesson-menus {
+            display: flex; justify-content: center; align-items: flex-start;
+            flex-wrap: wrap; gap: 14px;
+        }
+
+        .dropdown { position: relative; }
+
+        .dropbtn {
+            padding: 12px 22px; border: 1px solid var(--border-soft); border-radius: 40px;
+            cursor: pointer; font-size: 0.95rem; font-weight: 600; font-family: inherit;
+            letter-spacing: 0.02em; transition: var(--transition);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-md); color: var(--text-medium);
+            white-space: nowrap; user-select: none; -webkit-tap-highlight-color: transparent;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .dropbtn:hover {
+            color: var(--primary-deep); border-color: var(--primary-blue);
+            box-shadow: var(--shadow-lg); transform: translateY(-2px);
+        }
+
+        .dropbtn i { font-style: normal; font-size: 0.7rem; transition: transform 0.3s ease; }
+        .dropdown.open .dropbtn i { transform: rotate(180deg); }
+
+        .dropdown-content {
+            position: absolute; top: calc(100% + 10px); left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            min-width: 230px; background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--border-radius); box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-soft); padding: 8px;
+            opacity: 0; visibility: hidden; transition: var(--transition); z-index: 500;
+        }
+
+        .dropdown.open .dropdown-content {
+            opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-content a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px; border-radius: 12px; color: var(--text-medium);
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .dropdown-content a:hover { background: rgba(148, 163, 184, 0.12); color: var(--primary-deep); }
+
+        .dropdown-content a .lesson-badge {
+            background: rgba(251, 191, 36, 0.18); color: #b45309;
+            font-size: 0.7rem; font-weight: 700; padding: 2px 8px;
+            border-radius: 20px; margin-left: auto;
+        }
+
+        /* TARTALMI SZEKCIÓK */
+        .content-section {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+            background: var(--card-bg); border-radius: var(--border-radius); padding: 48px;
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-soft);
+        }
+
+        .section-spacing { margin-bottom: 48px; }
+
+        .section-title {
+            font-size: 1.8rem; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 20px; letter-spacing: -0.01em;
+        }
+
+        .physics-text { color: var(--text-medium); margin-bottom: 16px; font-size: 1.02rem; }
+
+        .highlight { color: var(--primary-deep); font-weight: 600; }
+        .highlight-warm { color: var(--accent-2); font-weight: 600; }
+
+        .image-wrapper { border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+        .physics-image { width: 100%; height: auto; display: block; transition: transform 0.5s ease; }
+        .image-wrapper:hover .physics-image { transform: scale(1.03); }
+
+        /* LÁBLÉC */
+        .page-footer {
+            text-align: center; color: var(--text-light); font-size: 0.9rem;
+            padding-top: 20px; border-top: 1px solid var(--border-soft);
+        }
+
+        /* RESZPONZÍV */
+        @media (max-width: 768px) {
+            .content-section { grid-template-columns: 1fr; padding: 28px; gap: 28px; }
+            .lang-switcher { position: static; margin: 16px auto 0; width: fit-content; }
+            .physics-container { padding-top: 24px; }
+            .lesson-menus { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NYELVVÁLASZTÓ GOMBOK -->
+    <div class="lang-switcher" aria-label="Nyelvválasztó / Izbor jezika">
+        <button class="lang-btn active" data-lang="hu" aria-pressed="true" aria-label="Magyar nyelv">Magyar</button>
+        <button class="lang-btn" data-lang="sr" aria-pressed="false" aria-label="Srpski jezik">Srpski</button>
+    </div>
+
+    <div class="physics-container">
+        <!-- FEJLÉC -->
+        <header class="page-header">
+            <h1 class="main-title" data-translate-key="main-title">III. osztály – Mágnesek, rezgések és hullámok</h1>
+            <p class="subtitle" data-translate-key="subtitle">A láthatatlan mágneses erőtől a lengő ingákon át a fény és a hang hullámaiig</p>
+
+            <!-- CENTRÍROZOTT LECKE-MENÜK – ide jöhetnek további dropdownok -->
+            <div class="lesson-menus">
+                <div class="dropdown" id="dropdown1">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown1')" aria-expanded="false">
+                        <span data-translate-key="nav-grade">III. osztály leckéi</span>
+                        <i>▼</i>
+                    </button>
+                    <div class="dropdown-content">
+                        <!-- PRÓBA LECKE – később kerül ide a valódi lecke neve -->
+                        <a href="#" data-translate-key="nav-lesson1">
+                            Próba lecke
+                            <span class="lesson-badge">DEMO</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+                <section class="content-section section-spacing">
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section1-title">Mágnesek világa</h2>
+                <p class="physics-text" data-translate-key="section1-p1">Minden mágnesnek két <span class="highlight">pólusa</span> van: az egyező pólusok taszítják, az ellentétesek vonzzák egymást. A mágneses erőtér láthatatlan, mégis formálja a világot.</p>
+                <p class="physics-text" data-translate-key="section1-p2">A Föld maga is óriási mágnes – <span class="highlight">mágneses mezeje</span> tereli el a kozmikus sugárzást, és festi az eget sarki fénnyel.</p>
+            </div>
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Sarki fény – a Föld mágneses mezeje" class="physics-image">
+            </div>
+        </section>
+
+        <section class="content-section section-spacing">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Newton-bölcső" class="physics-image">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section2-title">Rezgések</h2>
+                <p class="physics-text" data-translate-key="section2-p1">Ami ide-oda leng, az <span class="highlight">rezgés</span>: a hinta, az inga, a rugó. Minden rezgésnek megvan a maga <span class="highlight">periódusideje</span> – az idő, amíg egy teljes lengést végez.</p>
+                <p class="physics-text" data-translate-key="section2-p2">A Newton-bölcső mutatja meg, hogyan adódik át a rezgés energiája egyik testről a másikra – szép példája az <span class="highlight">energia megmaradásának</span>.</p>
+            </div>
+        </section>
+
+        <section class="content-section section-spacing">
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section3-title">Optika – a fény útjai</h2>
+                <p class="physics-text" data-translate-key="section3-p1">A fény <span class="highlight">egyenesen terjed</span>, de a közeg határán megtörik és visszaverődik. A szivárvány is a fénytörés műve: a vízcseppek <span class="highlight">színekre bontják</span> a napfényt.</p>
+                <p class="physics-text" data-translate-key="section3-p2">A lencsék és prizmák segítségével irányítjuk a fényt – a szemüvegtől a teleszkópig minden optikai eszköz erre épül.</p>
+            </div>
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="A fény színspektruma" class="physics-image">
+            </div>
+        </section>
+
+        <section class="content-section section-spacing">
+            <div class="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Tengeri hullámok" class="physics-image">
+            </div>
+            <div class="text-content">
+                <h2 class="section-title" data-translate-key="section4-title">Hullámok</h2>
+                <p class="physics-text" data-translate-key="section4-p1">Ha követ dobsz a vízbe, körkörös hullámok futnak szét. A <span class="highlight">hullám</span> energiát szállít, anélkül hogy az anyag vele utazna – a víz csak fel-le mozog.</p>
+                <p class="physics-text" data-translate-key="section4-p2">A hang is hullám! Megtanuljuk a <span class="highlight">hullámhossz</span> és a <span class="highlight">frekvencia</span> fogalmát, és hogy miért halljuk másképp a mély és a magas hangokat.</p>
+            </div>
+        </section>
+
+
+        <!-- LÁBLÉC -->
+        <footer class="page-footer">
+            <p data-translate-key="footer-text">TECHSCIENCE • III. osztály – Mágnesek, rezgések és hullámok • Középiskolások számára</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // --- FORDÍTÁSI ADATBÁZIS ---
+            const translations = {
+                'page-title': {
+                    hu: 'III. osztály – Mágnesek, rezgések és hullámok | TECHSCIENCE',
+                    sr: 'III razred – Magneti, oscilacije i talasi | TECHSCIENCE'
+                },
+                'nav-grade': {
+                    hu: 'III. osztály leckéi',
+                    sr: 'Lekcije III razreda'
+                },
+                'nav-lesson1': {
+                    hu: 'Próba lecke',
+                    sr: 'Probna lekcija'
+                },
+                'main-title': {
+                    hu: 'III. osztály – Mágnesek, rezgések és hullámok',
+                    sr: 'III razred – Magneti, oscilacije i talasi'
+                },
+                'subtitle': {
+                    hu: 'A láthatatlan mágneses erőtől a lengő ingákon át a fény és a hang hullámaiig',
+                    sr: 'Od nevidljive magnetske sile preko njihala koje se ljulja do talasa svetlosti i zvuka'
+                },
+                'section1-title': {
+                    hu: 'Mágnesek világa',
+                    sr: 'Svet magneta'
+                },
+                'section1-p1': {
+                    hu: 'Minden mágnesnek két <span class="highlight">pólusa</span> van: az egyező pólusok taszítják, az ellentétesek vonzzák egymást. A mágneses erőtér láthatatlan, mégis formálja a világot.',
+                    sr: 'Svaki magnet ima dva <span class="highlight">pola</span>: istoimeni polovi se odbijaju, a raznoimeni privlače. Magnetno polje je nevidljivo, a ipak oblikuje svet.'
+                },
+                'section1-p2': {
+                    hu: 'A Föld maga is óriási mágnes – <span class="highlight">mágneses mezeje</span> tereli el a kozmikus sugárzást, és festi az eget sarki fénnyel.',
+                    sr: 'I sama Zemlja je ogroman magnet – njeno <span class="highlight">magnetno polje</span> skreće kosmičko zračenje i boji nebo polarnom svetlošću.'
+                },
+                'section2-title': {
+                    hu: 'Rezgések',
+                    sr: 'Oscilacije'
+                },
+                'section2-p1': {
+                    hu: 'Ami ide-oda leng, az <span class="highlight">rezgés</span>: a hinta, az inga, a rugó. Minden rezgésnek megvan a maga <span class="highlight">periódusideje</span> – az idő, amíg egy teljes lengést végez.',
+                    sr: 'Sve što se ljulja tamo-amo <span class="highlight">osciluje</span>: ljuljaška, njihalo, opruga. Svaka oscilacija ima svoj <span class="highlight">period</span> – vreme potrebno za jedno potpuno njihanje.'
+                },
+                'section2-p2': {
+                    hu: 'A Newton-bölcső mutatja meg, hogyan adódik át a rezgés energiája egyik testről a másikra – szép példája az <span class="highlight">energia megmaradásának</span>.',
+                    sr: 'Njutnovo njihalo pokazuje kako se energija oscilovanja prenosi s jednog tela na drugo – lep primer <span class="highlight">održanja energije</span>.'
+                },
+                'section3-title': {
+                    hu: 'Optika – a fény útjai',
+                    sr: 'Optika – putevi svetlosti'
+                },
+                'section3-p1': {
+                    hu: 'A fény <span class="highlight">egyenesen terjed</span>, de a közeg határán megtörik és visszaverődik. A szivárvány is a fénytörés műve: a vízcseppek <span class="highlight">színekre bontják</span> a napfényt.',
+                    sr: 'Svetlost se širi <span class="highlight">pravolinijski</span>, ali se na granici sredina prelama i odbija. I duga je delo prelamanja: kapljice vode <span class="highlight">rastavljaju</span> sunčevu svetlost na boje.'
+                },
+                'section3-p2': {
+                    hu: 'A lencsék és prizmák segítségével irányítjuk a fényt – a szemüvegtől a teleszkópig minden optikai eszköz erre épül.',
+                    sr: 'Pomoću sočiva i prizmi upravljamo svetlošću – od naočara do teleskopa, svaki optički instrument zasniva se na tome.'
+                },
+                'section4-title': {
+                    hu: 'Hullámok',
+                    sr: 'Talasi'
+                },
+                'section4-p1': {
+                    hu: 'Ha követ dobsz a vízbe, körkörös hullámok futnak szét. A <span class="highlight">hullám</span> energiát szállít, anélkül hogy az anyag vele utazna – a víz csak fel-le mozog.',
+                    sr: 'Kad baciš kamen u vodu, kružni talasi se rašire. <span class="highlight">Talas</span> prenosi energiju, a da materija ne putuje s njim – voda se samo kreće gore-dole.'
+                },
+                'section4-p2': {
+                    hu: 'A hang is hullám! Megtanuljuk a <span class="highlight">hullámhossz</span> és a <span class="highlight">frekvencia</span> fogalmát, és hogy miért halljuk másképp a mély és a magas hangokat.',
+                    sr: 'I zvuk je talas! Učimo pojmove <span class="highlight">talasne dužine</span> i <span class="highlight">frekvencije</span>, i zašto duboke i visoke tonove čujemo različito.'
+                },
+                'footer-text': {
+                    hu: 'TECHSCIENCE • III. osztály – Mágnesek, rezgések és hullámok • Középiskolások számára',
+                    sr: 'TECHSCIENCE • III razred – Magneti, oscilacije i talasi • Za učenike srednje škole'
+                }
+            };
+
+            let currentLang = 'hu';
+
+            function applyTranslations(lang) {
+                currentLang = lang;
+                document.documentElement.lang = lang;
+                document.querySelectorAll('[data-translate-key]').forEach(function(el) {
+                    const key = el.getAttribute('data-translate-key');
+                    if (translations[key] && translations[key][lang]) {
+                        el.innerHTML = translations[key][lang];
+                    }
+                });
+                document.querySelectorAll('.lang-btn').forEach(function(btn) {
+                    const isActive = btn.getAttribute('data-lang') === lang;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-pressed', isActive);
+                });
+            }
+
+            document.querySelectorAll('.lang-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    applyTranslations(btn.getAttribute('data-lang'));
+                });
+            });
+
+            // --- LENYÍLÓ MENÜ ---
+            window.toggleDropdown = function(id) {
+                const dd = document.getElementById(id);
+                const btn = dd.querySelector('.dropbtn');
+                const isOpen = dd.classList.toggle('open');
+                btn.setAttribute('aria-expanded', isOpen);
+            };
+
+            // Kattintás a menün kívülre -> bezárás
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('.dropdown.open').forEach(function(dd) {
+                    if (!dd.contains(e.target)) {
+                        dd.classList.remove('open');
+                        dd.querySelector('.dropbtn').setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
