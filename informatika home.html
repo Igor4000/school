@@ -187,6 +187,86 @@
             transform: rotate(180deg);
         }
 
+        /* ---- ÚJ: jobbra nyíló almenü (pl. Home -> Gyakorló feladatok) ---- */
+        .has-submenu {
+            position: relative;
+        }
+
+        .has-submenu > a {
+            padding-right: 32px;
+        }
+
+        .submenu-arrow {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.6rem;
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        /* láthatatlan "híd" a szülő és az almenü között, hogy a kurzor
+           ne essen ki a hover-zónából átmenet közben */
+        .has-submenu::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -14px;
+            width: 14px;
+            height: 100%;
+        }
+
+        .submenu-content {
+            display: none;
+            position: absolute;
+            top: -6px;
+            left: 100%;
+            margin-left: 6px;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(30, 64, 175, 0.08);
+            z-index: 150;
+            overflow: hidden;
+            padding: 6px 0;
+        }
+
+        .submenu-content a {
+            display: block;
+            padding: 12px 22px;
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .submenu-content a:hover {
+            background: rgba(30, 64, 175, 0.07);
+            border-left: 3px solid #1e40af;
+            color: #1e40af;
+            padding-left: 26px;
+        }
+
+        .has-submenu:hover > .submenu-content,
+        .has-submenu:focus-within > .submenu-content {
+            display: block;
+            animation: submenuFade 0.2s ease-out;
+        }
+
+        @keyframes submenuFade {
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Kis képernyőn a hover nem elérhető - ilyenkor az almenü
+           a szülő alá csúszik, sima blokk-listaként */
         @media (max-width: 768px) {
             .glass-nav {
                 gap: 8px;
@@ -207,6 +287,27 @@
             @keyframes dropdownFade {
                 from { opacity: 0; transform: translateY(-6px); }
                 to { opacity: 1; transform: translateY(0); }
+            }
+
+            .submenu-content {
+                position: static;
+                display: none;
+                margin-left: 0;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                border-radius: 12px;
+                box-shadow: none;
+                background: rgba(30, 64, 175, 0.04);
+                width: calc(100% - 20px);
+                margin-left: 10px;
+            }
+            .has-submenu:hover > .submenu-content,
+            .has-submenu:focus-within > .submenu-content,
+            .has-submenu.open > .submenu-content {
+                display: block;
+            }
+            .has-submenu::after {
+                display: none;
             }
         }
 
@@ -443,11 +544,27 @@
                     <i>▼</i>
                 </button>
                 <div class="dropdown-content">
-                    <a href="excel_home.html" class="lang-hu">💻  Home</a> 
-                    <a href="excel_home.html" class="lang-sr">💻 Home</a>
 
-                    <a href="home_gyakorlas_1.html" class="lang-hu"> Gyakorlas 1</a> 
-                    <a href="home_gyakorlas_1.html" class="lang-sr"> Vezbe 1</a>
+                    <!-- Home + jobbra nyíló almenü a gyakorló feladatokkal -->
+                    <div class="has-submenu" tabindex="0">
+                        <a href="excel_home.html" class="lang-hu">💻 Home</a>
+                        <a href="excel_home.html" class="lang-sr">💻 Home</a>
+                        <span class="submenu-arrow">▶</span>
+
+                        <div class="submenu-content">
+                            <a href="home_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
+                            <a href="home_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
+
+                            <a href="home_gyakorlas_2.html" class="lang-hu">📝 Gyakorlás 2</a>
+                            <a href="home_gyakorlas_2.html" class="lang-sr">📝 Vežbe 2</a>
+
+                            <a href="home_gyakorlas_3.html" class="lang-hu">📝 Gyakorlás 3</a>
+                            <a href="home_gyakorlas_3.html" class="lang-sr">📝 Vežbe 3</a>
+
+                            <a href="home_gyakorlas_4.html" class="lang-hu">📝 Gyakorlás 4</a>
+                            <a href="home_gyakorlas_4.html" class="lang-sr">📝 Vežbe 4</a>
+                        </div>
+                    </div>
 
                     <a href="excel_insert.html" class="lang-hu">💻 Insert</a> 
                     <a href="excel_insert.html" class="lang-sr">💻 Insert</a>
@@ -617,6 +734,19 @@
                 document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
                 document.querySelectorAll('.dropbtn').forEach(b => b.setAttribute('aria-expanded', 'false'));
             }
+        });
+
+        /* Érintőképernyőn (hover nélkül) koppintásra nyíljon/záródjon
+           az almenü, ne csak hoverre */
+        document.querySelectorAll('.has-submenu').forEach(function(item) {
+            item.addEventListener('click', function(event) {
+                if (window.matchMedia('(hover: none)').matches) {
+                    if (!event.target.closest('.submenu-content')) {
+                        event.preventDefault();
+                        item.classList.toggle('open');
+                    }
+                }
+            });
         });
     </script>
 </body>
