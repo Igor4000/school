@@ -183,6 +183,16 @@
             display: block;
         }
 
+        /* Ennél a dropdown-contentnél NE vágjon le semmit az overflow,
+           mert az almenü (submenu-content) a doboz jobb szélén túlra nyílik.
+           A többi (almenü nélküli) dropdownt nem érinti. */
+        .dropdown-content.has-submenu-parent {
+            overflow: visible;
+        }
+        .dropdown-content.has-submenu-parent a:hover {
+            border-radius: 12px;
+        }
+
         .dropdown.active .dropbtn i {
             transform: rotate(180deg);
         }
@@ -543,7 +553,7 @@
                     <span class="lang-sr">📊 Excel</span>
                     <i>▼</i>
                 </button>
-                <div class="dropdown-content">
+                <div class="dropdown-content has-submenu-parent">
 
                     <!-- Home + jobbra nyíló almenü a gyakorló feladatokkal -->
                     <div class="has-submenu" tabindex="0">
@@ -554,6 +564,15 @@
                         <div class="submenu-content">
                             <a href="home_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
                             <a href="home_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
+
+                            <a href="home_gyakorlas_2.html" class="lang-hu">📝 Gyakorlás 2</a>
+                            <a href="home_gyakorlas_2.html" class="lang-sr">📝 Vežbe 2</a>
+
+                            <a href="home_gyakorlas_3.html" class="lang-hu">📝 Gyakorlás 3</a>
+                            <a href="home_gyakorlas_3.html" class="lang-sr">📝 Vežbe 3</a>
+
+                            <a href="home_gyakorlas_4.html" class="lang-hu">📝 Gyakorlás 4</a>
+                            <a href="home_gyakorlas_4.html" class="lang-sr">📝 Vežbe 4</a>
                         </div>
                     </div>
 
