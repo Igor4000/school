@@ -609,12 +609,24 @@
                     <span class="lang-sr">🗄️ Baze podataka</span>
                     <i>▼</i>
                 </button>
-                <div class="dropdown-content">
+                <div class="dropdown-content has-submenu-parent">
                     <a href="adatbazisok.html" class="lang-hu">📕 Adatbázisok világa</a>
                     <a href="adatbazisok.html" class="lang-sr">📕 Svet baze podataka</a>
 
-                    <a href="dbbrowser.html" class="lang-hu">📕 DB Browser for SQLite</a>
-                    <a href="dbbrowser.html" class="lang-sr">📕 DB Browser for SQLite</a>
+                    <!-- DB Browser for SQLite + jobbra nyíló almenü a gyakorló feladattal és a megoldókulccsal -->
+                    <div class="has-submenu" tabindex="0">
+                        <a href="dbbrowser.html" class="lang-hu">📕 DB Browser for SQLite</a>
+                        <a href="dbbrowser.html" class="lang-sr">📕 DB Browser for SQLite</a>
+                        <span class="submenu-arrow">▶</span>
+
+                        <div class="submenu-content">
+                            <a href="dbbrowser_gyakorlas.html" class="lang-hu">📝 Gyakorlás</a>
+                            <a href="dbbrowser_gyakorlas.html" class="lang-sr">📝 Vežbe</a>
+
+                            <a href="dbbrowser_megoldokulcs.html" class="lang-hu">🔑 Megoldókulcs</a>
+                            <a href="dbbrowser_megoldokulcs.html" class="lang-sr">🔑 Ključ za rešenja</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
