@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+<title>DB Browser for SQLite — Gyakorlófeladatok / Praktični zadaci</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#0b1120;
+  --bg-soft:#0f172a;
+  --panel:#121a2e;
+  --panel-2:#0d1526;
+  --border:#22314d;
+  --border-soft:#1a2540;
+  --text:#e2e8f0;
+  --text-dim:#8b9bb8;
+  --text-faint:#5b6a87;
+  --blue:#38bdf8;
+  --blue-dim:#0c4a6e;
+  --green:#4ade80;
+  --amber:#fbbf24;
+  --purple:#a78bfa;
+  --red:#f87171;
+  --teal:#2dd4bf;
+  --gray:#94a3b8;
+  --code-bg:#0c1526;
+}
+
+body[data-theme="light"]{
+  --bg:#f1f5f9;
+  --bg-soft:#ffffff;
+  --panel:#ffffff;
+  --panel-2:#f8fafc;
+  --border:#e2e8f0;
+  --border-soft:#eef2f7;
+  --text:#0f172a;
+  --text-dim:#475569;
+  --text-faint:#94a3b8;
+  --blue:#0284c7;
+  --blue-dim:#e0f2fe;
+  --green:#16a34a;
+  --amber:#b45309;
+  --purple:#7c3aed;
+  --red:#dc2626;
+  --teal:#0d9488;
+  --gray:#64748b;
+  --code-bg:#eaf4fc;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background:
+    radial-gradient(circle at 15% 0%, rgba(56,189,248,0.06), transparent 40%),
+    radial-gradient(circle at 85% 15%, rgba(167,139,250,0.05), transparent 40%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter', system-ui, sans-serif;
+  line-height:1.65;
+  min-height:100vh;
+}
+
+code, .mono{ font-family:'JetBrains Mono', monospace; }
+
+.lang-hu-section,.lang-sr-section{display:none;}
+body[data-lang="hu"] .lang-hu-section{display:block;}
+body[data-lang="sr"] .lang-sr-section{display:block;}
+
+/* ---- Window chrome / title bar ---- */
+.app-window{
+  max-width:1180px;
+  margin:1.5rem auto;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:0 30px 80px -20px rgba(0,0,0,0.6);
+}
+
+.title-bar{
+  background:linear-gradient(180deg, var(--panel), var(--panel-2));
+  padding:0.7rem 1.1rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+
+.traffic-lights{display:flex; gap:7px;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.red{background:#ff5f56;}
+.dot.yellow{background:#ffbd2e;}
+.dot.green{background:#27c93f;}
+
+.title-text{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.82rem;
+  color:var(--text-dim);
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+
+.lang-toggle{display:flex; gap:4px; background:var(--panel-2); padding:3px; border-radius:8px; border:1px solid var(--border);}
+
+.theme-btn{
+  width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--panel-2);
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.theme-btn:hover{ border-color:var(--blue); color:var(--text); }
+
+.title-right{ display:flex; align-items:center; gap:10px; }
+.lang-btn{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  padding:5px 12px;
+  border-radius:6px;
+  border:none;
+  background:transparent;
+  color:var(--text-dim);
+  cursor:pointer;
+  font-weight:600;
+}
+.lang-btn.on{background:var(--blue); color:#08131f;}
+
+/* ---- fake app tab strip ---- */
+.app-tabs{
+  display:flex;
+  background:var(--panel-2);
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.app-tab{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.8rem;
+  padding:0.65rem 1.1rem;
+  color:var(--text-faint);
+  border-right:1px solid var(--border-soft);
+  white-space:nowrap;
+}
+.app-tab.live{color:var(--blue); background:var(--panel); border-bottom:2px solid var(--blue); font-weight:600;}
+.app-tab.disabled{ text-decoration:line-through; opacity:0.45; }
+
+.app-body{ background:var(--bg-soft); padding:1.75rem 1.75rem 3rem; }
+
+/* ---- header block ---- */
+.page-head h1{
+  font-size:1.55rem;
+  font-weight:700;
+  letter-spacing:-0.01em;
+}
+.page-head p{ color:var(--text-dim); margin-top:0.3rem; font-size:0.95rem;}
+
+/* ---- note / comment block ---- */
+.note-block{
+  margin:1.6rem 0;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--blue);
+  border-radius:10px;
+  padding:1rem 1.25rem;
+  font-size:0.92rem;
+  color:var(--text-dim);
+}
+.note-block .comment-mark{ color:var(--green); font-family:'JetBrains Mono',monospace; font-weight:700; margin-right:0.4rem;}
+.note-block strong{ color:var(--text); }
+.note-block code{ background:var(--code-bg); color:var(--blue); padding:1px 6px; border-radius:4px; font-size:0.85em;}
+
+/* ---- file tabs (project switcher) ---- */
+.file-tabs{
+  display:flex;
+  gap:0.5rem;
+  margin:1.8rem 0 1.5rem;
+  flex-wrap:wrap;
+}
+.file-tab{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.85rem;
+  padding:0.55rem 1rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.file-tab:hover{ border-color:var(--blue); color:var(--text); }
+.file-tab.active{ background:var(--blue-dim); border-color:var(--blue); color:var(--blue); }
+
+.db-project{ display:none; }
+.db-project.active{ display:block; animation:fadeIn .25s ease; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.project-title{
+  display:flex; align-items:center; gap:0.6rem;
+  font-family:'JetBrains Mono', monospace;
+  font-size:1.05rem;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:0.3rem;
+}
+.project-title .ext{ color:var(--text-faint); font-weight:400; }
+.project-desc{ color:var(--text-dim); font-size:0.92rem; margin-bottom:1.6rem; }
+
+/* ---- schema preview cards (ER-style) ---- */
+.schema-wrap{
+  display:flex; flex-wrap:wrap; gap:1rem;
+  margin-bottom:2.2rem;
+}
+.schema-table{
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  min-width:250px;
+  flex:1 1 250px;
+}
+.schema-header{
+  background:linear-gradient(135deg, var(--panel-2), var(--panel));
+  border-bottom:1px solid var(--border);
+  padding:0.55rem 0.9rem;
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size:0.88rem;
+  color:var(--blue);
+  display:flex; align-items:center; gap:0.4rem;
+}
+.schema-row{
+  display:grid;
+  grid-template-columns: 1.1fr 0.8fr auto;
+  gap:0.5rem;
+  align-items:center;
+  padding:0.4rem 0.9rem;
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  border-bottom:1px solid var(--border-soft);
+}
+.schema-row:last-child{ border-bottom:none; }
+.col-name{ color:var(--text); }
+.col-type{ color:var(--text-faint); }
+.flags{ display:flex; gap:3px; justify-content:flex-end; }
+.flag{
+  font-size:0.62rem;
+  font-weight:700;
+  padding:1px 5px;
+  border-radius:4px;
+  letter-spacing:0.02em;
+}
+.flag.pk{ background:rgba(251,191,36,0.15); color:var(--amber); border:1px solid rgba(251,191,36,0.4); }
+.flag.ai{ background:rgba(148,163,184,0.15); color:var(--gray); border:1px solid rgba(148,163,184,0.35); }
+.flag.nn{ background:rgba(56,189,248,0.15); color:var(--blue); border:1px solid rgba(56,189,248,0.35); }
+.flag.uq{ background:rgba(167,139,250,0.15); color:var(--purple); border:1px solid rgba(167,139,250,0.4); }
+.flag.def{ background:rgba(74,222,128,0.15); color:var(--green); border:1px solid rgba(74,222,128,0.35); }
+
+/* ---- steps ---- */
+.steps{ counter-reset: step; }
+.step-card{
+  display:flex;
+  gap:1rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:4px solid var(--gray);
+  border-radius:10px;
+  padding:0.95rem 1.1rem;
+  margin-bottom:0.7rem;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.step-card:hover{ transform:translateX(3px); box-shadow:0 8px 20px -10px rgba(0,0,0,0.5); }
+
+.step-card.cat-create{ border-left-color:var(--green); }
+.step-card.cat-alter{ border-left-color:var(--amber); }
+.step-card.cat-insert{ border-left-color:var(--blue); }
+.step-card.cat-update{ border-left-color:var(--purple); }
+.step-card.cat-delete{ border-left-color:var(--red); }
+.step-card.cat-save{ border-left-color:var(--teal); }
+.step-card.cat-view{ border-left-color:var(--gray); }
+
+.step-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  font-weight:700;
+  color:var(--text-faint);
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+
+.step-body{ flex:1; }
+.step-head{ display:flex; align-items:center; gap:0.6rem; margin-bottom:0.35rem; flex-wrap:wrap; }
+.badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.66rem;
+  font-weight:700;
+  letter-spacing:0.03em;
+  padding:2px 8px;
+  border-radius:5px;
+}
+.badge.cat-create{ background:rgba(74,222,128,0.12); color:var(--green); border:1px solid rgba(74,222,128,0.35); }
+.badge.cat-alter{ background:rgba(251,191,36,0.12); color:var(--amber); border:1px solid rgba(251,191,36,0.35); }
+.badge.cat-insert{ background:rgba(56,189,248,0.12); color:var(--blue); border:1px solid rgba(56,189,248,0.35); }
+.badge.cat-update{ background:rgba(167,139,250,0.12); color:var(--purple); border:1px solid rgba(167,139,250,0.35); }
+.badge.cat-delete{ background:rgba(248,113,113,0.12); color:var(--red); border:1px solid rgba(248,113,113,0.35); }
+.badge.cat-save{ background:rgba(45,212,191,0.12); color:var(--teal); border:1px solid rgba(45,212,191,0.35); }
+.badge.cat-view{ background:rgba(148,163,184,0.12); color:var(--gray); border:1px solid rgba(148,163,184,0.35); }
+
+.step-target{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; color:var(--text-faint); }
+.step-text{ font-size:0.93rem; color:var(--text); }
+.step-text code{ background:var(--code-bg); color:var(--blue); padding:1px 6px; border-radius:4px; font-size:0.86em; }
+
+footer{
+  text-align:center;
+  padding:1.6rem;
+  color:var(--text-faint);
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+}
+
+@media (max-width:640px){
+  .app-body{ padding:1.2rem; }
+  .schema-row{ grid-template-columns: 1fr auto; }
+  .schema-row .col-type{ display:none; }
+}
+</style>
+</head>
+<body data-lang="hu">
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="traffic-lights"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+    <div class="title-text">🗄️ DB Browser for SQLite <span class="lang-hu-section">— gyakorlófeladatok</span><span class="lang-sr-section">— praktični zadaci</span></div>
+    <div class="title-right">
+      <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()" title="Dark / Light mode">🌙</button>
+      <div class="lang-toggle">
+        <button class="lang-btn" id="btn-hu" onclick="setLang('hu')">HU</button>
+        <button class="lang-btn" id="btn-sr" onclick="setLang('sr')">SR</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-tabs">
+    <div class="app-tab live">Database Structure</div>
+    <div class="app-tab live">Browse Data</div>
+    <div class="app-tab disabled" title="Ebben a gyakorlatban nem használjuk / Ne koristimo u ovoj vežbi">Execute SQL</div>
+    <div class="app-tab disabled">Edit Pragmas</div>
+  </div>
+
+  <div class="app-body">
+
+    <!-- ============ MAGYAR ============ -->
+    <div class="lang-hu-section" id="hu-content">
+      <div class="page-head">
+        <h1>Adatbázis szerkesztés és létrehozás</h1>
+        <p>Három önálló adatbázis-projekt, egyenként 15 könnyű lépéssel — kizárólag a program kezelőfelületén dolgozva.</p>
+      </div>
+
+      <div class="note-block">
+        <span class="comment-mark">#</span><strong>Megjegyzés:</strong> az <code>Execute SQL</code> fület egyik feladatban sem kell megnyitnod.
+        Minden lépés a <code>Database Structure</code> és a <code>Browse Data</code> fülön történik. Minden projekt végén
+        mentsd el a változtatásokat a <code>Write Changes</code> gombbal — enélkül a módosítások elvesznek.
+      </div>
+
+      <div class="file-tabs">
+        <button class="file-tab active" onclick="showProject(this,'hu','set1')">📁 konyvtar.db</button>
+        <button class="file-tab" onclick="showProject(this,'hu','set2')">📁 verseny.db</button>
+        <button class="file-tab" onclick="showProject(this,'hu','set3')">📁 receptek.db</button>
+      </div>
+
+      <!-- SET 1 -->
+      <div class="db-project active" id="hu-set1">
+        <div class="project-title">📁 konyvtar.db <span class="ext">— Iskolai könyvtár</span></div>
+        <p class="project-desc">Egy könyvtári nyilvántartás felépítése és karbantartása a nulláról.</p>
+
+        <div class="schema-wrap">
+          <div class="schema-table">
+            <div class="schema-header">📄 Konyvallomany <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+            <div class="schema-row"><span class="col-name">cim</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div>
+            <div class="schema-row"><span class="col-name">szerzo</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">kiadas_eve</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">ar</span><span class="col-type">REAL</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">kategoria</span><span class="col-type">TEXT</span><span class="flags"><span class="flag def">DEF</span></span></div>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">New Database</span></div><p class="step-text">Hozz létre egy új adatbázist a <code>New Database</code> gombbal, és mentsd el <code>konyvtar.db</code> néven.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">A Database Structure fülön hozz létre egy új táblát <code>Konyvek</code> néven.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Fields</span></div><p class="step-text">Adj hozzá öt mezőt: <code>id</code> (INTEGER, Primary Key, AutoIncrement), <code>cim</code> (TEXT), <code>szerzo</code> (TEXT), <code>kiadas_eve</code> (INTEGER), <code>ar</code> (REAL).</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Not Null</span></div><p class="step-text">Állítsd be, hogy a <code>cim</code> mező <code>Not Null</code> legyen, vagyis kötelező legyen kitölteni.</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Kattints a <code>Write Changes</code> gombra, hogy elmentsd a tábla szerkezetét.</p></div></div>
+          <div class="step-card cat-view"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-view">MEGTEKINTÉS</span><span class="step-target">Browse Data</span></div><p class="step-text">Lépj a <code>Browse Data</code> fülre, és válaszd ki a <code>Konyvek</code> táblát a legördülő listából.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Insert new record</span></div><p class="step-text">Az <code>Insert new record</code> gombbal vegyél fel öt könyvet saját adatokkal.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Módosítsd az egyik könyv árát: kattints duplán a cellára, és írd be az új értéket.</p></div></div>
+          <div class="step-card cat-delete"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">TÖRLÉS</span><span class="step-target">Delete record</span></div><p class="step-text">A <code>Delete record</code> gombbal törölj egy könyvet a listából.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Modify Table</span></div><p class="step-text">Térj vissza a Database Structure fülre, és a <code>Modify Table</code> funkcióval adj hozzá egy új <code>kategoria</code> (TEXT) mezőt.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Töltsd ki a kategória oszlopot minden könyvnél (pl. „Regény", „Tankönyv").</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Default Value</span></div><p class="step-text">A Modify Table ablakban állíts be alapértelmezett értéket a kategória mezőnek: <code>Ismeretlen</code>.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Rename Table</span></div><p class="step-text">Nevezd át a <code>Konyvek</code> táblát <code>Konyvallomany</code>-ra a jobb klikk <code>Rename Table</code> opcióval.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Browse Data</span></div><p class="step-text">Vigyél fel kézzel egy új rekordot, amely egy meglévő könyv adatait ismétli meg, de a címéhez fűzd hozzá: „2. kiadás".</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Kattints a <code>Write Changes</code> gombra, hogy véglegesen elmentsd az adatbázist, majd zárd be a programot.</p></div></div>
+        </div>
+      </div>
+
+      <!-- SET 2 -->
+      <div class="db-project" id="hu-set2">
+        <div class="project-title">📁 verseny.db <span class="ext">— Sportverseny nyilvántartás</span></div>
+        <p class="project-desc">Versenyzők és csapatok nyilvántartása két összekapcsolódó táblával.</p>
+
+        <div class="schema-wrap">
+          <div class="schema-table">
+            <div class="schema-header">📄 Versenyzok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+            <div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag uq">UQ</span></span></div>
+            <div class="schema-row"><span class="col-name">sportag</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">eletkor</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">egyesulet</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">eredmeny</span><span class="col-type">TEXT</span><span class="flags"><span class="flag def">DEF</span></span></div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-header">📄 Csapatok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span></span></div>
+            <div class="schema-row"><span class="col-name">csapatnev</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">New Database</span></div><p class="step-text">Hozz létre egy új adatbázist <code>verseny.db</code> néven.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Készíts egy <code>Versenyzok</code> táblát a Create Table ablakkal.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Fields</span></div><p class="step-text">Adj hozzá mezőket: <code>id</code> (INTEGER, PK, AI), <code>nev</code> (TEXT), <code>sportag</code> (TEXT), <code>eletkor</code> (INTEGER), <code>csapat</code> (TEXT).</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Unique</span></div><p class="step-text">Állítsd be, hogy a <code>nev</code> mező <code>Unique</code> legyen, vagyis ne ismétlődhessen két azonos érték.</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el a tábla szerkezetét a <code>Write Changes</code> gombbal.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Insert new record</span></div><p class="step-text">A Browse Data fülön vegyél fel hat új versenyzőt.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Módosítsd az egyik versenyző életkorát egy meglévő rekordban.</p></div></div>
+          <div class="step-card cat-delete"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">TÖRLÉS</span><span class="step-target">Delete record</span></div><p class="step-text">Töröld a legfiatalabb versenyzőt a listából.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Modify Table</span></div><p class="step-text">A Modify Table funkcióval adj hozzá egy új <code>eredmeny</code> (TEXT) mezőt.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Töltsd ki az eredmény oszlopot minden versenyzőnél (pl. „1. hely", „Résztvevő").</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Default Value</span></div><p class="step-text">Állíts be alapértelmezett értéket az <code>eredmeny</code> mezőnek: <code>Nincs megadva</code>.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Rename Field</span></div><p class="step-text">Nevezd át a <code>csapat</code> mezőt <code>egyesulet</code>-re a Modify Table ablakban.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Hozz létre egy második táblát <code>Csapatok</code> néven, mezőkkel: <code>id</code> (INTEGER, PK), <code>csapatnev</code> (TEXT).</p></div></div>
+          <div class="step-card cat-view"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-view">MEGTEKINTÉS</span><span class="step-target">Browse Data</span></div><p class="step-text">Az oszlopfejlécre kattintva rendezd sorba a versenyzőket az <code>eletkor</code> szerint (ez nem lekérdezés, csak a nézet rendezése).</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el a végleges adatbázist a <code>Write Changes</code> gombbal.</p></div></div>
+        </div>
+      </div>
+
+      <!-- SET 3 -->
+      <div class="db-project" id="hu-set3">
+        <div class="project-title">📁 receptek.db <span class="ext">— Recept gyűjtemény</span></div>
+        <p class="project-desc">Receptek és hozzávalók nyilvántartása két összekapcsolódó táblával.</p>
+
+        <div class="schema-wrap">
+          <div class="schema-table">
+            <div class="schema-header">📄 Receptek <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+            <div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div>
+            <div class="schema-row"><span class="col-name">keszitesi_ido</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">szint</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">adag</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag def">DEF</span></span></div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-header">📄 Hozzavalok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span></span></div>
+            <div class="schema-row"><span class="col-name">recept_id</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">mennyiseg</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">New Database</span></div><p class="step-text">Hozz létre egy új adatbázist <code>receptek.db</code> néven.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Készíts egy <code>Receptek</code> táblát: <code>id</code> (INTEGER, PK, AI), <code>nev</code> (TEXT), <code>keszitesi_ido</code> (INTEGER), <code>nehezseg</code> (TEXT).</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Not Null</span></div><p class="step-text">Állítsd be, hogy a <code>nev</code> mező <code>Not Null</code> legyen.</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el a szerkezetet a <code>Write Changes</code> gombbal.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Insert new record</span></div><p class="step-text">A Browse Data fülön vegyél fel öt receptet.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Módosítsd az egyik recept elkészítési idejét.</p></div></div>
+          <div class="step-card cat-delete"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">TÖRLÉS</span><span class="step-target">Delete record</span></div><p class="step-text">Töröld a legnehezebb receptet a listából.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Modify Table</span></div><p class="step-text">A Modify Table funkcióval adj hozzá egy új <code>adag</code> (INTEGER) mezőt a táblához.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Default Value</span></div><p class="step-text">Állíts be alapértelmezett értéket az <code>adag</code> mezőnek: <code>4</code>.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Töltsd ki az adag oszlopot minden receptnél.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Hozz létre egy második táblát <code>Hozzavalok</code> néven, mezőkkel: <code>id</code> (INTEGER, PK), <code>recept_id</code> (INTEGER), <code>nev</code> (TEXT), <code>mennyiseg</code> (TEXT).</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Insert new record</span></div><p class="step-text">Vegyél fel három hozzávalót az egyik recepthez.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Rename Field</span></div><p class="step-text">Nevezd át a <code>nehezseg</code> mezőt <code>szint</code>-re a Modify Table ablakban.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Browse Data</span></div><p class="step-text">Másolj le kézzel egy receptet egy új rekordba, majd egészítsd ki a nevét a „Változat" szóval.</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el véglegesen az adatbázist a <code>Write Changes</code> gombbal.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SRPSKI ============ -->
+    <div class="lang-sr-section" id="sr-content">
+      <div class="page-head">
+        <h1>Uređivanje i kreiranje baze podataka</h1>
+        <p>Tri nezavisna projekta baze podataka, svaki sa 15 lakih koraka — isključivo preko korisničkog interfejsa programa.</p>
+      </div>
+
+      <div class="note-block">
+        <span class="comment-mark">#</span><strong>Napomena:</strong> karticu <code>Execute SQL</code> nije potrebno otvarati ni u jednom zadatku.
+        Svaki korak se izvodi na kartici <code>Database Structure</code> i <code>Browse Data</code>. Na kraju svakog projekta
+        sačuvaj izmene dugmetom <code>Write Changes</code> — bez toga se izmene gube.
+      </div>
+
+      <div class="file-tabs">
+        <button class="file-tab active" onclick="showProject(this,'sr','set1')">📁 biblioteka.db</button>
+        <button class="file-tab" onclick="showProject(this,'sr','set2')">📁 takmicenje.db</button>
+        <button class="file-tab" onclick="showProject(this,'sr','set3')">📁 recepti.db</button>
+      </div>
+
+      <!-- SET 1 -->
+      <div class="db-project active" id="sr-set1">
+        <div class="project-title">📁 biblioteka.db <span class="ext">— Školska biblioteka</span></div>
+        <p class="project-desc">Izgradnja i održavanje evidencije biblioteke od nule.</p>
+
+        <div class="schema-wrap">
+          <div class="schema-table">
+            <div class="schema-header">📄 Fond_knjiga <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+            <div class="schema-row"><span class="col-name">naslov</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div>
+            <div class="schema-row"><span class="col-name">autor</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">godina_izdanja</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">cena</span><span class="col-type">REAL</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">kategorija</span><span class="col-type">TEXT</span><span class="flags"><span class="flag def">DEF</span></span></div>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">New Database</span></div><p class="step-text">Kreiraj novu bazu podataka pomoću dugmeta <code>New Database</code> i sačuvaj je kao <code>biblioteka.db</code>.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Na kartici Database Structure kreiraj tabelu pod nazivom <code>Knjige</code>.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Fields</span></div><p class="step-text">Dodaj pet polja: <code>id</code> (INTEGER, PK, AI), <code>naslov</code> (TEXT), <code>autor</code> (TEXT), <code>godina_izdanja</code> (INTEGER), <code>cena</code> (REAL).</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Not Null</span></div><p class="step-text">Podesi da polje <code>naslov</code> bude <code>Not Null</code>, odnosno obavezno za popunjavanje.</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Klikni na <code>Write Changes</code> da sačuvaš strukturu tabele.</p></div></div>
+          <div class="step-card cat-view"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PRIKAZ</span><span class="step-target">Browse Data</span></div><p class="step-text">Pređi na karticu <code>Browse Data</code> i izaberi tabelu <code>Knjige</code>.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Insert new record</span></div><p class="step-text">Pomoću <code>Insert new record</code> unesi pet knjiga sa sopstvenim podacima.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Izmeni cenu jedne knjige dvoklikom na ćeliju i unosom nove vrednosti.</p></div></div>
+          <div class="step-card cat-delete"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">BRISANJE</span><span class="step-target">Delete record</span></div><p class="step-text">Pomoću <code>Delete record</code> obriši jednu knjigu sa liste.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Modify Table</span></div><p class="step-text">Pomoću <code>Modify Table</code> dodaj novo polje <code>kategorija</code> (TEXT).</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Popuni kolonu kategorija za svaku knjigu (npr. „Roman", „Udžbenik").</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Default Value</span></div><p class="step-text">Podesi podrazumevanu vrednost za polje kategorija: <code>Nepoznato</code>.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Rename Table</span></div><p class="step-text">Preimenuj tabelu <code>Knjige</code> u <code>Fond_knjiga</code> desnim klikom i opcijom <code>Rename Table</code>.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Browse Data</span></div><p class="step-text">Ručno unesi novi zapis koji ponavlja podatke jedne knjige, ali naslovu dodaj „2. izdanje".</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Klikni na <code>Write Changes</code> da trajno sačuvaš bazu, a zatim zatvori program.</p></div></div>
+        </div>
+      </div>
+
+      <!-- SET 2 -->
+      <div class="db-project" id="sr-set2">
+        <div class="project-title">📁 takmicenje.db <span class="ext">— Evidencija sportskog takmičenja</span></div>
+        <p class="project-desc">Evidencija takmičara i klubova kroz dve povezane tabele.</p>
+
+        <div class="schema-wrap">
+          <div class="schema-table">
+            <div class="schema-header">📄 Takmicari <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+            <div class="schema-row"><span class="col-name">ime</span><span class="col-type">TEXT</span><span class="flags"><span class="flag uq">UQ</span></span></div>
+            <div class="schema-row"><span class="col-name">sport</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">godine</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">klub</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">rezultat</span><span class="col-type">TEXT</span><span class="flags"><span class="flag def">DEF</span></span></div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-header">📄 Klubovi <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span></span></div>
+            <div class="schema-row"><span class="col-name">naziv_kluba</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">New Database</span></div><p class="step-text">Kreiraj novu bazu podataka pod nazivom <code>takmicenje.db</code>.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Napravi tabelu <code>Takmicari</code> pomoću prozora Create Table.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Fields</span></div><p class="step-text">Dodaj polja: <code>id</code> (INTEGER, PK, AI), <code>ime</code> (TEXT), <code>sport</code> (TEXT), <code>godine</code> (INTEGER), <code>tim</code> (TEXT).</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Unique</span></div><p class="step-text">Podesi da polje <code>ime</code> bude <code>Unique</code>, tako da se ne može ponoviti.</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Sačuvaj strukturu tabele dugmetom <code>Write Changes</code>.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Insert new record</span></div><p class="step-text">Na kartici Browse Data unesi šest novih takmičara.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Izmeni godine jednog takmičara u postojećem zapisu.</p></div></div>
+          <div class="step-card cat-delete"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">BRISANJE</span><span class="step-target">Delete record</span></div><p class="step-text">Obriši najmlađeg takmičara sa liste.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Modify Table</span></div><p class="step-text">Pomoću Modify Table dodaj novo polje <code>rezultat</code> (TEXT).</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Popuni kolonu rezultat za svakog takmičara (npr. „1. mesto", „Učesnik").</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Default Value</span></div><p class="step-text">Podesi podrazumevanu vrednost za polje <code>rezultat</code>: <code>Nije uneto</code>.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Rename Field</span></div><p class="step-text">Preimenuj polje <code>tim</code> u <code>klub</code> u prozoru Modify Table.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Napravi drugu tabelu <code>Klubovi</code>, sa poljima: <code>id</code> (INTEGER, PK), <code>naziv_kluba</code> (TEXT).</p></div></div>
+          <div class="step-card cat-view"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PRIKAZ</span><span class="step-target">Browse Data</span></div><p class="step-text">Klikom na zaglavlje kolone sortiraj takmičare po polju <code>godine</code> (ovo nije upit, samo sortiranje prikaza).</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Sačuvaj konačnu bazu podataka dugmetom <code>Write Changes</code>.</p></div></div>
+        </div>
+      </div>
+
+      <!-- SET 3 -->
+      <div class="db-project" id="sr-set3">
+        <div class="project-title">📁 recepti.db <span class="ext">— Zbirka recepata</span></div>
+        <p class="project-desc">Evidencija recepata i sastojaka kroz dve povezane tabele.</p>
+
+        <div class="schema-wrap">
+          <div class="schema-table">
+            <div class="schema-header">📄 Recepti <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+            <div class="schema-row"><span class="col-name">naziv</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div>
+            <div class="schema-row"><span class="col-name">vreme_pripreme</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">nivo</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">porcije</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag def">DEF</span></span></div>
+          </div>
+          <div class="schema-table">
+            <div class="schema-header">📄 Sastojci <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div>
+            <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span></span></div>
+            <div class="schema-row"><span class="col-name">id_recepta</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">naziv</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+            <div class="schema-row"><span class="col-name">kolicina</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">New Database</span></div><p class="step-text">Kreiraj novu bazu podataka pod nazivom <code>recepti.db</code>.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Napravi tabelu <code>Recepti</code>: <code>id</code> (INTEGER, PK, AI), <code>naziv</code> (TEXT), <code>vreme_pripreme</code> (INTEGER), <code>tezina</code> (TEXT).</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Not Null</span></div><p class="step-text">Podesi da polje <code>naziv</code> bude <code>Not Null</code>.</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Sačuvaj strukturu dugmetom <code>Write Changes</code>.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Insert new record</span></div><p class="step-text">Na kartici Browse Data unesi pet recepata.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Izmeni vreme pripreme jednog recepta.</p></div></div>
+          <div class="step-card cat-delete"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">BRISANJE</span><span class="step-target">Delete record</span></div><p class="step-text">Obriši najteži recept sa liste.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Modify Table</span></div><p class="step-text">Pomoću Modify Table dodaj novo polje <code>porcije</code> (INTEGER).</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Default Value</span></div><p class="step-text">Podesi podrazumevanu vrednost za polje <code>porcije</code>: <code>4</code>.</p></div></div>
+          <div class="step-card cat-update"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Popuni kolonu porcije za svaki recept.</p></div></div>
+          <div class="step-card cat-create"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Napravi drugu tabelu <code>Sastojci</code>, sa poljima: <code>id</code> (INTEGER, PK), <code>id_recepta</code> (INTEGER), <code>naziv</code> (TEXT), <code>kolicina</code> (TEXT).</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Insert new record</span></div><p class="step-text">Unesi tri sastojka za jedan od recepata.</p></div></div>
+          <div class="step-card cat-alter"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Rename Field</span></div><p class="step-text">Preimenuj polje <code>tezina</code> u <code>nivo</code> u prozoru Modify Table.</p></div></div>
+          <div class="step-card cat-insert"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Browse Data</span></div><p class="step-text">Ručno unesi jedan recept kao novi zapis, a zatim nazivu dodaj reč „Varijanta".</p></div></div>
+          <div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Trajno sačuvaj bazu podataka dugmetom <code>Write Changes</code>.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span class="lang-hu-section">DB Browser for SQLite gyakorlófeladatok · Készült tanulási céllal</span>
+  <span class="lang-sr-section">Praktični zadaci za DB Browser for SQLite · Napravljeno u edukativne svrhe</span>
+</footer>
+
+<script>
+  function setLang(lang){
+    document.body.setAttribute('data-lang', lang);
+    document.documentElement.lang = (lang === 'hu') ? 'hu' : 'sr';
+    document.getElementById('btn-hu').classList.toggle('on', lang === 'hu');
+    document.getElementById('btn-sr').classList.toggle('on', lang === 'sr');
+  }
+  function showProject(btn, lang, key){
+    const root = document.getElementById(lang + '-content');
+    root.querySelectorAll('.db-project').forEach(el => el.classList.remove('active'));
+    root.querySelectorAll('.file-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById(lang + '-' + key).classList.add('active');
+    btn.classList.add('active');
+  }
+  function toggleTheme(){
+    const isLight = document.body.getAttribute('data-theme') === 'light';
+    const next = isLight ? 'dark' : 'light';
+    document.body.setAttribute('data-theme', next);
+    document.getElementById('theme-toggle').textContent = next === 'light' ? '☀️' : '🌙';
+  }
+  setLang('hu');
+</script>
+
+</body>
+</html>
