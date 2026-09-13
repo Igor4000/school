@@ -189,19 +189,39 @@
             <h1 class="main-title" data-translate-key="main-title">II. osztály – Hő és elektromosság</h1>
             <p class="subtitle" data-translate-key="subtitle">A gázok láthatatlan mozgásától a kristályok rendjéig és az elektromos áram erejéig – a fizika második lépcsőfoka</p>
 
-            <!-- CENTRÍROZOTT LECKE-MENÜK – ide jöhetnek további dropdownok -->
+            <!-- CENTRÍROZOTT LECKE-MENÜK – 3 kategória: szkriptek / munkafüzetek / interaktív anyagok -->
             <div class="lesson-menus">
-                <div class="dropdown" id="dropdown1">
-                    <button class="dropbtn" onclick="toggleDropdown('dropdown1')" aria-expanded="false">
-                        <span data-translate-key="nav-grade">II. osztály leckéi</span>
+                <div class="dropdown" id="dropdown-skripte">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown-skripte')" aria-expanded="false">
+                        <span data-translate-key="nav-skripte">Jegyzetek</span>
                         <i>▼</i>
                     </button>
                     <div class="dropdown-content">
-                        <!-- PRÓBA LECKE – később kerül ide a valódi lecke neve -->
-                        <a href="#" data-translate-key="nav-lesson1">
-                            Próba lecke
-                            <span class="lesson-badge">DEMO</span>
-                        </a>
+                        <!-- IDE ÍRD BE A JEGYZETEK (SKRIPTE) FÁJLOK LINKJEIT -->
+                        <!-- OVDE UPIŠI LINKOVE KA FAJLOVIMA SA SKRIPTAMA -->
+                        <!-- Példa / Primer: <a href="jegyzet1.html">Cím <span class="lesson-badge">PDF</span></a> -->
+                    </div>
+                </div>
+
+                <div class="dropdown" id="dropdown-radne-sveske">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown-radne-sveske')" aria-expanded="false">
+                        <span data-translate-key="nav-radnesveske">Munkafüzetek</span>
+                        <i>▼</i>
+                    </button>
+                    <div class="dropdown-content">
+                        <!-- IDE ÍRD BE A MUNKAFÜZETEK (RADNE SVESKE) FÁJLOK LINKJEIT -->
+                        <!-- OVDE UPIŠI LINKOVE KA FAJLOVIMA SA RADNIM SVESKAMA -->
+                    </div>
+                </div>
+
+                <div class="dropdown" id="dropdown-interaktiv">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown-interaktiv')" aria-expanded="false">
+                        <span data-translate-key="nav-interaktiv">Interaktív anyagok</span>
+                        <i>▼</i>
+                    </button>
+                    <div class="dropdown-content">
+                        <!-- IDE ÍRD BE AZ INTERAKTÍV ANYAGOK (INTERAKTIVNI MATERIJALI) FÁJLOK LINKJEIT -->
+                        <!-- OVDE UPIŠI LINKOVE KA INTERAKTIVNIM MATERIJALIMA -->
                     </div>
                 </div>
             </div>
@@ -266,13 +286,17 @@
                     hu: 'II. osztály – Hő és elektromosság | TECHSCIENCE',
                     sr: 'II razred – Toplota i elektricitet | TECHSCIENCE'
                 },
-                'nav-grade': {
-                    hu: 'II. osztály leckéi',
-                    sr: 'Lekcije II razreda'
+                'nav-skripte': {
+                    hu: 'Jegyzetek',
+                    sr: 'Skripte'
                 },
-                'nav-lesson1': {
-                    hu: 'Próba lecke',
-                    sr: 'Probna lekcija'
+                'nav-radnesveske': {
+                    hu: 'Munkafüzetek',
+                    sr: 'Radne sveske'
+                },
+                'nav-interaktiv': {
+                    hu: 'Interaktív anyagok',
+                    sr: 'Interaktivni materijali'
                 },
                 'main-title': {
                     hu: 'II. osztály – Hő és elektromosság',
