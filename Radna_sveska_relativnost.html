@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="sr-Cyrl-RS">
+<head>
+<meta charset="UTF-8">
+<title>Радна свеска из физике</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:1.5cm 2cm}body{font-family:Roboto,sans-serif;font-size:10pt;line-height:1.5;color:#1a1a2e;margin:0;padding:2cm;max-width:800px;margin:auto;background:linear-gradient(135deg,#f0f4ff,#e8eaf6,#f3e7f9)}p{text-indent:1.25cm;margin:0 0 .5em 0}.ni{text-indent:0}:root{--pd:#0f1626;--pb:#0052D4;--ac:#00C6FB;--ap:#9D50BB;--gbg:rgba(255,255,255,.75);--gbd:1px solid rgba(255,255,255,.8);--gsh:0 8px 32px rgba(15,22,38,.1)}h1{font-family:Orbitron;font-size:24pt;background:linear-gradient(90deg,var(--pb),var(--ap));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:.2cm;letter-spacing:2px}h2{font-family:Rajdhani;font-size:16pt;color:var(--pd);margin:0 0 .5cm 0;text-indent:0;border-bottom:2px solid;border-image:linear-gradient(90deg,var(--ac),var(--ap)) 1;padding-bottom:8px;display:flex;align-items:center}h2::before{content:'';width:10px;height:10px;background:var(--ac);border-radius:50%;margin-right:10px;box-shadow:0 0 8px var(--ac)}h3{font-family:Rajdhani;font-size:12pt;color:var(--pb);margin:.8cm 0 .3cm 0;text-indent:0;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center}h3::before{content:'';width:6px;height:6px;background:var(--ap);margin-right:8px;border-radius:2px;transform:rotate(45deg)}.pb{page-break-before:always}.box{background:var(--gbg);backdrop-filter:blur(8px);border:var(--gbd);box-shadow:var(--gsh);border-radius:10px;padding:15px;margin-bottom:1em;page-break-inside:avoid}.rb{border-left:4px solid var(--ac)}.fb{border-left:4px solid var(--ap);background:rgba(255,255,255,.9)}.bt{font-family:Orbitron;font-weight:500;display:block;margin-bottom:8px;font-size:11pt;text-transform:uppercase;letter-spacing:1px}.rb .bt{color:var(--pb)}.fb .bt{color:var(--ap)}.box p{text-indent:0;margin-bottom:.5em;font-size:10pt}.math{font-style:italic;font-family:Cambria Math,serif;background:rgba(157,80,187,.05);padding:1px 4px;border-radius:3px;border:1px solid rgba(157,80,187,.1)}sup,sub{font-size:.7em}.task{margin-bottom:1em;page-break-inside:avoid}.tp{font-weight:500;text-indent:0;margin-bottom:.5em;text-align:left;color:var(--pd);font-size:10pt}.wl{text-indent:0;margin-top:10px}.wl .l{border-bottom:1px solid rgba(15,22,38,.2);height:1.8em;width:100%;display:block}.fbl{display:inline-block;min-width:80px;border-bottom:1.5px solid var(--pb);margin:0 3px;height:1em}.tfr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;text-indent:0;padding:6px;background:rgba(255,255,255,.5);border-radius:6px}.cl{flex:0 0 80%;text-align:left;font-size:10pt}.cr{flex:0 0 18%;text-align:right;white-space:nowrap}.cb{display:inline-block;width:16px;height:16px;border:2px solid var(--pb);margin-right:4px;vertical-align:middle;border-radius:4px;background:#fff}.tfg{display:inline-block}.tfo{margin-left:15px;font-weight:700;font-family:Rajdhani;font-size:11pt}table.ft{border-collapse:separate;border-spacing:0;width:80%;margin:.5em auto;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05)}table.ft th,table.ft td{border:none;padding:8px;text-align:center}table.ft th{background:linear-gradient(90deg,var(--pb),var(--ac));color:#fff;font-family:Rajdhani;font-weight:600;text-transform:uppercase}table.ft tr:nth-child(even) td{background:rgba(240,244,255,.8)}table.ft tr:nth-child(odd) td{background:#fff}table.mt{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:.3cm}table.mt td{width:50%;padding:10px 12px;background:rgba(255,255,255,.6);vertical-align:top;text-indent:0;border-radius:6px;border:1px solid rgba(255,255,255,.8)}table.mt td:first-child{border-left:3px solid var(--ac)}table.mt td:last-child{border-left:3px solid var(--ap)}.gc{text-align:center;margin:1em 0;page-break-inside:avoid;background:#fff;padding:15px;border-radius:10px;box-shadow:var(--gsh)}.da{border:2px dashed rgba(0,82,212,.3);background:linear-gradient(rgba(0,198,251,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,251,.05) 1px,transparent 1px),#fff;background-size:20px 20px;border-radius:10px;height:200px;margin-top:10px}@media print{body{background:#fff;padding:0;max-width:100%;font-size:10pt}.pb{page-break-before:always}.task,.box,.gc{page-break-inside:avoid;box-shadow:none;border:1px solid #ccc}.box{background:#fff!important;backdrop-filter:none}.tfr{background:none;padding:4px 0;border-bottom:1px solid #eee;border-radius:0}table.mt td{background:none;border:1px solid #ccc}h1,h2,h3{-webkit-text-fill-color:currentColor;color:#000!important;text-shadow:none}h1{color:var(--pb)!important}h2{border-bottom:2px solid var(--ac)}h3{color:var(--pb)!important}}</style>
+</head>
+<body>
+<h1>РАДНА СВЕСКА ИЗ ФИЗИКЕ</h1>
+<div class="ni" style="text-align:center;font-family:Rajdhani;font-size:12pt;font-weight:600;color:var(--pd);letter-spacing:3px;text-transform:uppercase;margin-bottom:1cm">Теорија релативности</div>
+
+<h2>1. Њутново схватање простора и времена</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Њутн је простор замишљао као непроменљиву кутију (позорницу), а време као космичку уру која куца истом брзином за све. Време и простор су апсолутни и независни.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Допуни: Простор је као огромна, празна <span class="fbl"></span>, а време тече као река без <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">2. Обележи Т/Н:</p>
+<div class="tfr"><div class="cl">Време тече истим током за све посматраче.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Кретање тела мења сам простор у коме се дешава.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Удаљеност од два метра иста је за оног ко мирује и оног ко јури.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Њутн је објаснио кретање планета око Сунца.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Инжењери данас не користе класичну механику.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Њутн би рекао да "исти трен" има смисла за све.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">3. Повежи:</p><table class="mt"><tr><td>1. Апсолутни простор</td><td>А) Космичка ура</td></tr><tr><td>2. Апсолутно време</td><td>Б) Савршена позорница</td></tr><tr><td>3. 5 m/s и 4 m/s</td><td>В) 90 m после 10 s</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу брзина бициклиста:</p><table class="ft"><tr><th>Брзина 1</th><th>Брзина 2</th><th>Растојање после 10s</th></tr><tr><td>5 m/s</td><td>4 m/s</td><td></td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Договор „нађемо се у 18 часова“ подразумева да време тече исто за <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај шему апсолутног простора као кутије у којој се тела крећу.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Израчунај растојање два бициклисте после 10 s (5 m/s и 4 m/s у супротним смеровима).</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни везу између класичне механике и грађевинарства (мостова, мотора).</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Класична механика radi беспрекорно на <span class="fbl"></span> брзинама.</p></div>
+<div class="task"><p class="tp">10. Нацртај заједничку позадину (платно) за све посматраче.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">У класичној слици света, тела мењају простор.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Систем временских зона почива на идеји једног времена.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Лет ђулета из топа се не може објаснити Њутновом механиком.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Свакодневно се договори поклапају јер време тече исто.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Њутн је време замишљао као мноштво локалних окуцаја.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Простор постоји сама по себи, увек иста.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. Географија</td><td>А) Договор 18ч</td></tr><tr><td>2. Свакодневно</td><td>Б) Усаглашавање сатова</td></tr><tr><td>3. Техника</td><td>В) Машинство</td></tr></table></div>
+<div class="task"><p class="tp">13. График растојања у односу на време.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g1" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g1)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">t</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">s</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Опсервација</th><th>Њутнов објашњење</th></tr><tr><td>Пад јабуке</td><td></td></tr><tr><td>Кретање планета</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто данашњи инжењери и даље успешно користе Њутнову механику?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Зашто је Њутн сматрао да је време "река без обала"?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто је слика о заједничкој позадини служила више од 200 година?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Шта ће Ајнштајн довести у питање код ове слике света?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>2. Ајнштајнови претходници</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Галилеј је поставио принцип релативности (закони механике исти у глатком броду). Максвел је открио да је светлост електромагнетни талас сталне брзине c. Физичари су измислили етар да би објаснили у односу на шта се светлост креће.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Т/Н:</p>
+<div class="tfr"><div class="cl">У глатком броду не можеш открити крећеш ли се.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Етар је материја која испуњава цео свемир.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Звук путује кроз етар.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Максвел је ујединио електрицитет и магнетизам.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Лоренц је извео формулу за скраћење тела кроз етар.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Поенкаре је мислио да је истовременост проблематична.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">2. Допуни: Светлост је електромагнетни <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">3. Попуни табелу:</p><table class="ft"><tr><th>Звук у ваздуху</th><th>Ветар</th><th>Укупна брзина</th></tr><tr><td>340 m/s</td><td>20 m/s</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. Галилеј</td><td>А) Светлост као талас</td></tr><tr><td>2. Максвел</td><td>Б) Принцип релативности</td></tr><tr><td>3. Лоренц</td><td>В) Једначине скраћења</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Свака брзина се мора односити на нешто, па је уведен <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај глатки брод у коме се не осећа кретање.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Израчунај брзину звука низ ветар (340+20 m/s).</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни шта је спектроскопија (веза Максвела и хемије).</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Лоренц је мислио да тело које се пробија кроз етар стварно <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај интерферометар са полупропусним огледалом.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Звук има брзину у односу на ваздух.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Светлост се очекивало да се понаша као звук.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Мерења су показала да светлост задржава исту брзину.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Лоренцове формуле су биле математички потпуно погрешне.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ајнштајн је био тај који је измислио етар.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Поенкаре је наслутио проблем истовремености.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. Невидљива средина</td><td>А) Светлост</td></tr><tr><td>2. Етар</td><td>Б) Поенкаре</td></tr><tr><td>3. "У исто време"</td><td>В) Бритва природе</td></tr></table></div>
+<div class="task"><p class="tp">13. График брзина звука у односу на ветар.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g2)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v_wind</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">v</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Научник</td><th>Оставштина</td></tr><tr><td>Галилеј</td><td></td></tr><tr><td>Максвел</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто је Ајнштајн морао да одбаци етар?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Зашто се очекивало да ће Земља стварати "етарски ветар"?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Објасни разлику између Лоренцовог и Ајнштајновог схватања истих формула.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Шта је Поенкаре наслутио, али није имао храбрости да заврши?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>3. Галилејеве трансформације</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Воз је систем S' (креће се брзином v), перон систем S. x' = x - vt, а време је исто: t' = t. Брзине се директно сабирају (u = u' + v).</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Допуни: Возни положај једнак је пероновом положају умањеном за пут: x' = <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">2. Т/Н:</p>
+<div class="tfr"><div class="cl">Систем S мирује, а систем S' се креће брзином v.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">У Галилејевим трансформацијама време зависи од брзине.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Лопта у возу лети 1 m/s, воз 30 m/s, перон види 31 m/s.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Лењири клизе један поред другог, а штоперице показују исто.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Закон слагања брзина гласи u = u' + v.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Воз је систем S, а перон S'.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">3. Повежи:</p><table class="mt"><tr><td>1. Перон</td><td>А) Брзина у односу на воз</td></tr><tr><td>2. Воз</td><td>Б) Система S</td></tr><tr><td>3. u'</td><td>В) Систем S'</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни:</p><table class="ft"><tr><th>Река (v)</th><th>Чамац (u')</th><th>Укупно (u)</th></tr><tr><td>2 m/s</td><td>3 m/s</td><td></td></tr><tr><td>2 m/s</td><td>-3 m/s</td><td></td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Удаљеност нула на лењиру се помера за <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај два лењира (система S и S').</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Река тече 2 m/s, чамац весла 3 m/s. Брзина низводно?</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Исти чамац весла узводно. Брзина према обали?</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Птица лебди насупрот ветру, па у односу на тло <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај векторе брзина ваздуха и авиона.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Убрзано кретање спада у инерцијалне системе.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Враћање узводно је споро јер се брзине одузимају.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Галилејеве трансформације задржавају време истим.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Воз 30 m/s + ходач 1 m/s = 31 m/s је класично слагање.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Навигација бродова не користи слагање брзина.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Здраворазумска аритметика је Галилејево слагање.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. Чамац низводно</td><td>А) t' = t</td></tr><tr><td>2. Неинерцијални систем</td><td>Б) Убрзање</td></tr><tr><td>3. Апсолутно време</td><td>В) u = u' + v</td></tr></table></div>
+<div class="task"><p class="tp">13. График x у односу на t.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g3" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g3)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">t</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">x</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Воз (v)</th><th>Ходач (u')</th><th>Перон (u)</th></tr><tr><td>30 m/s</td><td>1 m/s</td><td></td></tr><tr><td>10 m/s</td><td>2 m/s</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто је враћање узводно споро и напорно?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Ако светлост има брзину c у S, колика би била у S' по Галилеју?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто Галилејеве трансформације нису компатибилне са Максвеловим једначинама?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто навигација бродова користи Галилејево слагање брзина?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>4. Мајкелсон–Морлијев оглед</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Интерферометар дели сноп под углом 45°. Ако Земља јури кроз етар, светлост низ ветар и попреко би требало да имају различито време. Резултат: нула, брзина c је иста у свим правцима.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Т/Н:</p>
+<div class="tfr"><div class="cl">Апарат се зове интерферометар.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Полупропусно огледало је под углом 45°.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Очекивани "етарски ветар" је пронађен.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Брзина c се мењала са годишњим добима.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Земља обилази Сунце брзином 30 km/s.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Пруге интерференције нису се помериле.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">2. Допуни: Резултат огледа је био <span class="fbl"></span> (нула померања).</p></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>Очекивано</th><th>Мерено</th></tr><tr><td>c + 30 km/s</td><td></td></tr><tr><td>c - 30 km/s</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. 45°</td><td>А) Нула померања</td></tr><tr><td>2. Интерференција</td><td>Б) Полупропусно огледало</td></tr><tr><td>3. Резултат</td><td>В) Светле и тамне пруге</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Апарат је био постављен на плочу која плива на <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај шему интерферометра.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Израчунај очекивану промену брзина у процентима (30 / 300000).</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни шта је LIGO детектор.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Никаквог <span class="fbl"></span> није било, па је c иста у сваком правцу.</p></div>
+<div class="task"><p class="tp">10. Нацртај tanker са живом и плочом изнад.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Интерферометри мере померања мања од косе.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Класично сабирање брзина важи за светлост.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Мехур од сапунице даје интерференцију.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Соучива и огледала се проверавају интерферометријом.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Светлост низ ветар је бржа од светлости попреко.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Овај оглед је срушио темеље класичне слике.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. Крак напред</td><td>А) Половина снопа</td></tr><tr><td>2. Полупропусно огледало</td><td>Б) Етар</td></tr><tr><td>3. Свеприсутна средина</td><td>В) Правац кретања Земље</td></tr></table></div>
+<div class="task"><p class="tp">13. График c у односу на правац мерења.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g4" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g4)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">правац</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">c</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Годишње доба</th><th>Очекивана разлика</th></tr><tr><td>Зима</td><td></td></tr><tr><td>Лето</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто су поставили плочу на живу приликом мерења?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Зашто је овај "нула" резултат срушио темеље класичне слике света?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто су очекивали да ће светлост низ ветар бити бржа?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто класично сабирање брзина за светлост не важи?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>5. Специјална теорија релативности</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">1) Закони физике су исти у свим инерцијалним системима. 2) Брзина c иста је за све посматраче. Ако јуриш 0.9c за зраком, светлост бежи пуним c.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Т/Н:</p>
+<div class="tfr"><div class="cl">СТР је објављена 1905.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Постоји апсолутно мировање.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Брзина c зависи од извора.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ако јуриш 0.9c за зраком, светлост бежи 0.1c.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Галилејев принцип релативности се односио само на механику.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">c је непремостива граница.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">2. Допуни: Нема повлашћеног система, нема <span class="fbl"></span> мировања.</p></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>Брзина брода</th><th>Брзина светлости према Земљи</th></tr><tr><td>0.8c</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. Инерцијални систем</td><td>А) c ≈ 3·10^8 m/s</td></tr><tr><td>2. 2. постулат</td><td>Б) Мирно или равномерно</td></tr><tr><td>3. Брзина c</td><td>В) Иста за све</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Галилејев принцип релативности је проширен са механике на <span class="fbl"></span> законе.</p></div>
+<div class="task"><p class="tp">6. Нацртај брод који емитује зрак светлости напред.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Брод лети 0.8c ка Земљи и упали фарове. Коликом брзином светлост стиже?</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни утицај СТР на GPS у телефону.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Злато има своју боју због релативистичких <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај зрак светлости и посматрача који јури 0.9c за њим.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Простор и време су променљиви.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Светлост се може сустићи ако јуриш довољно брзо.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Узрок жуте боје злата је СТР.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Акцелератори честица морају рачунати са СТР.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">c = пут / време.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ајнштајн је измишљао трикове да спаси етар.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. GPS</td><td>А) Злато</td></tr><tr><td>2. Брзи електрони</td><td>Б) СТР исправке</td></tr><tr><td>3. 1. постулат</td><td>В) Исти закони</td></tr></table></div>
+<div class="task"><p class="tp">13. График c у односу на брзину извора.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g5" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g5)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v_izv</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">c</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Посматрач</th><th>Брзина c</th></tr><tr><td>Мирује</td><td></td></tr><tr><td>0.8c</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто је здрав разум преварен код слагања брзина светлости?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Ако бројилац и именилац морају dati c, шта мора да попусти?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто Ајнштајн није измишљао трикове да спаси етар?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто се акцелератори не могу покренути без СТР?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>6. Истовременост догађаја</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Сијалица у средишту вагона. Путник види да светлост истовремено стиже на предњи и задњи зид. Перон види да задњи зид "јури усусрет" светлости, па се његова страна осветли прва.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Т/Н:</p>
+<div class="tfr"><div class="cl">Светлост ка предњем и задњем зиду иде истом брзином c.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Перон види да се предњи зид осветли први.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Путник види да су догађаји истовремени.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Узрочност је очувана.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Воз и перон се слажу око истовремености.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">"Сада" није исто за све.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">2. Допуни: За перон, задњи зид вагона јури <span class="fbl"></span> светлости.</p></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>Дужина вагона</th><th>Удаљеност сијалице до зида</th></tr><tr><td>300 m</td><td></td></tr><tr><td>600 m</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. Путник у возу</td><td>А) Задњи зид први</td></tr><tr><td>2. Посматрач на перону</td><td>Б) Не постоји за све</td></tr><tr><td>3. "Сада"</td><td>В) Истовремено</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Не постоји једно заједничко <span class="fbl"></span> које важи за цео свемир.</p></div>
+<div class="task"><p class="tp">6. Нацртај вагон са сијалицом у средини.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Вагон 300 m. Колико времена светлости треба да стигне до зида?</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни везу између географије и усаглашавања времена.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Усклађивање удаљених сатова зависи од кретања и времена путовања <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај воз и перон са стрелама.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Сат на предњем зиду касни за перон.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Рачунарске мреже не морају рачунати са овим ефектом.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Сателити захтевају физички дефинисан појам истовремености.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Светлост убрзава да би сустигла предњи зид.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">0.5 µs је време за 150 m.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Перон види 0.5 µs разлике.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. Синхронизација</td><td>А) c</td></tr><tr><td>2. 150m / 3e8</td><td>Б) Удаљени сатови</td></tr><tr><td>3. Коначна брзина</td><td>В) 0.5 µs</td></tr></table></div>
+<div class="task"><p class="tp">13. График времена у односу на брзину система.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g6" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g6)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">t</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Систем</th><th>Истовремено?</th></tr><tr><td>S (мировање)</td><td>Да</td></tr><tr><td>S' (кретање)</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто светлост не убрзава да би сустигла предњи зид?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Може ли последица претходити узроку?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Ko je u pravu, перон или путник?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто "у исто време" губи апсолутно значење?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>7. Лоренцове трансформације</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Замењују Галилејеве при великим брзинама. γ = 1 / √(1 - v²/c²). При малим брзинама γ≈1. Када v тежи c, γ тежи ∞.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Допуни: γ = 1 / √(1 - <span class="fbl"></span>).</p></div>
+<div class="task"><p class="tp">2. Т/Н:</p>
+<div class="tfr"><div class="cl">γ је увек већи или једнак 1.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Кривуља γ је до 0.3c готово равна.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">У формули за t' време не зависи од x.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Дељење нулом није дозвољено.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">γ је дефинисан за v > c.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">При мировању је γ = 1.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>v</th><th>γ</th></tr><tr><td>0</td><td></td></tr><tr><td>0.6c</td><td>1.25</td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. γ = 1</td><td>А) Брзина светлости</td></tr><tr><td>2. γ → ∞</td><td>Б) Мировање</td></tr><tr><td>3. v = c</td><td>В) Непремостива граница</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: У једначини за t' постоји члан v·x / <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај осе x и x'.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Израчунај γ за v = 0.6c. (0.6²=0.36).</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни утицај Лоренцових трансформација на GPS.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Све до око 0.3c крива једва да се одваја од <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај кривуљу γ.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Пројектовање акцелератора је немогуће без γ.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">При малим брзинама Лоренц се своди на Галилеја.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Енергетски нивои тешких елемената се рачунају са γ.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">c није граница већ само велика брзина.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">При v=c, γ би било бесконачно.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Медицински акцелератори морају рачунати γ.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. Галилеј</td><td>А) vx/c²</td></tr><tr><td>2. Релативност истовремености</td><td>Б) γ ≈ 1</td></tr><tr><td>3. Мале брзине</td><td>В) Стара механика</td></tr></table></div>
+<div class="task"><p class="tp">13. График γ у односу на v/c.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g7" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g7)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v/c</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">γ</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>v</th><th>γ</th></tr><tr><td>0.8c</td><td></td></tr><tr><td>0.9c</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Докажи да за в << c, Лоренцове једначине прелазе у Галилејеве.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Из формуле за γ докажи да тело не може достићи c.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Објасни физичку смислу члана (vx/c²).</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто пројектовање зрачне терапије захтева фактор γ?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>8. Релативистичко скраћење (контракција) дужине тела</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Сопствена дужина L0 се мери у мировању. Посматрач у односу на кога тело јури мери L = L0/γ. Скраћује се само дуж правца кретања.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Т/Н:</p>
+<div class="tfr"><div class="cl">Сопствена дужина L0 је најдужа могућа.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Тело се скраћује нормално на правац кретања.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">L ≤ L0.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Парадокс гараже је могућ.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Путник у броду види да му се штап скратио.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Скраћивање није оптичка варка.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">2. Допуни: L = <span class="fbl"></span> / γ.</p></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>L0</th><th>γ</th><th>L</th></tr><tr><td>10 m</td><td>1.667</td><td>6 m</td></tr><tr><td>20 m</td><td>1.667</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. L0</td><td>А) Систем кретања</td></tr><tr><td>2. L</td><td>Б) Мировање</td></tr><tr><td>3. γ</td><td>В) Фактор скраћења</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Скраћивање постоји само дуж правца <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај дугачки брод и стрелу.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. L0=10 m, v=0.8c, γ=1.667. Израчунај L.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни везу између миона и атмосфере.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Висина и <span class="fbl"></span> тела остају непромењене.</p></div>
+<div class="task"><p class="tp">10. Нацртај метарску шипку у броду и њену скраћену верзију за станицу.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Снопови честица у акцелераторима су спљоштени.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">У граници v=c, L тежи нули.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Возач види свој аутомобил скраћеним.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Маса тела се не мења.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Оба посматрача су у праву.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Сопствена дужина се мери у пролазу.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. 10m, v=0.8c</td><td>А) Најдужа</td></tr><tr><td>2. Сопствена дужина</td><td>Б) 6 m</td></tr><tr><td>3. Возач</td><td>В) Не види скраћење</td></tr></table></div>
+<div class="task"><p class="tp">13. График L у односу на v/c.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g8" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g8)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v/c</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">L</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Видик</th><th>Дужина</th></tr><tr><td>Путник</td><td>10 m</td></tr><tr><td>Станица</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Објасни "парадокс гараже" из угла аутомобила.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Миони виде удаљеност до тла краћом. Објасни зашто.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто посматрач у броду не види свој брод скраћеним?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Ако се тело креће нормално на своју дужину, да ли се скраћује?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>9. Дилатација времена</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Светлосни часовник. Зрак светлости код покретног сата иде косо, дужим путем, па треба више времена. Δt = γ·Δt0.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Допуни: Формула за дилатацију је Δt = <span class="fbl"></span> · Δt0.</p></div>
+<div class="task"><p class="tp">2. Т/Н:</p>
+<div class="tfr"><div class="cl">Покретни часовник куца спорије.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Сопствено време је најдуже.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Дилатација је последица лоших сатова.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Светлосни часовник има два огледала.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">GPS сателити заостају за земаљским сатовима.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Зрак код покретног сата иде право горе-доле.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">3. Повежи:</p><table class="mt"><tr><td>1. Δt0</td><td>А) Два огледала</td></tr><tr><td>2. Светлосни часовник</td><td>Б) Мировање</td></tr><tr><td>3. Коси пут светлости</td><td>В) Растегнуто време</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни:</p><table class="ft"><tr><th>Δt0</th><th>γ</th><th>Δt</th></tr><tr><td>1 г</td><td>1.667</td><td>1.67 г</td></tr><tr><td>2 г</td><td>1.667</td><td></td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Зрак код покретног сата прати слово <span class="fbl"></span> окренуто на страну.</p></div>
+<div class="task"><p class="tp">6. Нацртај светлосни часовник у мировању.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Астронаут 0.8c (γ=1.667). 1 год прође у броду. Колико на Земљи?</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни везу миона и дилатације времена.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Дужи пут при истој брзини значи <span class="fbl"></span> времена по откуцају.</p></div>
+<div class="task"><p class="tp">10. Нацртај светлосни пут за мировање и за покретно.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Атомски часовници у авионима су потврдили дилатацију.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Сопствено време Δt0 мери покретан посматрач.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ефекат је потпуно узајаман.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Твој часовник теби изгледа нормалан.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">GPS без исправки би грешио километрима.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Време је апсолутно.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. 1 год у броду</td><td>А)GPS</td></tr><tr><td>2. Земаљски сатови</td><td>Б) 1.67 год на Земљи</td></tr><tr><td>3. Заостајање</td><td>В) Иду брже</td></tr></table></div>
+<div class="task"><p class="tp">13. График Δt у односу на v/c.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g9" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g9)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v/c</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">Δt</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Систем</th><th>Време</th></tr><tr><td>Мировање</td><td>1 г</td></tr><tr><td>0.8c</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто дужи пут светлости код покретног сата нужно значи спорије време?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Зашто је дилатација узајамна?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Ако два сата крену из исте тачке, хоће ли показивати исто време при састанку?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто не осећамо дилатацију у колима?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>10. Парадокс близанаца</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Путник лети скоро c и враћа се. Земаљац све време мирује у једном инерцијалном систему, а путник убрзава/окреће. Зато путник остари мање (Δt_путник = Δt_Земља / γ).</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Т/Н:</p>
+<div class="tfr"><div class="cl">Путник се враћа млађи.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ситуација је савршено симетрична.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Убрзање ломи симетрију.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Земаљац све време мирује у једном систему.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ово је научна фантастика, није измерено.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Путник окреће ракету.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">2. Допуни: Онај који је убрзавао — <span class="fbl"></span> — јесте онај који се вратио млађи.</p></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>Δt_Земља</th><th>γ</th><th>Δt_путник</th></tr><tr><td>30 г</td><td>3</td><td>10 г</td></tr><tr><td>60 г</td><td>3</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. Путник</td><td>А) Права линија кроз време</td></tr><tr><td>2. Земаљац</td><td>Б) Изломљен пут</td></tr><tr><td>3. Окрет ракете</td><td>В) Убрзање</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Земаљац не напушта један инерцијални <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај Земљу и ракету на удаљеној звезди.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. На Земљи прође 30 година, γ=3. Колико је путник остарио?</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни везу парадокса и физике нестабилних честица.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Изломљени пут кроз простор и време одговара <span class="fbl"></span> протеклом сопственом времену.</p></div>
+<div class="task"><p class="tp">10. Нацртај "мапу" путањи кроз време (права и изломљена).</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Ова појава је логичка контрадикција.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">У акцелераторима се ово не може измерити.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">GPS мора рачунати с овим ефектом.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Старост није апсолутна.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Земаљац може рећи да је он тај који се одлетео.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Разлика је стварна и мерљива.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. Инерцијални систем</td><td>А) Контраинтуитивно</td></tr><tr><td>2. Убрзање/окрет</td><td>Б) Земаљац</td></tr><tr><td>3. Парадокс</td><td>В) Путник</td></tr></table></div>
+<div class="task"><p class="tp">13. График старења у односу на γ.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g10" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g10)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">γ</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">t</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Близанац</th><th>Пут</th></tr><tr><td>Земаљац</td><td>Прав</td></tr><tr><td>Путник</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто земаљац не може рећи да је он тај који се одлетео?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Шта ако је универзум само њих двојица (без звезда)? Ко је млађи?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Ако путник не успори, већ прође поред земље, хоће ли видити да је земаљац старији?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто ова појава није логичка контрадикција већ само контраинтуитивна?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>11. Релативистичка динамика (импулс и енергија)</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">p = γ·m0·v. На малим брзинама γ≈1, па је p=m0v. Код 0.99c, γ тежи ∞, па честица једва убрзава — енергија одлази у импулс. c је непробојан зид.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Допуни: p = <span class="fbl"></span> · m0 · v.</p></div>
+<div class="task"><p class="tp">2. Т/Н:</p>
+<div class="tfr"><div class="cl">Дупло дуже гурање значи дупло већу брзину.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">p = mv важи за све брзине.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">На малим брзинама γ ≈ 1.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Близу c, импулс расте ка бесконачности.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Тело може достићи c ако се довољно дуго убрзава.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">c је непробојан зид.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>v</th><th>γ</th></tr><tr><td>0</td><td>1</td></tr><tr><td>0.6c</td><td>1.25</td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. Класично</td><td>А) p = γm0v</td></tr><tr><td>2. Релативистички</td><td>Б) p = m0v</td></tr><tr><td>3. Бесконачно много импулса</td><td>В) Прелазак c</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Тело се све теже убрзава — као да му расте <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај тело масе m0 и вектор брзине v.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Протон m0=1.67e-27, v=0.6c, γ=1.25. Израчунај p. (v=1.8e8 m/s).</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни зашто магнети морају бити пројектовани на основу p = γm0v.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: У акцелераторима, брзина једва пређе <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај праву (класично) и криву (релативистички) на истом графику.</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Сва додатна енергија одлази у пораст брзине.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Сва додатна енергија одлази у пораст импулса.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Космички зраци имају огромне импулсе.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Маса мировања m0 се мења са брзином.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Фотон има импулс а нема масу.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Класично, дупла брзина значи дупли импулс.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. 0.6c</td><td>А) Ласерско хлађење</td></tr><tr><td>2. Импулс фотона</td><td>Б) γ = 1.25</td></tr><tr><td>3. Ударци импулса</td><td>В) Соларно једро</td></tr></table></div>
+<div class="task"><p class="tp">13. График p у односу на v/c.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g11" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g11)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v/c</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">p</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>v</th><th>p (рел) / p (класично)</th></tr><tr><td>0.6c</td><td>1.25</td></tr><tr><td>0.8c</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Објасни зашто се честица не може убрзати преко c узимајући у обзир тромост (импулс).</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Из p = γm0v изведи F = dp/dt.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто фотон има импулс а нема масу?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Зашто космички зраци имају огромне импулсе у односу на масу?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>12. Релативистичка енергија (маса и енергија)</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">E0 = m0·c². Маса и енергија су исто. Укупна E = γm0c², а кинетичка Ek = (γ-1)m0c². 1 грам крије 9·10^13 J.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Т/Н:</p>
+<div class="tfr"><div class="cl">Маса и енергија су исто.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Тело у мировању има енергију једнаку нули.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Енергија мировања се рачуна као E0 = m0 c^2.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Укупна енергија расте са брзином.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Кинетичка енергија је једнака укупној.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Мајушна маса крије застрашујућу количину енергије.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">2. Допуни: Формула за енергију мировања је <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>m0</th><th>E0</th></tr><tr><td>1 g</td><td>9·10^13 J</td></tr><tr><td>2 g</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. E0 = m0 c^2</td><td>А) (γ-1)m0c^2</td></tr><tr><td>2. Ek</td><td>Б) Енергија мировања</td></tr><tr><td>3. Дефект масе</td><td>В) Нуклеарна</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: Укупна енергија је збир енергије мировања и <span class="fbl"></span> енергије.</p></div>
+<div class="task"><p class="tp">6. Нацртај кутију у мировању са ознаком E0 унутар ње.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Израчунај E0 за m0 = 1 g. (c = 3·10^8 m/s)</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни везу између Сунца, нуклеарних електрана и дефекта масе.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Стара формула за кинетичку енергију је <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај график E (y) у односу на v (x).</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">PET дијагностика користи поништавање масе.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">У старијим уџбеницим се спомиње релативистичка маса m=γm0.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">При мировању, укупна енергија није нула већ E0.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">c^2 је мали број.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Кинетичка енергија расте без границе код c.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Класично Ek = mv²/2 је погрешно за све брзине.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. 1 g</td><td>А) Поништавање масе</td></tr><tr><td>2. PET</td><td>Б) 9·10^13 J</td></tr><tr><td>3. m = γm0</td><td>В) Стари уџбеник</td></tr></table></div>
+<div class="task"><p class="tp">13. График E (y) у односу на v/c (x).</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g12" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g12)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">v/c</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">E</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>v</th><th>E/E0</th></tr><tr><td>0.6c</td><td>1.25</td></tr><tr><td>0.8c</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Зашто класична Ek = mv²/2 није погрешна, већ само блажи случај?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Ако је Ek = 2 E0, нађи γ.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто c остаје недостижна за тела са масом (користи поjam укупне енергије)?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Објасни шта се дешава у PET дијагностици.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+<div class="pb"></div><h2>13. Веза релативистичке енергије и импулса</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">E² = (pc)² + (m0c²)². Хипотенуза је E, катете p·c и m0c². За фотон (без масе), m0=0, па важи E = p·c.</p></div>
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Допуни: E² = (pc)² + (<span class="fbl"></span>)².</p></div>
+<div class="task"><p class="tp">2. Т/Н:</p>
+<div class="tfr"><div class="cl">Веза изгледа као Питагорина теорема.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Фотон има масу мировања m0.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Светлост (фотон) има импулс.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Соларно једро ради на принципу притиска светлости.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Маса мировања m0c² је инваријанта.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">За фотон, m0c² = 0.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">3. Попуни:</p><table class="ft"><tr><th>m0</th><th>Формула</th></tr><tr><td>0 (фотон)</td><td>E = pc</td></tr><tr><td>>0 (протон)</td><td></td></tr></table></div>
+<div class="task"><p class="tp">4. Повежи:</p><table class="mt"><tr><td>1. Хипотенуза</td><td>А) p·c</td></tr><tr><td>2. Катета кретања</td><td>Б) m0c²</td></tr><tr><td>3. Катета мировања</td><td>В) E</td></tr></table></div>
+<div class="task"><p class="tp">5. Допуни: За фотон, формула се своди на E = <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">6. Нацртај правоугли троугао.</p><div class="da"></div></div>
+<h3>Средње тешки задаци</h3>
+<div class="task"><p class="tp">7. Фотон има E = 3·10^-19 J. Израчунај p. (c = 3·10^8 m/s)</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">8. Објасни принцып соларног једра.</p><div class="wl"><span class="l"></span></div></div>
+<div class="task"><p class="tp">9. Допуни: Честице без масе увек путују тачно брзином <span class="fbl"></span>.</p></div>
+<div class="task"><p class="tp">10. Нацртај спљоштени троугао (права линија).</p><div class="da"></div></div>
+<div class="task"><p class="tp">11. Т/Н:</p>
+<div class="tfr"><div class="cl">Притисак светлости обликује репове комета.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ласерско хлађење користи ударце импулса фотона.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">У сударима, маса се рачуна из мерења E и p.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">За тело у мировању, p=0.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">Ако m0=0, троугао постаје једнакокрак.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div>
+<div class="tfr"><div class="cl">E = p·c важи за протон.</div><div class="cr"><span class="tfg"><span class="cb"></span> Т <span class="tfo"><span class="cb"></span> Н</span></span></div></div></div>
+<div class="task"><p class="tp">12. Повежи:</p><table class="mt"><tr><td>1. p = E/c</td><td>А) Инваријанта</td></tr><tr><td>2. m0c²</td><td>Б) Импулс фотона</td></tr><tr><td>3. Фотон</td><td>В) Без масе</td></tr></table></div>
+<div class="task"><p class="tp">13. График E у односу на p.</p><div class="gc"><svg width="300" height="200" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g13" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee"/></pattern></defs><rect width="300" height="200" fill="url(#g13)"/><line x1="20" y1="180" x2="280" y2="180" stroke="#0052D4" stroke-width="1.5"/><line x1="20" y1="180" x2="20" y2="20" stroke="#0052D4" stroke-width="1.5"/><text x="270" y="195" font-size="10" fill="#9D50BB" font-family="Rajdhani">p</text><text x="5" y="30" font-size="10" fill="#9D50BB" font-family="Rajdhani">E</text></svg></div></div>
+<div class="task"><p class="tp">14. Попуни:</p><table class="ft"><tr><th>Честица</th><th>m0</th></tr><tr><td>Фотон</td><td>0</td></tr><tr><td>Протон</td><td></td></tr></table></div>
+<h3>Тешки (логички) задаци</h3>
+<div class="task"><p class="tp">15. Ако фотон нема масу, како може нешто да "гурне" (соларно једро)?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">16. Како се мери маса непознатих честица у сударима?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">17. Зашто честице без масе морају путовати тачно c?</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+<div class="task"><p class="tp">18. Из E² = (pc)² + (m0c²)² изведи E = m0c² за тело у мировању.</p><div class="wl"><span class="l"></span><span class="l"></span></div></div>
+
+</body>
+</html>
