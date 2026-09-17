@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<title>Радна свеска - МКТ гасова</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:1.5cm 2cm}body{font-family:Roboto,sans-serif;font-size:10pt;line-height:1.5;color:#1a1a2e;margin:0;padding:2cm;max-width:800px;margin:auto;background:linear-gradient(135deg,#f0f4ff,#e8eaf6,#f3e7f9)}p{text-indent:1.25cm;margin:0 0 .5em 0}.ni{text-indent:0}:root{--pd:#0f1626;--pb:#0052D4;--ac:#00C6FB;--ap:#9D50BB;--gbg:rgba(255,255,255,.75);--gbd:1px solid rgba(255,255,255,.8);--gsh:0 8px 32px rgba(15,22,38,.1)}h1{font-family:Orbitron;font-size:24pt;background:linear-gradient(90deg,var(--pb),var(--ap));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:.2cm;letter-spacing:2px}h2{font-family:Rajdhani;font-size:16pt;color:var(--pd);margin:0 0 .5cm 0;text-indent:0;border-bottom:2px solid;border-image:linear-gradient(90deg,var(--ac),var(--ap)) 1;padding-bottom:8px;display:flex;align-items:center}h2::before{content:'';width:10px;height:10px;background:var(--ac);border-radius:50%;margin-right:10px;box-shadow:0 0 8px var(--ac)}h3{font-family:Rajdhani;font-size:12pt;color:var(--pb);margin:.8cm 0 .3cm 0;text-indent:0;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center}h3::before{content:'';width:6px;height:6px;background:var(--ap);margin-right:8px;border-radius:2px;transform:rotate(45deg)}.pb{page-break-before:always}.box{background:var(--gbg);backdrop-filter:blur(8px);border:var(--gbd);box-shadow:var(--gsh);border-radius:10px;padding:15px;margin-bottom:1em;page-break-inside:avoid}.rb{border-left:4px solid var(--ac)}.fb{border-left:4px solid var(--ap);background:rgba(255,255,255,.9)}.bt{font-family:Orbitron;font-weight:500;display:block;margin-bottom:8px;font-size:11pt;text-transform:uppercase;letter-spacing:1px}.rb .bt{color:var(--pb)}.fb .bt{color:var(--ap)}.box p{text-indent:0;margin-bottom:.5em;font-size:10pt}.math{font-style:italic;font-family:Cambria Math,serif;background:rgba(157,80,187,.05);padding:1px 4px;border-radius:3px;border:1px solid rgba(157,80,187,.1)}sup,sub{font-size:.7em}.task{margin-bottom:1em;page-break-inside:avoid}.tp{font-weight:500;text-indent:0;margin-bottom:.5em}
+.fbl .b{border-bottom:1px solid var(--ap);display:inline-block;width:100px}.tfr-item{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:9pt}.tfr-item .t,.tfr-item .n{border:1px solid var(--ap);width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;font-family:Rajdhani;font-weight:bold;color:var(--ap);font-size:10pt}table.mt,table.ft{width:100%;border-collapse:collapse;margin-top:8px;font-size:9pt}table.mt td,table.ft td{border:1px solid #ccc;padding:6px;text-align:center}.mt td:first-child,.mt td:nth-child(3){font-weight:bold;color:var(--pb)}table.ft thead th{background:linear-gradient(90deg,var(--pb),var(--ap));color:#fff;padding:8px;font-family:Rajdhani;border:1px solid #ccc}.gc svg,.da .gb{width:300px;height:200px;background-color:#fff;background-image:linear-gradient(#e0e0e0 1px,transparent 1px),linear-gradient(90deg,#e0e0e0 1px,transparent 1px);background-size:20px 20px;border:1px solid #ccc;border-radius:5px}.da .gb{width:100%}.wl .lines div{border-bottom:1px dashed #999;height:28px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<h1>Молекулско-кинетичка теорија гасова</h1>
+
+<!-- Поглавље 1 -->
+<h2>1. Методи проучавања гасовитих тела</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Гас можемо описати на два начина: преко кретања молекула (молекулско-кинетички метод) или преко мерљивих величина као целине (феноменолошки метод). Термодинамички метод се заснива на принципима претварања енергије.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Параметри стања: <span class="math">p</span> (притисак), <span class="math">V</span> (запремина), <span class="math">T</span> (температура), <span class="math">U</span> (унутрашња енергија).<br>Молекулско-кинетички метод polази од молекула; феноменолошки и термодинамички гледају гас као целину.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т (тачно) или Н (нетачно) за следеће тврдње о методама:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Феноменолошки метод бави се структуром гаса.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Притисак је макроскопски параметар стања.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Термодинамика проучава претварање енергије.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекулско-кинетички метод прати сваки молекул.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Статистички метод користи средње вредности.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Температура није параметар стања.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни текст: Метод који се ослања на статистику и кретање молекула назива се <span class="b"></span> метод.</p></div>
+<div class="task"><p class="tp">3. Повежи појмове из леве колоне са описима у десној:</p>
+<table class="mt"><tr><td>1. Молекулско-кинетички</td><td></td><td>А. Мери макроскопске величине</td></tr><tr><td>2. Феноменолошки</td><td></td><td>Б. Проучава претварање енергије</td></tr><tr><td>3. Термодинамички</td><td></td><td>В. Полази од унутрашње структуре</td></tr><tr><td>4. Параметри стања</td><td></td><td>Г. p, V, T</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу карактеристика метода:</p>
+<table class="ft"><thead><tr><th>Метод</th><th>Шта посматра?</th></tr></thead><tbody><tr><td>Статистички</td><td></td></tr><tr><td>Феноменолошки</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Параметри стања су притисак, температура, запремина и <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Мерењем притиска у гуми користимо феноменолошки метод.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Брзина хемијских реакција зависи од кретања молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Термодинамички метод не важи за расхладне уређаје.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекулско-кинетички метод гледа гас "изнутра".</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Феноменолошки метод прати број судара молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Унутрашња енергија је параметар стања.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни на примеру аутомобилске гуме разлику између молекулско-кинетичког и феноменолошког приступа.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Гравитационо поље се проучава у оквиру <span class="b"></span> метода, док се судари молекула проучавају у оквиру <span class="b"></span> метода.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Феноменолошки метод се бави структуром гаса.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Термодинамика се заснива на два принципа.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Статистички метод прати сваки молекул посебно.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Манометар мери притисак на феноменолошки начин.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Кинетичка енергија молекула је макроскопска величина.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Модел идеалног гаса користи молекулско-кинетички метод.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график који приказује даљину цик-цак путање молекула у времену.</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи свакодневне примере са одговарајућим методом:</p>
+<table class="mt"><tr><td>1. Мерење притиска у гуми</td><td></td><td>А. Статистички</td></tr><tr><td>2. Брзина хемијске реакције</td><td></td><td>Б. Термодинамички</td></tr><tr><td>3. Прорачун мотора</td><td></td><td>В. Феноменолошки</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему судара два молекула у гасу.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу области примене:</p>
+<table class="ft"><thead><tr><th>Област</th><th>Метод</th></tr></thead><tbody><tr><td>Хемија</td><td></td></tr><tr><td>Расхладни уређаји</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Зашто је немогуће пратити сваки молекул гаса понаособ и шта се уместо тога ради?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Ако знамо да се притисак у гуми повећа при загревању, објасни ово помоћу оба метода (молекулско-кинетичког и феноменолошког).</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Термодинамика не може да објасни зашто притисак расте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Феноменолошки метод мери параметре без уласка у структуру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Статистички метод занемарује енергију молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Модел идеалног гаса је поједностављење стварности.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња вредност брзине се не може израчунати.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Термодинамика проучава претварање енергије при промени стања.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график расподеле судара молекула о зид суда у зависности од времена.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Наведи два примера из свакодневног живота где истовремено користимо оба приступа (и микроскопски и макроскопски) без тога да то примећујемо.</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 2 -->
+<h2>2. Кретање молекула гаса</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">У одсуству спољашње побуде, молекули гаса се крећу хаотично (свим правцима подједнако). Спољашња побуда (механичка или термодинамичка) уводи усмерено кретање. У изолованом систему укупна енергија се одржава.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Хаотично кретање: нема повлашћеног правца.<br>Побуда: механичка (елиса), термодинамичка (разлика температуре).<br>Изоловани систем: не размењује енергију ни материју са околином.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У хаотичном кретању постоји повлашћени правац.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Судари молекула мењају њихову брзину.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Вентилатор уноси механичку побуду.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У изолованом систему енергија опада.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Мирис се шири због хаотичног кретања.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Разлика температуре ствара термодинамичку побуду.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни: У одсуству побуде, кретање молекула гаса је <span class="b"></span>.</p></div>
+<div class="task"><p class="tp">3. Повежи врсте побуде са извором:</p>
+<table class="mt"><tr><td>1. Механичка</td><td></td><td>А. Вентилатор</td></tr><tr><td>2. Термодинамичка</td><td></td><td>Б. Грејно тело</td></tr><tr><td>3. Хаотично кретање</td><td></td><td>В. Мирис парфема</td></tr><tr><td>4. Усмерено кретање</td><td></td><td>Г. Ветар</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу карактеристика кретања:</p>
+<table class="ft"><thead><tr><th>Услов</th><th>Врста кретања</th></tr></thead><tbody><tr><td>Без побуде</td><td></td></tr><tr><td>Са побудом</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Систем који не размењује ништа са околином назива се <span class="b"></span> систем.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекули се сударају само са зидовима суда.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Сваки судар мења импулс молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Климатизација уклања побуду из ваздуха.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У хаотичном кретању су сви правци равноправни.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изолован sistem размењује само енергију.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У судару молекула енергија може да се промени.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task da"><p class="tp">1. Нацртај шему путање молекула од тачке А до тачке Б (цик-цак линија).</p><div class="gb"></div></div>
+<div class="task wl"><p class="tp">2. Објасни зашто мирис хране из кухиње стигне до собе и када нема промаје.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task"><p class="tp">3. Попуни табелу врста побуда и њихових ефеката:</p>
+<table class="ft"><thead><tr><th>Побуда</th><th>Ефекат на гас</th></tr></thead><tbody><tr><td>Механичка</td><td></td></tr><tr><td>Термодинамичка</td><td></td></tr></tbody></table></div>
+<div class="task tfr"><p class="tp">4. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Импулс молекула се при судару увек одржава.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Енергија при судару може да се пренесе.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Усмерено кретање значи да сви молекули иду истим правцем.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изолован систем не постоји у природи.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Хаотично кретање ствара притисак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Без побуде молекули мирују.</div></div>
+<div class="task gc"><p class="tp">5. Нацртај график који приказује број молекула у зависности од правца кретања (равномерна расподела).</p><svg></svg></div>
+<div class="task fbl"><p class="tp">6. Допуни: Вектори брзине већине молекула при побуди добијају приближно исти <span class="b"></span>.</p></div>
+<div class="task wl"><p class="tp">7. Шта ради вентилатор у просторији са становишта кретања молекула?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task"><p class="tp">8. Повежи појмове:</p>
+<table class="mt"><tr><td>1. Изолован систем</td><td></td><td>А. Елиса вентилатора</td></tr><tr><td>2. Хаотично кретање</td><td></td><td>Б. Одржање енергије</td></tr><tr><td>3. Механичка побуда</td><td></td><td>В. Равноправни правци</td></tr></table></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task gc"><p class="tp">1. Скицирај график који показује промену енергије молекула у изолованом систему током судара.</p><svg></svg></div>
+<div class="task wl"><p class="tp">2. Ако у затвореној просторији укључимо вентилатор, температура ваздуха се благно повећава. Објасни зашто, користећи појам енергије.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У изолованом систему укупан импулс се одржава.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Термодинамичка побуда увек смању температуру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Усмерено кретање нема хаотичну компоненту.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Судари молекула су еластични.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Без хаотичног кретања не би било дифузије.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изолован sistem размењује материју са околином.</div></div>
+<div class="task wl"><p class="tp">4. Замисли затворену кутију са гасом. Како доказати да је систем изолован пратећи само кретање молекула?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 3 -->
+<h2>3. Мерење брзине молекула гаса — Штернов оглед</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Ото Штерн је 1920. године мерио брзину молекула користећи два коаксијална цилиндра у ротацији. Атоми сребра су пролазили кроз прорез и таложили се на зиду. Размазани отисак је доказао да молекули имају распон брзина.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Средња квадратна брзина: <span class="math">v = √(3kT/m)</span><br>Штернова формула: <span class="math">v = l<sup>2</sup>ω / S</span><br>кде је <span class="math">l</span> пут, <span class="math">ω</span> угаона брзина, <span class="math">S</span> растојање отисака.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl"><p class="tp">1. Допуни: Штернов оглед је изведен помоћу два <span class="b"></span> цилиндра.</p></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Отисак при ротацији је оштар.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Штерн је добио Нобелову награду.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекули се крећу истом брзином.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Бржи атоми стигну пре него што се зид помери.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Угаона брзина се означава са ω.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња квадратна брзина зависи од температуре.</div></div>
+<div class="task"><p class="tp">3. Повежи елементе огледа са њиховом улогом:</p>
+<table class="mt"><tr><td>1. Волфрамска нит</td><td></td><td>А. Мери брзину</td></tr><tr><td>2. Прорез</td><td></td><td>Б. Испарава сребро</td></tr><tr><td>3. Ротација</td><td></td><td>В. Формира млаз</td></tr><tr><td>4. Отисак L'</td><td></td><td>Г. Размазан је</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу симбола из формуле:</p>
+<table class="ft"><thead><tr><th>Симбол</th><th>Значење</th></tr></thead><tbody><tr><td>v</td><td></td></tr><tr><td>ω</td><td></td></tr><tr><td>S</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Бржи атоми стигну пре него што се зид много помери, спорији касне и падну даље, па се уместо једне линије добија <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Штерн је користио атоме злата.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Кад цилиндри мирују отисак је тачно наспрам прореза.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња квадратна брзина расте са масом молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Размазани отисак је доказ распона брзина.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> l означава растојање између цилиндара.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Штернова формула рачуна брзину атома сребра.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто отисак L' при ротацији није оштар већ размазан?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Што је гас топлији и што су му молекули лакши, то се брже <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Угаона брзина ротације не утиче на отисак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Пут молекула од осе до зида је l.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Атом сребра има исту брзину као и други.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Вакуумско напаравање метала користи сличан принцип.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Штерн је измерио брзину реда 500 m/s.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Маса молекула у формули означава масу једног молекула.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график расподеле атома по брзинама на основу размазаног отиска.</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи величине са јединицама:</p>
+<table class="mt"><tr><td>1. k</td><td></td><td>А. m</td></tr><tr><td>2. T</td><td></td><td>Б. J/K</td></tr><tr><td>3. v</td><td></td><td>В. rad/s</td></tr><tr><td>4. ω</td><td></td><td>Г. K</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему два коаксијална цилиндра са осом и прорезом.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу вредности у огледу:</p>
+<table class="ft"><thead><tr><th>Услов</th><th>Изглед отиска</th></tr></thead><tbody><tr><td>Цилиндри мирују</td><td></td></tr><tr><td>Цилиндри ротирају</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Како се одређује брзина атома сребра помоћу растојања између отисака L и L'?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Шта би се догодило са отиском L' да сви молекули имају потпуно исту брзину? Образложи.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Лакши молекули се крећу спорије при истој температури.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња кинетичка енергија не зависи од масе молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекули ваздуха лече брже од путничког авиона.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Штернов оглед може да се изведе без ротације.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Размазани отисак постоји и лево и десно.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Болцманова константа је једнака 1,38×10<sup>-23</sup> J/K.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај померање отисака L и L' на унутрашњем зиду спољашњег цилиндра.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Објасни физички смисао скраћивања средње брзине и средњег броја судара при извођењу формуле за средњи слободни пут (у вези са Штерновим закључцима).</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 4 -->
+<h2>4. Расподела молекула гаса по брзинама</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Молекули гаса имају читав распон брзина описан Максвеловом расподелом. Врх криве је највероватнија брзина. Средња кинетичка енергија молекула зависи искључиво од температуре.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Функција расподеле: <span class="math">f(v) = Δn / (nΔv)</span><br>Највероватнија: <span class="math">v<sub>n</sub> = √(2kT/m)</span><br>Средња аритметичка: <span class="math">v<sub>s</sub> = √(8kT/πm)</span><br>Средња квадратна: <span class="math">v = √(3kT/m)</span><br>Енергија: <span class="math">E<sub>k</sub> = ½mv<sup>2</sup></span></p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task"><p class="tp">1. Повежи врсте брзина са формулама:</p>
+<table class="mt"><tr><td>1. Највероватнија</td><td></td><td>А. √(3kT/m)</td></tr><tr><td>2. Средња квадратна</td><td></td><td>Б. √(8kT/πm)</td></tr><tr><td>3. Средња аритметичка</td><td></td><td>В. √(2kT/m)</td></tr></table></div>
+<div class="task fbl"><p class="tp">2. Допуни: Врх криве Максвелове расподеле одговара <span class="b"></span> брзини.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> График расподеле има облик звона.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Сваки молекул има исту брзину.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Вреди однос v<sub>n</sub> < v<sub>s</sub> < v.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња кинетичка енергија расте са температуром.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Са порастом температуре врх се помера улево.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Крива је симетрична.</div></div>
+<div class="task"><p class="tp">4. Попуни табелу одлика брзина:</p>
+<table class="ft"><thead><tr><th>Брзина</th><th>Однос према маси</th></tr></thead><tbody><tr><td>v<sub>n</sub></td><td></td></tr><tr><td>v</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Средња кинетичка енергија молекула не зависи од врсте гаса, већ само од <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Лакши молекули се крећу брже.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Крива расподеле има дугачак реп према великим брзинама.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Највише молекула има нулту брзину.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Два гаса на истој температури имају исту средњу кинетичку енергију.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Врх расподеле се са загревањем спушта.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Расподела се "развлачи" при вишим температурама.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task gc"><p class="tp">1. Нацртај график Максвелове расподеле за две различите температуре.</p><svg></svg></div>
+<div class="task wl"><p class="tp">2. Зашто вода испарава и на собној температури, иако није достигла тачку кључања?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task"><p class="tp">3. Повежи утицаје на расподелу:</p>
+<table class="mt"><tr><td>1. Пораст температуре</td><td></td><td>А. Иста енергија</td></tr><tr><td>2. Пораст масе молекула</td><td></td><td>Б. Померање врха удесно</td></tr><tr><td>3. Различит гас, иста T</td><td></td><td>В. Смањење брзине</td></tr></table></div>
+<div class="task tfr"><p class="tp">4. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Реп расподеле значи да постоје врло брзи молекули.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња квадратна брзина се не користи за енергију.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Највероватнија брзина има највише молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Код хемијских реакција битан је удео најбржих молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> v<sub>s</sub> је увек већа од v<sub>n</sub>.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> v је најмања од три брзине.</div></div>
+<div class="task fbl"><p class="tp">5. Допуни: Ако упоредимо два гаса на истој температури, тежи молекули ће имати <span class="b"></span> брзину.</p></div>
+<div class="task da"><p class="tp">6. Нацртај шему репа расподеле који прелази активациону енергију.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу поређења брзина:</p>
+<table class="ft"><thead><tr><th>Својство</th><th>Вредност</th></tr></thead><tbody><tr><td>Однос v<sub>n</sub> : v<sub>s</sub> : v</td><td></td></tr><tr><td>Врх криве одговара</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Објасни физичко значење функције расподеле f(v).</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Изведи закључак да средња кинетичка енергија не зависи од врсте гаса, полазећи од формуле за средњу квадратну брзину и њене везе са температуром.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ширење спектралних линија у ласерима објашњава расподела брзина.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако удвостручимо температуру (у K), енергија се удвостручава.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Удвостручење масе полови брзину.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При апсолутно нули престаје свако кретање молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Максвелова расподела примењује се и на чврста тела.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Врху расподеле одговара најмањи број молекула.</div></div>
+<div class="task gc"><p class="tp">3. Нацртај график који приказује да је испод криве расподеле укупан број молекула (површина).</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Раздвајање изотопа се ослања на разлику у брзинама молекула. Објасни како расподела брзина то омогућава.</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 5 -->
+<h2>5. Дужина слободног пута молекула</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Молекул између два судара прелази средњи слободни пут (λ). Због судара путања је цик-цак, па је брзина дифузије много мања од брзине молекула. Средњи слободни пут не зависи од температуре, већ обрнуто сразмерно притиску.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Брзина дифузије: <span class="math">v<sub>nv</sub> = ΔL / Δt</span><br>Средњи слободни пут: <span class="math">λ = v<sub>s</sub> / Z</span><br>Број судара: <span class="math">Z = n<sub>0</sub> σ v<sub>s</sub></span><br>Израз: <span class="math">λ = 1 / (n<sub>0</sub> σ)</span></p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl"><p class="tp">1. Допуни: Просечна дужина пута молекула између два судара назива се <span class="b"></span> пут.</p></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средњи слободни пут зависи од температуре.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При нормалном притиску λ је реда 10<sup>-7</sup> m.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Брзина дифузије је једнака брзини молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ефикасни пресек се означава са σ.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> λ је обрнуто сразмеран притиску.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Пречник молекула је реда 10<sup>-10</sup> m.</div></div>
+<div class="task"><p class="tp">3. Повежи појмове са симболима:</p>
+<table class="mt"><tr><td>1. Средњи слободни пут</td><td></td><td>А. Z</td></tr><tr><td>2. Средњи број судара</td><td></td><td>Б. σ</td></tr><tr><td>3. Ефикасни пресек</td><td></td><td>В. λ</td></tr><tr><td>4. Концентрација</td><td></td><td>Г. n<sub>0</sub></td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу утицаја:</p>
+<table class="ft"><thead><tr><th>Величина расте</th><th>Ефекат на λ</th></tr></thead><tbody><tr><td>Притисак</td><td></td></tr><tr><td>Концентрација</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Стварно напредовање гаса кроз простор много је <span class="b"></span> од саме брзине молекула.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекул увек лети праволинијски од А до Б.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Што је гас ређи, слободни пут је дужи.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У вакууму слободни пут може бити већи од суда.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Већа гушћина значи мање судара.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> λ не зависи од температуре.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Мирис споро путује због цик-цак путање.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто мирис из кухиње не стигне до собе тренутно, кад молекули лете брзином стотина m/s?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Када се убаци формула за број судара у формулу за слободни пут, брзина v<sub>s</sub> се <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У електронским цевима притисак је висок.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> На великим висинама слободни пут је дугачак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ефикасни пресек је површина суда.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Због судара молекул скреће.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Што је брзина молекула већа, судара има мање.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Строжи облик формуле укључује фактор √2.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график зависности λ од притиска (обрнута сразмерност).</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи области примене са условима:</p>
+<table class="mt"><tr><td>1. Вакуумске цеви</td><td></td><td>А. дугачак λ</td></tr><tr><td>2. Атмосфера при тлу</td><td></td><td>Б. кратак λ</td></tr><tr><td>3. Висока атмосфера</td><td></td><td>В. λ већи од суда</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему праволинијског растојања и изломљене (цик-цак) путање молекула.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу параметара судара:</p>
+<table class="ft"><thead><tr><th>Параметар</th><th>Симбол</th></tr></thead><tbody><tr><td>Концентрација</td><td></td></tr><tr><td>Ефикасни пресек</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Зашто се са загревањем молекули крећу брже, али средњи слободни пут остаје исти?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни како се из мерења средњег слободног пута може проценити величина (пречник) самог молекула.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Што је притисак већи, молекули су ближи.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Брзина дифузије једнака је средњој брзини.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У формули Z = n<sub>0</sub>σv<sub>s</sub>, σ представља мета судара.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ефикасни пресек има димензију површине.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако се запремина смањи, λ расте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Нулте осцилације су последица судара.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график средњег броја судара у јединици времена у зависности од концентрације молекула.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. У ком случају се дешава да је средњи слободни пут већи од димензија суда и која је практична примена те појаве?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 6 -->
+<h2>6. Закон дифузије</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Дифузија је спонтано изједначавање концентрација због хаотичног кретања. Фиков закон каже да маса која дифундује зависи од разлике густина (градијента), површине и времена. Маса иде од веће ка мањој густини.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Фиков закон: <span class="math">Δm = -D (Δρ/Δx) S Δt</span><br>Коефицијент дифузије: <span class="math">D = ⅓ λ v<sub>s</sub></span><br>Градијент густине: <span class="math">Δρ/Δx</span></p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Дифузија захтева мешање споља.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Маса иде од мање ка већој густини.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Знак минус означава кретање низ градијент.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Коефицијент D зависи од слободног пута.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Самодифузија је дифузија једног гаса.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Кроз површину S иде Δm масе.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Спонтано изједначавање концентрација двеју супстанци назива се <span class="b"></span>.</p></div>
+<div class="task"><p class="tp">3. Повежи симболе са називима:</p>
+<table class="mt"><tr><td>1. D</td><td></td><td>А. Време</td></tr><tr><td>2. S</td><td></td><td>Б. Коефицијент дифузије</td></tr><tr><td>3. Δt</td><td></td><td>В. Површина</td></tr><tr><td>4. Δρ/Δx</td><td></td><td>Г. Градијент густине</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу фактора:</p>
+<table class="ft"><thead><tr><th>Фактор расте</th><th>Утицај на Δm</th></tr></thead><tbody><tr><td>Разлика густина</td><td></td></tr><tr><td>Време</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Кроз површину S могу да прођу само молекули који су јој довољно близу, на растојању које не прелази <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Дифузија се користи при изради чипова (допирање).</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У плућима нема дифузије.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Шећер се сам раствори у чају.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Коефицијент D не зависи од брзине молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Шестина молекула иде дуж једне осе у једном смеру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Страна са вишком се празни.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни физички смисао предзнака минус у Фиковом закону.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: У слоју лево од површине S има молекула који путују удесно, а десно оних који путују <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Нето број молекула је разлика оних са леве и десне стране.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Маса Δm је једнака m<sub>0</sub>/Δn.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Већа површина значи мање дифундоване масе.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Разлика густина је једнака разлици концентрација помноженој масом.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> D = 1/3 λ v<sub>s</sub>.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Када се густине изједначе, дифузија престаје.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график опадања разлике концентрација у времену током дифузије.</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи процесе са врстом дифузије:</p>
+<table class="mt"><tr><td>1. Чај у води</td><td></td><td>А. Кроз мембрану</td></tr><tr><td>2. Допирање силицијума</td><td></td><td>Б. Самодифузија / мешање</td></tr><tr><td>3. Размена O2 у плућима</td><td></td><td>В. Уношење примеса</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему суда са површином S и молекулима лево (више) и десно (мање).</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу јединица:</p>
+<table class="ft"><thead><tr><th>Величина</th><th>Јединица</th></tr></thead><tbody><tr><td>Густина (ρ)</td><td></td></tr><tr><td>Коефицијент D</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Како се од броја молекула који пређу површину долази до израза за масу Δm?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Полазећи од нето тока молекула кроз површину, изведи закључак како разлика концентрација утиче на масу.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Фиков закон важи само за гасове.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Дифузија је последица хаотичног кретања.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако је Δρ = 0, нема нето дифузије.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Коефицијент D расте са порастом слободног пута.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Самодифузија захтева два различита гаса.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Нето ток иде ка страни са мањом густином.</div></div>
+<div class="task gc"><p class="tp">3. Нацртај график линеарне промене густине дуж суда (Δρ/Δx).</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Објасни зашто у плућима размена гасова иде само у једном смеру (крв - алвеоле) на основу градијента густине.</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 7 -->
+<h2>7. Модел идеалног гаса</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Идеалан гас је поједностављен модел где су молекули тачкасте куглице занемарљиве запремине, судари су еластични, а узајамно деловање између судара се занемарује. Реалан гас му се приближава при ниском притиску и високој температури.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Параметри стања: <span class="math">p</span> (притисак), <span class="math">V</span> (запремина), <span class="math">T</span> (температура).<br>Узевши у обзир да су судари еластични, важи одржање импулса и енергије.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl"><p class="tp">1. Допуни: Гас је углавном <span class="b"></span> простор.</p></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У идеалном гасу молекули привлаче једни друге.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Судари су еластични.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина молекула је занемарљива.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При високом притиску гас је идеалан.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Одржава се кинетичка енергија при судару.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекули су ситне куглице.</div></div>
+<div class="task"><p class="tp">3. Повежи карактеристике са моделима:</p>
+<table class="mt"><tr><td>1. Еластични судари</td><td></td><td>А. Идеалан гас</td></tr><tr><td>2. Силе привлачења</td><td></td><td>Б. Реалан гас</td></tr><tr><td>3. Запремина молекула занемарљива</td><td></td><td>В. Идеалан гас</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу услова:</p>
+<table class="ft"><thead><tr><th>Услов</th><th>Понашање гаса</th></tr></thead><tbody><tr><td>Висок притисак</td><td></td></tr><tr><td>Низак притисак</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Стање одређене количине гаса описују параметри: запремина, притисак и <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекулске силе у гасу су јаке.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Реалан гас се понаша као идеалан кад је разређен.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Модел не важи за превисоке притиске.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ваздух у гуми се понаша отприлике као идеалан гас.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Кретање молекула је хаотично.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекули при судару губе енергију.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто се узајамно деловање молекула у гасу може занемарити у овом моделу?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Молекулске силе нагло опадају са <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Параметри стања су међусобно независни.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Еластични судар значи да се енергија одржава.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина суда је једнака збиру запремина молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Модел идеалног гаса се користи у пнеуматици.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Све гасне законе хемија изводи из овог модела.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При ниској температури гас одступа од идеалног.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график који приказује судар две куглице (векторе пре и после судара).</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи особине са услова:</p>
+<table class="mt"><tr><td>1. Разређеност</td><td></td><td>А. Ближе идеалном гасу</td></tr><tr><td>2. Висок притисак</td><td></td><td>Б. Одступање од идеалног</td></tr><tr><td>3. Еластичан судар</td><td></td><td>В. Основна претпоставка модела</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему суда са молекулима као тачкама без међусобног деловања.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу важења модела:</p>
+<table class="ft"><thead><tr><th>Гас је</th><th>Модел важи</th></tr></thead><tbody><tr><td>Разређен</td><td></td></tr><tr><td>Сабијен</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Шта значи да су судари еластични и који закони важе при њима?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто се реални гасови при врло ниским температурама не понашају као идеални, и шта се дешава са молекулима?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Модел идеалног гаса се не поправља никад.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња растојања међу молекулима морају бити велика.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Код идеалног гаса притисак не постоји.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Импулс се при сударима мења.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекули се крећу у свим правцима.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина молекула идеалног гаса је нула.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график односа реалног и идеалног гаса при промени притиска.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Наведи три ситуације из технике где се мора одустати од модела идеалног гаса.</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 8 -->
+<h2>8. Притисак гаса</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Притисак гаса је последица удара молекула о зид. Сваки удар предаје импулс, а њихов збир по јединици површине ствара макроскопски притисак. Основна једначина везује притисак са концентрацијом и средњом кинетичком енергијом.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Дефиниција: <span class="math">p = F / S</span><br>Основна једначина МКТ: <span class="math">p = ⅓ n<sub>0</sub> m v<sup>2</sup> = ⅔ n<sub>0</sub> E<sub>k</sub></span><br>Веза са енергијом: <span class="math">pV = ⅔ n E<sub>k</sub></span></p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Притисак је векторска величина.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Гурање потиче од удара молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Јединица за притисак је Pa (Паскал).</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При судару о зид молекул мења импулс.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Промена импулса у времену једнака је сили.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Више молекула значи мањи притисак.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Притисак је скаларна величина једнака односу нормалне компоненте силе и <span class="b"></span>.</p></div>
+<div class="task"><p class="tp">3. Повежи величине са њиховим значењем:</p>
+<table class="mt"><tr><td>1. n<sub>0</sub></td><td></td><td>А. Средња кинетичка енергија</td></tr><tr><td>2. E<sub>k</sub></td><td></td><td>Б. Концентрација</td></tr><tr><td>3. p</td><td></td><td>В. Притисак</td></tr><tr><td>4. S</td><td></td><td>Г. Површина</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу јединица:</p>
+<table class="ft"><thead><tr><th>Величина</th><th>Јединица</th></tr></thead><tbody><tr><td>p</td><td></td></tr><tr><td>F</td><td></td></tr><tr><td>E<sub>k</sub></td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: При еластичном удару о зид молекул задржи брзину по величини, али јој промени <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Средња вредност квадрата брзине по оси је 1/3 укупног квадрата.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Промена импулса при удару је 2mv<sub>x</sub>.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Крвни притисак нема везе са овим моделом.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV је константно ако је T константно.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Притисак расте ако молекули брже ударају.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У формули p=2/3 n<sub>0</sub>E<sub>k</sub>, E<sub>k</sub> је енергија свих молекула.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни како хаотично кретање молекула ствара равномерни притисак на зидове суда.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Ако се температура не мења, средња кинетичка енергија остаје <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Гума се при вожњи загрева па притисак расте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Политика константне запремине значи пада притиска.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Манометри мере силу на клип.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Концентрација n<sub>0</sub> је број молекула по запремини.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Квадрат брзине по x-оси је 1/4 укупног.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Удар молекула о зид је еластичан.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график линеарне зависности притиска p од концентрације n<sub>0</sub> (за исту температуру).</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи свакодневне примере:</p>
+<table class="mt"><tr><td>1. Загревање гуме</td><td></td><td>А. Опадање притиска</td></tr><tr><td>2. Барометар</td><td></td><td>Б. Раст притиска</td></tr><tr><td>3. Клип компресора</td><td></td><td>В. Мерење ваздушног притиска</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему разлагања вектора брзине молекула на компоненте при удару о зид.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу формула:</p>
+<table class="ft"><thead><tr><th>Величина</th><th>Формула</th></tr></thead><tbody><tr><td>Притисак дефиниција</td><td></td></tr><tr><td>Основна једначина</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Изведи закључак како се из основне једначине добија Бојл-Мариотов закон (pV=const).</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни зашто је приликом извођења формуле узето да је v<sub>x</sub><sup>2</sup> = 1/3 v<sup>2</sup>.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Промена импулса молекула при удару је mv<sub>x</sub>.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Укупна сила на зид је збир импулса свих удара у секунди.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако запремина расте, притисак мора расти.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Модел важи под претпоставком да је суд коцка.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Крвни притисак се мери у Паскалима.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Е<sub>k</sub> је сразмерно температури.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график pV = const (хипербола) на основу изведеног закона.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Шта би се десило са притиском у идеалном гасу ако би нагло половина молекула изгубила своју кинетичку енергију?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 9 -->
+<h2>9. Бојл-Мариотов закон</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">На сталној температури, производ притиска и запремине одређене количине идеалног гаса има сталну вредност (изотермски процес). Крива у p-V дијаграму је хипербола (изотерма).</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Закон: <span class="math">pV = const</span> (за T = const)<br>Изотерма: хипербола у p-V дијаграму. Вишим температурама одговарају више изотерме.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl"><p class="tp">1. Допуни: Процеси који се одвијају на сталној температури зову се <span class="b"></span> процеси.</p></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако запремину смањимо, притисак расте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изотерма је облика хиперболе.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Вишој температури одговара нижа изотерма.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV = const важи само за T=const.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Сабијањем расте концентрација молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У шприцу са затвореним врхом притисак опада при сабијању.</div></div>
+<div class="task"><p class="tp">3. Повежи промене:</p>
+<table class="mt"><tr><td>1. Запремина на пола</td><td></td><td>А. Исти притисак</td></tr><tr><td>2. Притисак дупло већи</td><td></td><td>Б. Запремина на пола</td></tr><tr><td>3. Стална температура</td><td></td><td>В. Притисак дупло</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу стања:</p>
+<table class="ft"><thead><tr><th>Стање</th><th>p × V</th></tr></thead><tbody><tr><td>Пре сабијања</td><td></td></tr><tr><td>После сабијања</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Бојл-Мариотов закон утолико боље описује реалне гасове уколико су на нижем притиску и <span class="b"></span> температури.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Код удисаја запремина плућа се смањује.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Разлика притиска уноси ваздух у плућа.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Код клипних пумпи притисак и запремина су повезани овим законом.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изотерма је права линија.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ронилац осећа промену притиска на већој дубини.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Збир p+V је константан.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто при сабијању гаса у шприцу притисак расте? Објасни на нивоу молекула.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Крива која у p-V дијаграму представља изотермски процес назива се <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако се запремина увећа 3 пута, притисак опада 3 пута.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Закон не важи ако temperatura расте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Количина гаса се не сме мењати.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изотерма при вишој температури лежи испод оне при нижој.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV производ је константан.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При сабијању расте унутрашња енергија.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај p-V дијаграм са две изотерме (T1 < T2).</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи уређај са законом:</p>
+<table class="mt"><tr><td>1. Шприц</td><td></td><td>А. Бојл-Мариотов закон</td></tr><tr><td>2. Компресор</td><td></td><td>Б. Промена p и V</td></tr><tr><td>3. Пнеуматика</td><td></td><td>В. Сабијање ваздуха</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему шприца у стању пре и после сабијања ваздуха.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу односа:</p>
+<table class="ft"><thead><tr><th>V (запремина)</th><th>p (притисак)</th></tr></thead><tbody><tr><td>1 L</td><td>2 atm</td></tr><tr><td>2 L</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Објасни процес удисаја помоћу промене запремине плућа и притиска.</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто закон pV=const не важи ако током сабијања температура гаса порасте? Шта тада треба урадити?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изотермски процес не захтева размену топлоте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Да би T остало исто при сабијању, гас мора предати топлоту.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Крива p-V је хипербола.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Вредност const зависи од количине гаса.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изотерма за 100K лежи изнад изотерме за 50K.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При V→0, p→∞ по закону.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график притиска у функцији реципрочне запремине (1/V).</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Ваздух у затвореној пластичној боци се охлади у фрижидеру. Да ли ће притисак остати исти? Зашто?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 10 -->
+<h2>10. Температура</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Температура мери средњу кинетичку енергију кретања молекула. Топлота увек иде са тела више на тело ниже температуре. Апсолутна нула (0 K) је најнижа могућа температура (−273,15 °C), недостижна у пракси.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Веза скала: <span class="math">T = 273,15 + t</span><br>Енергија и температура: <span class="math">E<sub>k</sub> = (3/2) kT</span><br>Топлотна равнотежа: нема размене топлоте.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Топлота увек иде са хладнијег на топлије тело.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Температура мери средњу кинетичку енергију.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Апсолутна нула је 0 °C.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Пораст за 1 °C је пораст за 1 K.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> 0 K одговара -273,15 °C.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Топлије тело има брже молекуле.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Тело више температуре предаје унутрашњу енергију телу <span class="b"></span> температуре.</p></div>
+<div class="task"><p class="tp">3. Повежи температурне скале:</p>
+<table class="mt"><tr><td>1. 0 K</td><td></td><td>А. 100 °C</td></tr><tr><td>2. 0 °C</td><td></td><td>Б. 273,15 K</td></tr><tr><td>3. 373,15 K</td><td></td><td>В. -273,15 °C</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу претварања:</p>
+<table class="ft"><thead><tr><th>t (°C)</th><th>T (K)</th></tr></thead><tbody><tr><td>27</td><td></td></tr><tr><td>-50</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Температура је физичка величина која одређује смер <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Апсолутну нулу је могуће достићи.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Близу апсолутне нуле јавља се суперпроводљивост.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> МР скенери захтевају врло ниске температуре.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Квантна својства су изражена при високим температурама.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Нулте осцилације постоје на 0 K.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Двоструко топлији гас има двоструко енергичније молекуле.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Шта се дешава са гасом кад му се температура приближава апсолутној нули?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Кажемо да су тела у топлотној равнотежи ако нема <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Келвинова скала почиње од апсолутне нуле.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Целзијусова скала нема негативне вредности.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ек = 3/2 kT важи за идеалан гас.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При 0 K молекули мирују потпуно.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Мерењем притиска можемо мерити температуру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Топлота је исто што и температура.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график средње кинетичке енергије у зависности од апсолутне температуре.</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи феномене са температуром:</p>
+<table class="mt"><tr><td>1. Суперпроводљивост</td><td></td><td>А. Висока температура</td></tr><tr><td>2. Брже хемијске реакције</td><td></td><td>Б. Близу 0 K</td></tr><tr><td>3. Испаравање</td><td></td><td>В. Врло високе брзине молекула</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему размене топлоте између два тела различитих температура.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу енергије:</p>
+<table class="ft"><thead><tr><th>T (K)</th><th>E<sub>k</sub> (релативно)</th></tr></thead><tbody><tr><td>100</td><td></td></tr><tr><td>300</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Зашто апсолутну нулу схватамо као температуру најмање могуће унутрашње енергије?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто се каже да је нула енергија на апсолутној нули "најнижи могући квантни ниво" а не потпуно одсуство кретања?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> 0 K одговарара потпуном одсуству енергије.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Топлота може да тече са хладног на топло у фрижидеру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Модел идеалног гаса важи близу 0 K.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ек је сразмерно T.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Топлотна равнотежа значи да су T1 и T2 једнаки.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Молекули на 0 K и даље осцилују.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график зависности притиска од температуре у Целзијусовим степенима (права линија која сеце x-осу на -273,15).</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Ако два различита гаса имају исту температуру, шта је исто за њихове молекуле?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 11 -->
+<h2>11. Једначина стања идеалног гаса</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Сва три параметра стања (p, V, T) повезана су једном једначином. Из ње као посебне случајеве следе сви гасни закони (Бојл-Мариотов, Шарлов, Геј-Лисаков).</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Притисак и температура: <span class="math">p = n<sub>0</sub> kT</span><br>Једначина стања: <span class="math">pV = nkT</span> (или <span class="math">pV/T = const</span>)<br>кде је n број молекула, k Болцманова константа.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl"><p class="tp">1. Допуни: Сва три параметра стања повезана су једначином <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV сразмерно је температури.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Болцманова константа је 1,38×10<sup>-23</sup> J/K.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Број молекула не утиче на притисак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Концентрација је n/V.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Из ове једначине следе сви гасни закони.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Балон на сунцу се шири због пораста T.</div></div>
+<div class="task"><p class="tp">3. Повежи законе са условима:</p>
+<table class="mt"><tr><td>1. Бојл-Мариотов</td><td></td><td>А. p = const</td></tr><tr><td>2. Шарлов</td><td></td><td>Б. V = const</td></tr><tr><td>3. Геј-Лисаков</td><td></td><td>В. T = const</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу параметара:</p>
+<table class="ft"><thead><tr><th>Параметар</th><th>Симбол</th></tr></thead><tbody><tr><td>Притисак</td><td></td></tr><tr><td>Запремина</td><td></td></tr><tr><td>Температура</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: За сталну количину гаса производ притиска и запремине сразмеран је <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Затворена конзерва не сме у ватру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> p = n<sub>0</sub>kT значи да притисак зависи само од T.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Једначина стања објашњава рад резервоара под притиском.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV/T је константно за сталну количину.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Метеорологија не користи ову једначину.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> n је број молекула.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни како из pV = nkT добијамо Бојл-Мариотов закон.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Притисак идеалног гаса сразмеран је апсолутној температури и <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV=nkT важи само на 0 °C.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако T расте и V је константно, p расте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако T расте и p је константно, V расте.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Хемијске реакције се не ослањају на ову формулу.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина се мери у m<sup>3</sup>.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако се молекули удвоструче, p се удвостручи (уз исти V и T).</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график p у функцији од T при сталној запремини.</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи величине:</p>
+<table class="mt"><tr><td>1. p</td><td></td><td>А. m<sup>3</sup></td></tr><tr><td>2. V</td><td></td><td>Б. K</td></tr><tr><td>3. T</td><td></td><td>В. Pa</td></tr><tr><td>4. k</td><td></td><td>Г. J/K</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему балона који се шири при загревању на сунцу.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу стања:</p>
+<table class="ft"><thead><tr><th>T (K)</th><th>p (Pa)</th><th>V (m<sup>3</sup>)</th></tr></thead><tbody><tr><td>300</td><td>100</td><td>1</td></tr><tr><td>600</td><td>100</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Зашто се сматра да је једначина стања "круна целе приче" о гасовима?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Ако број молекула гаса у суду преполовимо, а истовремено температуру удвостручимо, шта ће се десити са притиском?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Једначина pV=nkT изведена је из претпоставке о хаотичном кретању.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV/T = nk је константа за сталну масу.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При 0 K притисак је нула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Формула не важи за хемијске прорачуне запремине.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Увек мора бити T у Целзијусима.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Убацивањем p=n<sub>0</sub>kT у pV добијамо општу једначину.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај 3D дијаграм симултане зависности p, V и T.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Наведи пример из свакодневног живота где константно притисак не важи, па се једначина мора прилагођавати.</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 12 -->
+<h2>12. Шарлов закон. Изохорски процес</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Изохорски процес одвија се при сталној запремини. Шарлов закон каже да је притисак сразмеран апсолутној температури. Све праве у p-t дијаграму секу осу у тачки -273,15 °C.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Закон: <span class="math">p/p<sub>0</sub> = T/T<sub>0</sub></span> (V = const)<br>Линеарни облик: <span class="math">p = p<sub>0</sub>(1 + γt)</span><br>Коефицијент: <span class="math">γ = 1/273,15 °C<sup>-1</sup></span></p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изохорски процес је при сталном притиску.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Шарлов закон веже притисак и температуру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> γ је температурни коефицијент притиска.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Загревање гаса у затвореном суду повећава притисак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Праве у p-t дијаграму сецу осу на -273,15 °C.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина се не мења.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Процес при сталној запремини назива се <span class="b"></span> процес.</p></div>
+<div class="task"><p class="tp">3. Повежи симболе са називима:</p>
+<table class="mt"><tr><td>1. γ</td><td></td><td>А. Коначни притисак</td></tr><tr><td>2. p<sub>0</sub></td><td></td><td>Б. Температурни коефицијент</td></tr><tr><td>3. p</td><td></td><td>В. Почетни притисак</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу вредности:</p>
+<table class="ft"><thead><tr><th>t (°C)</th><th>T (K)</th></tr></thead><tbody><tr><td>0</td><td></td></tr><tr><td>-273,15</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Лименка спреја не сме се бацати у ватру јер ће притисак нагло <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> p = p<sub>0</sub>(1 + γt) линеаран је облик.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Коефицијент γ има вредност 1/100.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Гејзири раде на принципу загревања гаса у шупљинама.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Безбедносни вентили штите од пораста притиска.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Шарлов закон не предвиђа апсолутну нулу.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При 0 °C, притисак је p<sub>0</sub>.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто све праве у p-t дијаграму секу температурну осу у истој тачки?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Ако се запремина не мења, притисак сталне количине гаса сразмеран је <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Када t пада испод 0, притисак опада.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Линеарни облик не важи за негативне температуре у K.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Шарлов закон се изводи из pV=nkT када је V константно.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Коефицијент γ једнак је 1/273,15.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Апсолутна нула је наговештај из овог закона.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Притисак при удвостручивању T се удвостручује.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај p-T дијаграм (права линија кроз координатни почетак).</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи уређаје са процесом:</p>
+<table class="mt"><tr><td>1. Бојлер</td><td></td><td>А. Изохорско загревање</td></tr><tr><td>2. Лименка у ватри</td><td></td><td>Б. Пораст притиска</td></tr><tr><td>3. Безбедносни вентил</td><td></td><td>В. Заштита од експлозије</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему затвореног суда у коме се загрева гас (V=const).</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу односа:</p>
+<table class="ft"><thead><tr><th>T (K)</th><th>p ( atm )</th></tr></thead><tbody><tr><td>300</td><td>1</td></tr><tr><td>600</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Објасни разлику између облика p/p<sub>0</sub>=T/T<sub>0</sub> и p=p<sub>0</sub>(1+γt).</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто линеарни облик p = p<sub>0</sub>(1+γt) губи смисао на врло ниским температурама?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У изохорском процесу запремина суда мора бити чврста.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако температура опадне на 0 K, притисак би био 0.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> γ зависи од врсте гаса.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Шарлов закон не важи за течности.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Праве за различите запремине паралелне су у p-t дијаграму.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Коефицијент γ једнак је температурном коефицијенту ширења α.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график линеарне зависности p у функцији од t (у °C) и продужи га до пресека са x-осом.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Ако празну лименку спреја загревамо, у једном тренутку ће пући. Зашто, ако у њој нема течности?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 13 -->
+<h2>13. Гасни термометар</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Гасни термометар мери температуру преко притиска гаса при сталној запремини, ослањајући се на Шарлов закон. Састоји се од балона са гасом и живиног манометра.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Веза притиска: <span class="math">p = p<sub>0</sub> + p<sub>h</sub></span><br>p<sub>h</sub> је притисак очитан са разлике висина нивоа живе у манометру.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl"><p class="tp">1. Допуни: Гасни термометар мери температуру преко <span class="b"></span> гаса при сталној запремини.</p></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Манометар је савијена цев.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ниво живе се мора померати слева.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Користи Шарлов закон.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Разлика висина живе даје p<sub>h</sub>.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина гаса се мора држати сталном.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Служи за баждарење других термометара.</div></div>
+<div class="task"><p class="tp">3. Повежи делове термометра са улогом:</p>
+<table class="mt"><tr><td>1. Балон</td><td></td><td>А. Мери разлику притиска</td></tr><tr><td>2. Живин манометар</td><td></td><td>Б. Садржи гас</td></tr><tr><td>3. Покретни резервоар</td><td></td><td>В. Одржава V=const</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу формула:</p>
+<table class="ft"><thead><tr><th>Симбол</th><th>Значење</th></tr></thead><tbody><tr><td>p</td><td></td></tr><tr><td>p<sub>h</sub></td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Мерење температуре се своди на мерење <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Гасни термометар ослања се на ширење течности.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Веома је тачан.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Користи се као еталон.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Леви крак манометра спојен је са балоном.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Десни крак је затворен.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ниво на левој страни држи се непомичним.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто је неопходно да се ниво живе на левој страни држи непомичним на нултој ознаки?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Коначни притисак рачуна се као збир почетног притиска и притиска <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако температура расте, гас у балону шири се и гура живу.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Спуштањем резервоара десни ниво опада.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Очитавање температуре је директно.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Разлика висина се мери у mm.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Баждарење значи проверу тачности.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У балону је вакуум.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график зависности висине живе h од температуре гаса.</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи кораке мерења:</p>
+<table class="mt"><tr><td>1. Балон се загрева</td><td></td><td>А. Очитава се h</td></tr><tr><td>2. Гас шири</td><td></td><td>Б. Пораст притиска</td></tr><tr><td>3. Резервоар се дигне</td><td></td><td>В. Враћа ниво на 0</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему живиног манометра са два крака.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу веза:</p>
+<table class="ft"><thead><tr><th>Промена</th><th>Ефекат на леви ниво</th></tr></thead><tbody><tr><td>Пораст T</td><td></td></tr><tr><td>Пораст десног нивоа</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Зашто се за прецизно одређивање температурне скале користи баш гасни термометар?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Ако би гас у балону био неидеалан, како би то утицало на тачност гасног термометра?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Гасни термометар не може да ради на температурама где жива мрзне.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> p<sub>h</sub> зависи од густине живе.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Тачност мерења је већа код обичних живиних термометара.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Стална запремина је кључни услов.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> p = p<sub>0</sub> + p<sub>h</sub> је тачно само ако је лева рука на нули.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Манометар мери у Паскалима директно.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график p = p<sub>0</sub> + p<sub>h</sub> и објасни шта представља пресек са y-осу.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Како се помоћу гасног термометара могу дефинисати температурне тачке (нпр. тачка топљења леда)?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 14 -->
+<h2>14. Геј-Лисаков закон. Изобарски процес</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Изобарски процес одвија се при сталном притиску. Геј-Лисаков закон каже да је запремина сразмерна апсолутној температури. Топлао ваздух се шири, постаје ређи и диже се.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Закон: <span class="math">V/V<sub>0</sub> = T/T<sub>0</sub></span> (p = const)<br>Линеарни облик: <span class="math">V = V<sub>0</sub>(1 + αt)</span><br>Коефицијент: <span class="math">α = 1/273,15 °C<sup>-1</sup></span></p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изобарски процес има сталан притисак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина расте са температуром.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Тесто нараста у рерни због тога.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> α је термички коефицијент ширења.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Праве у V-t дијаграму секу осу на 0 °C.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Балон на топао ваздух лети на овом принципу.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни: При сталном притиску запремина гаса сразмерна је <span class="b"></span>.</p></div>
+<div class="task"><p class="tp">3. Повежи појмове:</p>
+<table class="mt"><tr><td>1. Изобарски</td><td></td><td>А. Промена V</td></tr><tr><td>2. α</td><td></td><td>Б. p = const</td></tr><tr><td>3. V/V<sub>0</sub> = T/T<sub>0</sub></td><td></td><td>В. Коефицијент ширења</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу:</p>
+<table class="ft"><thead><tr><th>T (K)</th><th>V (релативно)</th></tr></thead><tbody><tr><td>300</td><td>1</td></tr><tr><td>600</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Топао ваздух заузме више простора, постане <span class="b"></span> и лакши.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Сушаре користе промену запремине и температуре.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Вредност α је иста за све гасове.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Геј-Лисаков закон везује притисак и температуру.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Праве у V-t дијаграму секу осу на -273,15 °C.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Дизање топлог ваздуха назива се термика.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> В=В<sub>0</sub>(1+αt) је облик у Целзијусима.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто балон пуњен топлим ваздухом лети?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Вишим притисцима у V-T дијаграму одговарају <span class="b"></span> праве.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У V-T дијаграму (T у K) зависност је права линија кроз координатни почетак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> При загревању гас се скупља.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Коефицијент α једнак је γ код Шарловог закона.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако притисак расте, то више није изобарски процес.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Запремина гаса у затвореној тегли се не мења.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Тесто нараста због ширења гасова при печењу.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај V-T дијаграм за два различита притиска (p1 > p2).</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи примере са процесима:</p>
+<table class="mt"><tr><td>1. Тесто у рерни</td><td></td><td>А. Изохорски</td></tr><tr><td>2. Лименка у ватри</td><td></td><td>Б. Изобарски</td></tr><tr><td>3. Балон на ваздух</td><td></td><td>В. Изобарски</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему клипа који се слободно помера (p=const) при загревању.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу:</p>
+<table class="ft"><thead><tr><th>t (°C)</th><th>V (у односу на V<sub>0</sub>)</th></tr></thead><tbody><tr><td>0</td><td></td></tr><tr><td>273,15</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Зашто се каже да топао ваздух постане ређи приликом изобарског ширења?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни зашто праве у V-t дијаграму (t у °C) за различите притиске секу температурну осу у истој тачки.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У V = V<sub>0</sub>(1+αt), α не зависи од врсте гаса.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако запремина порасте 2 пута, T (у K) је порасло 2 пута.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Геј-Лисаков закон се не може извести из једначине стања.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Изобарски процес захтева отворен суд (или покретан клип).</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Густине ваздуха у балону остаје иста при загревању.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако T падне на 0 K, V би био 0.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график V у функцији од t (у °C) за p=const и обележи пресек са x-осом.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Шта би се десило са балоном на топао ваздух ако би температура споља била виша него у балону? Зашто?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 15 -->
+<h2>15. Авогадров закон и Клапејронова једначина</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">Авогадров закон каже да једнаке запремине различитих гасова под истим условима садрже једнак број молекула. Клапејронова једначина уводи моларну масу и универзалну гасну константу R.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Лошмитов број: <span class="math">N<sub>L</sub> = p<sub>0</sub> / (kT<sub>0</sub>) = 2,69×10<sup>25</sup> m<sup>-3</sup></span><br>Клапејронова једначина: <span class="math">pV = (m/M<sub>m</sub>) RT</span><br>Универзална константа: <span class="math">R = 8,314 J/(mol K)</span></p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl"><p class="tp">1. Допуни: Једнаке запремине различитих гасова под истим условима садрже <span class="b"></span> број молекула.</p></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Лошмитов број важи за нормалне услове.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> R је Болцманова константа.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Моларна маса се означава са M<sub>m</sub>.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Један мол заузима 22,4 L при нормалним условима.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Авогадров закон важи за све услове.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Клапејронова једначина користи молове.</div></div>
+<div class="task"><p class="tp">3. Повежи називе:</p>
+<table class="mt"><tr><td>1. Лошмитов број</td><td></td><td>А. Број честица у молу</td></tr><tr><td>2. Авогадров број</td><td></td><td>Б. J/(molK)</td></tr><tr><td>3. R</td><td></td><td>В. Молекулe у 1 m<sup>3</sup></td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу вредности:</p>
+<table class="ft"><thead><tr><th>Величина</th><th>Вредност</th></tr></thead><tbody><tr><td>R</td><td></td></tr><tr><td>N<sub>L</sub> (ред величине)</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: Маса једног мола назива се <span class="b"></span> маса.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Нормални услови су 0 °C и 101325 Pa.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Стехиометрија гасова користи Авогадров закон.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> m/M<sub>m</sub> даје број молекула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Клапејронова једначина се пише као pV=N<sub>m</sub>RT.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Дозирање гаса у индустрији користи молеве.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Број молекула у молу је 6,02×10<sup>23</sup>.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто је згодно рачунати са моловима уместо са појединачним молекулима?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Број молова једнак је количнику укупне масе и <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Лошмитов број израчунава се из p=n<sub>0</sub>kT.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> R = N<sub>A</sub> * k.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Авогадров број је исти за све материје.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Клапејронова једначина не важи за смешу гасова.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> pV=nkT исто је што и pV=N<sub>m</sub>RT.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Моларна запремина не зависи од врсте гаса.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график pV у функцији од T за 1 мол гаса (права линија, нагиб R).</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи константе:</p>
+<table class="mt"><tr><td>1. k</td><td></td><td>А. 2,69×10<sup>25</sup></td></tr><tr><td>2. R</td><td></td><td>Б. 1,38×10<sup>-23</sup></td></tr><tr><td>3. N<sub>L</sub></td><td></td><td>В. 8,314</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему две једнаке запремине са различитим гасовима (иста p и T).</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу:</p>
+<table class="ft"><thead><tr><th>Гас</th><th>M<sub>m</sub> (отприлике)</th></tr></thead><tbody><tr><td>O<sub>2</sub></td><td>32 g/mol</td></tr><tr><td>H<sub>2</sub></td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Како се из једначине pV = nkT долази до pV = (m/M<sub>m</sub>)RT?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Објасни везу између Болцманове константе k, Авогадровог броја N<sub>A</sub> и универзалне гасне константе R.</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> 22,4 L важи само за нормалне услове.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Моларна маса воде је 18 g/mol.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Лошмитов број се мења са температуром.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> 1 мол било ког гаса има исту масу.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ако знато масу, можете израчунати број молова.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> У Клапејроновој једначини, T је у Целзијусима.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график односа броја молекула и запремине (за стално p и T).</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Ако имамо 1 kg водоника и 1 kg кисеоника у истим условима, у коме више молекула и зашто?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<div class="pb"></div>
+<!-- Поглавље 16 -->
+<h2>16. Расподела молекула у пољу силе — барометарска формула</h2>
+<div class="box rb"><span class="bt">Подсетник</span><p class="ni">У гравитационом пољу, гравитација вуче молекуле надоле, док хаотично кретање тежи изједначавању. Притисак ваздуха опада експоненцијално са висином по барометарској формули.</p></div>
+<div class="box fb"><span class="bt">Кључне формуле / Појмови</span><p class="ni">Барометарска формула: <span class="math">p = p<sub>0</sub> e<sup>-(m<sub>0</sub>gz)/(kT)</sup></span><br>Однос: тежи молекули и хладнија атмосфера чине брже опадање притиска.</p></div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr"><p class="tp">1. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Притисак опада линеарно са висином.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Гравитација вуче молекуле надоле.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> На планинама је ваздух ређи.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Хаотично кретање тежи равномерној расподели.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Висиномер (алтиметар) мери притисак.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Формулу је дао Болцман.</div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Зависност притиска ваздуха од висине у гравитационом пољу описује <span class="b"></span> формула.</p></div>
+<div class="task"><p class="tp">3. Повежи симболе:</p>
+<table class="mt"><tr><td>1. z</td><td></td><td>А. Маса молекула</td></tr><tr><td>2. m<sub>0</sub></td><td></td><td>Б. Убрзање силе теже</td></tr><tr><td>3. g</td><td></td><td>В. Висина</td></tr><tr><td>4. p<sub>0</sub></td><td></td><td>Г. Притисак на тлу</td></tr></table></div>
+<div class="task"><p class="tp">4. Попуни табелу утицаја:</p>
+<table class="ft"><thead><tr><th>Фактор расте</th><th>Опадање притиска</th></tr></thead><tbody><tr><td>Висина (z)</td><td></td></tr><tr><td>Температура (T)</td><td></td></tr></tbody></table></div>
+<div class="task fbl"><p class="tp">5. Допуни: У авиону притисак опадне, па осетимо притисак у <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">6. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Ваздух не пада на тло зато што се молекули крећу.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> На 0 m висине притисак је нула.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Експоненцијално опадање значи спорије падање на великим висинама.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Већа маса молекула убрзава опадање притиска.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Кисеоник опада са висином.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Формула се не може користити уназад.</div></div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl"><p class="tp">1. Зашто се ваздух не наталожи у танак слој на површини Земље под дејством гравитације?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task fbl"><p class="tp">2. Допуни: Ако измеримо притисак помоћу барометарске формуле, можемо израчунати <span class="b"></span>.</p></div>
+<div class="task tfr"><p class="tp">3. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Атмосфера је исте густине свуда.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Измерени притисак на висини од 1000 м нижи је од оног на нивоу мора.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Тежи гасови имају краћу скалу висине.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Хладнија атмосфера значи брже опадање притиска.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Алтиметар је заправо барометар.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Болцманова расподела има исти принцип.</div></div>
+<div class="task gc"><p class="tp">4. Нацртај график експоненцијалног опадања притиска у функцији од висине z.</p><svg></svg></div>
+<div class="task"><p class="tp">5. Повежи величине са утицајем:</p>
+<table class="mt"><tr><td>1. Пораст m<sub>0</sub></td><td></td><td>А. Брже опадање</td></tr><tr><td>2. Пораст z</td><td></td><td>Б. Мањи притисак</td></tr><tr><td>3. Пораст T</td><td></td><td>В. Спорије опадање</td></tr></table></div>
+<div class="task da"><p class="tp">6. Нацртај шему слојева атмосфере са стрелама гравитације и хаотичног кретања.</p><div class="gb"></div></div>
+<div class="task"><p class="tp">7. Попуни табелу:</p>
+<table class="ft"><thead><tr><th>Висина</th><th>Притисак</th></tr></thead><tbody><tr><td>0 m</td><td>p<sub>0</sub></td></tr><tr><td>∞</td><td></td></tr></tbody></table></div>
+<div class="task wl"><p class="tp">8. Како се дешава да на великим висинама тешко дишемо?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl"><p class="tp">1. Да ли би на врућој планети са лаком атмосфером притисак опадао брже или спорије него на хладној са тешком атмосфером? Зашто?</p><div class="lines"><div></div><div></div><div></div></div></div>
+<div class="task tfr"><p class="tp">2. Означи Т или Н:</p>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Експоненат у формули мора бити негативан.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Кисеоник на великим висинама чини већи проценат него на Земљи.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Атмосфера нема јасну горњу границу.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Гравитационо поље g расте са висином.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Болцманова константа се налази у имениоцу експонента.</div>
+<div class="tfr-item"><span class="t">Т</span><span class="n">Н</span> Формула претпоставља да је T константно по висини.</div></div>
+<div class="task gc"><p class="tp">3. Скицирај график p(z) за две различите температуре (T1 > T2) на истом цртежу.</p><svg></svg></div>
+<div class="task wl"><p class="tp">4. Објасни како висиномер може да одреди надморску висину помоћу притиска, а да гравитационо убрзање g варира?</p><div class="lines"><div></div><div></div><div></div></div></div>
+
+</body>
+</html>
