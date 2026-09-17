@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кинематика - Радна свеска</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;600;700&family=Roboto:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* Основни CSS из задатка */
+@page{size:A4;margin:1.5cm 2cm}
+body{font-family:Roboto,sans-serif;font-size:10pt;line-height:1.5;color:#1a1a2e;margin:0;padding:2cm;max-width:800px;margin:auto;background:linear-gradient(135deg,#f0f4ff,#e8eaf6,#f3e7f9)}
+p{text-indent:1.25cm;margin:0 0 .5em 0}
+.ni{text-indent:0}
+:root{--pd:#0f1626;--pb:#0052D4;--ac:#00C6FB;--ap:#9D50BB;--gbg:rgba(255,255,255,.75);--gbd:1px solid rgba(255,255,255,.8);--gsh:0 8px 32px rgba(15,22,38,.1)}
+h1{font-family:Orbitron;font-size:24pt;background:linear-gradient(90deg,var(--pb),var(--ap));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:.2cm;letter-spacing:2px}
+h2{font-family:Rajdhani;font-size:16pt;color:var(--pd);margin:0 0 .5cm 0;text-indent:0;border-bottom:2px solid;border-image:linear-gradient(90deg,var(--ac),var(--ap)) 1;padding-bottom:8px;display:flex;align-items:center}
+h2::before{content:'';width:10px;height:10px;background:var(--ac);border-radius:50%;margin-right:10px;box-shadow:0 0 8px var(--ac)}
+h3{font-family:Rajdhani;font-size:12pt;color:var(--pb);margin:.8cm 0 .3cm 0;text-indent:0;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center}
+h3::before{content:'';width:6px;height:6px;background:var(--ap);margin-right:8px;border-radius:2px;transform:rotate(45deg)}
+.pb{page-break-before:always}
+.box{background:var(--gbg);backdrop-filter:blur(8px);border:var(--gbd);box-shadow:var(--gsh);border-radius:10px;padding:15px;margin-bottom:1em;page-break-inside:avoid}
+.rb{border-left:4px solid var(--ac)}
+.fb{border-left:4px solid var(--ap);background:rgba(255,255,255,.9)}
+.bt{font-family:Orbitron;font-weight:500;display:block;margin-bottom:8px;font-size:11pt;text-transform:uppercase;letter-spacing:1px}
+.rb .bt{color:var(--pb)}
+.fb .bt{color:var(--ap)}
+.box p{text-indent:0;margin-bottom:.5em;font-size:10pt}
+.math{font-style:italic;font-family:Cambria Math,serif;background:rgba(157,80,187,.05);padding:1px 4px;border-radius:3px;border:1px solid rgba(157,80,187,.1)}
+sup,sub{font-size:.7em}
+.task{margin-bottom:1em;page-break-inside:avoid}
+.tp{font-weight:500;text-indent:0;margin-bottom:.5em;text-align:justify}
+
+/* Додатни CSS за типове задатака */
+.fbl span { display:inline-block; min-width:120px; border-bottom:1.5px solid var(--ap); margin:0 5px; }
+.tfr { display:flex; flex-direction:column; gap:8px; }
+.tfr .item { display:flex; align-items:center; font-size:10pt; background:rgba(255,255,255,.5); padding:8px 10px; border-radius:6px; }
+.tfr .item .text { flex:1; margin-right:15px; }
+.tfr .opts { display:flex; gap:15px; }
+.tfr .opts span { display:flex; align-items:center; gap:4px; font-weight:bold; color:var(--pd); }
+.tfr .opts span::before { content:''; width:14px; height:14px; border:2px solid var(--pb); border-radius:3px; display:inline-block; }
+table.mt { width:100%; border-collapse:collapse; margin:10px 0; }
+table.mt td { border:1px solid rgba(15,22,38,.2); padding:8px; width:45%; text-align:center; vertical-align:middle; }
+table.mt td.arr { width:10%; border:none; color:var(--ap); font-weight:bold; font-size:14pt; }
+table.ft { width:100%; border-collapse:collapse; margin:10px 0; border-radius:8px; overflow:hidden; }
+table.ft th { background:linear-gradient(90deg,var(--pb),var(--ap)); color:#fff; padding:8px; text-align:left; font-family:Rajdhani; font-weight:600; font-size:11pt; }
+table.ft td { border:1px solid rgba(15,22,38,.1); padding:8px; height:24px; }
+.gc { width:300px; height:200px; border:1px solid rgba(15,22,38,.2); border-radius:8px; background:#fff; display:block; margin:10px auto; }
+.da { width:100%; height:200px; border:1px dashed rgba(15,22,38,.3); border-radius:8px; background-image:linear-gradient(rgba(15,22,38,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(15,22,38,.08) 1px, transparent 1px); background-size:20px 20px; margin:10px 0; }
+.wl .line { width:100%; border-bottom:1px dashed rgba(15,22,38,.3); margin-top:25px; }
+</style>
+</head>
+<body>
+
+<h1>КИНЕМАТИКА - ДЕО I</h1>
+<p class="ni" style="text-align:center; margin-bottom:2cm;">Интерактивна радна свеска из физике за средње школе<br><span style="opacity:0.7">Основе кинематике и праволинијско кретање</span></p>
+
+<!-- ПОГЛАВЉЕ 1 -->
+<h2>1. Шта проучава кинематика</h2>
+<div class="box rb">
+  <span class="bt">Подсетник</span>
+  <p>Кинематика је део механике који бројчано описује како се тела крећу, не питајући се зашто. Она проучава промену положаја тела у односу на друго тело током времена, користећи појмове попут путање, пута и материјалне тачке.</p>
+</div>
+<div class="box fb">
+  <span class="bt">Кључни појмови</span>
+  <p><span class="math">Механика</span> = Кинематика + Динамика + Статика</p>
+  <p><span class="math">Механичко кретање</span> = промена положаја тела у односу на референтно тело током времена.</p>
+  <p><span class="math">Материјална тачка</span> = замишљено тело чији облик и димензије можемо занемарити у датом кретању.</p>
+</div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl">
+  <p class="tp">Механика се дели на три области, а област која описује кретање без улажења у узроке зове се <span>&nbsp;</span>.</p>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о кинематици:</p>
+  <div class="item"><span class="text">Кинематика проучава узроке кретања тела.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Материјална тачка је тело чији облик можемо занемарити.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Путања је линија коју тело описује током кретања.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Апсолутно мировање постоји у природи.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Земља око Сунца се увек посматра као материјална тачка.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Статика проучава равнотежу тела.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Повежи појам из леве колоне са одговарајућим описом из десне колоне:</p>
+  <table class="mt">
+    <tr><td>Кинематика</td><td class="arr">↔</td><td>Тело чије димензије занемарујемо</td></tr>
+    <tr><td>Материјална тачка</td><td class="arr">↔</td><td>Описује како се тело креће</td></tr>
+    <tr><td>Путања</td><td class="arr">↔</td><td>Узрок кретања</td></tr>
+    <tr><td>Динамика</td><td class="arr">↔</td><td>Линија коју тело описује кретањем</td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу уписивањем назива области механике која одговара датом опису:</p>
+  <table class="ft">
+    <tr><th>Опис</th><th>Област механике</th></tr>
+    <tr><td>Описује кретање не питајући за узрок</td><td></td></tr>
+    <tr><td>Проучава узроке кретања</td><td></td></tr>
+    <tr><td>Проучава услове равнотеже</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">На датим осама исцртај график зависности брзине од времена за тело које мирује:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g1" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g1)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v</text>
+  </svg>
+</div>
+<div class="task">
+  <p class="tp">У оквир исцртај путању тела које се креће по правој линији од тачке А до тачке Б:</p>
+  <div class="da"></div>
+</div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl">
+  <p class="tp">Објасни разлику између пута и путање на примеру аутомобила који се креће по кривој путањи. Прошири свој одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Повежи свакодневни пример са одговарајућим кинематичким појмом:</p>
+  <table class="mt">
+    <tr><td>Навигација у телефону</td><td class="arr">↔</td><td>Кружење око Сунца</td></tr>
+    <tr><td>Земља као материјална тачка</td><td class="arr">↔</td><td>Праћење положаја и брзине</td></tr>
+    <tr><td>Обртање Земље око осе</td><td class="arr">↔</td><td>Кретање не може бити апсолутно</td></tr>
+    <tr><td>Релативност кретања</td><td class="arr">↔</td><td>Облик и димензије су битни</td></tr>
+  </table>
+</div>
+<div class="task fbl">
+  <p class="tp">Кретање тела описујемо помоћу путање, пута, помераја, брзине, убрзања и <span>&nbsp;</span> кретања.</p>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о механици:</p>
+  <div class="item"><span class="text">Ако се сви делови тела крећу исто, пратимо једну тачку.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Радар мери узрок кретања аутомобила.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Статика проучава равнотежу тела.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Закони кретања дају квалитативни опис кретања.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Исто тело може бити материјална тачка, а некад и не може.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Приказ дана и годишњих доба почива на кинематици.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај шему тела чији облик представља аутомобил, који се не може посматрати као материјална тачка јер је облик битан:</p>
+  <div class="da"></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу наводећи да ли се тело у датој ситуацији може посматрати као материјална тачка:</p>
+  <table class="ft">
+    <tr><th>Ситуација</th><th>Материјална тачка (Да/Не)</th></tr>
+    <tr><td>Земља при кружењу око Сунца</td><td></td></tr>
+    <tr><td>Земља при обртању око сопствене осе</td><td></td></tr>
+    <tr><td>Аутомобил на путу Београд-Нови Сад</td><td></td></tr>
+    <tr><td>Кованица која пада са стола</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">На датим осама исцртај график зависности положаја од времена (x-t дијаграм) за тело које мирује:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g2)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Наведи два примера из свакодневног живота где се неког посматрача може сматрати материјалном тачком, и објасни зашто.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task">
+  <p class="tp">Упореди област механике према томе шта проучавају:</p>
+  <table class="ft">
+    <tr><th>Област механике</th><th>Шта проучава</th><th>Питање на которое одговара</th></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="task wl">
+  <p class="tp">Ако навигација у телефону рачуна твој положај и брзину, која област физике је ту примарно на делу и зашто динамика није?</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">У оквир визуелно прикажи везу између путање и пређеног пута за тело које се помера по кривој линији:</p>
+  <div class="da"></div>
+</div>
+<div class="task wl">
+  <p class="tp">Зашто је за физику потребно прецизно описати кретање бројевима, а не само осећајем? Прошири своје објашњење.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<div class="pb"></div>
+<!-- ПОГЛАВЉЕ 2 -->
+<h2>2. Релативност кретања и референтни систем</h2>
+<div class="box rb">
+  <span class="bt">Подсетник</span>
+  <p>Свако кретање има смисла тек кад кажемо у односу на који референтни систем га посматрамо. Тело у односу на које посматрамо кретање зове се референтно тело, а заједно са координатним системом чини референтни систем.</p>
+</div>
+<div class="box fb">
+  <span class="bt">Кључни појмови</span>
+  <p><span class="math">Референтно тело</span> — тело у односу на које се посматра кретање.</p>
+  <p><span class="math">Референтни систем</span> = Референтно тело + Координатни систем.</p>
+  <p><span class="math">Декартов систем</span> — правоугали координатни систем (осе x, y, z).</p>
+</div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о релативности:</p>
+  <div class="item"><span class="text">Апсолутно мировање не постоји.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Путник у возу који седи мирноје у мировању у односу на перон.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Референтно тело је исто што и координатни систем.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Кретање изгледа исто из свих референтних система.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Најчешће користимо Декартов координатни систем.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">У авиону који равномерно лети немаш осећај брзине у односу на кабину.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Повежи појам са одговарајућим описом:</p>
+  <table class="mt">
+    <tr><td>Референтно тело</td><td class="arr">↔</td><td>Осе x, y, z под правим углом</td></tr>
+    <tr><td>Декартов систем</td><td class="arr">↔</td><td>Тело у односу на које посматрамо</td></tr>
+    <tr><td>Мировање</td><td class="arr">↔</td><td>Сунце у средишту</td></tr>
+    <tr><td>Хелиоцентрични модел</td><td class="arr">↔</td><td>Положај се не мења у односу на посматрача</td></tr>
+  </table>
+</div>
+<div class="task fbl">
+  <p class="tp">Тело у односу на које посматрамо и описујемо кретање зове се <span>&nbsp;</span> тело.</p>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу уписујући назив система по избору (нпр. воз, перон, Земља):</p>
+  <table class="ft">
+    <tr><th>Ситуација</th><th>Референтни систем</th></tr>
+    <tr><td>Чаша мирује на столу у возу</td><td></td></tr>
+    <tr><td>Човек посматра воз са перона</td><td></td></tr>
+    <tr><td>Планете круже око Сунца</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај Декартов правоугли координатни систем у простору (са означеним осама) у оквиру:</p>
+  <div class="da"></div>
+</div>
+<div class="task">
+  <p class="tp">На датим осама обележи два положаја тела у различитим временима:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g3" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g3)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl">
+  <p class="tp">Објасни шта значи да је кретање релативно, користећи пример путника у возу и посматрача на перону. Прошири свој одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Повежи посматрача са оним што он види да се дешава са чашом у возу:</p>
+  <table class="mt">
+    <tr><td>Путник поред чаше</td><td class="arr">↔</td><td>Чаша јури заједно са возом</td></tr>
+    <tr><td>Човек на перону</td><td class="arr">↔</td><td>Чаша мирује</td></tr>
+    <tr><td>Систем везан за воз</td><td class="arr">↔</td><td>Инерцијални навигациони системи</td></tr>
+    <tr><td>Систем везан за тло</td><td class="arr">↔</td><td>Покретни систем референце</td></tr>
+  </table>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о референтним системима:</p>
+  <div class="item"><span class="text">Промена референтног система мења вредности брзине и помераја.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Увек морамо рећи у односу на шта посматрамо кретање.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Поларни координатни систем не постоји.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">У хелиоцентричном моделу Сунце је референтно тело.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Геоцентрични модел значи да је Земља у средишту.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Апсолутно мировање постоји само за тела на Земљи.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task fbl">
+  <p class="tp">Да бисмо положај изразили бројевима, референтном телу придружујемо <span>&nbsp;</span> систем.</p>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу наводећи који модел (геоцентрични или хелиоцентрични) користи који референтни систем:</p>
+  <table class="ft">
+    <tr><th>Модел</th><th>Референтно тело</th></tr>
+    <tr><td>Геоцентрични</td><td></td></tr>
+    <tr><td>Хелиоцентрични</td><td></td></tr>
+    <tr><td>Воз у кретању</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај положај путника у возу у односу на две различите осе посматрања:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g4" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g4)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Опиши како се мењају вредности величина (путање, брзине) ако променимо референтни систем. Да ли кретање престаје да буде стварно?</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl">
+  <p class="tp">Замисли да си у авиону који равномерно лети. Да ли можеш без гледања кроз прозор да докажеш да се крећеш у односу на тло? Образложи одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">На датим осама исцртај како изгледа положај једног истог тела посматраног из два различита референтна система:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g5" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g5)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу упоређујући спор између геоцентричног и хелиоцентричног модела:</p>
+  <table class="ft">
+    <tr><th>Карактеристика</th><th>Геоцентрични модел</th><th>Хелиоцентрични модел</th></tr>
+    <tr><td>Референтно тело</td><td></td><td></td></tr>
+    <tr><td>Шта круже око центра</td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="task wl">
+  <p class="tp">Ако се два аутомобила крећу паралелно истом брзином, какво је њихово кретање међусобно? Објасни помоћу појма референтног система.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<div class="pb"></div>
+<!-- ПОГЛАВЉЕ 3 -->
+<h2>3. Вектор положаја и померај</h2>
+<div class="box rb">
+  <span class="bt">Подсетник</span>
+  <p>Вектор положаја спаја координатни почетак и посматрану тачку, одређујући где се тело налази. Померај је вектор који спаја почетни и крајњи положај тела и каже колико се и у ком правцу тело преместило.</p>
+</div>
+<div class="box fb">
+  <span class="bt">Кључне формуле / Појмови</span>
+  <p>Интензитет вектора положаја у простору: <span class="math">r = √(x² + y² + z²)</span></p>
+  <p>Померај: <span class="math">Δr = r₂ - r₁</span></p>
+  <p><span class="math">r</span> — вектор положаја; <span class="math">x, y, z</span> — координате; <span class="math">Δr</span> — померај; <span class="math">r₁, r₂</span> — почетни и крајњи вектор положаја.</p>
+</div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl">
+  <p class="tp">Вектор који спаја координатни почетак и посматрану тачку назива се вектор <span>&nbsp;</span>.</p>
+</div>
+<div class="task">
+  <p class="tp">На датим осама исцртај вектор положаја од координатног почетка до тачке A(3, 4):</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g6" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g6)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task">
+  <p class="tp">Повежи појам са одговарајућим описом:</p>
+  <table class="mt">
+    <tr><td>Вектор положаја</td><td class="arr">↔</td><td>Стрелица од почетка до краја кретања</td></tr>
+    <tr><td>Померај</td><td class="arr">↔</td><td>Стрелица од координатног почетка до тачке</td></tr>
+    <tr><td>Пут</td><td class="arr">↔</td><td>Дужина путање (скалар)</td></tr>
+    <tr><td>Путања</td><td class="arr">↔</td><td>Линија коју тело описује</td></tr>
+  </table>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о померају и путу:</p>
+  <div class="item"><span class="text">Пут је увек позитиван број.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Померај је скаларна величина.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Ако се тело врати на старт, померај је нула.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Пут се никад не може смањити.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Интензитет вектора рачуна се Питагорином теоремом.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Померај мери најкраће растојање између почетка и краја.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">У оквир исцртај тачку А (почетни положај) и тачку Б (крајњи положај), затим повуци померај:</p>
+  <div class="da"></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу уписивањем недостајућих вредности за интензитет вектора (r = √(x² + y²)):</p>
+  <table class="ft">
+    <tr><th>x</th><th>y</th><th>r</th></tr>
+    <tr><td>3</td><td>4</td><td></td></tr>
+    <tr><td>6</td><td>8</td><td></td></tr>
+    <tr><td>5</td><td>12</td><td></td></tr>
+  </table>
+</div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task wl">
+  <p class="tp">Објасни разлику између пута и помераја на примеру тркача који обиђе цео стадион и врати се на старт. Прошири свој одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task fbl">
+  <p class="tp">Ако тело обиђе круг и врати се на старт, пут је једнак обиму стазе, а померај је <span>&nbsp;</span>.</p>
+</div>
+<div class="task">
+  <p class="tp">Повежи математички симбол са његовим физичким значењем:</p>
+  <table class="mt">
+    <tr><td>r</td><td class="arr">↔</td><td>Промена положаја</td></tr>
+    <tr><td>Δr</td><td class="arr">↔</td><td>Вектор положаја</td></tr>
+    <tr><td>s</td><td class="arr">↔</td><td>Координатни почетак</td></tr>
+    <tr><td>0</td><td class="arr">↔</td><td>Пређени пут</td></tr>
+  </table>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о векторима:</p>
+  <div class="item"><span class="text">Вектор има само интензитет.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Вектор положаја је усмерен ка тачки.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Померај је једнак разлици вектора положаја.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Увек важи да је пут једнак интензитету помераја.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Ако се тело креће по правој линији, пут је једнак интензитету помераја.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Интензитет вектора може бити негативан.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу израчунавајући интензитет вектора положаја за дате координате у простору (r = √(x² + y² + z²)):</p>
+  <table class="ft">
+    <tr><th>x</th><th>y</th><th>z</th><th>r</th></tr>
+    <tr><td>1</td><td>2</td><td>2</td><td></td></tr>
+    <tr><td>2</td><td>3</td><td>6</td><td></td></tr>
+    <tr><td>4</td><td>0</td><td>3</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај правоугли троугао настао пројекцијама вектора положаја у равни:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g7" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g7)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Како се рачуна интензитет вектора положаја у равни и у простору? Напиши формулу и објасни је.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl">
+  <p class="tp">Зашто интензитет помераја никада не може бити већи од пређеног пута? Прошири свој одговор и наведи пример.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Упореди карактеристике пута и помераја у табели:</p>
+  <table class="ft">
+    <tr><th>Карактеристика</th><th>Пут</th><th>Померај</th></tr>
+    <tr><td>Врста величине (скалар/вектор)</td><td></td><td></td></tr>
+    <tr><td>Зависност од путање</td><td></td><td></td></tr>
+    <tr><td>Може ли бити нула?</td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај векторе положаја r₁ и r₂ и њихов померај Δr на истом цртежу:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g8" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g8)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Ако кажеш „кућа је 300 m северно одавде”, да ли си задао пут, померај или путању? Образложи одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<div class="pb"></div>
+<!-- ПОГЛАВЉЕ 4 -->
+<h2>4. Брзина - средња и тренутна</h2>
+<div class="box rb">
+  <span class="bt">Подсетник</span>
+  <p>Средња брзина је просек кретања и рачуна се као количник пређеног пута и времена. Тренутна брзина говори шта се дешава баш у датом тренутку, а њен вектор има правац тангенте на путању у тој тачки.</p>
+</div>
+<div class="box fb">
+  <span class="bt">Кључне формуле / Појмови</span>
+  <p>Средња брзина (скаларно): <span class="math">v<sub>s</sub> = Δs / Δt</span></p>
+  <p>Средња брзина (векторски): <span class="math">v⃗<sub>s</sub> = Δr⃗ / Δt</span></p>
+  <p>Тренутна брзина: <span class="math">v = lim(Δt→0) Δs / Δt</span></p>
+  <p><span class="math">Δs</span> — пређени пут; <span class="math">Δr</span> — померај; <span class="math">Δt</span> — време; јединица за брзину је m/s.</p>
+</div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о брзини:</p>
+  <div class="item"><span class="text">Средња брзина даје детаљну причу о кретању у сваком тренутку.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Тренутна брзина је онај број који брзиномер показује баш сада.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Средња брзина се рачуна као количник пута и времена.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Вектор тренутне брзине има правац тангенте на путању.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Брзина може бити само скаларна величина.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Јединица за брзину у SI систему је m/s.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај празан v-t дијаграм (зависност брзине од времена):</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g9" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g9)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t [s]</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v [m/s]</text>
+  </svg>
+</div>
+<div class="task fbl">
+  <p class="tp">Вектор тренутне брзине увек има правац <span>&nbsp;</span> на путању у посматраној тачки.</p>
+</div>
+<div class="task">
+  <p class="tp">Повежи појам са одговарајућим описом:</p>
+  <table class="mt">
+    <tr><td>Средња брзина</td><td class="arr">↔</td><td>Правац тангенте на путању</td></tr>
+    <tr><td>Тренутна брзина</td><td class="arr">↔</td><td>Количник помераја и времена</td></tr>
+    <tr><td>Вектор средње брзине</td><td class="arr">↔</td><td>Просек кретања</td></tr>
+    <tr><td>Брзиномер</td><td class="arr">↔</td><td>Мери тренутну брзину</td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">У оквир исцртај стрелицу (вектор) која представља вектор средње брзине:</p>
+  <div class="da"></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу врстама брзине (средња/тренутна) према уредају који их мери:</p>
+  <table class="ft">
+    <tr><th>Уређај / Процес</th><th>Врста брзине</th></tr>
+    <tr><td>Брзиномер у аутомобилу</td><td></td></tr>
+    <tr><td>Навигација при процени доласка</td><td></td></tr>
+    <tr><td>Полицијски радар</td><td></td></tr>
+    <tr><td>Темпомат у аутомобилу</td><td></td></tr>
+  </table>
+</div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task">
+  <p class="tp">Повежи свакодневни пример са врстом брзине која се користи:</p>
+  <table class="mt">
+    <tr><td>Радар полиције</td><td class="arr">↔</td><td>Очекивано време доласка</td></tr>
+    <tr><td>Навигација</td><td class="arr">↔</td><td>Тренутна брзина</td></tr>
+    <tr><td>Темпомат</td><td class="arr">↔</td><td>Средња брзина</td></tr>
+    <tr><td>Брзина протока крви</td><td class="arr">↔</td><td>Држање сталне тренутне брзине</td></tr>
+  </table>
+</div>
+<div class="task fbl">
+  <p class="tp">Средња брзина показује колико у просеку тело пређе <span>&nbsp;</span> у јединици <span>&nbsp;</span>.</p>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о брзинама:</p>
+  <div class="item"><span class="text">Из средње брзине можемо сазнати где се тело налазило у сваком тренутку.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Ако је кретање равномерно, тренутна брзина је иста као средња.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Средња брзина не зависи од тога који интервал изаберемо.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Вектор средње брзине користи померај, а не пут.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Тренутна брзина је гранична вредност средње брзине када интервал тежи нули.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Смер тренутне брзине се поклапа са смером кретања.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај криву путању тела и обележи стрелицом правац вектора тренутне брзине у једној тачки:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g10" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g10)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу израчунавајући средњу брзину (v = s/t):</p>
+  <table class="ft">
+    <tr><th>Пређени пут (m)</th><th>Време (s)</th><th>Средња брзина (m/s)</th></tr>
+    <tr><td>100</td><td>10</td><td></td></tr>
+    <tr><td>450</td><td>30</td><td></td></tr>
+    <tr><td>1200</td><td>60</td><td></td></tr>
+  </table>
+</div>
+<div class="task wl">
+  <p class="tp">Зашто брзиномер у колима мери тренутну, а не средњу брзину? Прошири своје објашњење.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај вектор помераја и стрелицу која представља вектор средње брзине у оквиру:</p>
+  <div class="da"></div>
+</div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl">
+  <p class="tp">Ако кретање није равномерно, од чега све зависи средња брзина? Објасни процес њеног рачунања.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу разлике између пута и помераја у контексту брзине:</p>
+  <table class="ft">
+    <tr><th>Врста брзине</th><th>Користи пут или померај?</th><th>Да ли има правац?</th></tr>
+    <tr><td>Средња брзина (скалар)</td><td></td><td></td></tr>
+    <tr><td>Вектор средње брзине</td><td></td><td></td></tr>
+    <tr><td>Тренутна брзина</td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај процес смањивања интервала Δt на путањи до добијања тангенте (тренутне брзине):</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g11" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g11)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Објасни геометријски смисао вектора тренутне брзине и зашто он има управо правац тангенте?</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<div class="pb"></div>
+<!-- ПОГЛАВЉЕ 5 -->
+<h2>5. Класични закон сабирања брзина</h2>
+<div class="box rb">
+  <span class="bt">Подсетник</span>
+  <p>Брзина тела у једном систему добија се векторским сабирањем његове брзине у другом систему и брзине тог другог система у односу на први. Овај закон важи за брзине много мање од брзине светлости.</p>
+</div>
+<div class="box fb">
+  <span class="bt">Кључне формуле / Појмови</span>
+  <p>Векторски збир: <span class="math">v⃗ = u⃗ + v⃗'</span></p>
+  <p>Исти смер: <span class="math">v = u + v'</span></p>
+  <p>Супротан смер: <span class="math">v = |u - v'|</span></p>
+  <p><span class="math">v⃗</span> — брзина у непокретном систему; <span class="math">u⃗</span> — брзина покретног система; <span class="math">v⃗'</span> — брзина у покретном систему.</p>
+</div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl">
+  <p class="tp">Брзина тела у односу на непокретни систем једнака је збиру брзине <span>&nbsp;</span> и брзине <span>&nbsp;</span>.</p>
+</div>
+<div class="task">
+  <p class="tp">Повежи појам са одговарајућим описом:</p>
+  <table class="mt">
+    <tr><td>Непокретни систем (S)</td><td class="arr">↔</td><td>Брзина тела у односу на покретни систем</td></tr>
+    <tr><td>Покретни систем (S')</td><td class="arr">↔</td><td>Систем везан за тло (пругу)</td></tr>
+    <tr><td>v'</td><td class="arr">↔</td><td>Воз који се креће</td></tr>
+    <tr><td>u</td><td class="arr">↔</td><td>Брзина покретног система у односу на S</td></tr>
+  </table>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о закону сабирања брзина:</p>
+  <div class="item"><span class="text">Ако ходаш у возу ка локомотиви, брзине се одузимају.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Ако су брзине истог смера, интензитети се сабирају.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Закон сабирања брзина важи за брзине блиске брзини светлости.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Класичан закон претпоставља апсолутно време.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">На покретним степеницама се брзине сабирају.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Закон сабирања брзина може се примењивати векторски по правилу паралелограма.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу израчунавајући брзину тела у односу на тло (v = u + v') за исти смер:</p>
+  <table class="ft">
+    <tr><th>u (m/s)</th><th>v' (m/s)</th><th>v (m/s)</th></tr>
+    <tr><td>10</td><td>2</td><td></td></tr>
+    <tr><td>20</td><td>5</td><td></td></tr>
+    <tr><td>15</td><td>3</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">У оквир исцртај две стрелице истог смера које представљају векторе брзина u и v':</p>
+  <div class="da"></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај празан дијаграм брзина (v-t дијаграм) за тело које се креће:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g12" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g12)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v</text>
+  </svg>
+</div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task fbl">
+  <p class="tp">Кад су брзине истог правца и смера, интензитети се <span>&nbsp;</span>, а кад су супротног, <span>&nbsp;</span>.</p>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње:</p>
+  <div class="item"><span class="text">Ако ходаш ка репу воза, спорији си у односу на пругу него сам воз.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Брод који плови узводно креће се брже низводно.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">У општем случају брзине се сабирају по правилу паралелограма.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Време тече другачије за различите посматраче у класичној механици.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Авион при слетању уз бочни ветар мора рачунати векторски збир.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Воз представља непокретни систем ако посматрамо путника у њему.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Повежи ситуацију са одговарајућом врстом сабирања:</p>
+  <table class="mt">
+    <tr><td>Ходање по покретним степеницама</td><td class="arr">↔</td><td>Векторски збир (правило паралелограма)</td></tr>
+    <tr><td>Воз креће се напред, путник хода назад</td><td class="arr">↔</td><td>Просто сабирање интензитета</td></tr>
+    <tr><td>Авион и бочни ветар</td><td class="arr">↔</td><td>Одузимање интензитета</td></tr>
+    <tr><td>Брод низводно</td><td class="arr">↔</td><td>Сабирање брзине брода и струје</td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу израчунавајући брзину тела у односу на тло (v = |u - v'|) за супротан смер:</p>
+  <table class="ft">
+    <tr><th>u (m/s)</th><th>v' (m/s)</th><th>v (m/s)</th></tr>
+    <tr><td>20</td><td>5</td><td></td></tr>
+    <tr><td>15</td><td>10</td><td></td></tr>
+    <tr><td>12</td><td>4</td><td></td></tr>
+  </table>
+</div>
+<div class="task wl">
+  <p class="tp">Ако ходаш кроз воз ка репу брзином од 5 km/h, а воз јури 100 km/h, каква је твоја брзина у односу на пругу? Образложи одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај паралелограм брзина за авион који се креће кроз ваздух са бочним ветром:</p>
+  <div class="da"></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај график зависности брзине путника (у односу на тло) ако хода напред кроз воз:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g13" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g13)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v</text>
+  </svg>
+</div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl">
+  <p class="tp">Замисли да пливаш у реци брзином 2 m/s у односу на воду. Река тече брзином 1.5 m/s. Објасни како ћеш израчунати своју брзину у односу на обалу ако пливаш низводно и узводно.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Упореди класични закон сабирања и Ајнштајнову теорију у табели:</p>
+  <table class="ft">
+    <tr><th>Карактеристика</th><th>Класични закон</th><th>Релативистичка теорија</th></tr>
+    <tr><td>Брзине које важи за</td><td></td><td></td></tr>
+    <tr><td>Претпоставка о времену</td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај стрелице брзина брода и реке приликом пловидбе узводно:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g14" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g14)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Зашто се овај закон зове "классични" и шта се дешава са овим законом ако се тела крећу брзинама блиским брзини светлости? Прошири одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<div class="pb"></div>
+<!-- ПОГЛАВЉЕ 6 -->
+<h2>6. Убрзање - средње и тренутно</h2>
+<div class="box rb">
+  <span class="bt">Подсетник</span>
+  <p>Убрзање мери сваку промену вектора брзине — и по интензитету (тангенцијална компонента) и по правцу (нормална компонента). Средње убрзање је количник промене брзине и времена, док тренутно убрзање то чини у бесконачно малом интервалу.</p>
+</div>
+<div class="box fb">
+  <span class="bt">Кључне формуле / Појмови</span>
+  <p>Средње убрзање: <span class="math">a⃗<sub>s</sub> = Δv⃗ / Δt = (v⃗₂ - v⃗₁) / Δt</span></p>
+  <p>Разлагање убрзања: <span class="math">a⃗ = a⃗<sub>t</sub> + a⃗<sub>n</sub></span></p>
+  <p><span class="math">a⃗<sub>t</sub></span> — тангенцијална (мења интензитет); <span class="math">a⃗<sub>n</sub></span> — нормална (мења правац); јединица је m/s².</p>
+</div>
+
+<h3>Лаки задаци</h3>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о убрзању:</p>
+  <div class="item"><span class="text">Убрзање постоји само ако се мења интензитет брзине.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Аутомобил у кривини има убрзање иако му брзиномер показује сталну вредност.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Тангенцијална компонента убрзања мења правац брзине.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Нормална компонента убрзања мења правац брзине.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Јединица за убрзање је m/s².</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Средње убрзање је количник промене брзине и времена.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task fbl">
+  <p class="tp">Компонента убрзања која мења само правац брзине зове се <span>&nbsp;</span> компонента.</p>
+</div>
+<div class="task">
+  <p class="tp">Повежи појам са одговарајућим описом:</p>
+  <table class="mt">
+    <tr><td>Средње убрзање</td><td class="arr">↔</td><td>Мења правац брзине</td></tr>
+    <tr><td>Тангенцијално убрзање</td><td class="arr">↔</td><td>Мења интензитет брзине</td></tr>
+    <tr><td>Нормално убрзање</td><td class="arr">↔</td><td>Количник промене брзине и времена</td></tr>
+    <tr><td>m/s²</td><td class="arr">↔</td><td>Јединица за убрзање</td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај празан a-t дијаграм (зависност убрзања од времена):</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g15" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g15)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t [s]</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">a [m/s²]</text>
+  </svg>
+</div>
+<div class="task">
+  <p class="tp">У оквир исцртај стрелице тангенцијалног и нормалног убрзања на кривој путањи:</p>
+  <div class="da"></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу врстама убрзања према врсти промене:</p>
+  <table class="ft">
+    <tr><th>Промена</th><th>Компонента убрзања</th></tr>
+    <tr><td>Кочење аутомобила по правцу</td><td></td></tr>
+    <tr><td>Скретање аутомобила у кривини сталном брзином</td><td></td></tr>
+    <tr><td>Полетање авиона по писти</td><td></td></tr>
+  </table>
+</div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task fbl">
+  <p class="tp">Средње убрзање рачунамо као количник промене <span>&nbsp;</span> и времена за које се та промена десила.</p>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о компонентама убрзања:</p>
+  <div class="item"><span class="text">Ако тело иде право и убрзава, нормална компонента је нула.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Тангенцијална компонента може бити негативна при кочењу.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Вектор убрзања је увек у правцу брзине.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">У кривини, вектор убрзања има две компоненте.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Акцелерометар у телефону мери убрзање.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Велика убрзања не делују на пилоте.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Повежи пример са типом убрзања које доминира:</p>
+  <table class="mt">
+    <tr><td>Аутомобил убрзава по правом путу</td><td class="arr">↔</td><td>Тангенцијално и нормално</td></tr>
+    <tr><td>Аутомобил у кривини сталном брзином</td><td class="arr">↔</td><td>Само нормално</td></tr>
+    <tr><td>Пликов авиона при скретању</td><td class="arr">↔</td><td>Само тангенцијално</td></tr>
+    <tr><td>Аутомобил кочи</td><td class="arr">↔</td><td>Негативно тангенцијално</td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу израчунавајући средње убрзање (a = (v₂ - v₁) / t):</p>
+  <table class="ft">
+    <tr><th>v₁ (m/s)</th><th>v₂ (m/s)</th><th>Δt (s)</th><th>a (m/s²)</th></tr>
+    <tr><td>0</td><td>10</td><td>5</td><td></td></tr>
+    <tr><td>20</td><td>0</td><td>4</td><td></td></tr>
+    <tr><td>5</td><td>15</td><td>10</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај стрелице вектора брзине и вектора убрзања за ауто у кривини:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g16" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g16)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Зашто аутомобил у кривини има убрзање иако му брзиномер показује сталну вредност? Објасни помоћу компоненти.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">У оквир визуелно прикажи разлагање вектора укупног убрзања на тангенцијалну и нормалну компоненту:</p>
+  <div class="da"></div>
+</div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl">
+  <p class="tp">Може ли тело имати убрзање ако му је брзина по интензитету стална? Образложи одговор и наведи пример.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Упореди тангенцијално и нормално убрзање у табели:</p>
+  <table class="ft">
+    <tr><th>Карактеристика</th><th>Тангенцијално (aₜ)</th><th>Нормално (aₙ)</th></tr>
+    <tr><td>Правац деловања</td><td></td><td></td></tr>
+    <tr><td>Шта мења код брзине</td><td></td><td></td></tr>
+    <tr><td>Да ли постоји при равномерном праволинијском кретању</td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај правац нормалног убрзања тела које се креће по кружној путањи:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g17" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g17)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">x</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">y</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Опиши сва три начина на која се вектор брзине може мењати током кретања. Прошири свој одговор.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+<div class="pb"></div>
+<!-- ПОГЛАВЉЕ 7 -->
+<h2>7. Равномерно убрзано праволинијско кретање</h2>
+<div class="box rb">
+  <span class="bt">Подсетник</span>
+  <p>Код равномерно убрзаног праволинијског кретања убрзање је стално, брзина се мења линеарно (v = v0 ± a·t), а пређени пут је површина испод v–t графика. Посебан случај је слободан пад, где је убрзање g ≈ 9,81 m/s².</p>
+</div>
+<div class="box fb">
+  <span class="bt">Кључне формуле / Појмови</span>
+  <p>Брзина: <span class="math">v = v<sub>0</sub> ± a · t</span></p>
+  <p>Пут: <span class="math">s = v<sub>0</sub> · t ± ½ · a · t²</span></p>
+  <p>Веза без времена: <span class="math">v² = v<sub>0</sub>² ± 2 · a · s</span></p>
+  <p>Време кочења: <span class="math">t<sub>k</sub> = v<sub>0</sub> / a</span></p>
+  <p>+ за убрзање, - за успоравање (кочење). Слободан пад: <span class="math">a = g</span>.</p>
+</div>
+
+<h3>Лаки задаци</h3>
+<div class="task fbl">
+  <p class="tp">Кретање је равномерно убрзано ако је интензитет убрзања <span>&nbsp;</span>.</p>
+</div>
+<div class="task">
+  <p class="tp">Повежи симбол формуле са његовим значењем:</p>
+  <table class="mt">
+    <tr><td>v₀</td><td class="arr">↔</td><td>Време до заустављања</td></tr>
+    <tr><td>tₖ</td><td class="arr">↔</td><td>Почетна брзина</td></tr>
+    <tr><td>s</td><td class="arr">↔</td><td>Пређени пут</td></tr>
+    <tr><td>g</td><td class="arr">↔</td><td>Убрзање слободног пада</td></tr>
+  </table>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње о равномерном убрзању:</p>
+  <div class="item"><span class="text">Код успореног кретања убрзање се узима као негативно.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">При слободном паду убрзање износи око 9.81 m/s².</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Пређени пут је површина испод v-t графика.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">При кочењу се брзина увек повећава.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Ако тело креће из мировања, почетна брзина је нула.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Пут кочења расте линеарно са брзином.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај празан v-t дијаграм за убрзано кретање:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g18" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g18)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t [s]</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v [m/s]</text>
+  </svg>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу врстама кретања (убрзано/успорено):</p>
+  <table class="ft">
+    <tr><th>Ситуација</th><th>Врста кретања</th></tr>
+    <tr><td>Аутомобил креће са семафора</td><td></td></tr>
+    <tr><td>Аутомобил кочи до знака стоп</td><td></td></tr>
+    <tr><td>Тело пада са висине</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">У оквир исцртај путању тела које креће из мировања и убрзава:</p>
+  <div class="da"></div>
+</div>
+
+<h3>Средње тешки задаци</h3>
+<div class="task fbl">
+  <p class="tp">Време од почетка кочења до потпуног заустављања тела зове се време <span>&nbsp;</span>.</p>
+</div>
+<div class="task tfr">
+  <p class="tp">Штиклирај (Т или Н) следеће тврдње:</p>
+  <div class="item"><span class="text">Двоструко већа брзина значи четвороструко дужи пут кочења.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Формула v² = v₀² + 2as не садржи време.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Слободан пад је равномерно убрзано кретање.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Реакционо време возача не утиче на укупан пут заустављања.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">Код кретања из мировања, пут је s = ½ · a · t².</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+  <div class="item"><span class="text">ABS систем не користи законе кочења.</span><div class="opts"><span>Т</span><span>Н</span></div></div>
+</div>
+<div class="task">
+  <p class="tp">Повежи пример са одговарајућом кинематичком формулом:</p>
+  <table class="mt">
+    <tr><td>Рачунање брзине после времена t</td><td class="arr">↔</td><td>s = v₀·t ± ½·a·t²</td></tr>
+    <tr><td>Рачунање пута кочења</td><td class="arr">↔</td><td>v = v₀ ± a·t</td></tr>
+    <tr><td>Веза брзине и пута без времена</td><td class="arr">↔</td><td>tₖ = v₀ / a</td></tr>
+    <tr><td>Рачунање времена до заустављања</td><td class="arr">↔</td><td>v² = v₀² ± 2·a·s</td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу израчунавајући брзину након времена t (v = v₀ + a·t):</p>
+  <table class="ft">
+    <tr><th>v₀ (m/s)</th><th>a (m/s²)</th><th>t (s)</th><th>v (m/s)</th></tr>
+    <tr><td>0</td><td>2</td><td>5</td><td></td></tr>
+    <tr><td>10</td><td>3</td><td>4</td><td></td></tr>
+    <tr><td>5</td><td>1.5</td><td>10</td><td></td></tr>
+  </table>
+</div>
+<div class="task">
+  <p class="tp">Исцртај правоугаоник и троугао чија површина даје пређени пут код убрзаног кретања:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g19" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g19)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v</text>
+  </svg>
+</div>
+<div class="task wl">
+  <p class="tp">Зашто пут кочења расте са квадратом почетне брзине? Објасни физички смисао формуле.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Попуни табелу израчунавајући пређени пут (s = v₀·t + ½·a·t²):</p>
+  <table class="ft">
+    <tr><th>v₀ (m/s)</th><th>a (m/s²)</th><th>t (s)</th><th>s (m)</th></tr>
+    <tr><td>0</td><td>4</td><td>3</td><td></td></tr>
+    <tr><td>5</td><td>2</td><td>5</td><td></td></tr>
+    <tr><td>10</td><td>0</td><td>10</td><td></td></tr>
+  </table>
+</div>
+
+<h3>Тешки (логички) задаци</h3>
+<div class="task wl">
+  <p class="tp">Објасни како се из једначина за брзину и пут избацивањем времена добија формула v² = v₀² ± 2·a·s. Прошири поступак.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+<div class="task">
+  <p class="tp">Исцртај v-t график за аутомобил који креће, убрзава се, па кочи до потпуног заустављања:</p>
+  <svg class="gc" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><pattern id="g20" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15,22,38,.1)" stroke-width="1"/></pattern></defs>
+    <rect width="300" height="200" fill="url(#g20)" />
+    <line x1="30" y1="180" x2="290" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <line x1="30" y1="10" x2="30" y2="180" stroke="#0f1626" stroke-width="1.5" />
+    <text x="285" y="195" font-family="Rajdhani" font-size="10pt" fill="#0f1626">t</text>
+    <text x="15" y="15" font-family="Rajdhani" font-size="10pt" fill="#0f1626">v</text>
+  </svg>
+</div>
+<div class="task">
+  <p class="tp">Упореди особине убрзаног и успореног кретања у табели:</p>
+  <table class="ft">
+    <tr><th>Карактеристика</th><th>Убрзано кретање</th><th>Успорено кретање</th></tr>
+    <tr><td>Смер убрзања у односу на брзину</td><td></td><td></td></tr>
+    <tr><td>Промена интензитета брзине</td><td></td><td></td></tr>
+    <tr><td>Знак испред 'a' у формули</td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="task wl">
+  <p class="tp">Ако аутомобил кочи са почетном брзином 100 km/h, како се одређује време кочења? Прошири своје објашњење логичким корацима.</p>
+  <div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+</body>
+</html>
