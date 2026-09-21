@@ -197,9 +197,20 @@
                         <i>▼</i>
                     </button>
                     <div class="dropdown-content">
-                        <!-- IDE ÍRD BE A JEGYZETEK (SKRIPTE) FÁJLOK LINKJEIT -->
-                        <!-- OVDE UPIŠI LINKOVE KA FAJLOVIMA SA SKRIPTAMA -->
-                         <a href="Molekulsko-kineticka_teorija_skripta.html">Kineticka teorija skripta <span class="lesson-badge"></span></a>
+                        <!--
+                            EGY LINK = EGY LECKE, KÉT FÁJLLAL (HU és SR).
+                            data-href-hu  -> IDE ÍRD A MAGYAR NYELVŰ JEGYZET FÁJL ELÉRÉSI ÚTJÁT
+                            data-href-sr  -> OVDE UPIŠI PUTANJU DO SKRIPTE NA SRPSKOM JEZIKU
+                            A "href" a kezdő (alapértelmezett) fájl, ez jelenik meg betöltéskor.
+                            Az oldal a nyelvváltáskor automatikusan a megfelelő data-href-* értékre cseréli.
+                        -->
+                        <a href="Molekulsko-kineticka_teorija_skripta_HU.html"
+                           data-href-hu="Molekulsko-kineticka_teorija_skripta_HU.html"
+                           data-href-sr="Molekulsko-kineticka_teorija_skripta_SR.html">
+                           <span data-translate-key="link-skripta1">Kinetikai elmélet – jegyzet</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <!-- ÚJ JEGYZET HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, és cseréld ki a fájlneveket és a data-translate-key értékét (pl. link-skripta2), majd a translations objektumban is add hozzá az új kulcsot. -->
                     </div>
                 </div>
 
@@ -209,9 +220,17 @@
                         <i>▼</i>
                     </button>
                     <div class="dropdown-content">
-                        <!-- IDE ÍRD BE A MUNKAFÜZETEK (RADNE SVESKE) FÁJLOK LINKJEIT -->
-                        <!-- OVDE UPIŠI LINKOVE KA FAJLOVIMA SA RADNIM SVESKAMA -->
-                        <a href="Radna_sveska_kineticka_teorija.html">Kineticka teorija <span class="lesson-badge"></span></a>
+                        <!--
+                            data-href-hu  -> IDE ÍRD A MAGYAR NYELVŰ MUNKAFÜZET FÁJL ELÉRÉSI ÚTJÁT
+                            data-href-sr  -> OVDE UPIŠI PUTANJU DO RADNE SVESKE NA SRPSKOM JEZIKU
+                        -->
+                        <a href="Radna_sveska_kineticka_teorija_HU.html"
+                           data-href-hu="Radna_sveska_kineticka_teorija_HU.html"
+                           data-href-sr="Radna_sveska_kineticka_teorija_SR.html">
+                           <span data-translate-key="link-radnasveska1">Kinetikai elmélet – munkafüzet</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <!-- ÚJ MUNKAFÜZET HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, cseréld a fájlneveket és a data-translate-key-t. -->
                     </div>
                 </div>
 
@@ -221,8 +240,19 @@
                         <i>▼</i>
                     </button>
                     <div class="dropdown-content">
-                        <!-- IDE ÍRD BE AZ INTERAKTÍV ANYAGOK (INTERAKTIVNI MATERIJALI) FÁJLOK LINKJEIT -->
-                        <!-- OVDE UPIŠI LINKOVE KA INTERAKTIVNIM MATERIJALIMA -->
+                        <!--
+                            data-href-hu  -> IDE ÍRD A MAGYAR NYELVŰ INTERAKTÍV ANYAG FÁJL ELÉRÉSI ÚTJÁT
+                            data-href-sr  -> OVDE UPIŠI PUTANJU DO INTERAKTIVNOG MATERIJALA NA SRPSKOM JEZIKU
+                            Példa (töröld a megjegyzésjeleket, ha van fájlod):
+                        -->
+                        <!--
+                        <a href="Interaktiv_anyag_1_HU.html"
+                           data-href-hu="Interaktiv_anyag_1_HU.html"
+                           data-href-sr="Interaktivni_materijal_1_SR.html">
+                           <span data-translate-key="link-interaktiv1">Interaktív anyag 1</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        -->
                     </div>
                 </div>
             </div>
@@ -307,6 +337,17 @@
                     hu: 'A gázok láthatatlan mozgásától a kristályok rendjéig és az elektromos áram erejéig – a fizika második lépcsőfoka',
                     sr: 'Od nevidljivog kretanja gasova do reda kristala i snage električne struje – drugi stepenik fizike'
                 },
+                // --- LINKEK SZÖVEGE (dropdown menük) ---
+                // Ha új linket adsz hozzá fent a HTML-ben, a data-translate-key-hez tartozó
+                // fordítást ide kell felvenned (hu / sr).
+                'link-skripta1': {
+                    hu: 'Kinetikai elmélet – jegyzet',
+                    sr: 'Kinetička teorija – skripta'
+                },
+                'link-radnasveska1': {
+                    hu: 'Kinetikai elmélet – munkafüzet',
+                    sr: 'Kinetička teorija – radna sveska'
+                },
                 'section1-title': {
                     hu: 'A gázmolekulák mozgása',
                     sr: 'Kretanje molekula gasa'
@@ -372,6 +413,16 @@
                         el.innerHTML = translations[key][lang];
                     }
                 });
+
+                // ÚJ: a jegyzetek / munkafüzetek / interaktív anyagok linkjeinek
+                // href-jét is a kiválasztott nyelvhez igazítjuk.
+                document.querySelectorAll('a[data-href-' + lang + ']').forEach(function(link) {
+                    const newHref = link.getAttribute('data-href-' + lang);
+                    if (newHref) {
+                        link.setAttribute('href', newHref);
+                    }
+                });
+
                 document.querySelectorAll('.lang-btn').forEach(function(btn) {
                     const isActive = btn.getAttribute('data-lang') === lang;
                     btn.classList.toggle('active', isActive);
@@ -402,6 +453,9 @@
                     }
                 });
             });
+
+            // Kezdéskor is állítsuk be a helyes href-eket (hu az alapértelmezett)
+            applyTranslations(currentLang);
         })();
     </script>
 </body>
