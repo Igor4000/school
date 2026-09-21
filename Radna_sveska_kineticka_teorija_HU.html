@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Munkafüzet: Gázok molekuláris-kinetikai elmélete</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-cyan: linear-gradient(135deg, #0052D4 0%, #00C6FB 100%);
+            --purple: linear-gradient(135deg, #9D50BB 0%, #6E48AA 100%);
+            --green-turq: linear-gradient(135deg, #2ecc71 0%, #1abc9c 100%);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e0f7ff 0%, #f3e6ff 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            background: var(--blue-cyan);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chapter {
+            page-break-before: always;
+            margin-bottom: 50px;
+            padding-top: 20px;
+        }
+
+        .chapter:first-of-type {
+            page-break-before: avoid;
+        }
+
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: #333;
+            border-bottom: 3px solid transparent;
+            border-image: var(--blue-cyan);
+            border-image-slice: 1;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--blue-cyan);
+            border-radius: 50%;
+            margin-right: 15px;
+            box-shadow: 0 0 8px #00C6FB;
+        }
+
+        h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            color: #0052D4;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .reminder-box {
+            border-left: 5px solid #0052D4;
+        }
+
+        .formula-box {
+            border-left: 5px solid #9D50BB;
+        }
+
+        .self-eval-box {
+            border-left: 5px solid #2ecc71;
+        }
+
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            background: rgba(0,0,0,0.03);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+
+        /* Feladatok */
+        .task {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .tf-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .tf-statement {
+            width: 75%;
+        }
+
+        .tf-boxes {
+            width: 20%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chk-pair {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chk-box {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #0052D4;
+            border-radius: 4px;
+            background: transparent;
+        }
+
+        .write-lines {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .line {
+            border-bottom: 1px dashed #aaa;
+            height: 28px;
+            width: 100%;
+        }
+
+        /* Párosító táblázat */
+        .match-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 10px 15px;
+        }
+
+        .match-table td {
+            width: 45%;
+            padding: 12px;
+            border-radius: 8px;
+            vertical-align: top;
+        }
+
+        .match-table td.left {
+            border-left: 4px solid #00C6FB;
+            background: rgba(0, 198, 251, 0.05);
+            font-weight: 500;
+        }
+
+        .match-table td.right {
+            border-left: 4px solid #9D50BB;
+            background: rgba(157, 80, 187, 0.05);
+        }
+
+        .spacer {
+            height: 20px;
+        }
+
+        /* Önértékelés */
+        .eval-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .eval-text {
+            width: 80%;
+        }
+
+        /* Nyomtatási stílusok */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                background: white;
+                padding: 0;
+                max-width: 100%;
+            }
+            .glass {
+                background: white;
+                backdrop-filter: none;
+                border: 1px solid #ddd;
+                box-shadow: none;
+            }
+            .chapter {
+                page-break-before: always;
+            }
+            .task, .glass, .tf-row {
+                page-break-inside: avoid;
+            }
+            h1, h2 {
+                -webkit-text-fill-color: initial;
+                color: #0052D4;
+            }
+            h2::before {
+                background: #0052D4;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Munkafüzet: Gázok molekuláris-kinetikai elmélete</h1>
+
+        <!-- 1. Fejezet -->
+        <div class="chapter">
+            <h2>1. Gázmolekulák sebesség szerinti eloszlása</h2>
+            <div class="glass reminder-box">
+                <p>A gázmolekulák nem azonos sebességgel mozognak; mozgásukat a Maxwell-eloszlás írja le. A legtöbb molekulának a legvalószínűbb sebessége van, míg a négyzetes középsebesség a legnagyobb, és közvetlenül kapcsolódik a mozgási energiához. A molekulák átlagos mozgási energiája kizárólag a hőmérséklettől függ.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>Kulcsképletek:</strong> Legvalószínűbb sebesség <span class="math">v<sub>n</sub> = √(2kT / m)</span>; Aritmetikai középsebesség <span class="math">v<sub>s</sub> = √(8kT / πm)</span>; Négyzetes középsebesség <span class="math">v = √(3kT / m)</span>; Mozgási energia <span class="math">E<sub>k</sub> = ½ m v<sup>2</sup></span>.</p>
+            </div>
+
+            <div class="task">
+                <h3>1.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">A Maxwell-eloszlás azt a szabályt jelenti, amely megmutatja, hogy a molekulák mekkora hányada rendelkezik bizonyos tartományba eső sebességgel.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A Maxwell-eloszlás görbéjének csúcsa a molekulák legvalószínűbb sebességének felel meg.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A négyzetes középsebesség mindig kisebb, mint a legvalószínűbb sebesség.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A hőmérséklet növekedésével az eloszlás görbéjének csúcsa jobbra tolódik, a görbe pedig szélesebb és alacsonyabb lesz.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A molekulák átlagos mozgási energiája a gáz fajtájától és a molekulák tömegétől függ.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A könnyebb molekulák ezt nagyobb sebességgel kompenzálják, hogy azonos hőmérsékleten az energiájuk megegyezzen a nehezebb molekulákéval.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A Maxwell-eloszlás grafikonja szimmetrikus harang alakú.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A legvalószínűbb, az aritmetikai közép- és a négyzetes középsebesség aránya megközelítőleg 1 : 1,13 : 1,22.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>1.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Maxwell-eloszlás</td>
+                        <td class="right">A molekulák négyzetes középsebességéből számítható<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Legvalószínűbb sebesség (v<sub>n</sub>)</td>
+                        <td class="right">A gázban lévő összes molekula sebességének egyszerű átlaga<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Aritmetikai középsebesség (v<sub>s</sub>)</td>
+                        <td class="right">A molekulák tömegétől függően meghatározza a görbe magasságát és szélességét<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Négyzetes középsebesség (v)</td>
+                        <td class="right">Az a sebesség, amellyel a legtöbb molekula rendelkezik (a görbe csúcsa)<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Átlagos mozgási energia (E<sub>k</sub>)</td>
+                        <td class="right">Az összes molekula sebességnégyzete átlagának gyöke<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Boltzmann-állandó (k)</td>
+                        <td class="right">Az a szabály, amely szerint a molekulák sebesség szerint elosztásra kerülnek<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>1.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> Egy tartályban 300 K hőmérsékleten oxigén található. Egyetlen oxigénmolekula tömege 5,3 ⋅ 10<sup>-26</sup> kg. Számítsd ki az oxigénmolekulák legvalószínűbb sebességét. (Boltzmann-állandó <span class="math">k = 1,38 ⋅ 10<sup>-23</sup> J/K</span>).</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Számítsd ki az a) alfeladatban szereplő gáz molekuláinak négyzetes középsebességét és egyetlen molekula átlagos mozgási energiáját.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> A hidrogén molekulatömege 3,3 ⋅ 10<sup>-27</sup> kg. Ha 300 K-es azonos hőmérsékleten van, számítsd ki, hányszor nagyobb a hidrogénmolekulák négyzetes középsebessége, mint az oxigéné.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> A kémiai reakció sebessége azoktól a molekuláktól függ, amelyek energiája nagyobb, mint 6 ⋅ 10<sup>-21</sup> J. Ha a molekula tömege 4 ⋅ 10<sup>-26</sup> kg, mekkora négyzetes középsebesség felel meg ennek a határenergiának?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>1.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> A légkörben lévő nitrogénmolekulák legvalószínűbb sebessége 420 m/s. Ha a nitrogénmolekula tömege 4,6 ⋅ 10<sup>-26</sup> kg, számítsd ki a légkör hőmérsékletét, majd határozd meg a molekulák aritmetikai középsebességét ezen a hőmérsékleten.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> 400 K hőmérsékletű héliumban a molekulák átlagos mozgási energiája 8,28 ⋅ 10<sup>-21</sup> J. Ezen adatok felhasználásával számítsd ki a négyzetes középsebességet, majd határozd meg a héliummolekula tömegét.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Két különböző gáz összehasonlításakor megállapították, hogy az A gáz molekuláinak legvalószínűbb sebessége 300 m/s, míg a B gáz molekuláinak négyzetes középsebessége azonos hőmérsékleten 600 m/s. Ha az A gáz molekulatömege 6 ⋅ 10<sup>-26</sup> kg, számítsd ki a B gáz molekulatömegét.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, hogy mit ír le a Maxwell-eloszlás.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a különbséget a legvalószínűbb, az aritmetikai közép- és a négyzetes középsebesség között.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogyan befolyásolja a hőmérséklet a görbe csúcsának eltolódását.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, hogy az átlagos mozgási energia nem függ a gáz fajtájától.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom képletből kiszámítani a három jellemző sebességet.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a négyzetes középsebesség és a mozgási energia közötti kapcsolatot.</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 2. Fejezet -->
+        <div class="chapter">
+            <h2>2. Az ideális gáz modellje</h2>
+            <div class="glass reminder-box">
+                <p>Az ideális gáz modellje több feltételezéssel egyszerűsíti a gázok tanulmányozását: a molekulák pontszerűek (elhanyagolható térfogatú), egymással csak ütközéskor hatnak kölcsön, az ütközések rugalmasak, és a mozgás kaotikus. A reális gázok akkor viselkednek ideálisként, amikor hígok.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>Kulcsfogalmak:</strong> ideális gáz modellje, elhanyagolható molekulatérfogat, rugalmas ütközések, gáz híg volta, állapotparaméterek <span class="math">p, V, T</span>.</p>
+            </div>
+
+            <div class="task">
+                <h3>2.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">Az ideális gáz modellje szerint a molekulák saját térfogata az edény térfogatához képest elhanyagolhatóan kicsi.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az ideális gáznál figyelembe veszik a molekulák közötti erős kölcsönhatást.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az ideális gázban lévő molekulák ütközései nem rugalmasak, energiaveszteséggel járnak.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A reális gázok akkor viselkednek ideálisként, amikor nagyon magas nyomáson vannak.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az ideális gáz modellje feltételezi, hogy a molekulák kaotikusan mozognak.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Egy adott mennyiségű gáz állapotát a következő paraméterek írják le: térfogat, nyomás és hőmérséklet.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Ideális gáz esetében az ütközések során az edény falaival szemben nem lép fel energiaveszteség.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A gázokban lévő molekuláris erők lényegesen erősebbek, mint a folyadékokban.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>2.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Ideális gáz</td>
+                        <td class="right">Olyan ütközési tulajdonság, amely során a mozgási energia és az impulzus megmarad<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Pontszerű molekulák</td>
+                        <td class="right">Olyan állapot, amelyben a molekulák közötti átlagos távolság jóval nagyobb, mint maguk a molekulák<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Rugalmas ütközések</td>
+                        <td class="right">A nyomás, térfogat és hőmérséklet gyűjtőneve<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Gáz híg volta</td>
+                        <td class="right">Az a feltételezés, hogy a molekulák térfogata az edény térfogatához képest elhanyagolható<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Állapotparaméterek</td>
+                        <td class="right">Egyszerűsített modell, amely a gázok viselkedését írja le a könnyebb számítások érdekében<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Kölcsönhatás</td>
+                        <td class="right">Az az erő, amelyet az ideális gáz modelljében a rövid ütközések kivételével elhanyagolunk<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>2.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> Egy 30 liter térfogatú autógumiban lévő levegő 2,5 bar nyomáson és 300 K hőmérsékleten van. Ha a levegőt ideális gázként kezeljük, mely három állapotparamétert határoztuk meg?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy 10<sup>7</sup> Pa nyomáson lévő reális gáz egy edényben található. Ha állandó hőmérsékleten 10<sup>4</sup> Pa-ra csökkentjük a nyomását, közelebb fog-e viselkedni az ideális gáz modelljéhez? Indokld a válaszodat.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy 2 literes edényben 0,05 mol ideális gáz van. Ha a gáz hőmérséklete 250 K, a nyomás pedig 52 kPa, sorold fel az ideális gáz modelljének azokat a feltételezéseit, amelyek lehetővé tették, hogy ezt a rendszert állapotparaméterekkel írjuk le.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> Ha a c) alfeladatban lévő gáz térfogatát 1 literre csökkentjük, de a nyomást változatlanul hagyjuk, mekkora kell, hogy legyen a rendszer új hőmérséklete?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>2.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> Egy 10 m<sup>3</sup> térfogatú edényben 3 ⋅ 10<sup>26</sup> molekula található 300 K hőmérsékletű híg gázból. Ha elhanyagoljuk a molekulák saját térfogatát, a nyomás 124 kPa. Ha figyelembe vesszük, hogy a molekulák összesen 0,5 m<sup>3</sup> térfogatot foglalnak el, számítsd ki a százalékos hibát, amelyet akkor követünk el, ha ideális gázként kezeljük.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy ideális gázt tartalmazó edény térfogata 5 m<sup>3</sup>. A gáz 100 kPa nyomáson és 200 K hőmérsékleten van. Ha a gáz mennyisége megkétszereződik, a hőmérséklet pedig megháromszorozódik, mekkora értékre kell változnia az edény térfogatának ahhoz, hogy a nyomás ugyanaz maradjon? Feltételezd, hogy az ütközések rugalmasak és érvényes az állapotegyenlet.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy hermetikusan zárt, 0,02 m<sup>3</sup> térfogatú kamrában 200 kPa nyomáson lévő gáz rugalmasan ütközik a falakkal. A gáz hőmérséklete 400 K. Ha a kamrából eltávolítjuk a molekulák 80%-át, a maradék molekuláknak pedig megengedjük, hogy 50%-kal nagyobb térfogatot foglaljanak el, számítsd ki a gáz új nyomását, feltételezve, hogy ideálisként viselkedik.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom az ideális gáz modelljének feltételeit.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, mit jelent az, hogy a molekulák pontszerűek.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a rugalmas ütközések jellemzőit.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, milyen feltételek mellett felel meg a reális gáz az ideális gáz modelljének.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, mik a gáz állapotparaméterei.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, hogy a molekulák közötti kölcsönhatást elhanyagoljuk.</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3. Fejezet -->
+        <div class="chapter">
+            <h2>3. Gáznyomás</h2>
+            <div class="glass reminder-box">
+                <p>A gáz edény falára gyakorolt nyomása a molekulák kaotikus mozgása során bekövetkező hatalmas számú ütközés eredménye. A molekuláris-kinetikai elmélet alapegyenlete a nyomást a molekulák koncentrációjával és azok átlagos mozgási energiájával kapcsolja össze.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>A MKE alapegyenlete:</strong> <span class="math">p = ⅔ n<sub>0</sub> E<sub>k</sub> = ⅓ n<sub>0</sub> m v<sup>2</sup></span>.<br><strong>Nyomás:</strong> <span class="math">p = F<sub>n</sub> / S</span> (1 Pa = 1 N/m<sup>2</sup>).<br><strong>Jelölések:</strong> <span class="math">n<sub>0</sub></span> - koncentráció, <span class="math">m</span> - egy molekula tömege, <span class="math">v<sup>2</sup></span> - sebesség négyzetének középértéke, <span class="math">E<sub>k</sub></span> - átlagos mozgási energia.</p>
+            </div>
+
+            <div class="task">
+                <h3>3.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">A gáz edény falára gyakorolt nyomása a molekulák falával történő állandó ütközéséből származik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A nyomás vektorialis mennyiség, amely az erő merőleges komponense és a felület hányadosa.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A molekula fallal történő rugalmas ütközésekor a molekula elveszíti mozgási energiája egy részét.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A fallal történő ütközéskor a molekula impulzusváltozása 2mv<sub>x</sub>.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az ideális gáz nyomása fordítottan arányos a molekulák koncentrációjával.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Kaotikus mozgás esetén a sebességnégyzet összegének harmada jut egy tengelyre.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Azonos hőmérsékleten az állandó mennyiségű gáz nyomásának és térfogatának szorzata állandó marad.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Több molekula vagy gyorsabb molekulák nagyobb gáznyomást jelentenek.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>3.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Nyomás (p)</td>
+                        <td class="right">Molekulák száma egységnyi térfogatra jutó<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Erő merőleges komponense (F<sub>n</sub>)</td>
+                        <td class="right">A <span class="math">2 m v<sub>x</sub></span> értéke<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Koncentráció (n<sub>0</sub>)</td>
+                        <td class="right">A <span class="math">⅓ n<sub>0</sub> m v<sup>2</sup></span> értéke<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Impulzusváltozás ütközéskor</td>
+                        <td class="right">Sík felületre merőlegesen ható erő<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">A MKE alapegyenlete</td>
+                        <td class="right">A merőleges erő és a felület nagyságának hányadosa<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Pascal (Pa)</td>
+                        <td class="right">A nyomás mértékegysége, amely egyenértékű a N/m<sup>2</sup>-rel<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>3.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> Egy 150 N erő merőlegesen hat egy 0,5 m<sup>2</sup> felületű edényfalra. Számítsd ki az ebből az erőből eredő nyomást.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> A gáz molekuláinak koncentrációja 2 ⋅ 10<sup>25</sup> m<sup>-3</sup>, a molekulák átlagos mozgási energiája pedig 6 ⋅ 10<sup>-21</sup> J. A MKE alapegyenletének alkalmazásával számítsd ki a gáz nyomását.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy 4 ⋅ 10<sup>-26</sup> kg tömegű és 10<sup>25</sup> m<sup>-3</sup> koncentrációjú gáz úgy mozog, hogy a négyzetes középsebessége 500 m/s. Számítsd ki a gáz nyomását.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> Ha a gázmolekulák koncentrációja megkétszereződik, a molekulák átlagos mozgási energiája pedig a felére csökken, mekkora lesz a nyomás új értéke a kezdetihez képest?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>3.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> Egy 1 m<sup>3</sup> térfogatú kockában 2,5 ⋅ 10<sup>25</sup> gázmolekula található. Minden molekula tömege 4,8 ⋅ 10<sup>-26</sup> kg. A gáz nyomása 10<sup>5</sup> Pa. Számítsd ki a molekulák négyzetes középsebességét és azok átlagos mozgási energiáját.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy edényben 120 kPa nyomáson gáz található. A 3,3 ⋅ 10<sup>-27</sup> kg tömegű gázmolekulák négyzetes középsebessége 1800 m/s. Számítsd ki a molekulák számát a 2 liter térfogatú edényben.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy 5 ⋅ 10<sup>-26</sup> kg tömegű molekula 400 m/s sebességgel merőlegesen nekiütközik egy edény falának, majd rugalmasan visszaverődik. A fal felülete 0,2 m<sup>2</sup>. Ha másodpercenként átlagosan 10<sup>23</sup> molekula ütközik a falnak, számítsd ki a másodpercenkénti teljes impulzusváltozást, a falra ható erőt és a gáz falra gyakorolt nyomását.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a gáznyomás eredetét a molekulák mozgásából.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a nyomás definícióját az erő és a felület segítségével.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a MKE alapegyenletét és a benne szereplő szimbólumok jelentését.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, miért vesszük az impulzusváltozást 2mv<sub>x</sub>-nek ütközéskor.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogyan befolyásolja a koncentráció a nyomást.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom kiszámítani a nyomást az átlagos mozgási energiából.</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 4. Fejezet -->
+        <div class="chapter">
+            <h2>4. Boyle–Mariotte-törvény</h2>
+            <div class="glass reminder-box">
+                <p>A Boyle–Mariotte-törvény izoterm folyamatokra (T = állandó) érvényes. Kimondja, hogy az állandó mennyiségű gáz nyomásának és térfogatának szorzata állandó hőmérsékleten konstans. A gáz összenyomásakor a nyomás arányosan nő.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>Képlet:</strong> <span class="math">pV = állandó</span> vagy <span class="math">p<sub>1</sub>V<sub>1</sub> = p<sub>2</sub>V<sub>2</sub></span>.<br><strong>Fogalmak:</strong> izoterm folyamat, izoterma, hiperbola a p-V diagramban. A törvény alacsonyabb nyomáson és magasabb hőmérsékleten érvényesül jobban.</p>
+            </div>
+
+            <div class="task">
+                <h3>4.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">Az izoterm folyamat állandó hőmérsékleten zajló folyamat.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A Boyle–Mariotte-törvény szerint, ha a gáz térfogatát a felére csökkentjük, a nyomás megkétszereződik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A p-V diagramban az izoterma egy növekvő egyenes alakját ölti.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A p-V diagramban a magasabb hőmérsékletekhez alacsonyabb izotermák tartoznak.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A fecskendőben lévő levegő összenyomásakor a molekulák koncentrációja nő, így a nyomás is nő.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A Boyle–Mariotte-törvény a legpontosabban a reális gázokat magas nyomáson írja le.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az izoterm folyamat során a molekulák átlagos mozgási energiája változatlan marad.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az izoterm folyamatot ábrázoló görbét hiperbolának nevezzük.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>4.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Boyle–Mariotte-törvény</td>
+                        <td class="right">Állandó hőmérsékleten zajló folyamat<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Izoterm folyamat</td>
+                        <td class="right">A diagramban a magasabb hőmérséklethez magasabb görbe tartozik<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Izoterma</td>
+                        <td class="right">A levegő összenyomásának gyakorlata egy zárt fecskendőben<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Hiperbola</td>
+                        <td class="right">A p-V diagramban az izoterm folyamat görbéjének alakja<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">p-V diagram</td>
+                        <td class="right">Állandó hőmérsékleten a nyomás térfogattól való függését ábrázoló görbe<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Az izoterma helyzete</td>
+                        <td class="right">Az a törvény, amely szerint pV = állandó<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>4.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> A fecskendőben lévő levegő térfogata 50 cm<sup>3</sup>, nyomása 100 kPa. Ha a dugattyút úgy nyomjuk meg, hogy a térfogat 20 cm<sup>3</sup>-ra csökkenjen azonos hőmérsékleten, mekkora lesz az új nyomás?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy zárt edényben 2 bar nyomáson gáz található. Ha állandó hőmérsékleten a nyomást 0,5 barra csökkentjük, hányszor változott a gáz térfogata?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> A mélyvízi búvár tüdejében lévő levegő térfogata 6 liter 3 atm nyomáson. Amikor a búvár a felszínre emelkedik, ahol a nyomás 1 atm, mekkora lesz a levegő térfogata a tüdőben, feltételezve, hogy a hőmérséklet azonos marad?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> A biciklipumpa hengere 200 cm<sup>3</sup> térfogatú. Ha a gumi szelepét zártva tartjuk, és a dugattyút a végletekig nyomjuk, a levegő térfogata 50 cm<sup>3</sup>-re csökken. Ha a levegő kezdeti nyomása a hengerben 101 kPa, számítsd ki a levegő nyomását az összenyomás végén.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>4.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> Egy 5 liter térfogatú pneumatikai kamrában 8 bar nyomáson levegő van. A kamra egy 15 literes üres edényhez van csatlakoztatva. Miután a levegő állandó hőmérsékleten kiegyenlítődik a két edény között, számítsd ki a rendszer végső nyomását.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy 2 dm<sup>3</sup> térfogatú gumilabdát 1,2 bar nyomású levegővel fújtunk fel. A hőmérséklet állandó. Ha a labdát 10 m mélyre merítjük a víz alá (ahol a nyomás 2 bar), számítsd ki a labda új térfogatát a víz alatt.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy 10 literes edényben 150 kPa nyomáson gáz található. Pumpálás során az edénybe további 5 liter gázt juttatunk azonos nyomáson (150 kPa), a hőmérséklet pedig változatlan marad. Számítsd ki a 10 literes edényben lévő végső nyomást az új gázmennyiség bevezetése után.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a feltételt, amely mellett a Boyle–Mariotte-törvény érvényes.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom írni és alkalmazni a pV = állandó képletet.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogyan néz ki az izoterma a p-V diagramban.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a molekuláris-kinetikai szempontból, miért nő a nyomás összenyomáskor.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogyan függ az izoterma helyzete a hőmérséklettől.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a törvény alkalmazhatóságának határait reális gázok esetén.</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5. Fejezet -->
+        <div class="chapter">
+            <h2>5. Hőmérséklet</h2>
+            <div class="glass reminder-box">
+                <p>A hőmérséklet meghatározza a hőcsere irányát, és a test hőegyensúlytól való távolságának mértéke. A MKE szempontjából a hőmérséklet a molekulák elmozdulási (transzlációs) mozgásának átlagos mozgási energiáját méri. Az abszolút nulla fok (0 K) egy elérhetetlen határ, ahol a termikus mozgás megszűnik.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>Skálák kapcsolata:</strong> <span class="math">T = 273,15 + t</span>.<br><strong>Energia és hőmérséklet:</strong> <span class="math">E<sub>k</sub> = (3/2) k T</span>.<br><strong>Jelölések:</strong> <span class="math">T</span> - abszolút hőmérséklet Kelvinben, <span class="math">t</span> - hőmérséklet Celsius-fokban, <span class="math">k</span> - Boltzmann-állandó (1,38⋅10<sup>-23</sup> J/K).</p>
+            </div>
+
+            <div class="task">
+                <h3>5.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">A hő mindig spontán az alacsonyabb hőmérsékletű testtől a magasabb hőmérsékletű felé áramlik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A hőmérséklet a molekulák elmozdulási mozgásának átlagos mozgási energiájának mértéke.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az abszolút nulla fok -273,15 °C-nak felel meg.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az 1 °C-os hőmérséklet-növekedés 1 K abszolút hőmérséklet-növekedésnek felel meg.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az abszolút nulla fok laboratóriumi körülmények között elérhető megfelelően erős hűtéssel.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Hőegyensúly akkor áll be, amikor a testek hőmérséklete azonos, és nincs hőcsere.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az abszolút nulla fokhoz közeli hőmérsékleten egyes anyagok szupravezetővé válnak.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Ha a hőmérsékletet Kelvinben megkétszerezzük, a molekulák átlagos mozgási energiája négyszeresére nő.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>5.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Hőegyensúly</td>
+                        <td class="right">A legalacsonyabb lehetséges hőmérsékletnek (0 K) megfelelő állapot<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Abszolút nulla fok</td>
+                        <td class="right">A <span class="math">E<sub>k</sub> = (3/2) k T</span> összefüggés<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Abszolút skála</td>
+                        <td class="right">Olyan állapot, amelyben nincs spontán hőcsere a testek között<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Celsius-skála</td>
+                        <td class="right">A mértékegysége a kelvin (K)<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Hőmérséklet a MKE-ben</td>
+                        <td class="right">A molekulák mozgási átlagos energiájának mértéke<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Szupravezetés</td>
+                        <td class="right">Olyan skála, amelyen a jég olvadáspontja 0°-on van<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>5.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> A szobában a levegő hőmérséklete 25 °C. Számítsd ki a Celsius-fokban megadott levegő hőmérsékletének Kelvinben kifejezett értékét.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> A Nap felszínének hőmérséklete körülbelül 5778 K. Számítsd ki ezt a hőmérsékletet Celsius-fokban.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Ha a gázmolekulák átlagos mozgási energiája 300 K hőmérsékleten van, számítsd ki ennek az energiának az értékét. A Boltzmann-állandó <span class="math">k</span> = 1,38 ⋅ 10<sup>-23</sup> J/K.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> Ha a c) alfeladatban lévő gáz hőmérséklete lineárisan 600 K-re nő, mennyivel nő a molekulák átlagos mozgási energiája? Fejezd ki általános alakban, és számítsd ki az új értéket.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>5.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> A hidrogénmolekulák átlagos mozgási energiája egy bizonyos hőmérsékleten 8,28 ⋅ 10<sup>-21</sup> J. A hidrogénmolekula tömege 3,3 ⋅ 10<sup>-27</sup> kg. Számítsd ki a gáz abszolút hőmérsékletét és a molekulák négyzetes középsebességét.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy edényben két különböző gáz, oxigén és hidrogén található 400 K hőmérsékleten. Az oxigénmolekula tömege 5,3 ⋅ 10<sup>-26</sup> kg. Számítsd ki mindkét gáz átlagos mozgási energiáját, és határozd meg a négyzetes középsebességeik arányát. Mit vontál le ebből az arányból?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Tegyük fel, hogy a rendszer hőmérséklet-növekedését a belső energia növekedése kíséri. Ha 27 °C-on az átlagos mozgási energia 6,21 ⋅ 10<sup>-21</sup> J, számítsd ki azt az abszolút hőmérsékletet, amelyen az energia 1,5 ⋅ 10<sup>-20</sup> J-ra nő. Alakítsd át a végső hőmérsékletet °C-ra.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a hőmérséklet definícióját a MKE-ben.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a Kelvin és a Celsius skála közötti kapcsolatot.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a hőegyensúly fogalmát.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, mit jelent az abszolút nulla fok.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom kiszámítani az átlagos mozgási energiát a hőmérsékletből.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudok a szupravezetés jelenségéről alacsony hőmérsékleteken.</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 6. Fejezet -->
+        <div class="chapter">
+            <h2>6. Az ideális gáz állapotegyenlete</h2>
+            <div class="glass reminder-box">
+                <p>Az ideális gáz állapotegyenlete egyetlen képletbe foglalja mind a három állapotparamétert: a nyomást, a térfogatot és a hőmérsékletet. Ebből vezethetők le az összes specifikus gáztörvény.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>Képlet:</strong> <span class="math">pV = n k T</span> vagy <span class="math">pV / T = n k = állandó</span>.<br><strong>Jelölések:</strong> <span class="math">p</span> - nyomás, <span class="math">V</span> - térfogat, <span class="math">T</span> - abszolút hőmérséklet, <span class="math">n</span> - molekulák száma, <span class="math">k</span> - Boltzmann-állandó.</p>
+            </div>
+
+            <div class="task">
+                <h3>6.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">Az ideális gáz állapotegyenlete összeköti a nyomást, a térfogatot és a hőmérsékletet.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az állapotegyenletben a pV szorzat értéke fordítottan arányos a hőmérséklettel.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Állandó gázmennyiség esetén a pV/T hányados állandót jelent.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A Boyle–Mariotte-törvény az állapotegyenlet speciális esete, amikor T állandó.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Ha az edényben lévő gázmennyiség megkétszereződik, az nk állandó értéke a felére csökken.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az ideális gáz nyomását a koncentráció segítségével a következőképpen fejezhetjük ki: p = n<sub>0</sub> k T.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Az állapotegyenlet csak akkor érvényes, ha a hőmérsékletet Celsius-fokban fejezzük ki.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A napon hagyott lufi kipukkanhat, mert a hőmérséklet növekedése miatt a pV szorzat nő.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>6.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Állapotegyenlet</td>
+                        <td class="right">Az edény térfogatával elosztott molekulák száma<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Az nk állandó</td>
+                        <td class="right">A <span class="math">p = n<sub>0</sub> k T</span> kifejezés<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Koncentráció (n<sub>0</sub>)</td>
+                        <td class="right">Olyan érték, amely állandó marad azonos gázmennyiség esetén<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">A nyomás levezetett összefüggése</td>
+                        <td class="right">A <span class="math">pV = n k T</span> egyenlet<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Speciális gáztörvények</td>
+                        <td class="right">Az általános egyenletben egy paraméter állandónak tartásával vezethetők le<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Boltzmann-állandó (k)</td>
+                        <td class="right">1,38 ⋅ 10<sup>-23</sup> J/K érték<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>6.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> Egy 0,02 m<sup>3</sup> térfogatú edényben 5 ⋅ 10<sup>23</sup> ideális gázmolekula található 300 K hőmérsékleten. Számítsd ki a gáz nyomását. (k = 1,38 ⋅ 10<sup>-23</sup> J/K)</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Ha az a) alfeladatban lévő gázmennyiséget 0,01 m<sup>3</sup> térfogatra sűrítjük össze, a nyomás pedig 414 kPa-ra nő, mekkora a gáz új hőmérséklete?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy edényben 100 kPa nyomáson és 250 K hőmérsékleten gáz található. Ha a térfogat 4 m<sup>3</sup>, hány molekula van az edényben?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> Ha a c) alfeladatban lévő edényt hermetikusan lezárjuk, a nyomás és a hőmérséklet pedig megkétszereződik, hányszor változott a gáz térfogata?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>6.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> Egy 0,03 m<sup>3</sup> térfogatú autógumit 220 kPa nyomáson és 290 K hőmérsékleten levegővel töltötték meg. A vezetés után a gumi hőmérséklete 320 K-re nőtt, a térfogata pedig jelentéktelenül (1%-kal) megnőtt. Számítsd ki az új nyomást a gumiban. A molekulák száma nem változott.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy edényben 150 kPa nyomáson és 27 °C hőmérsékleten gáz található. Ha a molekulák mennyisége azonos marad, az edény térfogata pedig harmadára csökken, milyen hőmérsékletre (°C) kell hűteni a gázt ahhoz, hogy a nyomás megkétszereződjön?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy 10 m<sup>3</sup> térfogatú héliumlufi 300 K hőmérsékleten és 101 kPa nyomáson van. A héliummolekula tömege 6,6 ⋅ 10<sup>-27</sup> kg. Számítsd ki a gáz teljes tömegét a lufiban úgy, hogy először az állapotegyenlettel kiszámítod a molekulák számát.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom az ideális gáz általános állapotegyenletét és megértem.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, hogy állandó gázmennyiség esetén a pV/T állandó.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogy a hőmérsékletnek Kelvinben kell lennie.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom kiszámítani bármelyik állapotparamétert, ha a többi adott.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogy a többi gáztörvény ebből az egyenletből vezethető le.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a koncentráció és a nyomás közötti kapcsolatot (p = n<sub>0</sub>kT).</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 7. Fejezet -->
+        <div class="chapter">
+            <h2>7. Charles-törvény. Izochor folyamat</h2>
+            <div class="glass reminder-box">
+                <p>Az izochor folyamat állandó térfogaton (V = állandó) zajlik. A Charles-törvény kimondja, hogy az állandó mennyiségű gáz nyomása egyenesen arányos az abszolút hőmérséklettel. A zárt edényben lévő gáz melegítésekor a nyomás hirtelen nő.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>Charles-törvény:</strong> <span class="math">p / T = állandó</span> vagy <span class="math">p / p<sub>0</sub> = T / T<sub>0</sub></span>.<br><strong>Lineáris alak:</strong> <span class="math">p = p<sub>0</sub>(1 + γt)</span>, ahol <span class="math">γ = 1/273,15 °C<sup>-1</sup></span>.<br><strong>Fogalmak:</strong> izochor folyamat, a nyomás hőmérsékleti együtthatója.</p>
+            </div>
+
+            <div class="task">
+                <h3>7.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">Az izochor folyamat állandó térfogaton zajlik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A Charles-törvény megállapítja, hogy a nyomás arányos a Celsius-fokban kifejezett hőmérséklettel.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Izochor folyamat során a gáz melegítése a nyomás növekedését eredményezi.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A nyomás hőmérsékleti együtthatója 1/273,15 °C<sup>-1</sup>.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Ha a zárt palackban lévő gáz hőmérséklete megkétszereződik, a nyomás is megkétszereződik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A spray-ok palackjának melegítése a nyomás csökkenése miatt robbanáshoz vezethet.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A p-T diagramban a különböző térfogatú egyenesek a hőmérsékleti tengelyt a 0 °C pontban metszik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A p-T diagramban az egyenesek visszahosszabbítva a hőmérsékleti tengelyt az abszolút nulla fokban metszik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>7.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Izochor folyamat</td>
+                        <td class="right">A nyomás 0 °C-on<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Charles-törvény</td>
+                        <td class="right">-273,15 °C hőmérséklet<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Hőmérsékleti együttható (γ)</td>
+                        <td class="right">1/273,15 °C<sup>-1</sup> érték<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Abszolút nulla fok</td>
+                        <td class="right">Állandó térfogaton zajló folyamat<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Kezdeti nyomás (p<sub>0</sub>)</td>
+                        <td class="right">Az a törvény, amely szerint p/p<sub>0</sub> = T/T<sub>0</sub><div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Gejzírek</td>
+                        <td class="right">A föld alatt lévő zárt üregekben lévő gázok melegítésének következménye<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>7.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> Egy 2 liter térfogatú zárt fém palackban a levegő 100 kPa nyomáson és 20 °C hőmérsékleten van. Ha a palackot tűznek tesszük ki, és a hőmérsékletet 120 °C-ra emeljük, mekkora lesz az új nyomás?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> A hermetikusan zárt edényben lévő gáz 300 K hőmérsékleten és 150 kPa nyomáson van. Ha a nyomás azonos térfogaton 100 kPa-ra csökken, mekkora a gáz új hőmérséklete?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy 0,03 m<sup>3</sup> térfogatú autógumiban a levegő nyomása 280 K hőmérsékleten 210 kPa. A vezetés után a hőmérséklet 310 K-re nő. Számítsd ki az új nyomást a gumiban, feltételezve, hogy a térfogat nem változott.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> Ha a 0 °C-on lévő edényben a kezdeti nyomás 80 kPa, számítsd ki a nyomást 100 °C-on a Charles-törvény lineáris alakjának segítségével. A hőmérsékleti együttható γ = 1/273 °C<sup>-1</sup>.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>7.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> Egy spray palackjában a nyomás 27 °C-on 3 ⋅ 10<sup>5</sup> Pa. Kibírja-e a palack a nyomást, ha a maximális működési határa 8 ⋅ 10<sup>5</sup> Pa, a tűzben lévő hőmérséklet pedig eléri a 600 °C-ot? A palack térfogata állandó.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> A kazán biztonsági szelepét úgy állították be, hogy 500 kPa nyomáson nyíljon. Ha az 1 m<sup>3</sup> térfogatú kazánban a víz 400 K kezdő hőmérsékleten és 300 kPa nyomáson gőzzé válik, milyen hőmérsékleten kezd el a szelep levegőt ereszt?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> Egy edényben 2 mól ideális gáz található 127 °C hőmérsékleten és 200 kPa nyomáson. Az edény térfogata 4 m<sup>3</sup>. Ha még 1 mól gázt adunk hozzá, és 27 °C-ra hűtjük, a térfogat pedig ugyanaz marad, számítsd ki a végső nyomást.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, mi az izochor folyamat.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a Charles-törvényt.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a Charles-törvény lineáris alakját.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, mi a nyomás hőmérsékleti együtthatója.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogy a p-T diagramban az összes egyenes az abszolút nulla felé tart.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Meg tudom indokolni, miért nem szabad a konzerves dobozokat tűzbe dobni.</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 8. Fejezet -->
+        <div class="chapter">
+            <h2>8. Gay-Lussac-törvény. Izobár folyamat</h2>
+            <div class="glass reminder-box">
+                <p>Az izobár folyamat állandó nyomáson (p = állandó) zajlik. A Gay-Lussac-törvény megállapítja, hogy az állandó mennyiségű gáz térfogata egyenesen arányos az abszolút hőmérséklettel. Ez magyarázza, miért tágul a meleg levegő, miért lesz ritkább és miért emelkedik fel.</p>
+            </div>
+            <div class="glass formula-box">
+                <p><strong>Gay-Lussac-törvény:</strong> <span class="math">V / T = állandó</span> vagy <span class="math">V / V<sub>0</sub> = T / T<sub>0</sub></span>.<br><strong>Lineáris alak:</strong> <span class="math">V = V<sub>0</sub>(1 + αt)</span>, ahol <span class="math">α = 1/273,15 °C<sup>-1</sup></span>.<br><strong>Fogalmak:</strong> izobár folyamat, a gáz hőtágulási együtthatója.</p>
+            </div>
+
+            <div class="task">
+                <h3>8.1 Igaz / Hamis</h3>
+                <div class="tf-row">
+                    <div class="tf-statement">Az izobár folyamat állandó nyomáson zajló folyamat.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A Gay-Lussac-törvény szerint a gáz térfogata fordítottan arányos a hőmérséklettel.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">Állandó nyomáson a gáz melegítésekor a térfogata nő.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A gáz hőtágulási együtthatójának értéke 1/273,15 °C<sup>-1</sup>.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A meleg levegő azért emelkedik, mert a melegítéskor a sűrűsége csökken.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A V-T diagramban az izobár folyamatot hiperbola ábrázolja.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A V-T diagramban a különböző nyomású egyenesek visszahosszabbítva a hőmérsékleti tengelyt az abszolút nulla fok pontjában metszik.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+                <div class="tf-row">
+                    <div class="tf-statement">A forró levegős ballon a Charles-törvénynek köszönhetően repül.</div>
+                    <div class="tf-boxes">
+                        <span class="chk-pair"><span class="chk-box"></span> I</span>
+                        <span class="chk-pair"><span class="chk-box"></span> H</span>
+                    </div>
+                </div><div class="write-lines"><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>8.2 Párosítsd a fogalmakat</h3>
+                <table class="match-table">
+                    <tr>
+                        <td class="left">Izobár folyamat</td>
+                        <td class="right">Az a törvény, hogy állandó nyomáson a térfogat arányos a hőmérséklettel<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Gay-Lussac-törvény</td>
+                        <td class="right">1/273,15 °C<sup>-1</sup> együttható<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Hőtágulási együttható (α)</td>
+                        <td class="right">A gáz térfogata 0 °C-on<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Kezdeti térfogat (V<sub>0</sub>)</td>
+                        <td class="right">Állandó nyomáson zajló folyamat<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Meleg levegő emelkedése</td>
+                        <td class="right">Egyenes a V-T diagramban<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="left">Izobára</td>
+                        <td class="right">A levegő sűrűségének csökkenése melegítéskor<div class="spacer"></div><div class="spacer"></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="task">
+                <h3>8.3 Számítási feladatok (közepes nehézség)</h3>
+                <p><strong>a)</strong> Egy 2 m<sup>3</sup> térfogatú ballon légköri nyomáson 300 K hőmérsékleten van. Ha a ballonban lévő levegőt 450 K-re melegítjük, a nyomás pedig állandó marad, mekkora lesz az új térfogat?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Az állandó nyomáson lévő gáz 127 °C-on 5 liter térfogatot foglal el. Ha a térfogat 6 literre nő, mekkora a gáz új hőmérséklete Kelvinben?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> A mozgatható dugattyús hengerben lévő levegő térfogata 800 cm<sup>3</sup> 27 °C-on. Mekkora lesz a térfogat, ha a levegőt azonos nyomáson -73 °C-ra hűtjük?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>d)</strong> A Gay-Lussac-törvény lineáris alakjának segítségével számítsd ki a gáz térfogatát 100 °C-on, ha 0 °C-on 10 liter. A hőtágulási együttható α = 1/273 °C<sup>-1</sup>.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="task">
+                <h3>8.4 Számítási feladatok (nehéz)</h3>
+                <p><strong>a)</strong> A klímakamrában gáz található 1 atm állandó nyomáson. A kezdetben a gáz 0,5 m<sup>3</sup> térfogatot foglal el 20 °C-on. Ha a gáz térfogata 10%-kal nő, milyen hőmérsékletre hevítették a levegőt? Fejezd ki °C-ban.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>b)</strong> Egy 1500 m<sup>3</sup> térfogatú forró levegős ballon 20 °C-os (293 K) levegő-hőmérsékleten van. A felemelkedéshez a ballonban lévő levegőt 373 K-re melegítik. Mekkora levegőtérfogat hagyja el a ballont az állandó nyomáson történő melegítés során? Feltételezd, hogy a nyomás végig légköri.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+                <p><strong>c)</strong> A 22 °C-os szobahőmérsékleten a nyitott térben (p = állandó) lévő levegő sűrűsége 1,2 kg/m<sup>3</sup>. Ha a szobát 40 °C-ra melegítik, számítsd ki az új térfogatot, amelyet 1 kg levegő foglal el, és határozd meg a levegő új sűrűségét.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+
+            <div class="glass self-eval-box">
+                <h3 style="margin-top:0;">Önértékelés</h3>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, mi az izobár folyamat.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem a Gay-Lussac-törvényt és a képletet.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogyan befolyásolja a hőmérséklet a térfogatot állandó nyomáson.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Megértem, miért emelkedik a meleg levegő.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom, hogyan néz ki az izobára a V-T diagramban.</div>
+                    <span class="chk-box"></span>
+                </div>
+                <div class="eval-row">
+                    <div class="eval-text">Tudom a törvény lineáris alakját a hőtágulási együtthatóval.</div>
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
