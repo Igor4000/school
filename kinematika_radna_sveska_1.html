@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="sr-Cyrl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Радна свеска: Кинематика - Део I</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-cyan-grad: linear-gradient(135deg, #0052D4 0%, #00C6FB 100%);
+            --purple-grad: linear-gradient(135deg, #9D50BB 0%, #6E48AA 100%);
+            --green-turq-grad: linear-gradient(135deg, #00b09b 0%, #00C6FB 100%);
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(120deg, #e0f7fa 0%, #e8eaf6 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .workbook {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            background: var(--blue-cyan-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            color: #2c3e50;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid transparent;
+            border-image: var(--blue-cyan-grad) 1;
+            page-break-before: always;
+        }
+
+        h2:first-of-type {
+            page-break-before: avoid;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--purple-grad);
+            border-radius: 50%;
+            margin-right: 15px;
+            box-shadow: 0 0 8px #9D50BB;
+        }
+
+        .chapter {
+            margin-bottom: 60px;
+            padding-top: 20px;
+        }
+
+        .glass-frame {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            page-break-inside: avoid;
+        }
+
+        .reminder-box {
+            border-left: 5px solid #0052D4;
+        }
+
+        .formulas-box {
+            border-left: 5px solid #9D50BB;
+        }
+
+        .self-assess-box {
+            border-left: 5px solid #00b09b;
+        }
+
+        .glass-frame h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #1a237e;
+        }
+
+        .self-assess-box h3 {
+            color: #00695c;
+        }
+
+        .math {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #4a148c;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .task-box {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+
+        .task-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #37474f;
+            margin-bottom: 15px;
+        }
+
+        .tf-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+        }
+
+        .tf-statement {
+            width: 75%;
+            padding-right: 20px;
+        }
+
+        .tf-box {
+            width: 25%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 20px;
+            white-space: nowrap;
+        }
+
+        .chk-pair {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .chk-box {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #0052D4;
+            border-radius: 4px;
+            background-color: rgba(255,255,255,0.8);
+        }
+
+        .match-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 10px 15px;
+            page-break-inside: avoid;
+        }
+
+        .match-cell {
+            width: 45%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            vertical-align: middle;
+        }
+
+        .match-cell.left {
+            border-left: 4px solid #00C6FB;
+            background: rgba(0, 198, 251, 0.05);
+        }
+
+        .match-cell.right {
+            border-left: 4px solid #9D50BB;
+            background: rgba(157, 80, 187, 0.05);
+        }
+
+        .subtask {
+            margin-bottom: 20px;
+        }
+
+        .subtask p {
+            margin: 0 0 10px 0;
+        }
+
+        .write-lines {
+            width: 100%;
+        }
+
+        .line {
+            border-bottom: 1px solid #b0bec5;
+            height: 1.8em;
+            width: 100%;
+        }
+
+        .line.short {
+            width: 50%;
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        .assess-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .assess-text {
+            width: 85%;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+            .workbook {
+                box-shadow: none;
+                background: #fff;
+                padding: 0;
+                max-width: 100%;
+            }
+            .glass-frame {
+                background: #fff;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            .chapter {
+                page-break-before: always;
+            }
+            .chapter:first-of-type {
+                page-break-before: avoid;
+            }
+            .task-box, .glass-frame, .tf-item, .match-table {
+                page-break-inside: avoid;
+            }
+            h1 {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            h2, h2::before, .match-cell.left, .match-cell.right {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="workbook">
+    <h1>Кинематика - Део I</h1>
+
+    <!-- POGLAVLJE 1 -->
+    <div class="chapter">
+        <h2>1. Шта проучава кинематика</h2>
+        
+        <div class="glass-frame reminder-box">
+            <h3>Подсетник</h3>
+            <p>Кинематика је део механике који описује како се тело креће, без улажења у узроке тог кретања. Основни појам је механичко кретање, што представља промену положаја тела у односу на друго тело током времена. Како би се поједноставило проучавање, уводи се појам материјалне тачке, односно тела чије се димензије могу занемарити у датом кретању.</p>
+        </div>
+
+        <div class="glass-frame formulas-box">
+            <h3>Кључни појмови</h3>
+            <p><strong>Механика:</strong> Област физике која проучава кретање тела и његове узроке.</p>
+            <p><strong>Материјална тачка:</strong> Модел тела чије се димензије и облик могу занемарити у посматраном кретању.</p>
+            <p><strong>Пут (s):</strong> Укупна дужина путање коју тело описује током кретања (скалар).</p>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">1.1 Задатак 1 – Тачно / Нетачно</div>
+            <div class="tf-item">
+                <div class="tf-statement">Механичко кретање представља промену положаја тела у односу на друго тело током времена.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Кинематика проучава кретање тела и истовремено објашњава која га сила изазива.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Путања представља линију коју тело описује током свог кретања.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Пут је векторска величина јер има правац и смер.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Земља при кружењу око Сунца се може сматрати материјалном тачком јер је њен пречник занемарљив у односу на растојање до Сунца.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Исто тело се у свим ситуацијама третира искључиво као материјална тачка, без обзира на врсту кретања које посматрамо.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Математичким изразима који повезују физичке величине кретања добијамо квантитативни (бројчани) опис кретања.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Навигација у мобилном телефону користи искључиво принципе статике како би одредила положај корисника.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">1.2 Задатак 2 – Повежи појмове</div>
+            <table class="match-table">
+                <tr>
+                    <td class="match-cell left">1. Кинематика</td>
+                    <td class="match-cell right">А) Тело чији облик и димензије у датом кретању можемо занемарити</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">2. Механика</td>
+                    <td class="match-cell right">Б) Део механике који описује кретање не питајући за узрок</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">3. Материјална тачка</td>
+                    <td class="match-cell right">В) Линија коју тело описује крећући се кроз простор</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">4. Путања</td>
+                    <td class="match-cell right">Г) Дужина путање коју тело пређе током кретања</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">5. Пут</td>
+                    <td class="match-cell right">Д) Област физике која проучава кретање тела и његове узроке</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">6. Динамика</td>
+                    <td class="match-cell right">Ђ) Део механике који проучава узроке настанка кретања</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">1.3 Задатак 3 – Рачунски задаци средње тежине</div>
+            <div class="subtask">
+                <p>а) Драган се креће бициклом равномерно брзином од 6 метара у секунди. Израчунај колики ће пут Драган прећи ако се тако креће током 120 секунди.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Воз који путује праволинијски брзином од 72 километра на час креће се између два града. Одреди колико је времена потребно возу да пређе растојање од 36 километара.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Аутомобил креће из мировања и током времена од 10 секунди убрзава до брзине од 20 метара у секунди. Израчунај средње убрзање аутомобила током тог интервала.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>г) Бродски радар емитује сигнал који се креће брзином од 300 000 километара у секунди. Сигнал се одбија од стене и враћа након 0,0008 секунди. Израчунај колико је растојање од радара до стене.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">1.4 Задатак 4 – Тешки рачунски задаци</div>
+            <div class="subtask">
+                <p>а) Истраживач креће из логора А према логору Б, који се налази на растојању од 12 километара. Првих 4 километра пређе пешке брзином од 1,2 метра у секунди, а преосталих 8 километара прелази возилом брзином од 10 метара у секунди. Израчунај укупно време које му је било потребно за цео пут и његову средњу брзину на целом путањом.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Авион треба да пређе растојање од 540 километара. Због неповољних услова, прву половину пута пролази брзином од 300 километара на час, а другу половину брзином од 600 километара на час. Израчунај колико времена ће авиону требати да стигне до одредишта и одреди његову средњу брзину на целокупном путу.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Воз дужине 150 метара креће се праволинијски сталном брзином и потребно му је тачно 10 секунди да прође поред стуба на перону. Након тога, воз улази у тунел дужине 450 метара. Израчунај брзину воза и укупно време које ће му бити потребно да прође кроз тунел од момента уласка до изласка.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="glass-frame self-assess-box">
+            <h3>Самопроцена</h3>
+            <div class="assess-item">
+                <div class="assess-text">Разумем разлику између кинематике и динамике.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу дефинисати механичко кретање и навести његове услове.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам када тело можемо посматрати као материјалну тачку.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разликујем појмове путање и пута.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем везу између брзине, пута и времена.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу препознати практичну примену кинематике у свакодневном животу.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POGLAVLJE 2 -->
+    <div class="chapter">
+        <h2>2. Релативност кретања и референтни систем</h2>
+        
+        <div class="glass-frame reminder-box">
+            <h3>Подсетник</h3>
+            <p>Кретање је релативно, што значи да изглед кретања зависи од тога у односу на које тело га посматрамо. Тело у односу на које посматрамо кретање зове се референтно тело. Референтно тело заједно са координатним системом који му је придружен чини референтни систем (систем референце).</p>
+        </div>
+
+        <div class="glass-frame formulas-box">
+            <h3>Кључни појмови</h3>
+            <p><strong>Релативност кретања:</strong> Особина да изглед кретања зависи од избора посматрача.</p>
+            <p><strong>Референтно тело:</strong> Тело у односу на које се посматра кретање.</p>
+            <p><strong>Референтни систем:</strong> Референтно тело + координатни систем + уређај за мерење времена.</p>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">2.1 Задатак 1 – Тачно / Нетачно</div>
+            <div class="tf-item">
+                <div class="tf-statement">Стање мировања значи да се положај тела не мења у односу на посматрача.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Апсолутно мировање постоји и то је мировање у односу на Земљу.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Референтно тело је тело у односу на које посматрамо и описујемо кретање.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Декартов координатни систем састоји се од оса које су међусобно закошене под углом од 45 степени.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Промена референтног система не мења вредности величина као што су брзина и положај.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Путник који седи у возу који креће мирује у односу на људе на перону.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Инерцијални навигациони системи у авионима одређују положај на основу унапред задатог референтног система.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Разлика између геоцентричног и хелиоцентричног модела света је заправо разлика у избору референтног система.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">2.2 Задатак 2 – Повежи појмове</div>
+            <table class="match-table">
+                <tr>
+                    <td class="match-cell left">1. Релативност кретања</td>
+                    <td class="match-cell right">А) Тело у односу на које посматрамо кретање</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">2. Референтно тело</td>
+                    <td class="match-cell right">Б) Осе x, y, z под правим углом</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">3. Референтни систем</td>
+                    <td class="match-cell right">В) Систем референце где се налазе осе и уређај за мерење времена</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">4. Апсолутно мировање</td>
+                    <td class="match-cell right">Г) Зависност изгледа кретања од посматрача</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">5. Декартов систем</td>
+                    <td class="match-cell right">Д) Не постоји у природи</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">2.3 Задатак 3 – Рачунски задаци средње тежине</div>
+            <div class="subtask">
+                <p>а) Авион лети брзином од 800 километара на час у односу на ваздух. Брзина ветра у односу на тло износи 50 километара на час и дува у правцу кретања авиона. Израчунај брзину авиона у односу на тло.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Путник у возу хода брзином 4 километра на час у правцу кретања воза. Воз се креће брзином 90 километара на час у односу на пругу. Одреди брзину путника у односу на пругу.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Брод плови узводно брзином 15 километара на час у односу на воду. Брзина реке у односу на обалу износи 3 километра на час. Израчунај брзину брода у односу на обалу.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>г) Чамац се креће брзином 5 метара у секунди у односу на воду. Река тече брзином 2 метра у секунди у односу на обалу, у правцу кретања чамца. Израчунај колико ће времена броду требати да пређе 70 метара уствари код обале.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">2.4 Задатак 4 – Тешки рачунски задаци</div>
+            <div class="subtask">
+                <p>а) Два аутомобила крећу се истим правцем, али супротним смеровима. Први аутомобил се креће брзином 60 километара на час, а други брзином 80 километара на час, оба у односу на тло. Израчунај брзину првог аутомобила у односу на други аутомобил.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Воз дужине 120 метара креће се сталном брзином од 15 метара у секунди у односу на тло. Други воз дужине 80 метара креће се паралелно истим правцем брзином 10 метара у секунди. Израчунај колико времена ће требати првом возу да претекне други воз.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Пливач плива брзином 1,5 метара у секунди у односу на воду. Река тече брзином 2 метра у секунди у односу на обалу. Пливач жели да пређе реку управо нормално на правац тока, тако да креће се под извесним углом у односу на воду. Израчунај брзину пливача у односу на обалу и угао између његовог правца кретања у односу на воду и правца тока реке.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="glass-frame self-assess-box">
+            <h3>Самопроцена</h3>
+            <div class="assess-item">
+                <div class="assess-text">Разумем поjam релативности кретања.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разликујем референтно тело и референтни систем.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам шта је Декартов координатни систем.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем да не постоји апсолутно мировање.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да објасним为啥 исто кретање изгледа различито из различитих референтних система.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POGLAVLJE 3 -->
+    <div class="chapter">
+        <h2>3. Вектор положаја и померај</h2>
+        
+        <div class="glass-frame reminder-box">
+            <h3>Подсетник</h3>
+            <p>Вектор положаја (радијус-вектор) спаја координатни почетак и посматрану тачку, усмерен ка тачки. Померај је вектор који спаја почетни и крајњи положај тела. За разлику од пута, који представља укупну пређену дужину путање (скалар), померај има правац и смер и једнак је разлици крајњег и почетног вектора положаја.</p>
+        </div>
+
+        <div class="glass-frame formulas-box">
+            <h3>Кључне формуле / Појмови</h3>
+            <span class="math">r = √(x<sup>2</sup> + y<sup>2</sup> + z<sup>2</sup>)</span>
+            <p>где су <strong>x, y, z</strong> координате тачке, а <strong>r</strong> интензитет вектора положаја.</p>
+            <span class="math">Δr = r<sub>2</sub> − r<sub>1</sub></span>
+            <p>где је <strong>Δr</strong> померај, а <strong>r<sub>1</sub></strong> и <strong>r<sub>2</sub></strong> почетни и крајњи вектор положаја.</p>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">3.1 Задатак 1 – Тачно / Нетачно</div>
+            <div class="tf-item">
+                <div class="tf-statement">Вектор положаја спаја координатни почетак и посматрану тачку.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Интензитет вектора положаја рачуна се применом Питагорине теореме на координате тачке.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Померај је скаларна величина која представља укупну дужину пређене путање.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако тело креће из координатног почетка, вектор положаја и померај имају исти интензитет након кретања.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Пут увек мери најкраће растојање између почетка и краја кретања без обзира на путању.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Вектор помераја усмерен је од почетног ка крајњем положају тела.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако трчите круг по стази и вратите се на старт, померај је једнак обиму круга.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Интензитет помераја може бити једнак нули док је пут различит од нуле.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">3.2 Задатак 2 – Повежи појмове</div>
+            <table class="match-table">
+                <tr>
+                    <td class="match-cell left">1. Вектор положаја</td>
+                    <td class="match-cell right">А) Вектор који спаја почетни и крајњи положај тела</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">2. Померај</td>
+                    <td class="match-cell right">Б) Дужина путање коју тело описује</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">3. Пут</td>
+                    <td class="match-cell right">В) Стрелица од координатног почетка до посматране тачке</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">4. Интензитет вектора</td>
+                    <td class="match-cell right">Г) Једнак разлици крајњег и почетног вектора положаја</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">5. Радијус-вектор</td>
+                    <td class="match-cell right">Д) Рачуна се помоћу Питагорине теореме на координатама</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">6. Материјална тачка</td>
+                    <td class="match-cell right">Ђ) Други назив за вектор положаја</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">3.3 Задатак 3 – Рачунски задаци средње тежине</div>
+            <div class="subtask">
+                <p>а) Дрон се у датом тренутку налази у равни на координатама x = 3 метра и y = 4 метра. Израчунај интензитет вектора положаја дрона у односу на координатни почетак.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Роботска рука помери своју хватаљку из положаја са координатама (2 м, 2 м) у нови положај са координатама (5 м, 6 м). Израчунај интензитет вектора помераја хватаљке.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Воз се креће праволинијски и пређе пут од 100 метара право, а затим се врати 30 метара уназад истим путем. Одреди укупан пут који је воз преишао и интензитет помераја.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>г) Тело се креће из координатног почетка до тачке A са координатама (6 м, 8 м), а потом до тачке B(6 м, 0 м). Израчунај укупан интензитет помераја тела од почетка до краја кретања.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">3.4 Задатак 4 – Тешки рачунски задаци</div>
+            <div class="subtask">
+                <p>а) Тело се креће у простору од тачке A(1 м, 1 м, 0 м) до тачке B(4 м, 5 м, 0 м). Израчунај укупан пређени пут претпостављајући да се тело кретало праволинијски од A до B, па одреди интензитет вектора помераја.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Аутомобил креће из координатног почетка право на исток 5 километара, а затим скреће на север и наставља још 5 километара. Израчунај укупан пут који је аутомобил прешао и интензитет његовог помераја у односу на полазну тачку.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Објекат у тридимензионалном простору креће се из координатног почетка у тачку M(2 м, -1 м, 3 м). Након тога, помера се за вектор помераја Δr = (2 м, 2 м, -1 м). Израчунај координате новог положаја објекта и укупан интензитет помераја од почетка до краја кретања.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="glass-frame self-assess-box">
+            <h3>Самопроцена</h3>
+            <div class="assess-item">
+                <div class="assess-text">Знам дефинисати вектор положаја.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разликујем појмове пут и померај.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Умем да израчунам интензитет вектора положаја преко координата.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем да померај може бити нула иако пут није.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу примењивати Питагорину теорему у прорачуну помераја.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POGLAVLJE 4 -->
+    <div class="chapter">
+        <h2>4. Брзина — средња и тренутна</h2>
+        
+        <div class="glass-frame reminder-box">
+            <h3>Подсетник</h3>
+            <p>Средња брзина показује колико у просеку тело пређе пута у јединици времена и рачуна се као количник укупног пута и укупног времена. Тренутна брзина представља граничну вредност средње брзине када временски интервал тежи нули. Вектор тренутне брзине увек има правац тангенте на путању у посматраној тачки.</p>
+        </div>
+
+        <div class="glass-frame formulas-box">
+            <h3>Кључне формуле / Појмови</h3>
+            <span class="math">v<sub>s</sub> = Δs / Δt</span> <i>(средња брзина - скаларно)</i>
+            <span class="math">v<sub>s</sub> = Δr / Δt</span> <i>(средња брзина - векторски)</i>
+            <span class="math">v = lim (Δt→0) (Δs / Δt)</span> <i>(тренутна брзина)</i>
+            <p><strong>v<sub>s</sub></strong> - средња брзина, <strong>Δs</strong> - пређени пут, <strong>Δt</strong> - време, <strong>v</strong> - тренутна брзина.</p>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">4.1 Задатак 1 – Тачно / Нетачно</div>
+            <div class="tf-item">
+                <div class="tf-statement">Средња брзина показује колико у просеку тело пређе пута у јединици времена.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Вектор средње брзине добија се као количник пута и времена.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Тренутна брзина је гранична вредност средње брзине када временски интервал тежи нули.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Аутомобил у кривини сталном брзином има исту средњу и тренутну брзину у сваком тренутку.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Вектор тренутне брзине увек има правац тангенте на путању у посматраној тачки.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Радар у саобраћају мери средњу брзину возила на дужем путу.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако је кретање равномерно, тренутна брзина се не мења током времена.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Темпомат у аутомобилу контролише средњу брзину како би одржао путању праву.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">4.2 Задатак 2 – Повежи појмове</div>
+            <table class="match-table">
+                <tr>
+                    <td class="match-cell left">1. Средња брзина</td>
+                    <td class="match-cell right">А) Правац тангенте на путању</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">2. Тренутна брзина</td>
+                    <td class="match-cell right">Б) Количник пута и времена</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">3. Вектор брзине</td>
+                    <td class="match-cell right">В) Брзина у бесконачно кратком интервалу</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">4. Тангента</td>
+                    <td class="match-cell right">Г) Има правац и смер помераја</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">5. km/h</td>
+                    <td class="match-cell right">Д) Мери га брзиномер у аутомобилу</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">6. Брзиномер</td>
+                    <td class="match-cell right">Ђ) Јединица за брзину изван СИ система</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">4.3 Задатак 3 – Рачунски задаци средње тежине</div>
+            <div class="subtask">
+                <p>а) Аутомобил креће из мировања и током 10 секунди пређе пут од 50 метара. Израчунај средњу брзину аутомобила на том путањом.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Бициклиста пређе 600 метара за време од 40 секунди, а затим се заустави на 20 секунди да би се одморио. Одреди средњу брзину бициклисте за укупно време кретања и мировања.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Воз који се креће праволинијски равномерно пређе 1800 метара за време од 60 секунди. Израчунај тренутну брзину воза у произвољном тренутку.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>г) Атлетичарка трчи 100 метара за 10 секунди. Током првих 4 секунде она пређе 30 метара. Израчунај њену средњу брзину на преосталом делу стазе.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">4.4 Задатак 4 – Тешки рачунски задаци</div>
+            <div class="subtask">
+                <p>а) Аутомобил креће из града А у град Б, који су удаљени 120 километара. Прву половину пута вози брзином од 60 километара на час, а другу половину брзином од 40 километара на час. Израчунај средњу брзину аутомобила на целом путањом и укупно време пута.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Тело се креће по праволинијској путањи тако да му се брзина мења линейно. У првом тренутку брзина му је 5 m/s, а након 4 секунде износи 15 m/s. Израчунај средњу брзину током тог интервала и пређени пут.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Чамац прелази реку ширине 100 метара. Брзина чамца у односу на воду износи 5 метара у секунди, а брзина реке 3 метра у секунди. Чамац креће нормално на ток реке. Израчунај стварни пређени пут чамца у односу на обалу и интензитет његове средње брзине у односу на обалу.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="glass-frame self-assess-box">
+            <h3>Самопроцена</h3>
+            <div class="assess-item">
+                <div class="assess-text">Разликујем средњу и тренутну брзину.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам да је правац тренутне брзине тангента на путању.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да израчунам средњу брзину као количник пута и времена.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем везу између помераја и вектора средње брзине.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам коју брзину мери брзиномер, а коју радар.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POGLAVLJE 5 -->
+    <div class="chapter">
+        <h2>5. Класични закон сабирања брзина</h2>
+        
+        <div class="glass-frame reminder-box">
+            <h3>Подсетник</h3>
+            <p>Брзина тела у једном референтном систему може се добити векторским сабирањем брзине тог тела у другом (покретном) систему и брзине тог покретног система у односу на непокретни. Ако су брзине истог правца и смера, интензитети се сабирају, а ако су супротног, одузимају.</p>
+        </div>
+
+        <div class="glass-frame formulas-box">
+            <h3>Кључне формуле / Појмови</h3>
+            <span class="math">v = u + v'</span>
+            <p>где је <strong>v</strong> брзина тела у односу на непокретни систем, <strong>u</strong> брзина покретног система у односу на непокретни, и <strong>v'</strong> брзина тела у односу на покретни систем.</p>
+            <span class="math">v = u + v'</span> (исти смер)
+            <span class="math">v = |u - v'|</span> (супротан смер)
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">5.1 Задатак 1 – Тачно / Нетачно</div>
+            <div class="tf-item">
+                <div class="tf-statement">Класични закон сабирања брзина важи за све брзине, чак и за оне блиске брзини светлости.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Брзина тела у односу на непокретни систем једнака је векторском збиру његове брзине у односу на покретни систем и брзине тог система.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако ходаш ка локомотиви воза који креће напред, твоја брзина у односу на пругу је мања од брзине воза.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Када се брзине истог правца и смера сабирају, интензитети се просто додају.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако су брзине супротног смера, интензитети се множе.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Брод који плови низводно има мању брзину у односу на обалу него у односу на воду.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">У општем случају, када брзине нису истог правца, оне се сабирају по правилу паралелограма.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Путник који мирује у возу нема брзину у односу на воз, али има исту брзину као воз у односу на тло.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">5.2 Задатак 2 – Повежи појмове</div>
+            <table class="match-table">
+                <tr>
+                    <td class="match-cell left">1. Класични закон сабирања</td>
+                    <td class="match-cell right">А) Брзина тела у односу на покретни систем</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">2. Непокретни систем (S)</td>
+                    <td class="match-cell right">Б) Правило за сабирање брзина под углом</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">3. Покретни систем (S')</td>
+                    <td class="match-cell right">В) Векторски збир брзина у различитим системима</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">4. Брзина u</td>
+                    <td class="match-cell right">Г) Везан за тло или обалу</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">5. Брзина v'</td>
+                    <td class="match-cell right">Д) Брзина покретног система у односу на S</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">6. Паралелограм</td>
+                    <td class="match-cell right">Ђ) Везан за воз или чамац</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">5.3 Задатак 3 – Рачунски задаци средње тежине</div>
+            <div class="subtask">
+                <p>а) Покретне степенице у тржном центру крећу се брзином 0,8 метара у секунди. Купац хода по њима у правцу кретања степеница брзином 0,4 метра у секунди у односу на степенице. Одреди брзину купца у односу на под тржног центра.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Чамац се креће брзином 4 метра у секунди у односу на воду. Река тече брзином 1,5 метара у секунди у односу на обалу, у супротном правцу од кретања чамца. Израчунај брзину чамца у односу на обалу.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Авион лети брзином 200 метара у секунди у односу на ваздух. Брзина ветра у односу на тло износи 20 метара у секунди и дува у правцу кретања авиона. Израчунај колико ће пута авиона прећи у односу на тло за време од 30 секунди.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>г) Пешак хода по возу брзином 3 километра на час супротно од правца кретања воза. Воз се креће брзином 60 километара на час у односу на пругу. Израчунај брзину пешака у односу на пругу.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">5.4 Задатак 4 – Тешки рачунски задаци</div>
+            <div class="subtask">
+                <p>а) Брод плови реком. Брзина брода у односу на воду износи 12 km/h, а брзина реке у односу на обалу 5 km/h. Капетан жели да пређе реку управо нормално на обалу. Израчунај под којим углом у односу на нормалу на обалу капетан мора усмерити прамац брода у односу на воду.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Воз се креће праволинијски брзином 20 m/s у односу на тло. Путник у возу бачује лопту у истом правцу брзином 5 m/s у односу на воз. Лопта удари у зид на крају вагона, који се налази на 25 метара од путника. Израчунај колико је времена потребно да лопта удари у зид из перспективе посматрача на тлу.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Чамац креће преко реке ширине 240 метара. Брзина чамца у односу на воду износи 10 m/s, а брзина реке у односу на обалу износи 6 m/s. Чамац је током целог времена управљен нормално на ток реке. Израчунај стварну брзину чамца у односу на обалу и колико ће бити померен низводно када стигне до друге обале.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="glass-frame self-assess-box">
+            <h3>Самопроцена</h3>
+            <div class="assess-item">
+                <div class="assess-text">Разумем класични закон сабирања брзина.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам када се брзине сабирају, а када одузимају.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Умем да направим разлику између брзине у односу на покретни и непокретни систем.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да применим правило паралелограма при сабирању брзина.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем ограничења класичног закона (важи за мале брзине).</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POGLAVLJE 6 -->
+    <div class="chapter">
+        <h2>6. Убрзање — средње и тренутно</h2>
+        
+        <div class="glass-frame reminder-box">
+            <h3>Подсетник</h3>
+            <p>Убрзање је величина која описује промену вектора брзине током времена. Може се променити интензитет брзине, правац, или обоје. Тангенцијална компонента убрзања одговорна је за промену интензитета брзине, док нормална компонента мења правац вектора брзине.</p>
+        </div>
+
+        <div class="glass-frame formulas-box">
+            <h3>Кључне формуле / Појмови</h3>
+            <span class="math">a<sub>s</sub> = Δv / Δt</span>
+            <p>где је <strong>a<sub>s</sub></strong> средње убрзање, <strong>Δv</strong> промена брзине, <strong>Δt</strong> време.</p>
+            <span class="math">a = a<sub>t</sub> + a<sub>n</sub></span>
+            <p><strong>a<sub>t</sub></strong> - тангенцијално убрзање (мења интензитет), <strong>a<sub>n</sub></strong> - нормално убрзање (мења правац). Јединица за убрзање је m/s<sup>2</sup>.</p>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">6.1 Задатак 1 – Тачно / Нетачно</div>
+            <div class="tf-item">
+                <div class="tf-statement">Убрзање је величина која описује промену брзине тела током времена.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Аутомобил који се креће кроз кривину сталном брзином нема убрзање.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Тангенцијална компонента убрзања утиче само на промену интензитета брзине.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Нормална компонента убрзања мења само правац вектора брзине.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Средње убрзање рачуна се као количник промене брзине и времена за које се та промена десила.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Правац и смер вектора средњег убрзања се поклапају са правцем и смером саме брзине.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако тело убрзава праволинијски, његово нормално убрзање је једнако нули.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Акцелерометар у телефону не може да региструје убрзање ако се не мења интензитет брзине, већ само правац.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">6.2 Задатак 2 – Повежи појмове</div>
+            <table class="match-table">
+                <tr>
+                    <td class="match-cell left">1. Убрзање</td>
+                    <td class="match-cell right">А) Мења правац вектора брзине</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">2. Тангенцијално убрзање</td>
+                    <td class="match-cell right">Б) Промена брзине по јединици времена</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">3. Нормално убрзање</td>
+                    <td class="match-cell right">В) Jединица за убрзање</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">4. Средње убрзање</td>
+                    <td class="match-cell right">Г) Мења интензитет брзине</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">5. m/s<sup>2</sup></td>
+                    <td class="match-cell right">Д) Количник промене брзине и укупног времена</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">6. Акцелерометар</td>
+                    <td class="match-cell right">Ђ) Сензор који мери убрзање</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">6.3 Задатак 3 – Рачунски задаци средње тежине</div>
+            <div class="subtask">
+                <p>а) Аутомобил креће из мировања и током времена од 5 секунди повећава своју брзину на 15 метара у секунди. Израчунај средње убрзање аутомобила током тог периода.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Бициклиста кочи и смањује брзину са 12 метара у секунди на 4 метра у секунди за време од 4 секунде. Одреди интензитет средњег убрзања бициклисте и наведи му смер у односу на кретање.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Воз креће праволинијски убрзано и током 10 секунди повећава брзину за 20 метара у секунди. Израчунај тангенцијалну компоненту убрзања воза.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>г) Аутомобил се креће кроз кривину сталном брзином од 10 метара у секунди. Ако му је нормална компонента убрзања 5 метара у секунди у квадрату, одреди интензитет укупног убрзања аутомобила.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">6.4 Задатак 4 – Тешки рачунски задаци</div>
+            <div class="subtask">
+                <p>а) Тело креће из мировања и креће се праволинијски убрзано. Након 3 секунде од почетка кретања, његова брзина износи 6 метара у секунди. Израчунај средње убрзање и пут који тело пређе у току пете секунде кретања.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Аутомобил креће брзином од 10 метара у секунди и почиње да убрзава једнаким убрзањем. Након пута од 75 метара, његова брзина износи 20 метара у секунди. Израчунај вредност убрзања и време за које је аутомобил прешао тај пут.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Аутомобил улази у кривину пречника 40 метара брзином од 36 километара на час. Док се креће кроз кривину, возач благовремено повећава брзину са убрзањем од 0,5 метара у секунди у квадрату у току 10 секунди. Израчунај интензитет нормалног убрзања на крају тог интервала и укупно убрзање аутомобила у том тренутку.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="glass-frame self-assess-box">
+            <h3>Самопроцена</h3>
+            <div class="assess-item">
+                <div class="assess-text">Знам дефиницију убрзања и јединицу за његово мерење.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разликујем тангенцијално и нормално убрзање.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем да тело у кривини има убрзање и кад му је брзина стална.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да израчунам средње убрзање из промене брзине.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам како се убрзање користи у безбедносним системима аутомобила.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POGLAVLJE 7 -->
+    <div class="chapter">
+        <h2>7. Равномерно убрзано праволинијско кретање</h2>
+        
+        <div class="glass-frame reminder-box">
+            <h3>Подсетник</h3>
+            <p>Равномерно убрзано праволинијско кретање је кретање по правој линији са сталним убрзањем. Брзина се мења линеарно током времена. Пређени пут је бројчано једнак површини испод графика брзине у зависности од времена. Посебан случај овог кретања је слободан пад, где је убрзање једнако гравитационом убрзању g.</p>
+        </div>
+
+        <div class="glass-frame formulas-box">
+            <h3>Кључне формуле / Појмови</h3>
+            <span class="math">v = v<sub>0</sub> ± a · t</span>
+            <span class="math">s = v<sub>0</sub> · t ± 1/2 · a · t<sup>2</sup></span>
+            <span class="math">v<sup>2</sup> = v<sub>0</sub><sup>2</sup> ± 2 · a · s</span>
+            <span class="math">t<sub>k</sub> = v<sub>0</sub> / a</span>
+            <p>где су <strong>v<sub>0</sub></strong> почетна брзина, <strong>a</strong> стално убрзање, <strong>t</strong> време, <strong>s</strong> пут, <strong>t<sub>k</sub></strong> време кочења. Знак + важи за убрзано, а - за успорено кретање.</p>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">7.1 Задатак 1 – Тачно / Нетачно</div>
+            <div class="tf-item">
+                <div class="tf-statement">Код равномерно убрзаног праволинијског кретања, интензитет убрзања је сталан.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако убрзање има супротан смер од брзине, тело се креће убрзано.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Време кочења се рачуна као количник почетне брзине и убрзања.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Пређени пут код овог кретања бројчано одговара површини испод графика брзине у функцији времена.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Тело бачено у слободан пад креће се убрзањем од приближно 9,81 m/s<sup>2</sup>.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Приликом кочења, ако се почетна брзина удвостручи, пут кочења се увећа четвороструко.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Ако тело креће из мировања, формула за пређени пут гласи s = 1/2 · a · t<sup>2</sup>.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-statement">Веза између брзине и пута без помињања времена гласи v = v<sub>0</sub> + 2 · a · s.</div>
+                <div class="tf-box">
+                    <div class="chk-pair"><span class="chk-box"></span> Т</div>
+                    <div class="chk-pair"><span class="chk-box"></span> Н</div>
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div><div class="line"></div></div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">7.2 Задатак 2 – Повежи појмове</div>
+            <table class="match-table">
+                <tr>
+                    <td class="match-cell left">1. Равномерно убрзано кретање</td>
+                    <td class="match-cell right">А) t<sub>k</sub> = v<sub>0</sub> / a</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">2. v-t дијаграм</td>
+                    <td class="match-cell right">Б) Кретање под утицајем гравитације из мировања</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">3. Време кочења</td>
+                    <td class="match-cell right">В) Кретање са сталним убрзањем по правој линији</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">4. Слободан пад</td>
+                    <td class="match-cell right">Г) Брзина у тренутку t=0</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">5. Почетна брзина (v<sub>0</sub>)</td>
+                    <td class="match-cell right">Д) Пут једнак површини испод њега</td>
+                </tr>
+                <tr>
+                    <td class="match-cell left">6. g ≈ 9,81 m/s<sup>2</sup></td>
+                    <td class="match-cell right">Ђ) Гравитационо убрзање</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">7.3 Задатак 3 – Рачунски задаци средње тежине</div>
+            <div class="subtask">
+                <p>а) Аутомобил креће из мировања и креће се праволинијски убрзано са убрзањем од 2 метра у секунди у квадрату. Израчунај брзину аутомобила након 10 секунди од почетка кретања.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Воз креће брзином од 20 метара у секунди и почиње да кочи једнаким успорењем од 2 метра у секунди у квадрату. Колико ће пута воз прећи до потпуног заустављања?</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Камен пуштен да слободно пада креће се из мировања. Израчунај брзину коју ће камен имати након што пређе пут од 20 метара (гравитационо убрзање узети као 10 m/s<sup>2</sup>).</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>г) Тело пада са висине од 45 метара. Израчунај време трајања пада тела до тла (гравитационо убрзање узети као 10 m/s<sup>2</sup>).</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="task-box">
+            <div class="task-title">7.4 Задатак 4 – Тешки рачунски задаци</div>
+            <div class="subtask">
+                <p>а) Воз креће праволинијски убрзано из мировања и током првих 10 секунди кретања пређе пута од 100 метара. Одреди убрзање воза и брзину коју ће имати након 15 секунди од почетка кретања.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>б) Аутомобил се креће брзином од 108 километара на час и возач примећује препреку на путу. Возач реагује и почиње да кочи једнаким успорењем. Аутомобил се заустави након што пређе 75 метара од момента почетка кочења. Израчунај време кочења и интензитет успорења аутомобила.</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+            <div class="subtask">
+                <p>в) Лопта је бачена вертикално наниже почетном брзином од 5 метара у секунди са висине од 20 метара. Израчунај брзину којом ће лопта ударити у тло и укупно време кретања лопте до удара (гравитационо убрзање узети као 10 m/s<sup>2</sup>).</p>
+                <div class="write-lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+            </div>
+        </div>
+
+        <div class="glass-frame self-assess-box">
+            <h3>Самопроцена</h3>
+            <div class="assess-item">
+                <div class="assess-text">Знам формулу за брзину код равномерно убрзаног кретања.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да израчунам пут на основу површине испод v-t графика.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем како се рачуна време кочења.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам да слободан пад представља посебан случај убрзаног кретања.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да комбинујем формуле за пут, брзину и време без коришћења времена (v<sup>2</sup> = v<sub>0</sub><sup>2</sup> + 2as).</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем практичну важност пута кочења у саобраћају.</div>
+                <div class="chk-pair"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
