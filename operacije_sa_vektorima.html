@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Osnovne operacije sa vektorima — automatska animacija</title>
+<style>
+  :root{
+    --bg:#EAE4D6; --paper:#FBF8F1; --panel:#F5F1E6; --ink:#262E35;
+    --muted:#7D7562; --line:#D9D1BC; --accent:#0F7B7C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--ink);
+    display:flex; flex-direction:column; min-height:100vh;
+    padding:clamp(14px,2.5vw,30px); gap:16px;
+    max-width:1280px; margin:0 auto;
+  }
+  header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:clamp(24px,3.2vw,34px);line-height:1.12}
+  .sub{color:var(--muted);font-size:14px;margin-top:6px}
+  .controls{display:flex;gap:10px}
+  .controls button{
+    display:inline-flex;align-items:center;gap:8px;
+    font:600 13.5px/1 "Segoe UI",sans-serif;color:var(--ink);
+    background:var(--paper);border:1px solid #B9AF97;border-radius:999px;
+    padding:9px 16px;cursor:pointer;transition:background .18s,color .18s,transform .12s;
+  }
+  .controls button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .controls button:active{transform:scale(.97)}
+  .controls svg{display:block}
+
+  main.stage{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:16px;align-items:stretch;flex:1 0 auto}
+  .canvas-wrap{
+    position:relative;background:var(--paper);border:1px solid var(--line);
+    border-radius:16px;overflow:hidden;height:clamp(360px,58vh,620px);
+    box-shadow:0 14px 34px -22px rgba(38,46,53,.28);
+  }
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;display:flex;flex-direction:column;gap:13px;overflow:auto}
+  #panelBody{transition:opacity .3s ease, transform .3s ease}
+  #panelBody.fadeout{opacity:0;transform:translateY(6px)}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .panel h2{font-family:Georgia,serif;font-size:22px;line-height:1.2}
+  .panel p{font-size:14.5px;line-height:1.6;color:#3C4148}
+  .formula{
+    font-family:Georgia,"Times New Roman",serif;font-size:16.5px;line-height:1.95;
+    background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 16px;
+  }
+  .v{font-style:italic;font-weight:700}
+  .sqrt{white-space:nowrap}
+  .sqrt>span{border-top:1.4px solid currentColor;padding:0 .18em}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;font-size:.85em;margin:0 .15em}
+  .frac>span{padding:0 .3em}
+  .frac>span:last-child{border-top:1.4px solid currentColor}
+
+  .legend{margin-top:auto;border-top:1px dashed var(--line);padding-top:14px}
+  .legend-title{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .legend ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+  .legend li{display:flex;align-items:center;gap:9px;font-size:13px;color:#3C4148}
+  .sw{width:22px;height:4px;border-radius:2px;flex:none;background:var(--c)}
+  .sw.dash{background:repeating-linear-gradient(90deg,var(--c) 0 5px,transparent 5px 9px)}
+
+  .progress{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .dots{display:flex;gap:7px}
+  .dots .dot{width:8px;height:8px;border-radius:99px;background:#C9C0A9;transition:all .35s}
+  .dots .dot.on{background:var(--accent);width:22px}
+  .ptrack{flex:1;min-width:120px;height:5px;background:#D8D0B9;border-radius:99px;overflow:hidden}
+  .pfill{height:100%;width:0;background:var(--accent);border-radius:99px}
+  .ptext{font-family:Georgia,serif;font-size:14.5px}
+
+  footer{font-size:12.5px;color:var(--muted);text-align:center;padding-top:2px}
+
+  @media(max-width:940px){
+    main.stage{grid-template-columns:1fr}
+    .canvas-wrap{height:clamp(300px,55vw,480px)}
+    .legend ul{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>Osnovne operacije sa vektorima</h1>
+    <p class="sub">Automatski ciklus od 7 scena &middot; vektori u ravni &middot; jedinice u SI sistemu</p>
+  </div>
+  <div class="controls">
+    <button id="btnPause" aria-pressed="false"></button>
+    <button id="btnRestart" aria-label="Ponovi od početka"></button>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="canvas-wrap" id="wrap"><canvas id="cv"></canvas></div>
+  <aside class="panel">
+    <div id="panelBody">
+      <div class="eyebrow" id="sceneNo">Scena 1 / 7</div>
+      <h2 id="sceneTitle"></h2>
+      <p id="sceneDesc"></p>
+      <div class="formula" id="sceneFormula"></div>
+    </div>
+    <div class="legend">
+      <div class="legend-title">Legenda boja</div>
+      <ul id="legendList"></ul>
+    </div>
+  </aside>
+</main>
+
+<div class="progress">
+  <div class="dots" id="dots"></div>
+  <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+  <div class="ptext" id="ptext"></div>
+</div>
+
+<footer>Materijal se prikazuje automatski — scene se smenjuju svakih ~10&thinsp;s uz gladke prelaze, a ceo ciklus se beskonačno ponavlja. Dugmad iznad platna služe samo za pauzu i ponavljanje od početka.</footer>
+
+<script>
+'use strict';
+
+/* =====================================================================
+   CONFIG — sve podesive vrednosti na jednom mestu (komentari na srpskom)
+   ===================================================================== */
+const CONFIG = {
+  boje: {
+    strana:      '#EAE4D6', // pozadina cele strane
+    platno:      '#FBF8F1', // pozadina platna (i boja "haloa" iza labele)
+    mreza:       '#E5DECB', // boja mreže koordinatnog sistema
+    ose:         '#A79D85', // boja x i y ose (i strelica na njima)
+    tekstOse:    '#8B8269', // boja brojeva i oznaka x, y na osama
+    tinta:       '#262E35', // osnovna tamna boja (tačke, ortovi, tekst)
+    priguseno:   '#7D7562', // prigušena boja (pomoćne linije, projekcije)
+    vektorA:     '#0F7B7C', // boja vektora a (teal)
+    vektorB:     '#C2453D', // boja vektora b i −b (koral)
+    rezultanta:  '#C96A1B', // boja zbira/razlike (oker)
+    komponenta:  '#4EA0A0', // boja komponenata ax, ay i kopija ortova
+    ort:         '#3D4650', // boja ortova i, j
+    trag:        '#CBC3AC'  // boja "šina" po kojoj klizi k·a (scena 6)
+  },
+  stil: {
+    debljinaVektora: 3.2,  // debljina glavnih vektora (px, množi se sa faktorom u)
+    debljinaTanko:   1.6,  // debljina pomoćnih linija (px)
+    glava:           13,   // veličina šiljka strelice (px)
+    tacka:           4.5,  // prečnik tačaka A i B (px)
+    fontSimbol:      20,   // veličina matematičkih labela (a, b, a + b…) u px
+    fontMala:        13,   // veličina malih opisnih labele (sans) u px
+    prikaziHalo:     true  // svetla "podloga" iza teksta za bolju čitljivost
+  },
+  anim: {
+    scenaTrajanja: [10, 10, 10, 10, 10, 10, 10], // trajanje svake scene u sekundama
+    prelaz: 0.9                                   // dužina fade prelaza između scena (s)
+  },
+  mreza: {
+    korak: 1,           // razmak mreže u svetskim jedinicama (1 = 1 m)
+    prikaziBrojeve: true// da li ispisivati brojeve na osama
+  }
+};
+
+/* ============================ Pomoćne funkcije ============================ */
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const ph    = (t,a,b)=>clamp((t-a)/(b-a),0,1);          // faza 0..1 između t=a i t=b
+const lerp  = (a,b,e)=>a+(b-a)*e;
+const easeIO= e=>{e=clamp(e,0,1);return e<0.5?2*e*e:1-Math.pow(-2*e+2,2)/2;}; // easeInOut
+const easeO = e=>{e=clamp(e,0,1);return 1-Math.pow(1-e,3);};                  // easeOut
+const smooth= e=>{e=clamp(e,0,1);return e*e*(3-2*e);};                        // smoothstep
+const fmt   = (x,d=1)=>x.toFixed(d).replace('.',',');   // srpski decimalni zapis
+
+const C = CONFIG.boje, S = CONFIG.stil;
+
+/* ============================ Canvas i kamera ============================ */
+const wrap = document.getElementById('wrap');
+const cv   = document.getElementById('cv');
+const ctx  = cv.getContext('2d');
+let W = 0, H = 0;
+
+// Prilagođava canvas veličini prozora i devicePixelRatio (oštrina)
+function resize(){
+  const r = wrap.getBoundingClientRect();
+  if(r.width < 10 || r.height < 10) return;
+  W = r.width; H = r.height;
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  cv.width  = Math.round(W*dpr);
+  cv.height = Math.round(H*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize', resize);
+if(window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
+resize();
+
+// Kamera: preslikava svetske jedinice (metre) u piksele; u — faktor veličine UI-ja
+function makeView(cam){
+  const scale = Math.min(W/cam.w, H/cam.h);
+  const ox = W/2 - cam.cx*scale, oy = H/2 + cam.cy*scale;
+  const u  = clamp(scale/85, 0.75, 1.35);
+  return { scale, ox, oy, u, X:x=>ox+x*scale, Y:y=>oy-y*scale };
+}
+
+/* ============================ Crtanje: pomoćnici ============================ */
+
+// Usmerena duž (vektor) sa šiljkom; dash — isprekidano, alpha — providnost
+function arrow(v,x1,y1,x2,y2,o={}){
+  const ax=v.X(x1), ay=v.Y(y1), bx=v.X(x2), by=v.Y(y2);
+  const dx=bx-ax, dy=by-ay, dist=Math.hypot(dx,dy);
+  if(dist < 1) return;
+  const ang=Math.atan2(dy,dx);
+  let hl=(o.head ?? S.glava)*v.u; hl=Math.min(hl, dist*0.9);
+  ctx.save();
+  ctx.globalAlpha=o.alpha ?? 1;
+  ctx.strokeStyle=o.color; ctx.fillStyle=o.color;
+  ctx.lineWidth=(o.width ?? S.debljinaVektora)*v.u; ctx.lineCap='round';
+  if(o.dash) ctx.setLineDash(o.dash);
+  ctx.beginPath();
+  ctx.moveTo(ax,ay);
+  ctx.lineTo(bx-Math.cos(ang)*hl*0.7, by-Math.sin(ang)*hl*0.7);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();                                   // šiljak (trougao)
+  ctx.moveTo(bx,by);
+  ctx.lineTo(bx-hl*Math.cos(ang-0.44), by-hl*Math.sin(ang-0.44));
+  ctx.lineTo(bx-hl*Math.cos(ang+0.44), by-hl*Math.sin(ang+0.44));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+// Obična duž (isprekidana ako je dato dash)
+function line(v,x1,y1,x2,y2,o={}){
+  ctx.save();
+  ctx.globalAlpha=o.alpha ?? 1;
+  ctx.strokeStyle=o.color;
+  ctx.lineWidth=(o.width ?? S.debljinaTanko)*v.u; ctx.lineCap='round';
+  if(o.dash) ctx.setLineDash(o.dash);
+  ctx.beginPath(); ctx.moveTo(v.X(x1),v.Y(y1)); ctx.lineTo(v.X(x2),v.Y(y2)); ctx.stroke();
+  ctx.restore();
+}
+
+// Tačka sa svetlim obodom (da se izdvoji od mreže)
+function dot(v,x,y,color,r,alpha=1){
+  ctx.save(); ctx.globalAlpha=alpha;
+  ctx.fillStyle=C.platno;
+  ctx.beginPath(); ctx.arc(v.X(x),v.Y(y),r*v.u*1.9,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=color;
+  ctx.beginPath(); ctx.arc(v.X(x),v.Y(y),r*v.u,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+// "Bogata" labela: delovi mogu biti subskript (sub) ili uspravni tekst (up)
+// parts: [{t:'a'},{t:'x',sub:1},{t:' = 3 m',up:1}]
+function richLabel(v,parts,wx,wy,o={}){
+  const size=(o.size ?? S.fontSimbol)*v.u;
+  const fam='Georgia,"Times New Roman",serif';
+  let total=0;
+  const segs=parts.map(p=>{
+    const fs = p.sub ? size*0.66 : size;
+    const st = (p.up?'normal ':'italic ')+(p.up?(p.boldUp===false?'400 ':'600 '):'700 ');
+    ctx.font=st+fs+'px '+fam;
+    const w=ctx.measureText(p.t).width;
+    total+=w;
+    return {t:p.t, font:st+fs+'px '+fam, w, dy:p.sub?fs*0.45:0, color:p.color||o.color||C.tinta};
+  });
+  const x=v.X(wx), y=v.Y(wy);
+  let cx = o.align==='center' ? x-total/2 : o.align==='right' ? x-total : x;
+  ctx.save();
+  ctx.globalAlpha=o.alpha ?? 1;
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  if(S.prikaziHalo){ ctx.lineJoin='round'; ctx.lineWidth=size*0.28; ctx.strokeStyle=C.platno; }
+  for(const s of segs){
+    ctx.font=s.font;
+    if(S.prikaziHalo) ctx.strokeText(s.t,cx,y+s.dy);
+    ctx.fillStyle=s.color; ctx.fillText(s.t,cx,y+s.dy);
+    cx+=s.w;
+  }
+  ctx.restore();
+}
+
+// Mala opisna labela (sans serif) — za tekst poput "početak", "5 m"…
+function sLabel(v,text,wx,wy,o={}){
+  const size=(o.size ?? S.fontMala)*v.u;
+  const x=v.X(wx), y=v.Y(wy);
+  ctx.save();
+  ctx.globalAlpha=o.alpha ?? 1;
+  ctx.font='400 '+size+'px "Segoe UI","Helvetica Neue",Arial,sans-serif';
+  ctx.textAlign=o.align ?? 'center'; ctx.textBaseline='alphabetic';
+  if(S.prikaziHalo){ ctx.lineJoin='round'; ctx.lineWidth=size*0.32; ctx.strokeStyle=C.platno; ctx.strokeText(text,x,y); }
+  ctx.fillStyle=o.color ?? C.priguseno; ctx.fillText(text,x,y);
+  ctx.restore();
+}
+
+// Labela u pikselima ekrana (ne zavisi od kamere) — za brojač k i oznaku pauze
+function screenLabel(text,x,y,o={}){
+  const size=o.size ?? 20;
+  ctx.save();
+  ctx.globalAlpha=o.alpha ?? 1;
+  ctx.font=o.sans ? '700 '+size+'px "Segoe UI",sans-serif'
+                  : 'italic 700 '+size+'px Georgia,"Times New Roman",serif';
+  ctx.textAlign=o.align ?? 'left'; ctx.textBaseline='alphabetic';
+  if(S.prikaziHalo){ ctx.lineJoin='round'; ctx.lineWidth=size*0.3; ctx.strokeStyle=C.platno; ctx.strokeText(text,x,y); }
+  ctx.fillStyle=o.color ?? C.tinta; ctx.fillText(text,x,y);
+  ctx.restore();
+}
+
+// Mreža + koordinatni sistem sa strelicama, oznakama x, y i brojevima
+function drawGrid(v){
+  const step=CONFIG.mreza.korak;
+  const x0=(0-v.ox)/v.scale, x1=(W-v.ox)/v.scale;
+  const yBot=(v.oy-H)/v.scale, yTop=v.oy/v.scale;
+  const hasX=(0>=yBot&&0<=yTop), hasY=(0>=x0&&0<=x1);
+  ctx.save();
+  ctx.strokeStyle=C.mreza; ctx.lineWidth=1; ctx.beginPath();
+  for(let i=Math.ceil(x0/step)*step;i<=x1+1e-9;i+=step){const X=v.X(i);ctx.moveTo(X,0);ctx.lineTo(X,H);}
+  for(let j=Math.ceil(yBot/step)*step;j<=yTop+1e-9;j+=step){const Y=v.Y(j);ctx.moveTo(0,Y);ctx.lineTo(W,Y);}
+  ctx.stroke();
+  ctx.strokeStyle=C.ose; ctx.lineWidth=1.4*v.u; ctx.beginPath();
+  if(hasX){ ctx.moveTo(0,v.Y(0)); ctx.lineTo(W,v.Y(0)); }
+  if(hasY){ ctx.moveTo(v.X(0),0); ctx.lineTo(v.X(0),H); }
+  ctx.stroke();
+  ctx.fillStyle=C.ose;                                  // strelice na osama
+  if(hasX){ ctx.beginPath(); ctx.moveTo(W-2,v.Y(0)); ctx.lineTo(W-11,v.Y(0)-4.5); ctx.lineTo(W-11,v.Y(0)+4.5); ctx.closePath(); ctx.fill(); }
+  if(hasY){ ctx.beginPath(); ctx.moveTo(v.X(0),2); ctx.lineTo(v.X(0)-4.5,11); ctx.lineTo(v.X(0)+4.5,11); ctx.closePath(); ctx.fill(); }
+  ctx.fillStyle=C.tekstOse;                             // oznake x i y
+  ctx.font='italic '+(13*v.u).toFixed(1)+'px Georgia,serif';
+  if(hasX){ ctx.textAlign='right'; ctx.textBaseline='bottom'; ctx.fillText('x',W-6,v.Y(0)-7); }
+  if(hasY){ ctx.textAlign='left';  ctx.textBaseline='top';    ctx.fillText('y',v.X(0)+8,6); }
+  if(CONFIG.mreza.prikaziBrojeve){                      // brojevi na osama
+    ctx.font=(12*v.u).toFixed(1)+'px Georgia,serif';
+    if(hasX){ ctx.textAlign='center'; ctx.textBaseline='top';
+      for(let i=Math.ceil(x0/step);i<=Math.floor(x1/step);i++){ if(i===0)continue; ctx.fillText(String(i),v.X(i),v.Y(0)+6); } }
+    if(hasY){ ctx.textAlign='left'; ctx.textBaseline='middle';
+      for(let j=Math.ceil(yBot/step);j<=Math.floor(yTop/step);j++){ if(j===0)continue; ctx.fillText(String(j),v.X(0)+7,v.Y(j)); } }
+    if(hasX&&hasY){ ctx.textAlign='right'; ctx.textBaseline='top'; ctx.fillText('0',v.X(0)-5,v.Y(0)+6); }
+  }
+  ctx.restore();
+}
+
+/* ============================ SCENE ============================ */
+
+/* ---- Scena 1: Šta je vektor? — tačke A i B, strelica, moduo ---- */
+function drawS1(v,t){
+  const A={x:-3.5,y:-1.5}, B={x:0.5,y:1.5};
+  const eA=easeO(ph(t,0.2,1.0));                       // tačka A
+  if(eA>0){
+    dot(v,A.x,A.y,C.tinta,S.tacka*eA);
+    const al=ph(t,0.5,1.0);
+    if(al>0) richLabel(v,[{t:'A'}],A.x-0.28,A.y+0.02,{align:'right',alpha:al});
+  }
+  const eB=easeO(ph(t,1.0,1.7));                       // tačka B
+  if(eB>0){
+    dot(v,B.x,B.y,C.tinta,S.tacka*eB);
+    const al=ph(t,1.3,1.8);
+    if(al>0) richLabel(v,[{t:'B'}],B.x+0.22,B.y+0.02,{align:'left',alpha:al});
+  }
+  const e=easeIO(ph(t,1.9,3.9));                       // strelica "raste" od A ka B
+  if(e>0) arrow(v,A.x,A.y,lerp(A.x,B.x,e),lerp(A.y,B.y,e),{color:C.vektorA});
+  const eL=ph(t,4.0,4.6);                              // labela vektora
+  if(eL>0) richLabel(v,[{t:'a'}],(A.x+B.x)/2-0.45,(A.y+B.y)/2+0.35,{size:22,align:'center',alpha:eL});
+  const n={x:0.6,y:-0.8}, off=0.75;                    // normala na AB
+  const eD=easeIO(ph(t,4.9,6.1));                      // dimenziona linija = moduo
+  if(eD>0){
+    const p1={x:A.x+n.x*off,y:A.y+n.y*off}, p2={x:B.x+n.x*off,y:B.y+n.y*off};
+    const q={x:lerp(p1.x,p2.x,eD),y:lerp(p1.y,p2.y,eD)};
+    line(v,p1.x,p1.y,q.x,q.y,{color:C.priguseno,width:1.4});
+    line(v,p1.x-n.x*0.14,p1.y-n.y*0.14,p1.x+n.x*0.14,p1.y+n.y*0.14,{color:C.priguseno,width:1.4});
+    if(eD>0.02) line(v,q.x-n.x*0.14,q.y-n.y*0.14,q.x+n.x*0.14,q.y+n.y*0.14,{color:C.priguseno,width:1.4});
+    const al=ph(t,6.0,6.5);
+    if(al>0) sLabel(v,'5 m',(p1.x+p2.x)/2+n.x*0.78,(p1.y+p2.y)/2+n.y*0.78,{alpha:al,color:C.tinta,size:13.5});
+  }
+  const eP=ph(t,6.7,7.3);                              // označavanje početka i vrha
+  if(eP>0) sLabel(v,'početak',A.x-0.35,A.y-0.7,{alpha:eP});
+  const eV=ph(t,7.3,7.9);
+  if(eV>0) sLabel(v,'vrh — šiljak',B.x+0.35,B.y+0.75,{alpha:eV});
+}
+
+/* ---- Scena 2: Komponente vektora — projekcije na ose ---- */
+function drawS2(v,t){
+  const e=easeIO(ph(t,0.2,1.8));                       // vektor a = (3, 4)
+  if(e>0) arrow(v,0,0,3*e,4*e,{color:C.vektorA});
+  const eL=ph(t,1.9,2.4);
+  if(eL>0) richLabel(v,[{t:'a'}],2.1,1.7,{size:22,align:'center',alpha:eL});
+  const eP=easeIO(ph(t,2.5,3.4));                      // isprekidane projekcije
+  if(eP>0){
+    line(v,3,4,3,4-4*eP,{color:C.priguseno,dash:[5,5]});
+    line(v,3,4,3-3*eP,4,{color:C.priguseno,dash:[5,5]});
+  }
+  const eX=easeIO(ph(t,3.7,4.7));                      // komponenta ax na x-osi
+  if(eX>0) arrow(v,0,0,3*eX,0,{color:C.komponenta,width:2.6,head:11});
+  const lX=ph(t,4.6,5.1);
+  if(lX>0) richLabel(v,[{t:'a'},{t:'x',sub:1},{t:' = 3 m',up:1,color:C.tinta}],1.5,-0.5,{align:'center',color:C.komponenta,alpha:lX});
+  const eY=easeIO(ph(t,4.9,5.9));                      // komponenta ay na y-osi
+  if(eY>0) arrow(v,0,0,0,4*eY,{color:C.komponenta,width:2.6,head:11});
+  const lY=ph(t,5.8,6.3);
+  if(lY>0) richLabel(v,[{t:'a'},{t:'y',sub:1},{t:' = 4 m',up:1,color:C.tinta}],-0.5,2.0,{align:'right',color:C.komponenta,alpha:lY});
+  const eV=ph(t,6.6,7.2);                              // zapis vektora
+  if(eV>0) richLabel(v,[{t:'a'},{t:' = (3, 4) m',up:1}],1.3,2.6,{align:'right',alpha:eV,bold:false,italic:false});
+  const eM=ph(t,7.4,8.0);                              // moduo
+  if(eM>0) sLabel(v,'|a| = 5 m',2.35,4.45,{align:'left',alpha:eM,color:C.tinta,size:13.5});
+}
+
+/* ---- Scena 3: Sabiranje — metod trougla ---- */
+function drawS3(v,t){
+  const aEnd={x:2,y:1}, b={x:1,y:3};
+  const eA=easeIO(ph(t,0.2,1.6));                      // prvo vektor a
+  if(eA>0) arrow(v,0,0,aEnd.x*eA,aEnd.y*eA,{color:C.vektorA});
+  const lA=ph(t,1.7,2.2);
+  if(lA>0) richLabel(v,[{t:'a'}],0.82,0.86,{size:21,align:'center',alpha:lA});
+  const eT=easeIO(ph(t,2.0,3.4));                      // b se paralelno prenosi na vrh a
+  const aG=0.35*(1-ph(t,3.5,4.0));                     // bledi "duh" originalnog b
+  if(eT>0.3&&aG>0) arrow(v,0,0,b.x,b.y,{color:C.vektorB,alpha:aG,dash:[6,5],width:2.4});
+  if(eT>0){
+    const sx=lerp(0,aEnd.x,eT), sy=lerp(0,aEnd.y,eT);
+    arrow(v,sx,sy,sx+b.x,sy+b.y,{color:C.vektorB});
+  }
+  const lB=ph(t,3.5,4.0);
+  if(lB>0) richLabel(v,[{t:'b'}],2.12,2.6,{size:21,align:'right',alpha:lB});
+  const eR=easeIO(ph(t,4.1,5.7));                      // rezultanta od O do vrha b
+  if(eR>0) arrow(v,0,0,3*eR,4*eR,{color:C.rezultanta,width:3.6});
+  const lR=ph(t,5.8,6.3);
+  if(lR>0) richLabel(v,[{t:'a + b'}],2.35,1.4,{size:21,align:'left',color:C.rezultanta,alpha:lR});
+  const eV=ph(t,6.6,7.2);
+  if(eV>0){
+    richLabel(v,[{t:'(3, 4) m',up:1}],3.35,4.05,{align:'left',size:14,boldUp:false,alpha:eV});
+    sLabel(v,'|a + b| = 5 m',3.35,3.5,{align:'left',alpha:eV,color:C.tinta,size:13.5});
+  }
+}
+
+/* ---- Scena 4: Sabiranje — metod paralelograma ---- */
+function drawS4(v,t){
+  const a={x:3,y:1}, b={x:1,y:2};
+  const eA=easeIO(ph(t,0.2,1.5));                      // oba vektora iz iste tačke
+  if(eA>0) arrow(v,0,0,a.x*eA,a.y*eA,{color:C.vektorA});
+  const eB=easeIO(ph(t,0.5,1.8));
+  if(eB>0) arrow(v,0,0,b.x*eB,b.y*eB,{color:C.vektorB});
+  const lA=ph(t,1.6,2.1);
+  if(lA>0) richLabel(v,[{t:'a'}],1.37,0.9,{size:21,align:'center',alpha:lA});
+  const lB=ph(t,1.9,2.4);
+  if(lB>0) richLabel(v,[{t:'b'}],0.12,1.2,{size:21,align:'right',alpha:lB});
+  const eP=easeIO(ph(t,2.4,3.8));                      // isprekidane paralelne strane
+  if(eP>0){
+    arrow(v,lerp(0,b.x,eP),lerp(0,b.y,eP),lerp(0,b.x,eP)+a.x,lerp(0,b.y,eP)+a.y,{color:C.vektorA,alpha:0.45,dash:[6,5],width:2.2});
+    arrow(v,lerp(0,a.x,eP),lerp(0,a.y,eP),lerp(0,a.x,eP)+b.x,lerp(0,a.y,eP)+b.y,{color:C.vektorB,alpha:0.45,dash:[6,5],width:2.2});
+  }
+  const eR=easeIO(ph(t,4.1,5.7));                      // dijagonala — rezultanta
+  if(eR>0) arrow(v,0,0,4*eR,3*eR,{color:C.rezultanta,width:3.6});
+  const lR=ph(t,5.8,6.3);
+  if(lR>0) richLabel(v,[{t:'a + b'}],4.3,3.2,{size:21,align:'left',color:C.rezultanta,alpha:lR});
+  const eV=ph(t,6.5,7.1);
+  if(eV>0) richLabel(v,[{t:'(4, 3) m',up:1}],4.3,2.62,{align:'left',size:14,boldUp:false,alpha:eV});
+  const eK=ph(t,7.0,7.7);                              // napomena o komutativnosti
+  if(eK>0) sLabel(v,'a + b = b + a — redosled sabiranja nije bitan',2.1,4.15,{alpha:eK,size:13.5});
+}
+
+/* ---- Scena 5: Oduzimanje — a − b = a + (−b) ---- */
+function drawS5(v,t){
+  const a={x:3,y:1}, b={x:1,y:2};
+  const Lb=Math.hypot(b.x,b.y), th0=Math.atan2(b.y,b.x);
+  const eA=easeIO(ph(t,0.2,1.4));                      // a i b iz iste tačke
+  if(eA>0) arrow(v,0,0,a.x*eA,a.y*eA,{color:C.vektorA});
+  const eB=easeIO(ph(t,0.6,1.8));
+  if(eB>0) arrow(v,0,0,b.x*eB,b.y*eB,{color:C.vektorB});
+  const alB=ph(t,1.5,2.0)*(1-ph(t,2.3,2.7));           // labela b nestaje pri rotaciji
+  if(alB>0) richLabel(v,[{t:'b'}],0.12,1.2,{size:21,align:'right',alpha:alB});
+  const lA=ph(t,1.5,2.0);
+  if(lA>0) richLabel(v,[{t:'a'}],1.37,0.9,{size:21,align:'center',alpha:lA});
+  const eR=easeIO(ph(t,2.2,3.3));                      // rotacija b za 180° → −b
+  const th=th0+Math.PI*eR;
+  const eT=easeIO(ph(t,3.5,4.6));                      // −b se prenosi na vrh a
+  let negEnd;
+  if(eT>0){
+    const sx=lerp(0,a.x,eT), sy=lerp(0,a.y,eT);
+    arrow(v,sx,sy,sx-1,sy-2,{color:C.vektorB,dash:[6,5],width:2.8});
+    negEnd={x:sx-1,y:sy-2};
+  } else if(eR>0){
+    arrow(v,0,0,Math.cos(th)*Lb,Math.sin(th)*Lb,{color:C.vektorB,dash:eR>0.15?[6,5]:null,width:2.8});
+    negEnd={x:Math.cos(th)*Lb,y:Math.sin(th)*Lb};
+  } else negEnd={x:b.x,y:b.y};
+  const aG=0.3*(1-ph(t,4.7,5.2));                      // bledi duh −b na početku
+  if(eT>0.05&&aG>0) arrow(v,0,0,-1,-2,{color:C.vektorB,alpha:aG,dash:[6,5],width:2.2});
+  const alN=ph(t,3.0,3.4)*(1-ph(t,4.9,5.4));           // labela −b
+  if(alN>0) richLabel(v,[{t:'−b'}],negEnd.x+0.3,negEnd.y-0.1,{size:21,align:'left',alpha:alN});
+  const eD=easeIO(ph(t,4.7,6.1));                      // rezultanta a − b
+  if(eD>0) arrow(v,0,0,2*eD,-1*eD,{color:C.rezultanta,width:3.6});
+  const lD=ph(t,6.2,6.7);
+  if(lD>0) richLabel(v,[{t:'a − b'}],2.5,-1.55,{size:21,align:'left',color:C.rezultanta,alpha:lD});
+  const eV=ph(t,6.9,7.4);
+  if(eV>0) richLabel(v,[{t:'(2, −1) m',up:1}],2.5,-0.95,{align:'left',size:14,boldUp:false,alpha:eV});
+  const eK=ph(t,7.2,7.9);                              // veza: od vrha b do vrha a
+  if(eK>0){
+    const e=easeO(eK);
+    arrow(v,1,2,lerp(1,3,e),lerp(2,1,e),{color:C.rezultanta,alpha:0.55,dash:[7,6],width:2});
+    const l=ph(t,7.7,8.2);
+    if(l>0) sLabel(v,'od vrha b do vrha a',2.05,1.85,{alpha:l,size:13});
+  }
+}
+
+/* ---- Scena 6: Množenje skalarom — k·a klizi po pravcu ---- */
+// Vrednost skalara k kroz vreme (ključni kadrovi: [t0, t1, k0, k1])
+function kOf(t){
+  const KF=[[0.2,1.6,0,1],[1.9,3.1,1,2],[3.9,5.0,2,0.5],[5.8,6.9,0.5,-1],[7.7,9.0,-1,1]];
+  if(t<KF[0][0]) return 0;
+  for(let i=0;i<KF.length;i++){
+    const s=KF[i];
+    if(t<s[0]) return i===0?0:KF[i-1][3];
+    if(t<=s[1]) return lerp(s[2],s[3],easeIO(ph(t,s[0],s[1])));
+  }
+  return KF[KF.length-1][3];
+}
+// Simbol pored vektora: u "zastojima" imenovani slučajevi, u pokretu k·a
+function symOf(t){
+  const H=[[0.2,1.9,'a'],[3.1,3.9,'2a'],[5.0,5.8,'½a'],[6.9,7.7,'−a'],[9.0,1e9,'a']];
+  for(const [t0,t1,s] of H) if(t>=t0&&t<t1) return {s, a:Math.min(1,ph(t,t0,t0+0.3))*(t>t1-0.25?Math.max(0,(t1-t)/0.25):1)};
+  return (t>=0.2)?{s:'k·a',a:0.8}:null;
+}
+function drawS6(v,t){
+  const a={x:2,y:1}, k=kOf(t);
+  const eRail=easeO(ph(t,1.9,2.7));                    // "šina" — ceo pravac k·a
+  if(eRail>0) line(v,-1.25*a.x,-1.25*a.y,2.25*a.x,2.25*a.y,{color:C.trag,width:1.6,alpha:eRail});
+  if(t>0.15) arrow(v,0,0,a.x*k,a.y*k,{color:C.vektorA,width:3.2});
+  const sym=symOf(t);
+  if(sym){
+    const off=k>=0?0.55:-0.55;
+    richLabel(v,[{t:sym.s}],a.x*k-0.15,a.y*k+off,{size:21,align:'center',color:C.vektorA,alpha:sym.a});
+  }
+  if(t>0.2) screenLabel('k = '+fmt(k,1),20,40,{size:22,color:C.tinta});
+}
+
+/* ---- Scena 7: Ortovi i jedinični vektor — a = 3i + 2j ---- */
+function drawS7(v,t){
+  const a={x:3,y:2};
+  const eI=easeIO(ph(t,0.2,0.9));                      // ort i
+  if(eI>0) arrow(v,0,0,eI,0,{color:C.ort,width:2.8,head:11});
+  const lI=ph(t,0.9,1.3);
+  if(lI>0) richLabel(v,[{t:'i'}],0.5,0.3,{size:20,align:'center',color:C.ort,alpha:lI});
+  const eJ=easeIO(ph(t,1.1,1.8));                      // ort j
+  if(eJ>0) arrow(v,0,0,0,eJ,{color:C.ort,width:2.8,head:11});
+  const lJ=ph(t,1.8,2.2);
+  if(lJ>0) richLabel(v,[{t:'j'}],0.26,0.55,{size:20,align:'left',color:C.ort,alpha:lJ});
+  const gA=0.3*ph(t,2.0,2.6)*(1-ph(t,6.0,6.6));        // bledi "okvir" ciljnog a
+  if(gA>0) arrow(v,0,0,a.x,a.y,{color:C.vektorA,alpha:gA,dash:[7,6],width:2});
+  const cps=[[2.6,3.2,0],[3.2,3.8,1],[3.8,4.4,2]];     // tri kopije i
+  for(const [t0,t1,kx] of cps){
+    const e=easeIO(ph(t,t0,t1));
+    if(e>0) arrow(v,kx,0,kx+e,0,{color:C.komponenta,width:2.6,head:10});
+  }
+  const cps2=[[4.6,5.2,0],[5.2,5.8,1]];                // dve kopije j
+  for(const [t0,t1,ky] of cps2){
+    const e=easeIO(ph(t,t0,t1));
+    if(e>0) arrow(v,3,ky,3,ky+e,{color:C.komponenta,width:2.6,head:10});
+  }
+  const eA=easeIO(ph(t,6.0,7.2));                      // rezultujući vektor a
+  if(eA>0) arrow(v,0,0,a.x*eA,a.y*eA,{color:C.vektorA,width:3.4});
+  const lA=ph(t,7.3,7.8);
+  if(lA>0){
+    richLabel(v,[{t:'a'}],3.3,2.35,{size:22,align:'left',alpha:lA});
+    richLabel(v,[{t:'= (3, 2) m',up:1}],3.3,1.8,{align:'left',size:14,boldUp:false,alpha:lA});
+  }
+  const eU=easeIO(ph(t,8.0,8.8));                      // jedinični vektor ê = a/|a|
+  if(eU>0){
+    arrow(v,0,0,0.894*eU,0.447*eU,{color:C.tinta,dash:[4,4],width:2.2,head:9});
+    const l=ph(t,8.5,9.0);
+    if(l>0) richLabel(v,[{t:'ê'},{t:' = ',up:1},{t:'a'},{t:'/|',up:1},{t:'a'},{t:'|',up:1}],1.15,0.78,{align:'left',size:16,alpha:l});
+  }
+}
+
+/* ============================ Podaci o scenama ============================ */
+const SCENES=[
+ { t:'Šta je vektor?', cam:{cx:-1.0,cy:0.15,w:11,h:7.8}, draw:drawS1,
+   d:'Vektor je fizička veličina koja pored modula (brojčane vrednosti) ima i smer, kao i napravljeni pravac. Grafički ga predstavljamo usmerenom duži: početak u tački A, a na vrhu u tački B nalazi se šiljak.',
+   f:'<b class="v">a</b> = <b class="v">AB</b> &nbsp;—&nbsp; od tačke A ka tački B<br>moduo: &nbsp;|<b class="v">a</b>| = dužina AB = 5 m' },
+ { t:'Komponente vektora', cam:{cx:1.0,cy:1.7,w:10,h:8.4}, draw:drawS2,
+   d:'Vrh vektora projektujemo okomito na obe ose i tako dobijamo njegove kartezijanske komponente. Moduo zatim računamo Pitagorinom teoremom iz pravougaonog trougla komponenti.',
+   f:'<b class="v">a</b> = (a<sub>x</sub>, a<sub>y</sub>) = (3, 4) m<br>|<b class="v">a</b>| = <span class="sqrt">√<span>a<sub>x</sub><sup>2</sup> + a<sub>y</sub><sup>2</sup></span></span> = <span class="sqrt">√<span>3<sup>2</sup> + 4<sup>2</sup></span></span> m = 5 m' },
+ { t:'Sabiranje — metod trougla', cam:{cx:2.0,cy:1.9,w:10,h:8}, draw:drawS3,
+   d:'Vektor b paralelno prenosimo tako da mu početak padne na vrh vektora a. Rezultanta je vektor koji spaja početak a sa vrhom b — zato se ovaj postupak zove metod trougla.',
+   f:'<b class="v">r</b> = <b class="v">a</b> + <b class="v">b</b> = (3, 4) m, &nbsp;&nbsp;|<b class="v">r</b>| = 5 m<br>r<sub>x</sub> = a<sub>x</sub> + b<sub>x</sub>, &nbsp;&nbsp;&nbsp;r<sub>y</sub> = a<sub>y</sub> + b<sub>y</sub>' },
+ { t:'Sabiranje — metod paralelograma', cam:{cx:2.2,cy:1.9,w:10.5,h:8}, draw:drawS4,
+   d:'Kada oba vektora crtamo iz iste tačke, dovoljno ih je dopuniti isprekidanim paralelnim stranama do paralelograma. Rezultanta je njegova dijagonala od zajedničkog početka — rezultat je isti kao u metodu trougla.',
+   f:'<b class="v">a</b> + <b class="v">b</b> = <b class="v">b</b> + <b class="v">a</b> = (4, 3) m<br>|<b class="v">a</b> + <b class="v">b</b>| = <span class="sqrt">√<span>4<sup>2</sup> + 3<sup>2</sup></span></span> m = 5 m' },
+ { t:'Oduzimanje vektora', cam:{cx:1.2,cy:0.3,w:10.5,h:8}, draw:drawS5,
+   d:'Oduzimanje svodimo na sabiranje: vektor b okrenemo za 180° i dobijemo −b, pa sabiramo a + (−b). Kad vektori imaju zajednički početak, razlika a − b je istovremeno i vektor od vrha b do vrha a.',
+   f:'<b class="v">a</b> − <b class="v">b</b> = <b class="v">a</b> + (−<b class="v">b</b>) = (2, −1) m<br>|<b class="v">a</b> − <b class="v">b</b>| = <span class="sqrt">√<span>2<sup>2</sup> + (−1)<sup>2</sup></span></span> m = <span class="sqrt">√<span>5</span></span> m ≈ 2,24 m' },
+ { t:'Množenje skalarom', cam:{cx:1.1,cy:0.4,w:11,h:7.6}, draw:drawS6,
+   d:'Množenje skalarom k uvećava ili umanjuje vektor: moduo se množi sa |k|, smer se ne menja za k &gt; 0, a za k &lt; 0 vektor dobija suprotan smer. Pratite kako vrh vektora klizi po istom pravcu dok se k menja.',
+   f:'|k·<b class="v">a</b>| = |k| · |<b class="v">a</b>|<br>k &gt; 0 — isti smer; &nbsp;&nbsp;k &lt; 0 — suprotan smer<br>za <b class="v">a</b> = (2, 1) m: &nbsp;|<b class="v">a</b>| = <span class="sqrt">√<span>5</span></span> ≈ 2,24 m' },
+ { t:'Ortovi i jedinični vektor', cam:{cx:1.7,cy:1.35,w:10.5,h:8}, draw:drawS7,
+   d:'Ortovi i i j su jedinični vektori pozitivnih smerova osa x i y. Svaki vektor zapisujemo kao zbir komponenti pomnoženih ortovima, a njegov jedinični vektor ê dobijamo deljenjem sa modulom.',
+   f:'<b class="v">a</b> = a<sub>x</sub><b class="v">i</b> + a<sub>y</sub><b class="v">j</b> = 3<b class="v">i</b> + 2<b class="v">j</b> &nbsp;(m)<br><span class="v">ê</span> = <span class="frac"><span><b class="v">a</b></span><span>|<b class="v">a</b>|</span></span> &nbsp;je jedinični vektor, &nbsp;|<span class="v">ê</span>| = 1' }
+];
+SCENES.forEach((s,i)=>{ s.dur = CONFIG.anim.scenaTrajanja[i] ?? 10; });
+
+/* ============================ UI: panel, legenda, progres ============================ */
+const panelBody=document.getElementById('panelBody');
+const pfill=document.getElementById('pfill'), ptext=document.getElementById('ptext');
+
+// Legenda boja — generiše se iz istih boja koje koriste scene
+const LEGENDA=[
+ [C.vektorA,'<b class="v">a</b> — vektor',false],
+ [C.vektorB,'<b class="v">b</b> — vektor',false],
+ [C.rezultanta,'<b class="v">a</b> + <b class="v">b</b>, <b class="v">a</b> − <b class="v">b</b>',false],
+ [C.komponenta,'a<sub>x</sub>, a<sub>y</sub> — komponente',false],
+ [C.vektorB,'−<b class="v">b</b> — suprotan smer',true],
+ [C.ort,'<b class="v">i</b>, <b class="v">j</b> — ortovi',false]
+];
+const legendUl=document.getElementById('legendList');
+LEGENDA.forEach(([c,lab,dash])=>{
+  const li=document.createElement('li');
+  li.innerHTML='<span class="sw'+(dash?' dash':'')+'" style="--c:'+c+'"></span><span>'+lab+'</span>';
+  legendUl.appendChild(li);
+});
+
+// Tačkice napretka
+const dotsEl=document.getElementById('dots');
+const dotsEls=SCENES.map(()=>{
+  const d=document.createElement('span'); d.className='dot'; dotsEl.appendChild(d); return d;
+});
+
+// Sinhronizacija panela sa scenom (uz CSS fade)
+let uiIdx=-1, panelTimer=null;
+function setSceneUI(i,instant){
+  const apply=()=>{
+    document.getElementById('sceneNo').textContent='Scena '+(i+1)+' / '+SCENES.length;
+    document.getElementById('sceneTitle').textContent=SCENES[i].t;
+    document.getElementById('sceneDesc').innerHTML=SCENES[i].d;
+    document.getElementById('sceneFormula').innerHTML=SCENES[i].f;
+    ptext.textContent='Scena '+(i+1)+'/'+SCENES.length+' — '+SCENES[i].t;
+    panelBody.classList.remove('fadeout');
+  };
+  if(instant){ apply(); return; }
+  panelBody.classList.add('fadeout');
+  clearTimeout(panelTimer);
+  panelTimer=setTimeout(apply,300);
+}
+
+/* ============================ Dugmad: pauza i restart ============================ */
+const ICON_PAUSE='<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><rect x="3" y="2" width="3.4" height="12" rx="1.2"/><rect x="9.6" y="2" width="3.4" height="12" rx="1.2"/></svg>';
+const ICON_PLAY ='<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M4.5 2.5 L13 8 L4.5 13.5 Z"/></svg>';
+const ICON_RST  ='<svg viewBox="0 0 16 16" width="13" height="13"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 .4 L12.2 2.5 L8 4.6 Z" fill="currentColor"/></svg>';
+
+const btnPause=document.getElementById('btnPause');
+const btnRestart=document.getElementById('btnRestart');
+let paused=false;
+
+btnPause.innerHTML=ICON_PAUSE+'<span>Pauza</span>';
+btnRestart.innerHTML=ICON_RST+'<span>Ponovi</span>';
+
+btnPause.addEventListener('click',()=>{
+  paused=!paused;
+  btnPause.innerHTML=(paused?ICON_PLAY:ICON_PAUSE)+'<span>'+(paused?'Nastavi':'Pauza')+'</span>';
+  btnPause.setAttribute('aria-pressed',String(paused));
+});
+btnRestart.addEventListener('click',()=>{
+  simT=0; uiIdx=-1;                     // vrati ciklus na početak i prisili osvežavanje panela
+});
+
+/* ============================ Glavna petlja ============================ */
+let simT=0, last=performance.now();
+
+function drawPauseBadge(){
+  const w=96,h=32,x=W-w-14,y=14;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x+16,y);
+  ctx.arcTo(x+w,y,x+w,y+h,16); ctx.arcTo(x+w,y+h,x,y+h,16);
+  ctx.arcTo(x,y+h,x,y,16);     ctx.arcTo(x,y,x+w,y,16);
+  ctx.closePath();
+  ctx.fillStyle='rgba(38,46,53,.85)'; ctx.fill();
+  ctx.fillStyle=C.platno;
+  ctx.font='700 12.5px "Segoe UI",sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('PAUZA',x+w/2,y+h/2+1);
+  ctx.restore();
+}
+
+function render(){
+  ctx.fillStyle=C.platno; ctx.fillRect(0,0,W,H);
+  const total=SCENES.reduce((s,x)=>s+x.dur,0);
+  let ct=simT%total, idx=0;
+  while(idx<SCENES.length-1 && ct>=SCENES[idx].dur){ ct-=SCENES[idx].dur; idx++; }
+  const sc=SCENES[idx], D=sc.dur;
+
+  if(idx!==uiIdx){ uiIdx=idx; setSceneUI(idx); }
+
+  const v=makeView(sc.cam);
+  drawGrid(v);
+  sc.draw(v,ct);
+
+  // Fade prelaz "dip-to-background" na granicama scene
+  const h=CONFIG.anim.prelaz/2;
+  let ov=0;
+  if(ct<h)        ov=1-smooth(ct/h);
+  else if(ct>D-h) ov=1-smooth((D-ct)/h);
+  if(ov>0.001){
+    ctx.save(); ctx.globalAlpha=Math.min(1,ov);
+    ctx.fillStyle=C.platno; ctx.fillRect(0,0,W,H);
+    ctx.restore();
+  }
+
+  // Indikator napretka
+  pfill.style.width=(ct/D*100).toFixed(2)+'%';
+  dotsEls.forEach((d,i)=>d.classList.toggle('on',i===idx));
+
+  if(paused) drawPauseBadge();
+}
+
+function frame(now){
+  let dt=(now-last)/1000; last=now;
+  if(dt>0.05) dt=0.05; if(dt<0) dt=0;   // ograničenje delta-vremena (stabilnost)
+  if(!paused) simT+=dt;
+  render();
+  requestAnimationFrame(frame);
+}
+setSceneUI(0,true);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
