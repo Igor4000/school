@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magnetno polje strujnog provodnika — interaktivna animacija</title>
+<style>
+  /* ============ OSNOVNA PALETA I RASPORED ============ */
+  :root{
+    --poz:#0d1219; --panel:#111925; --linija:#22303e;
+    --tekst:#e9eef4; --siv:#8ea0b1;
+    --tirkiz:#3bd6c2; --narandz:#ffab40; --crvena:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--poz); color:var(--tekst);
+    font-family:'Trebuchet MS',Verdana,sans-serif;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+
+  /* ============ ZAGLAVLJE ============ */
+  header{
+    display:flex; align-items:center; gap:26px;
+    padding:13px 26px; border-bottom:1px solid var(--linija); flex-wrap:wrap;
+  }
+  h1{
+    font-family:Georgia,'Times New Roman',serif; font-weight:600;
+    font-size:clamp(19px,2.1vw,26px); letter-spacing:.3px; line-height:1.15;
+    padding-left:14px; border-left:3px solid var(--tirkiz);
+  }
+  .podnaslov{color:var(--siv);font-size:13.5px;margin-top:4px;padding-left:17px}
+  .legenda{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap;align-items:center}
+  .legenda .st{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--siv)}
+  .sw{width:22px;border-top:3px solid;border-radius:2px;display:inline-block}
+  .sw.trougao{width:0;height:0;border:none;border-left:5px solid transparent;
+    border-right:5px solid transparent;border-bottom:9px solid var(--crvena)}
+  .kontrole{display:flex;gap:10px}
+  button{
+    background:transparent;border:1px solid var(--linija);color:var(--tekst);
+    padding:8px 14px;border-radius:8px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13.5px;
+    transition:border-color .25s,color .25s;
+  }
+  button:hover{border-color:var(--tirkiz);color:var(--tirkiz)}
+  button svg{display:block}
+
+  /* ============ GLAVNI DEO ============ */
+  main{flex:1;display:flex;min-height:0}
+  .platno-wrap{flex:1;position:relative;min-width:0}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .traka{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06)}
+  .traka b{display:block;height:100%;background:var(--tirkiz);width:0}
+
+  /* ============ PANEL SCENE ============ */
+  aside{
+    width:372px; background:var(--panel); border-left:1px solid var(--linija);
+    padding:24px 28px; display:flex; flex-direction:column; gap:14px; overflow:auto;
+  }
+  #panSadrzaj{display:flex;flex-direction:column;gap:14px;transition:opacity .38s ease,transform .38s ease}
+  #panSadrzaj.pretokol{opacity:0;transform:translateY(9px)}
+  .scena-broj{font-size:12px;letter-spacing:2.5px;color:var(--tirkiz);font-weight:700}
+  aside h2{font-family:Georgia,serif;font-size:23px;font-weight:600;line-height:1.25}
+  .obj{color:var(--siv);font-size:15px;line-height:1.55}
+  .formula{
+    border-top:1px solid var(--linija);border-bottom:1px solid var(--linija);
+    padding:15px 4px; font-family:Georgia,serif; font-style:italic;
+    font-size:21px; text-align:center; min-height:66px;
+    display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:5px 8px;
+  }
+  .formula sub,.formula sup{font-size:.62em;font-style:normal}
+  .formula .frac{display:inline-flex;flex-direction:column;align-items:center;line-height:1.18;margin:0 3px;vertical-align:middle}
+  .formula .frac .broj{padding:0 6px 2px;border-bottom:1.5px solid currentColor}
+  .formula .frac .ime{padding:2px 6px 0}
+  .formula .napomena{
+    width:100%;font-style:normal;font-family:Consolas,'Courier New',monospace;
+    font-size:12.5px;color:var(--siv);
+  }
+  .tackice{display:flex;gap:9px;margin-top:auto;padding-top:16px}
+  .tackice i{width:9px;height:9px;border-radius:50%;background:#2b3947;transition:.35s}
+  .tackice i.on{background:var(--tirkiz);transform:scale(1.4)}
+
+  /* ============ PODNOŽJE ============ */
+  footer{
+    border-top:1px solid var(--linija); padding:9px 26px; color:var(--siv);
+    font-size:12.5px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  }
+
+  /* ============ USKI EKRANI ============ */
+  @media (max-width:940px){
+    body{overflow:auto}
+    main{flex-direction:column}
+    .platno-wrap{min-height:58vh}
+    aside{width:auto;border-left:none;border-top:1px solid var(--linija)}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Magnetno polje strujnog provodnika</h1>
+    <p class="podnaslov">Oerstedovo otkriće · pravilo desne ruke · sila između paralelnih provodnika · definicija ampera</p>
+  </div>
+  <div class="legenda">
+    <span class="st"><span class="sw" style="border-color:var(--narandz)"></span>struja I</span>
+    <span class="st"><span class="sw" style="border-color:var(--tirkiz)"></span>magnetno polje B</span>
+    <span class="st"><span class="sw" style="border-color:var(--crvena)"></span>sila F</span>
+    <span class="st"><span class="sw trougao"></span>sever kompasa (N)</span>
+  </div>
+  <div class="kontrole">
+    <button id="btnPauza" title="Pauziraj ili nastavi animaciju">
+      <span id="ikPauza"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M7 4h4v16H7zM13 4h4v16h-4z" fill="currentColor"/></svg></span>
+      <span id="ikPlay" style="display:none"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg></span>
+      <span id="tekPauza">Pauza</span>
+    </button>
+    <button id="btnRestart" title="Ponovi ciklus od početka">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 3.5v5.2h5.2"/></svg>
+      Ponovi
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="platno-wrap">
+    <canvas id="platno"></canvas>
+    <div class="traka"><b id="trakaPopuna"></b></div>
+  </div>
+  <aside>
+    <div id="panSadrzaj">
+      <div class="scena-broj">SCENA <span id="brScene">1</span> / <span id="ukScena">7</span></div>
+      <h2 id="naslovScene"></h2>
+      <p class="obj" id="objasnjenje"></p>
+      <div class="formula" id="formula"></div>
+    </div>
+    <div class="tackice" id="tackice"></div>
+  </aside>
+</main>
+
+<footer>
+  <span>Materijal se prikazuje automatski — scene se smenjuju, a ceo ciklus se beskonačno ponavlja.</span>
+  <span>Moguće je samo pauzirati ili ponoviti prikaz od početka.</span>
+</footer>
+
+<script>
+/* =====================================================================
+   KONFIGURACIJA — sve podesivе vrednosti na jednom mestu
+   ===================================================================== */
+const CONFIG = {
+  boje: {
+    pozadina : '#0d1219',   // pozadina platna
+    mreza    : '#1d2833',   // boja tačkaste pomoćne mreže
+    tekst    : '#e9eef4',   // glavni tekst na platnu
+    tekstSiv : '#8ea0b1',   // sekundarni tekst
+    struja   : '#ffab40',   // NARANDŽASTO — struja I (kroz sve scene)
+    polje    : '#3bd6c2',   // TIRKIZNO — magnetno polje B (kroz sve scene)
+    sila     : '#ff6b6b',   // CRVENO — sila F (kroz sve scene)
+    provodnikPun: '#131c26'// ispuna preseka provodnika
+  },
+  trajanjaScena : [11, 11, 12, 12, 11, 11, 12], // trajanja scena u sekundama (7 scena)
+  fadeVreme     : 0.9,   // trajanje prelaza (crossfade) između scena, u sekundama
+  mrezaKorak    : 44,    // razmak tačkica pomoćne mreže, u pikselima
+  skalaMin      : 0.5,   // najmanji faktor skaliranja crtanja (uzak ekran)
+  skalaMax      : 1.35,  // najveći faktor skaliranja crtanja
+  fizika: {
+    mu0 : 4*Math.PI*1e-7, // magnetska konstanta μ₀ [T·m/A]
+    I   : 10,             // struja u provodnicima za numericke primere [A]
+    d   : 0.05            // rastojanje među provodnicima u scenama 5 i 6 [m]
+  },
+  brzine: {
+    klizanjePolja : 1.15, // brzina klizanja strelica duž linija polja [rad/s]
+    klizanjeStruje: 45,   // brzina klizanja strelica struje duž provodnika [px/s]
+    pulsSila      : 3.0   // učestanost pulsanja sila u sceni 7 [1/s]
+  }
+};
+
+const BOJE = CONFIG.boje, TAU = Math.PI*2;
+const F_SERIF='Georgia, "Times New Roman", serif';
+const F_SANS ='"Trebuchet MS", Verdana, sans-serif';
+const F_MONO ='Consolas, "Courier New", monospace';
+
+/* =====================================================================
+   POMOĆNE FUNKCIJE (easing, formati)
+   ===================================================================== */
+const clamp01 = v => v<0?0:v>1?1:v;
+const lerp = (a,b,u)=>a+(b-a)*u;
+function easeInOut(u){u=clamp01(u);return u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;}
+function easeOut(u){u=clamp01(u);return 1-Math.pow(1-u,3);}
+function normUgao(a){while(a>Math.PI)a-=TAU;while(a<-Math.PI)a+=TAU;return a;}
+// format broja sa srpskim decimalnim zarezom
+const fmt=(x,n)=>x.toFixed(n).replace('.',',');
+
+/* =====================================================================
+   POMOĆNE FUNKCIJE ZA CRTANJE (zajedničke svim scenama)
+   ===================================================================== */
+let SK = 1; // tekuća skalа scene (postavlja se pri svakom frejmu)
+
+function rr(c,x,y,w,h,r){ // zaobljen pravougaonik (radi svuda)
+  r=Math.min(r,h/2,w/2);
+  c.beginPath();c.moveTo(x+r,y);
+  c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();
+}
+// strelica od (x1,y1) do (x2,y2) — linija + trouglasta glava
+function strelica(c,x1,y1,x2,y2,o={}){
+  const boja=o.boja||BOJE.tekst, lw=o.debljina||2, gl=o.glava||9;
+  const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy); if(L<0.6)return;
+  const ux=dx/L,uy=dy/L,px=-uy,py=ux,w=gl*0.55;
+  c.strokeStyle=boja;c.lineWidth=lw;c.lineCap='round';
+  c.beginPath();c.moveTo(x1,y1);c.lineTo(x2-ux*gl*0.7,y2-uy*gl*0.7);c.stroke();
+  c.beginPath();c.moveTo(x2,y2);
+  c.lineTo(x2-ux*gl+px*w,y2-uy*gl+py*w);c.lineTo(x2-ux*gl-px*w,y2-uy*gl-py*w);
+  c.closePath();c.fillStyle=boja;c.fill();
+}
+// tekst sa opcionalnom poluprovidnom kutijom iza (za čitljivost)
+function tekst(c,x,y,str,o={}){
+  const vel=o.velicina||16;
+  c.font=`${o.bold?'700 ':''}${o.italic?'italic ':''}${vel}px ${o.mono?F_MONO:F_SANS}`;
+  c.textAlign=o.align||'left'; c.textBaseline=o.baza||'middle';
+  if(o.kutija){
+    const wd=c.measureText(str).width, px=vel*0.5, py=vel*0.58;
+    let bx=x; if(o.align==='center')bx=x-wd/2-px; else if(o.align==='right')bx=x-wd-px;
+    c.fillStyle='rgba(9,13,19,.78)'; rr(c,bx,y-py,wd+px*2,py*2,6); c.fill();
+  }
+  c.fillStyle=o.boja||BOJE.tekst; c.fillText(str,x,y);
+}
+// provodnik u poprečnom preseku: smer +1 (⊙ ka nama), -1 (⊗ od nas), 0 (bez struje)
+function provodnik(c,x,y,r,smer,alpha,o={}){
+  if(alpha<=0.01)return;
+  c.save();c.globalAlpha*=alpha;
+  c.beginPath();c.arc(x,y,r,0,TAU);
+  c.fillStyle=BOJE.provodnikPun;c.fill();
+  c.lineWidth=3*SK;c.strokeStyle=o.boja||BOJE.struja;c.stroke();
+  if(smer>0){ // simbol strelice ka nama — ispuna tačkа
+    c.beginPath();c.arc(x,y,Math.max(2.5,r*0.34),0,TAU);
+    c.fillStyle=o.boja||BOJE.struja;c.fill();
+  }else if(smer<0){ // simbol strelice od nas — krstić
+    const k=r*0.46; c.strokeStyle=o.boja||BOJE.struja; c.lineCap='round';
+    c.beginPath();c.moveTo(x-k,y-k);c.lineTo(x+k,y+k);
+    c.moveTo(x+k,y-k);c.lineTo(x-k,y+k);c.stroke();
+  }
+  c.restore();
+}
+// kružna linija polja sa strelicama koje "klize" duž nje.
+// m = trenutni smer strelica (+1 CCW, -1 CW, može biti u prelazu),
+// ang = klizni ugao, o.direktnoUgao = ang se koristi direktno kao početak.
+function linijaPolja(c,cx,cy,r,m,ang,alpha,o={}){
+  if(alpha<=0.01)return;
+  c.save();c.globalAlpha*=alpha;
+  c.strokeStyle=o.boja||BOJE.polje; c.lineWidth=o.debljina||1.6*SK;
+  c.setLineDash(o.crtice||[]);
+  c.beginPath();c.arc(cx,cy,r,0,TAU);c.stroke();c.setLineDash([]);
+  if(!o.bezStrelica){
+    const n=Math.max(2,Math.round(r/(42*SK)));
+    const len=13*SK*Math.abs(m); // u prelazu strelice se skupe pa rašire u novom smeru
+    const th0=(o.direktnoUgao?ang:-m*ang);
+    if(len>2.5) for(let k=0;k<n;k++){
+      const th=th0+k*TAU/n;
+      const px=cx+r*Math.cos(th), py=cy+r*Math.sin(th);
+      const tx=m*Math.sin(th), ty=-m*Math.cos(th);
+      strelica(c,px,py,px+tx*len,py+ty*len,{boja:o.boja||BOJE.polje,debljina:2*SK,glava:7*SK});
+    }
+  }
+  c.restore();
+}
+// elipsasta linija polja (za spoljne linije oko para provodnika), CCW klizanje
+function elipsaPolja(c,ex,ey,rx,ry,ang,alpha,o={}){
+  if(alpha<=0.01)return;
+  c.save();c.globalAlpha*=alpha;
+  c.strokeStyle=o.boja||BOJE.polje;c.lineWidth=o.debljina||1.6*SK;
+  c.setLineDash(o.crtice||[]);
+  c.beginPath();c.ellipse(ex,ey,rx,ry,0,0,TAU);c.stroke();c.setLineDash([]);
+  const len=13*SK;
+  for(let i=0;i<4;i++){
+    const phi=-ang+i*Math.PI/2;
+    const px=ex+rx*Math.cos(phi), py=ey+ry*Math.sin(phi);
+    const tx=rx*Math.sin(phi), ty=-ry*Math.cos(phi);
+    const L=Math.hypot(tx,ty)||1;
+    strelica(c,px,py,px+tx/L*len,py+ty/L*len,{boja:o.boja||BOJE.polje,debljina:2*SK,glava:7*SK});
+  }
+  c.restore();
+}
+// kompаs: igla sa crvenim severnim polom pod zadatim uglom
+function kompaks(c,x,y,ugao,vel,alpha){
+  if(alpha<=0.01)return;
+  c.save();c.globalAlpha*=alpha;
+  c.beginPath();c.arc(x,y,vel,0,TAU);
+  c.fillStyle=BOJE.provodnikPun;c.fill();
+  c.lineWidth=1.6*SK;c.strokeStyle=BOJE.tekstSiv;c.stroke();
+  const nx=x+vel*0.8*Math.cos(ugao), ny=y+vel*0.8*Math.sin(ugao);
+  const jx=x-vel*0.8*Math.cos(ugao), jy=y-vel*0.8*Math.sin(ugao);
+  c.lineCap='round';
+  c.strokeStyle=BOJE.sila;c.lineWidth=3.6*SK; // sever kompasa deli boju "crvenog pola"
+  c.beginPath();c.moveTo(x,y);c.lineTo(nx,ny);c.stroke();
+  c.strokeStyle='#cfd8e0';c.lineWidth=3*SK;   // jug — svetlosiv
+  c.beginPath();c.moveTo(x,y);c.lineTo(jx,jy);c.stroke();
+  c.restore();
+}
+// dimenziona linija |<— —>| sa natpisom
+function dimLinija(c,x1,y1,x2,y2,label,boja){
+  const mx=(x1+x2)/2,my=(y1+y2)/2;
+  c.strokeStyle=boja||BOJE.tekstSiv;c.lineWidth=1.4*SK;
+  c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+  strelica(c,mx,my,x1,y1,{boja:boja||BOJE.tekstSiv,debljina:1.6*SK,glava:8*SK});
+  strelica(c,mx,my,x2,y2,{boja:boja||BOJE.tekstSiv,debljina:1.6*SK,glava:8*SK});
+  tekst(c,mx,my-16*SK,label,{velicina:15*SK,boja:boja||BOJE.tekstSiv,mono:true,align:'center',kutija:true});
+}
+// razlomak nacrtan direktno na platnu (serif, kurziv)
+function formulaRazlomak(c,cx,cy,levo,gore,dole,vel,boja){
+  const meri=t=>{c.font=`italic ${vel}px ${F_SERIF}`;return c.measureText(t).width;};
+  const wl=meri(levo),wg=meri(gore),wd=meri(dole);
+  const gap=vel*0.38, wm=Math.max(wg,wd), uk=wl+gap+wm;
+  let x=cx-uk/2;
+  c.textAlign='left';c.textBaseline='middle';
+  c.font=`italic ${vel}px ${F_SERIF}`;c.fillStyle=boja;
+  c.fillText(levo,x,cy); x+=wl+gap;
+  c.strokeStyle=boja;c.lineWidth=1.6;
+  c.beginPath();c.moveTo(x,cy);c.lineTo(x+wm,cy);c.stroke();
+  c.fillText(gore,x+(wm-wg)/2,cy-vel*0.62);
+  c.fillText(dole,x+(wm-wd)/2,cy+vel*0.62);
+}
+
+/* =====================================================================
+   SCENE — svaka scena je zasebna funkcija draw(c, okruzenje)
+   okruzenje: { t (lokalno vreme scene u s), w, h, s (skala), T (trajanje) }
+   ===================================================================== */
+const SCENE = [
+
+/* ---------- SCENA 1: Oerstedovo otkriće ---------- */
+{
+  naslov:'Oerstedovo otkriće (1820)',
+  obj:'Kada kroz provodnik ne teče struja, igle kompasa mirno pokazuju ka severu. Čim struja potekne, svaka igla se zakrene i postavi tangencijalno na kružnice oko provodnika — struja oko sebe stvara magnetno polje.',
+  formula:'I ≠ 0 &nbsp;⇒&nbsp; B ≠ 0<span class="napomena">struja stvara magnetno polje (H. K. Oersted, 1820)</span>',
+  draw(c,e){
+    const {t,w,h,s}=e;
+    const cx=w*0.5, cy=h*0.5, R=Math.min(h*0.31,175*s);
+    // parametar "struja teče": uključuje se i na kraju se isključuje
+    let u;
+    if(t<2.6)u=0; else if(t<4.2)u=easeInOut((t-2.6)/1.6);
+    else if(t<8.2)u=1; else if(t<9.8)u=1-easeInOut((t-8.2)/1.6); else u=0;
+
+    tekst(c,cx,h*0.1,'Oerstedov ogled',{velicina:25*s,align:'center',italic:true});
+    tekst(c,cx,h*0.1+30*s,'struja deluje na magnetnu iglu',{velicina:16*s,align:'center',boja:BOJE.tekstSiv});
+
+    // provodnik u preseku — kontura se "pali" sa strujom
+    provodnik(c,cx,cy,17*s,0,1-u,{boja:BOJE.tekstSiv});
+    provodnik(c,cx,cy,17*s,0,u);
+    provodnik(c,cx,cy,17*s,+1,u);
+    if(u>0.05) tekst(c,cx+34*s,cy-30*s,'I',{velicina:22*s,boja:BOJE.struja,italic:true,bold:true});
+
+    // linija polja kroz kompase — pojavljuje se sa strujom, strelice klize
+    linijaPolja(c,cx,cy,R,+1,t*CONFIG.brzine.klizanjePolja,u*0.9,{debljina:2*SK});
+
+    // kompasi oko provodnika
+    for(let k=0;k<8;k++){
+      const th=k*Math.PI/4+Math.PI/8;
+      const x=cx+R*Math.cos(th), y=cy+R*Math.sin(th);
+      const aPoc=-Math.PI/2;                      // sever ka gore (geografski sever)
+      const aCilj=th-Math.PI/2;                   // sever uz tangentu polja (CCW)
+      const ugao=aPoc+normUgao(aCilj-aPoc)*u;     // glatka rotacija igle
+      kompaks(c,x,y,ugao,24*s,1);
+      if(k===0) tekst(c,x+34*s,y-24*s,'N',{velicina:14*s,boja:BOJE.sila,alpha:0+(1-u)});
+    }
+    // statusni natpis (prelaz između dva stanja)
+    if(u<0.99) tekst(c,cx,cy+R+52*s,'I = 0 — igle pokazuju ka severu',
+      {velicina:18*s,boja:BOJE.tekstSiv,align:'center',kutija:true,alpha:1-u});
+    if(u>0.01) tekst(c,cx,cy+R+52*s,'I ≠ 0 — igle se postavljaju uz linije polja',
+      {velicina:18*s,boja:BOJE.polje,align:'center',kutija:true,alpha:u});
+  }
+},
+
+/* ---------- SCENA 2: Pravilo desne ruke ---------- */
+{
+  naslov:'Pravilo desne ruke',
+  obj:'Smer kružnih linija magnetnog polja oko pravog provodnika određujemo desnom rukom: palac pokazuje smer struje, a savijeni prsti obavijaju provodnik u smeru linija polja.',
+  formula:'palac → I&nbsp;&nbsp;·&nbsp;&nbsp;prsti → B<span class="napomena">desna ruka: smer struje određuje smer kruženja polja</span>',
+  draw(c,e){
+    const {t,w,h,s}=e;
+    const cx=w*0.42, topY=h*0.16, botY=h*0.92;
+    const aZica=easeOut(t/1.2), aPrsti=easeOut((t-1.2)/1.2), aPalac=easeOut((t-2.6)/1.2);
+
+    tekst(c,w*0.5,h*0.09,'Pravilo desne ruke',{velicina:25*s,align:'center',italic:true});
+
+    // provodnik (žica) sa klizećim strelicama struje naviše
+    c.save();c.globalAlpha*=aZica;
+    c.strokeStyle=BOJE.struja;c.lineWidth=7*s;c.lineCap='round';
+    c.beginPath();c.moveTo(cx,topY+24*s);c.lineTo(cx,botY-6*s);c.stroke();
+    strelica(c,cx,topY+72*s,cx,topY+16*s,{boja:BOJE.struja,debljina:5*s,glava:14*s});
+    const gap=130*s, off=(t*CONFIG.brzine.klizanjeStruje*s)%gap;
+    for(let y=botY-30*s-off; y>topY+90*s; y-=gap)
+      strelica(c,cx,y+16*s,cx,y-16*s,{boja:BOJE.struja,debljina:3.5*s,glava:10*s});
+    tekst(c,cx+22*s,topY+52*s,'I',{velicina:23*s,boja:BOJE.struja,italic:true,bold:true});
+    c.restore();
+
+    // savijeni prsti — tri elipse oko žice, prednji deo ide udesno
+    if(aPrsti>0.01){
+      const rx=115*s, ry=25*s;
+      for(let f=0;f<3;f++){
+        const yF=botY-52*s-f*36*s, al=aPrsti*(f===0?1:f===1?0.9:0.8);
+        c.save();c.globalAlpha*=al;
+        // zadnji (gornji) luk — tanak, isprekidan
+        c.strokeStyle=BOJE.polje;c.lineWidth=1.2*SK;c.setLineDash([5,7]);
+        c.beginPath();c.ellipse(cx,yF,rx,ry,0,Math.PI,TAU);c.stroke();c.setLineDash([]);
+        // prednji (donji) luk — puna linija
+        c.lineWidth=2.4*SK;
+        c.beginPath();c.ellipse(cx,yF,rx,ry,0,0,Math.PI);c.stroke();
+        // klizeće strelice na prednjem luku (kretanje udesno = φ se smanjuje)
+        for(let k=0;k<2;k++){
+          const fi=Math.PI-0.25-((t*0.55+k*1.45+f*0.4)%(Math.PI-0.5));
+          const px=cx+rx*Math.cos(fi), py=yF+ry*Math.sin(fi);
+          const tx=rx*Math.sin(fi), ty=-ry*Math.cos(fi), L=Math.hypot(tx,ty)||1;
+          strelica(c,px,py,px+tx/L*13*s,py+ty/L*13*s,{boja:BOJE.polje,debljina:2.4*SK,glava:8*SK});
+        }
+        // sitna strelica na zadnjem luku — smer ulevo
+        strelica(c,cx+9*s,yF-ry,cx-9*s,yF-ry,{boja:BOJE.polje,debljina:2*SK,glava:7*SK});
+        c.restore();
+      }
+      tekst(c,cx+rx+30*s,botY-100*s,'savijeni prsti — smer polja B',
+        {velicina:17*s,boja:BOJE.polje,align:'left',alpha:aPrsti,kutija:true});
+    }
+
+    // palac — narandžasta kapsula uz žicu, pokazuje naviše
+    if(aPalac>0.01){
+      c.save();c.globalAlpha*=aPalac;
+      const yTop=botY-52*s-2*36*s-155*s;
+      c.fillStyle='rgba(255,171,64,.13)';c.strokeStyle=BOJE.struja;c.lineWidth=3*SK;
+      rr(c,cx-84*s,yTop,30*s,108*s,15*s);c.fill();c.stroke();
+      strelica(c,cx-69*s,yTop+44*s,cx-69*s,yTop+8*s,{boja:BOJE.struja,debljina:4.5*SK,glava:12*SK});
+      c.restore();
+      tekst(c,cx-69*s,yTop-20*s,'palac — smer struje I',
+        {velicina:17*s,boja:BOJE.struja,align:'center',alpha:aPalac,kutija:true});
+    }
+
+    // podsetnik desno gore
+    tekst(c,w-24*s,h*0.16,'struja naviše (⊙ ka nama)',{velicina:16*s,boja:BOJE.struja,align:'right',alpha:aZica});
+    tekst(c,w-24*s,h*0.16+28*s,'polje kruži oko provodnika',{velicina:16*s,boja:BOJE.polje,align:'right',alpha:aPrsti});
+  }
+},
+
+/* ---------- SCENA 3: Oblik i smer linija polja ---------- */
+{
+  naslov:'Oblik i smer linija polja',
+  obj:'Linije magnetnog polja pravog provodnika su koncentrične kružnice oko njega. Dok struja teče ka nama (⊙), polje kruži suprotno od smera kazaljke na satu; kada struja promeni smer (⊗), i polje se obrne.',
+  formula:'I ⊙ (ka nama) ⇒ B suprotno od kazaljke<span class="napomena">I ⊗ (od nas) ⇒ B u smeru kazaljke</span>',
+  draw(c,e){
+    const {t,w,h,s}=e;
+    const cx=w*0.5, cy=h*0.52;
+    const radijusi=[62,106,150,194].map(v=>v*s);
+    // f = prelaz promene smera struje (0 → 1), sredinom scene
+    let f=0; if(t>4.5) f=easeInOut(clamp01((t-4.5)/2.4));
+    const m=Math.cos(Math.PI*f); // +1 CCW → 0 → -1 CW (glatko)
+    // klizni ugao: numerički integral brzine ω·cos(πf) — nema skokova
+    const ω=CONFIG.brzine.klizanjePolja;
+    let slide=ω*Math.min(t,4.5);
+    for(let τ=4.5;τ<t;τ+=0.02){
+      const fu=easeInOut(clamp01((τ-4.5)/2.4));
+      slide+=0.02*ω*Math.cos(Math.PI*fu);
+    }
+
+    tekst(c,cx,h*0.1,'Koncentrične kružnice oko provodnika',{velicina:24*s,align:'center',italic:true});
+
+    // linije polja — redom se pojavljuju, klizu, pa obrnu smer
+    radijusi.forEach((r,k)=>{
+      const al=easeOut((t-k*0.35)/0.9);
+      linijaPolja(c,cx,cy,r,m,-slide,al*0.95,{direktnoUgao:true,debljina:1.9*SK});
+    });
+
+    // provodnik: simbol se preklapa pri promeni smera struje
+    provodnik(c,cx,cy,17*s,0,1);
+    provodnik(c,cx,cy,17*s,+1,1-f);
+    provodnik(c,cx,cy,17*s,-1,f);
+    // natpisi smera (crossfade)
+    if(f<0.99) tekst(c,cx,cy-46*s,'I ⊙ ka nama',{velicina:17*s,boja:BOJE.struja,align:'center',kutija:true,alpha:1-f});
+    if(f>0.01) tekst(c,cx,cy-46*s,'I ⊗ od nas',{velicina:17*s,boja:BOJE.struja,align:'center',kutija:true,alpha:f});
+
+    // kompasi raspoređeni po polju — igle rotiraju za 180° pri promeni
+    const poz=[[106,20],[150,80],[194,140],[106,200],[150,262],[194,320]];
+    poz.forEach(([rr_,deg])=>{
+      const r=rr_*s, th=deg*Math.PI/180;
+      const x=cx+r*Math.cos(th), y=cy+r*Math.sin(th);
+      const ugao=th-Math.PI/2+Math.PI*f; // sever prati novi smer polja
+      kompaks(c,x,y,ugao,23*s,easeOut((t-1.6)/0.9));
+    });
+
+    // napomena o smeru na dnu
+    if(f<0.99) tekst(c,cx,h*0.94,'polje kruži suprotno od kazaljke na satu',
+      {velicina:17*s,boja:BOJE.polje,align:'center',alpha:(1-f)*easeOut((t-3)/0.8),kutija:true});
+    if(f>0.01) tekst(c,cx,h*0.94,'polje kruži u smeru kazaljke na satu',
+      {velicina:17*s,boja:BOJE.polje,align:'center',alpha:f,kutija:true});
+  }
+},
+
+/* ---------- SCENA 4: Gustina polja B(r) ---------- */
+{
+  naslov:'Gustina polja — B opada sa r',
+  obj:'Jakost magnetnog polja opada obrnuto srazmerno sa rastojanjem r od provodnika. Zato su linije polja gušće blizu provodnika, a ređe dalje od njega — na duplo većem rastojanju polje je upola slabije.',
+  formula:'B = <span class="frac"><span class="broj">μ₀ I</span><span class="ime">2π r</span></span><span class="napomena">μ₀ = 4π·10⁻⁷ T·m/A · za I = 10 A: r = 2 cm → B = 100 μT, r = 4 cm → 50 μT</span>',
+  draw(c,e){
+    const {t,w,h,s}=e;
+    const I=CONFIG.fizika.I;                 // 10 A
+    const BmuT=r_cm=>200/r_cm;               // B u μT za I = 10 A: B = 2·10⁻⁷·I/r
+    const cx=w*0.17, cy=h*0.5, pxcm=26*s;
+    const gx0=cx+8*pxcm+46*s, gy0=h*0.8;
+    const pxB=(h*0.45)/120;                  // 120 μT visine grafika
+
+    formulaRazlomak(c,w*0.5,h*0.1,'B =','μ₀ I','2π r',27*s,BOJE.polje);
+    tekst(c,w*0.5,h*0.1+30*s,'μ₀ = 4π·10⁻⁷ T·m/A',{velicina:14*s,boja:BOJE.tekstSiv,align:'center',mono:true});
+
+    // provodnik i tri fiksne kružnice (bez strelica) sa oznakama r
+    provodnik(c,cx,cy,15*s,+1,1);
+    tekst(c,cx,cy+42*s,`I = ${I} A`,{velicina:15*s,boja:BOJE.struja,align:'center',mono:true,kutija:true});
+    [2,4,8].forEach(rc=>{
+      linijaPolja(c,cx,cy,rc*pxcm,+1,0,0.5,{bezStrelica:true,debljina:1.3*SK});
+      const a=-0.72*Math.PI; // oznaka dole-levo na kružnici
+      tekst(c,cx+rc*pxcm*Math.cos(a),cy+rc*pxcm*Math.sin(a)+13*s,`${rc} cm`,
+        {velicina:13*s,boja:BOJE.tekstSiv,align:'center',mono:true});
+    });
+
+    // pokretni kursor rastojanja (tamo-vamo)
+    const p=clamp01((t-1.2)/(e.T-2.4));
+    const rc=2+6*(0.5-0.5*Math.cos(TAU*p));
+    linijaPolja(c,cx,cy,rc*pxcm,+1,t*CONFIG.brzine.klizanjePolja,0.95,{debljina:2.6*SK});
+
+    // grafik B(r)
+    c.strokeStyle=BOJE.tekstSiv;c.lineWidth=1.6*SK;
+    strelica(c,gx0,gy0,gx0+9*pxcm+26*s,gy0,{boja:BOJE.tekstSiv,debljina:1.6*SK,glava:9*SK});
+    strelica(c,gx0,gy0,gx0,gy0-120*pxB-20*s,{boja:BOJE.tekstSiv,debljina:1.6*SK,glava:9*SK});
+    // pomoćne tačkaste linije i potpisi
+    c.setLineDash([3,6]);c.lineWidth=1;
+    [2,4,6,8].forEach(rv=>{
+      const x=gx0+rv*pxcm;
+      c.beginPath();c.moveTo(x,gy0);c.lineTo(x,gy0-120*pxB);c.stroke();
+      tekst(c,x,gy0+16*s,`${rv}`,{velicina:13*s,boja:BOJE.tekstSiv,align:'center',mono:true});
+    });
+    [25,50,75,100].forEach(bv=>{
+      const y=gy0-bv*pxB;
+      c.beginPath();c.moveTo(gx0,y);c.lineTo(gx0+9*pxcm,y);c.stroke();
+      tekst(c,gx0-10*s,y,`${bv}`,{velicina:13*s,boja:BOJE.tekstSiv,align:'right',mono:true});
+    });
+    c.setLineDash([]);
+    tekst(c,gx0+9*pxcm+16*s,gy0+22*s,'r (cm)',{velicina:14*s,boja:BOJE.tekstSiv,italic:true});
+    tekst(c,gx0,h*0.8-120*pxB-34*s,'B (μT)',{velicina:14*s,boja:BOJE.polje,italic:true});
+    // kriva B(r) = 200/r (hiperbola)
+    c.strokeStyle=BOJE.polje;c.lineWidth=2.6*SK;c.beginPath();
+    for(let rv=1.7;rv<=9;rv+=0.05){
+      const x=gx0+rv*pxcm, y=gy0-BmuT(rv)*pxB;
+      rv===1.7?c.moveTo(x,y):c.lineTo(x,y);
+    }
+    c.stroke();
+    // pokretna tačka na krivi + očitavanje vrednosti
+    const tx=gx0+rc*pxcm, ty=gy0-BmuT(rc)*pxB;
+    c.setLineDash([4,5]);c.strokeStyle=BOJE.tekstSiv;c.lineWidth=1.2;
+    c.beginPath();c.moveTo(tx,ty);c.lineTo(tx,gy0);c.moveTo(tx,ty);c.lineTo(gx0,ty);c.stroke();
+    c.setLineDash([]);
+    c.beginPath();c.arc(tx,ty,6*SK,0,TAU);c.fillStyle=BOJE.polje;c.fill();
+    tekst(c,tx+14*s,ty-26*s,`r = ${fmt(rc,1)} cm → B = ${Math.round(BmuT(rc))} μT`,
+      {velicina:16*s,boja:BOJE.tekst,mono:true,kutija:true});
+    // poruka
+    tekst(c,w*0.5,h*0.94,'B ∝ 1/r — duplo veće rastojanje, upola slabije polje',
+      {velicina:17*s,boja:BOJE.polje,align:'center',kutija:true,alpha:easeOut((t-2)/1)});
+  }
+},
+
+/* ---------- SCENA 5: Struje u istom smeru — privlačenje ---------- */
+{
+  naslov:'Struje u istom smeru — privlačenje',
+  obj:'Kada paralelni provodnici nose struje u istom smeru, njihova se polja između provodnika poništavaju, a spolja se saberu — rezultat je privlačenje. Sile su jednake po intenzitetu i suprotno usmerene (treći Njutnov zakon).',
+  formula:'<span class="frac"><span class="broj">F</span><span class="ime">L</span></span> = <span class="frac"><span class="broj">μ₀ I₁ I₂</span><span class="ime">2π d</span></span><span class="napomena">I₁ = I₂ = 10 A, d = 5 cm ⇒ F/L = 0,4 mN/m (privlačenje)</span>',
+  draw(c,e){
+    const {t,w,h,s}=e;
+    const I=CONFIG.fizika.I, d=CONFIG.fizika.d;
+    const FL=CONFIG.fizika.mu0*I*I/(TAU*d);   // sila po dužini [N/m]
+    const cy=h*0.42, dpx=Math.min(w*0.3,300*s);
+    // pomeranje provodnika ka sebi (tamo-vamo)
+    const p=0.5-0.5*Math.cos(TAU*clamp01((t-1)/(e.T-2)));
+    const cxA=w*0.5-dpx/2+p*24*s, cxB=w*0.5+dpx/2-p*24*s;
+    const aF=easeOut((t-0.8)/0.8);
+
+    tekst(c,w*0.5,h*0.11,'Isti smer struja — privlačenje',{velicina:24*s,align:'center',italic:true});
+
+    // polje oko svakog provodnika + spoljne linije koje obuhvataju oba
+    [[cxA,54],[cxA,78],[cxB,54],[cxB,78]].forEach(([x,r])=>
+      linijaPolja(c,x,cy,r*s,+1,t*CONFIG.brzine.klizanjePolja,0.85));
+    const rx=(cxB-cxA)/2+132*s;
+    elipsaPolja(c,w*0.5,cy,rx,rx*0.42,t*CONFIG.brzine.klizanjePolja*0.8,0.55,{crtice:[7,8]});
+    elipsaPolja(c,w*0.5,cy,rx+46*s,rx*0.42+34*s,t*CONFIG.brzine.klizanjePolja*0.65,0.4,{crtice:[7,8]});
+
+    // provodnici (obe tačke — struje ka nama, isti smer)
+    provodnik(c,cxA,cy,18*s,+1,1);
+    provodnik(c,cxB,cy,18*s,+1,1);
+    tekst(c,cxA,cy-52*s,'I₁',{velicina:17*s,boja:BOJE.struja,align:'center',italic:true,kutija:true});
+    tekst(c,cxB,cy-52*s,'I₂',{velicine:17*s,velicina:17*s,boja:BOJE.struja,align:'center',italic:true,kutija:true});
+
+    // sile — ka sebi
+    if(aF>0.01){
+      const r0=24*s,len=62*s;
+      strelica(c,cxA+r0,cy,cxA+r0+len,cy,{boja:BOJE.sila,debljina:4.5*SK,glava:14*SK});
+      strelica(c,cxB-r0,cy,cxB-r0-len,cy,{boja:BOJE.sila,debljina:4.5*SK,glava:14*SK});
+      tekst(c,cxA+r0+len*0.5,cy-24*s,'F₁',{velicina:18*s,boja:BOJE.sila,italic:true,bold:true});
+      tekst(c,cxB-r0-len*0.5,cy-24*s,'F₂',{velicina:18*s,boja:BOJE.sila,italic:true,bold:true});
+    }
+    // polje se između poništava
+    tekst(c,w*0.5,cy+58*s,'B ≈ 0 između provodnika',
+      {velicina:14*s,boja:BOJE.polje,align:'center',kutija:true,alpha:aF});
+
+    // rastojanje d
+    dimLinija(c,cxA,cy+126*s,cxB,cy+126*s,'d = 5 cm');
+
+    // numericоk očitavanje
+    tekst(c,w*0.5,h*0.9,
+      `I₁ = I₂ = ${I} A,  d = 5 cm  ⇒  F/L = ${fmt(FL*1000,1)} mN/m  (privlačenje)`,
+      {velicina:16*s,boja:BOJE.tekst,mono:true,align:'center',kutija:true,alpha:easeOut((t-1.4)/0.8)});
+  }
+},
+
+/* ---------- SCENA 6: Suprotni smerovi — odbijanje ---------- */
+{
+  naslov:'Struje u suprotnim smerovima — odbijanje',
+  obj:'Kada struje teku u suprotnim smerovima, polja se između provodnika sabiraju — magnetno polje je tamo jako, pa se provodnici odbijaju. Intenzitet sile je izračunava istom formulom kao i ranije.',
+  formula:'<span class="frac"><span class="broj">F</span><span class="ime">L</span></span> = <span class="frac"><span class="broj">μ₀ I₁ I₂</span><span class="ime">2π d</span></span><span class="napomena">I₁ = 10 A, I₂ = 10 A (suprotno), d = 5 cm ⇒ F/L = 0,4 mN/m (odbijanje)</span>',
+  draw(c,e){
+    const {t,w,h,s}=e;
+    const I=CONFIG.fizika.I, d=CONFIG.fizika.d;
+    const FL=CONFIG.fizika.mu0*I*I/(TAU*d);
+    const cy=h*0.42, dpx=Math.min(w*0.3,300*s);
+    // pomeranje provodnika od sebe (tamo-vamo)
+    const p=0.5-0.5*Math.cos(TAU*clamp01((t-1)/(e.T-2)));
+    const cxA=w*0.5-dpx/2-p*26*s, cxB=w*0.5+dpx/2+p*26*s;
+    const aF=easeOut((t-0.8)/0.8);
+
+    tekst(c,w*0.5,h*0.11,'Suprotni smerovi struja — odbijanje',{velicina:24*s,align:'center',italic:true});
+
+    // polja: levi provodnik ⊙ (CCW), desni ⊗ (CW) — između se sabiraju
+    [[cxA,54,1],[cxA,86,1],[cxA,112,1],[cxB,54,-1],[cxB,86,-1],[cxB,112,-1]]
+      .forEach(([x,r,sm])=>linijaPolja(c,x,cy,r*s,sm,t*CONFIG.brzine.klizanjePolja,0.85));
+
+    // provodnici
+    provodnik(c,cxA,cy,18*s,+1,1);
+    provodnik(c,cxB,cy,18*s,-1,1);
+    tekst(c,cxA,cy-58*s,'I₁',{velicina:17*s,boja:BOJE.struja,align:'center',italic:true,kutija:true});
+    tekst(c,cxB,cy-58*s,'I₂',{velicina:17*s,boja:BOJE.struja,align:'center',italic:true,kutija:true});
+
+    // rezultujuće polje između — jako, usmereno naviše
+    if(aF>0.01){
+      strelica(c,w*0.5,cy+34*s,w*0.5,cy-34*s,{boja:BOJE.polje,debljina:4*SK,glava:13*SK});
+      tekst(c,w*0.5+13*s,cy-42*s,'B',{velicina:18*s,boja:BOJE.polje,italic:true,bold:true});
+    }
+    // sile — od sebe
+    if(aF>0.01){
+      const r0=24*s,len=62*s;
+      strelica(c,cxA-r0,cy,cxA-r0-len,cy,{boja:BOJE.sila,debljina:4.5*SK,glava:14*SK});
+      strelica(c,cxB+r0,cy,cxB+r0+len,cy,{boja:BOJE.sila,debljina:4.5*SK,glava:14*SK});
+      tekst(c,cxA-r0-len*0.5,cy-24*s,'F₁',{velicina:18*s,boja:BOJE.sila,italic:true,bold:true});
+      tekst(c,cxB+r0+len*0.5,cy-24*s,'F₂',{velicina:18*s,boja:BOJE.sila,italic:true,bold:true});
+    }
+    tekst(c,w*0.5,cy+58*s+22*s,'polje se između pojačava',
+      {velicina:14*s,boja:BOJE.polje,align:'center',kutija:true,alpha:aF});
+
+    dimLinija(c,cxA,cy+150*s,cxB,cy+150*s,'d = 5 cm');
+
+    tekst(c,w*0.5,h*0.92,
+      `I₁ = ${I} A,  I₂ = ${I} A (suprotno),  d = 5 cm  ⇒  F/L = ${fmt(FL*1000,1)} mN/m  (odbijanje)`,
+      {velicina:16*s,boja:BOJE.tekst,mono:true,align:'center',kutija:true,alpha:easeOut((t-1.4)/0.8)});
+  }
+},
+
+/* ---------- SCENA 7: Definicija ampera ---------- */
+{
+  naslov:'Definicija ampera',
+  obj:'Na silu između provodnika oslanja se i definicija ampera: to je ona struja koja u dva paralelna provodnika na rastojanju od 1 m proizvodi silu od 2·10⁻⁷ N po metru dužine. Isti smer struja daje privlačenje, suprotni smerovi daju odbijanje.',
+  formula:'<span class="frac"><span class="broj">μ₀ (1 A)²</span><span class="ime">2π · 1 m</span></span> = 2·10⁻⁷ N/m<span class="napomena">1 A — definisan preko sile između provodnika</span>',
+  draw(c,e){
+    const {t,w,h,s}=e;
+    const puls=0.7+0.3*Math.sin(t*CONFIG.brzine.pulsSila);
+    tekst(c,w*0.5,h*0.1,'Definicija ampera',{velicina:25*s,align:'center',italic:true});
+
+    // — leva mini-šema: isti smer → privlačenje —
+    const cy=h*0.42;
+    let ax=w*0.26-60*s, bx=w*0.26+60*s;
+    [[ax,48],[ax,74],[bx,48],[bx,74]].forEach(([x,r])=>
+      linijaPolja(c,x,cy,r*s,+1,t*CONFIG.brzine.klizanjePolja,0.6));
+    provodnik(c,ax,cy,13*s,+1,1); provodnik(c,bx,cy,13*s,+1,1);
+    strelica(c,ax+17*s,cy,ax+53*s,cy,{boja:BOJE.sila,debljina:3.4*SK,glava:11*SK});
+    strelica(c,bx-17*s,cy,bx-53*s,cy,{boja:BOJE.sila,debljina:3.4*SK,glava:11*SK});
+    tekst(c,w*0.26,cy+92*s,'isti smer — privlačenje',{velicina:16*s,align:'center',boja:BOJE.tekstSiv,kutija:true});
+
+    // — desna mini-šema: suprotni smerovi → odbijanje —
+    let cx2=w*0.74-60*s, dx2=w*0.74+60*s;
+    [[cx2,48,1],[cx2,74,1],[dx2,48,-1],[dx2,74,-1]].forEach(([x,r,sm])=>
+      linijaPolja(c,x,cy,r*s,sm,t*CONFIG.brzine.klizanjePolja,0.6));
+    provodnik(c,cx2,cy,13*s,+1,1); provodnik(c,dx2,cy,13*s,-1,1);
+    strelica(c,cx2-17*s,cy,cx2-53*s,cy,{boja:BOJE.sila,debljina:3.4*SK,glava:11*SK});
+    strelica(c,dx2+17*s,cy,dx2+53*s,cy,{boja:BOJE.sila,debljina:3.4*SK,glava:11*SK});
+    tekst(c,w*0.74,cy+92*s,'suprotni smerovi — odbijanje',{velicina:16*s,align:'center',boja:BOJE.tekstSiv,kutija:true});
+
+    // pulsiranje sila — scene crtaju strelice stalno; ovo daje blagi treptaj
+    c.save(); c.globalAlpha*=puls*0.35; c.restore();
+
+    // — donji red: brojevi definicije, otkrivaju se redom —
+    const stavke=[
+      ['I₁ = I₂ = 1 A',1.2],['d = 1 m',3.0],['F/L = 2·10⁻⁷ N/m',4.8]
+    ];
+    const bw=178*s, gap=26*s, uk=stavke.length*bw+(stavke.length-1)*gap;
+    stavke.forEach(([str,prag],k)=>{
+      const a=easeOut((t-prag)/0.8); if(a<=0.01)return;
+      const x=w*0.5-uk/2+k*(bw+gap), y=h*0.74-14*s*a;
+      c.save();c.globalAlpha*=a;
+      c.strokeStyle=BOJE.polje;c.lineWidth=1.4*SK;
+      rr(c,x,y-24*s,bw,48*s,10*s);c.stroke();
+      c.restore();
+      tekst(c,x+bw/2,y,str,{velicina:17*s,boja:BOJE.tekst,mono:true,align:'center',alpha:a});
+    });
+    tekst(c,w*0.5,h*0.9,
+      '1 amper — struja koja na rastojanju od 1 m daje silu od 2·10⁻⁷ N po metru dužine.',
+      {velicina:17*s,boja:BOJE.polje,align:'center',kutija:true,alpha:easeOut((t-6.5)/1)});
+  }
+}
+];
+
+/* =====================================================================
+   GLAVNI MOTOR ANIMACIJE (petlja, crossfade, UI sinhronizacija)
+   ===================================================================== */
+const platno=document.getElementById('platno');
+const c=platno.getContext('2d');
+const TRAJANJA=CONFIG.trajanjaScena;
+const UKUPNO=TRAJANJA.reduce((a,b)=>a+b,0);
+let W=800,H=500,dpr=1,mrezaPattern=null;
+let vreme=0, prosliTs=null, pauzirano=false;
+
+// — responzivnost i oštrina platna (devicePixelRatio) —
+const wrap=document.querySelector('.platno-wrap');
+function napraviMrezu(){ // tačkasta pomoćna mreža kao uzorak (jeftino crtanje)
+  const t=document.createElement('canvas');
+  t.width=t.height=CONFIG.mrezaKorak;
+  const tc=t.getContext('2d');
+  tc.fillStyle=BOJE.mreza;
+  tc.beginPath();tc.arc(CONFIG.mrezaKorak/2,CONFIG.mrezaKorak/2,1.6,0,TAU);tc.fill();
+  mrezaPattern=c.createPattern(t,'repeat');
+}
+function resize(){
+  const r=wrap.getBoundingClientRect();
+  W=Math.max(320,r.width); H=Math.max(240,r.height);
+  dpr=window.devicePixelRatio||1;
+  platno.width=Math.round(W*dpr); platno.height=Math.round(H*dpr);
+  napraviMrezu();
+}
+new ResizeObserver(resize).observe(wrap); resize();
+
+// — pronalaženje tekuće scene iz ukupnog vremena —
+function tekucaScena(){
+  let acc=0,i=0,v=vreme;
+  while(v>=acc+TRAJANJA[i]){acc+=TRAJANJA[i];i++;}
+  return {i,t:v-acc};
+}
+function crtajScenu(idx,t,alpha){
+  c.save(); c.globalAlpha=alpha;
+  SK=Math.min(W/1150,H/620); SK=Math.max(CONFIG.skalaMin,Math.min(CONFIG.skalaMax,SK));
+  SCENE[idx].draw(c,{t,w:W,h:H,s:SK,T:TRAJANJA[idx]});
+  c.restore();
+}
+
+// — sinhronizacija panela (naslov, objašnjenje, formula, tačkice) —
+const panSadrzaj=document.getElementById('panSadrzaj');
+const el={br:document.getElementById('brScene'),naslov:document.getElementById('naslovScene'),
+  obj:document.getElementById('objasnjenje'),formula:document.getElementById('formula')};
+document.getElementById('ukScena').textContent=SCENE.length;
+const tackiceEl=document.getElementById('tackice');
+SCENE.forEach(()=>tackiceEl.appendChild(document.createElement('i')));
+const tackice=[...tackiceEl.children];
+let prikazanaScena=-1;
+function postaviPanel(i){
+  if(i===prikazanaScena)return;
+  prikazanaScena=i;
+  panSadrzaj.classList.add('pretokol');
+  setTimeout(()=>{
+    el.br.textContent=i+1;
+    el.naslov.textContent=SCENE[i].naslov;
+    el.obj.textContent=SCENE[i].obj;
+    el.formula.innerHTML=SCENE[i].formula;
+    tackice.forEach((t,k)=>t.classList.toggle('on',k===i));
+    panSadrzaj.classList.remove('pretokol');
+  },200);
+}
+postaviPanel(0); // inicijalni sadržaj odmah
+
+// — glavna petlja sa delta-vremenom (ne zavisi od brzine računara) —
+const traka=document.getElementById('trakaPopuna');
+function petlja(ts){
+  if(prosliTs===null)prosliTs=ts;
+  let dt=(ts-prosliTs)/1000; prosliTs=ts;
+  dt=Math.min(dt,0.05);
+  if(!pauzirano)vreme=(vreme+dt)%UKUPNO;
+
+  // pozadina + mreža
+  c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle=BOJE.pozadina; c.fillRect(0,0,W,H);
+  c.fillStyle=mrezaPattern;  c.fillRect(0,0,W,H);
+
+  // tekuća scena + glatki crossfade prelaz
+  const {i,t}=tekucaScena();
+  const preostalo=TRAJANJA[i]-t;
+  if(preostalo<CONFIG.fadeVreme){
+    const k=1-preostalo/CONFIG.fadeVreme;
+    const sledeca=(i+1)%SCENE.length;
+    crtajScenu(i,t,1-k);
+    crtajScenu(sledeca,0,k);
+    postaviPanel(k>0.5?sledeca:i);
+    traka.style.width=(t/TRAJANJA[i]*100)+'%';
+  }else{
+    crtajScenu(i,t,1);
+    postaviPanel(i);
+    traka.style.width=(t/TRAJANJA[i]*100)+'%';
+  }
+  requestAnimationFrame(petlja);
+}
+requestAnimationFrame(petlja);
+
+/* =====================================================================
+   KONTROLE: pauza / nastavi i ponovi od početka (jedine dozvoljene)
+   ===================================================================== */
+document.getElementById('btnPauza').addEventListener('click',()=>{
+  pauzirano=!pauzirano;
+  document.getElementById('ikPauza').style.display=pauzirano?'none':'block';
+  document.getElementById('ikPlay').style.display=pauzirano?'block':'none';
+  document.getElementById('tekPauza').textContent=pauzirano?'Nastavi':'Pauza';
+});
+document.getElementById('btnRestart').addEventListener('click',()=>{
+  vreme=0; prikazanaScena=-1; // panel se odmah osveži na prvu scenu
+});
+</script>
+</body>
+</html>
