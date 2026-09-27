@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gázok molekuláris kinetikus elmélete — automatikus animáció</title>
+<style>
+  /* ================================================================
+     AZ OLDAL ALAPMEGJELENÉSE (nyugodt, sötét téma, vetítésre)
+     ================================================================ */
+  :root{
+    --bg:#0e141b; --panel:#141c26; --linija:#243141;
+    --tekst:#e8edf2; --priguseno:#93a1af;
+    /* a mennyiségek színeit a JS CONFIG objektum állítja be */
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tekst);
+       font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+       min-height:100vh;display:flex;flex-direction:column}
+  header{text-align:center;padding:18px 16px 8px}
+  header h1{margin:0;font-size:clamp(20px,3vw,30px);font-weight:700;letter-spacing:.3px}
+  header p{margin:6px 0 0;color:var(--priguseno);font-size:clamp(12px,1.4vw,15px)}
+
+  main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:14px;
+       width:100%;max-width:1500px;margin:0 auto;padding:8px 16px}
+  @media(max-width:940px){ main{grid-template-columns:1fr} }
+
+  /* ----- Az animációs vászon ----- */
+  .canvas-wrap{position:relative;background:var(--panel);border:1px solid var(--linija);
+               border-radius:14px;overflow:hidden}
+  canvas{display:block;width:100%;height:min(66vh,640px);min-height:400px}
+  .kontrole{position:absolute;top:10px;right:10px;display:flex;gap:8px}
+  .kontrole button{background:rgba(20,28,38,.88);border:1px solid var(--linija);
+       color:var(--tekst);padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer}
+  .kontrole button:hover{border-color:#4a6079}
+
+  /* ----- Oldalsó panel (jelenet címe, szöveg, képlet, jelmagyarázat) ----- */
+  .panel{background:var(--panel);border:1px solid var(--linija);border-radius:14px;
+         padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-height:0}
+  #sadrzajScene{display:flex;flex-direction:column;flex:1;gap:12px}
+  .oznakaScene{display:inline-block;font-size:11px;letter-spacing:1.5px;
+       text-transform:uppercase;color:var(--priguseno);
+       border:1px solid var(--linija);border-radius:20px;padding:3px 10px;width:max-content}
+  .panel h2{margin:4px 0 0;font-size:22px;line-height:1.25}
+  .panel p{margin:0;color:#c3cdd7;line-height:1.55;font-size:14.5px}
+
+  /* ================================================================
+     KÉPLETEK — minden képlet igazított blokkok sora:
+     .red = a képlet egy sora, .jednako = függőlegesen középre igazított
+     egyenlőségjel, .clan = csoportosított tag (pl. p·V), .frac = tört
+     ================================================================ */
+  .formula{
+    margin-top:auto;background:#0f151d;border:1px solid var(--linija);border-radius:10px;
+    padding:20px 14px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;
+    font-family:"Cambria Math",Georgia,"Times New Roman",serif;
+  }
+  .formula .red{                       /* a képlet sora: az = bal oldala, jele, jobb oldala */
+    display:flex;align-items:center;justify-content:center;gap:.55em;
+    flex-wrap:wrap;                    /* tördelés megengedett, ha a sor nem fér el */
+    font-size:clamp(21px,2.1vw,28px);
+  }
+  .formula .jednako{font-size:1.05em;padding:0 .1em}          /* egyenlőségjel — szimmetrikus térközzel */
+  .formula .clan{display:inline-flex;align-items:center;gap:.22em}  /* csoportosított tag (pl. p·V) */
+  .formula .strelica{opacity:.65;margin:0 .15em}              /* ⟹ a hetedik jelenetben */
+  .formula .konst{font-style:italic;letter-spacing:.02em}
+  .formula .frac{                    /* tört — vonala pontosan a betűmagasság közepén */
+    display:inline-flex;flex-direction:column;align-items:center;
+    line-height:1.15;margin:0 .25em;
+  }
+  .formula .frac>span{display:block;padding:.04em .4em;text-align:center}
+  .formula .frac>span:first-child{border-bottom:1.8px solid currentColor}
+  .formula small{font-size:12.5px;color:var(--priguseno);
+    font-family:system-ui,"Segoe UI",Arial,sans-serif;text-align:center}
+  .cp{color:var(--c-p)} .cv{color:var(--c-v)} .ct{color:var(--c-t)}
+  .ce{color:var(--c-e)} .cc{color:var(--c-c)}
+
+  /* ----- Színjelmagyarázat ----- */
+  .legend{border-top:1px solid var(--linija);padding-top:12px;display:flex;
+       flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--priguseno)}
+  .legend .stavka{display:flex;align-items:center;gap:6px}
+  .legend .kvadrat{width:12px;height:12px;border-radius:3px;flex:none}
+  .legend b{color:var(--tekst);font-weight:600}
+
+  /* ----- Haladásjelző ----- */
+  .progress{max-width:1500px;width:calc(100% - 32px);margin:2px auto 0;
+       display:flex;align-items:center;gap:14px;padding:4px 0}
+  .tacke{display:flex;gap:7px}
+  .tacka{width:9px;height:9px;border-radius:50%;background:#2a3a4c;
+       transition:background .3s,transform .3s}
+  .tacka.aktivna{background:#e8edf2;transform:scale(1.3)}
+  .traka{flex:1;height:3px;background:#2a3a4c;border-radius:2px;overflow:hidden;min-width:50px}
+  #popunjenost{height:100%;width:0;background:#5a7186}
+  #labelaNapretka{font-size:13px;color:var(--priguseno);white-space:nowrap}
+
+  footer{text-align:center;color:#6b7a89;font-size:12px;padding:10px 16px 18px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Gázok molekuláris kinetikus elmélete</h1>
+  <p>Az ideális gáz modellje &middot; nyomás &middot; hőmérséklet &middot; a gáztörvények</p>
+</header>
+
+<main>
+  <div class="canvas-wrap">
+    <canvas id="platno"></canvas>
+    <div class="kontrole">
+      <button id="btnPauza">Szünet</button>
+      <button id="btnPonovi">Újrakezdés</button>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <div id="sadrzajScene">
+      <span class="oznakaScene" id="oznakaScene">1/7. jelenet</span>
+      <h2 id="naslovScene"></h2>
+      <p id="tekstScene"></p>
+      <div class="formula" id="formulaScene"></div>
+    </div>
+    <div class="legend" id="legenda"></div>
+  </aside>
+</main>
+
+<div class="progress">
+  <div class="tacke" id="tacke"></div>
+  <div class="traka"><div id="popunjenost"></div></div>
+  <div id="labelaNapretka"></div>
+</div>
+
+<footer id="podnozje"></footer>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   CONFIG — minden beállítható érték egy helyen
+   ===================================================================== */
+const CONFIG = {
+  /* ---------- SZÍNEK (minden fizikai mennyiség végig ugyanazt a színt kapja) ---------- */
+  boje: {
+    pozadina:    "#101820",  // a vászon háttere
+    resetka:     "#1c2733",  // rács a grafikonokon
+    tekst:       "#e8edf2",  // alap szöveg a vásznon
+    pritisak:    "#ff6b6b",  // piros     — nyomás p, erő F
+    zapremina:   "#4dabf7",  // kék       — térfogat V
+    temperatura: "#ffa94d",  // narancssárga — hőmérséklet T, láng
+    energija:    "#b197fc",  // lila      — kinetikus energia Ek
+    cestice:     "#3bc9db",  // türkiz    — gázrészecskék
+    zid:         "#8b98a5",  // a tartály falai, tengelyek
+    klip:        "#adb5bd",  // dugattyú és súlyok
+    akcenat:     "#f1f3f5"   // kiemelt elemek (vektorok, keretek)
+  },
+
+  /* ---------- IDŐZÍTÉS ---------- */
+  trajanjeScene: 10,   // egy jelenet időtartama másodpercben
+  trajanjeFadea: 0.9,  // az átúszás (fade) időtartama a jelenetek között, másodpercben
+
+  /* ---------- RÉSZECSKÉK ---------- */
+  brojCestica:    60,   // a részecskék száma a gázmodellben
+  precnikCestice: 6,    // a részecske átmérője pixelben
+  osnovnaBrzina:  130,  // a részecskék sebessége px/s, T = 300 K esetén
+  rasponBrzina:   0.35, // a sebességek relatív szórása (±35%)
+
+  /* ---------- FIZIKAI ÉRTÉKEK A FELIRATOKHOZ (SI-egységek) ---------- */
+  TmaxLabel: 480,       // a hőmérő skálájának maximuma (K)
+  TminLabel: 120,       // a hőmérő skálájának minimuma (K)
+  kBolcman:  1.38e-23,  // Boltzmann-állandó (J/K) — az ⟨Ek⟩ kijelzéséhez
+
+  /* ---------- EGYÉB ---------- */
+  debljinaZida: 3       // a tartály falának vastagsága (px)
+};
+
+const C = CONFIG.boje;                 // rövid név a színekhez
+const OMEGA = 2*Math.PI/5;             // a T és a dugattyú rezgésének körfrekvenciája (5 s periódus)
+
+/* a CONFIG színeit átvisszük a CSS-változókba (egy forrás) */
+(function(){
+  const rs = document.documentElement.style;
+  rs.setProperty("--c-p", C.pritisak);
+  rs.setProperty("--c-v", C.zapremina);
+  rs.setProperty("--c-t", C.temperatura);
+  rs.setProperty("--c-e", C.energija);
+  rs.setProperty("--c-c", C.cestice);
+})();
+
+/* =====================================================================
+   SEGÉDFUNKCIÓK (formázás, rajzolás)
+   ===================================================================== */
+function fmt(x, dec=0){ return x.toFixed(dec).replace(".", ","); }
+
+const SUP = {"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+function fmtNaucno(x, dec=2){                    // pl. 6.21e-21 → "6,21·10⁻²¹"
+  const [m, e] = x.toExponential(dec).split("e");
+  return m.replace(".", ",") + "·10" + e.split("").map(c=>SUP[c]||c).join("");
+}
+function glatko(t){ return t*t*(3-2*t); }        // smoothstep easing
+
+function labela(ctx, tekst, x, y, boja, vel=15, align="center", bold=false){
+  ctx.fillStyle = boja;
+  ctx.font = (bold?"600 ":"") + vel + 'px system-ui,"Segoe UI",Arial,sans-serif';
+  ctx.textAlign = align; ctx.textBaseline = "middle";
+  ctx.fillText(tekst, x, y);
+}
+function glava(ctx, x, y, ugao, boja, deb){       // nyílhegy
+  const d = 9 + deb*2;
+  ctx.fillStyle = boja;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x-d*Math.cos(ugao-0.45), y-d*Math.sin(ugao-0.45));
+  ctx.lineTo(x-d*Math.cos(ugao+0.45), y-d*Math.sin(ugao+0.45));
+  ctx.closePath(); ctx.fill();
+}
+function crtajStrelicu(ctx, x1,y1,x2,y2, boja, deb=2){
+  ctx.strokeStyle = boja; ctx.lineWidth = deb;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  glava(ctx, x2, y2, Math.atan2(y2-y1, x2-x1), boja, deb);
+}
+function crtajDvostruku(ctx, x1,y1,x2,y2, boja, deb=2){
+  ctx.strokeStyle = boja; ctx.lineWidth = deb;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  glava(ctx, x1, y1, Math.atan2(y1-y2, x1-x2), boja, deb);
+  glava(ctx, x2, y2, Math.atan2(y2-y1, x2-x1), boja, deb);
+}
+function crtajKutiju(ctx, x, y, w, h, boja){
+  ctx.strokeStyle = boja; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x, y, w, h, 8); else ctx.rect(x, y, w, h);
+  ctx.stroke();
+}
+function crtajZidove(ctx, s){
+  ctx.strokeStyle = C.zid; ctx.lineWidth = CONFIG.debljinaZida; ctx.lineJoin = "miter";
+  ctx.strokeRect(s.x, s.y, s.w, s.h);
+}
+function crtajKlip(ctx, s, frac){
+  const px = s.x + s.w*frac;
+  ctx.fillStyle = C.klip;
+  ctx.fillRect(px-6, s.y-2, 12, s.h+4);                                   // dugattyútest
+  ctx.fillRect(px+6, s.y+s.h/2-3, Math.max(2, s.x+s.w-px-6), 6);          // rúd
+}
+function crtajTegove(ctx, px, yTop, n){          // súlyok a dugattyún (p = állandó)
+  for (let i=0;i<n;i++){
+    const w = 48 - i*9;
+    ctx.fillStyle = i%2 ? "#77828c" : "#98a3ad";
+    ctx.fillRect(px-w/2, yTop-15*(i+1), w, 13);
+  }
+}
+function crtajCestice(ctx){
+  const r = CONFIG.precnikCestice/2;
+  ctx.fillStyle = C.cestice;
+  ctx.beginPath();
+  for (const c of cestice){ ctx.moveTo(c.x+r, c.y); ctx.arc(c.x, c.y, r, 0, 7); }
+  ctx.fill();
+}
+function crtajTermometar(ctx, x, y, visina, T){
+  const sw = 16, Tmin = CONFIG.TminLabel, Tmax = CONFIG.TmaxLabel;
+  ctx.strokeStyle = C.zid; ctx.lineWidth = 2;
+  ctx.strokeRect(x-sw/2, y, sw, visina);
+  ctx.beginPath(); ctx.arc(x, y+visina+12, 13, 0, 7); ctx.stroke();
+  const f = Math.max(0, Math.min(1, (T-Tmin)/(Tmax-Tmin)));
+  const fh = (visina-6)*f;
+  ctx.fillStyle = C.temperatura;
+  ctx.fillRect(x-sw/2+3, y+visina-fh, sw-6, fh);
+  ctx.beginPath(); ctx.arc(x, y+visina+12, 9, 0, 7); ctx.fill();
+  for (let i=0;i<=4;i++){                        // skálabeosztás
+    const yy = y + visina - (visina-6)*i/4;
+    ctx.beginPath(); ctx.moveTo(x+sw/2, yy); ctx.lineTo(x+sw/2+6, yy); ctx.stroke();
+  }
+  labela(ctx, "T", x, y-16, C.temperatura, 19, "center", true);
+  labela(ctx, fmt(T)+" K", x, y+visina+42, C.temperatura, 16, "center", true);
+}
+function plamenIliHladnja(ctx, s, lt){           // fűtés/hűtés a tartály alatt
+  const coss = Math.cos(OMEGA*lt);
+  const cx = s.x + s.w/2, yB = s.y + s.h + 28;
+  if (coss > 0.05){
+    const h = 14 + 24*coss + 4*Math.sin(lt*25);
+    ctx.fillStyle = C.temperatura;
+    ctx.beginPath();
+    ctx.moveTo(cx-10, yB);
+    ctx.quadraticCurveTo(cx-6, yB-h*0.55, cx, yB-h);
+    ctx.quadraticCurveTo(cx+6, yB-h*0.55, cx+10, yB);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#ffe08a";
+    ctx.beginPath();
+    ctx.moveTo(cx-5, yB);
+    ctx.quadraticCurveTo(cx-2, yB-h*0.35, cx, yB-h*0.55);
+    ctx.quadraticCurveTo(cx+2, yB-h*0.35, cx+5, yB);
+    ctx.closePath(); ctx.fill();
+    labela(ctx, "fűtés", cx, yB+16, C.temperatura, 13);
+  } else if (coss < -0.05){
+    labela(ctx, "hűtés ↓", cx, yB-4, "#74c0fc", 13);
+  }
+}
+
+/* ---------- Grafikon (tengelyek + rács + görbe + kiemelt pont) ---------- */
+function gTacka(g, x, y){
+  return { x: g.x + (x-g.xMin)/(g.xMax-g.xMin)*g.w,
+           y: g.y + g.h - (y-g.yMin)/(g.yMax-g.yMin)*g.h };
+}
+function crtajGrafikOsnovu(ctx, g){
+  ctx.strokeStyle = C.resetka; ctx.lineWidth = 1;
+  for (const v of g.xPodela){ const p = gTacka(g, v, g.yMin);
+    ctx.beginPath(); ctx.moveTo(p.x, g.y); ctx.lineTo(p.x, g.y+g.h); ctx.stroke(); }
+  for (const v of g.yPodela){ const p = gTacka(g, g.xMin, v);
+    ctx.beginPath(); ctx.moveTo(g.x, p.y); ctx.lineTo(g.x+g.w, p.y); ctx.stroke(); }
+  crtajStrelicu(ctx, g.x, g.y+g.h, g.x, g.y-14, C.zid, 2);          // y-tengely
+  crtajStrelicu(ctx, g.x, g.y+g.h, g.x+g.w+14, g.y+g.h, C.zid, 2);  // x-tengely
+  for (const v of g.xPodela){ const p = gTacka(g, v, g.yMin);
+    labela(ctx, fmt(v), p.x, g.y+g.h+16, "#7d8c9a", 12); }
+  for (const v of g.yPodela){ const p = gTacka(g, g.xMin, v);
+    labela(ctx, fmt(v), g.x-8, p.y, "#7d8c9a", 12, "right"); }
+  labela(ctx, g.xLab, g.x+g.w+16, g.y+g.h+18, C.tekst, 14, "left", true);
+  ctx.save(); ctx.translate(g.x-44, g.y+g.h/2); ctx.rotate(-Math.PI/2);
+  labela(ctx, g.yLab, 0, 0, C.tekst, 14, "center", true);
+  ctx.restore();
+}
+function crtajKrivu(ctx, g, f, boja, x0, x1){
+  ctx.beginPath();
+  for (let i=0;i<=90;i++){
+    const x = x0 + (x1-x0)*i/90, p = gTacka(g, x, f(x));
+    i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+  }
+  ctx.strokeStyle = boja; ctx.lineWidth = 2.5; ctx.stroke();
+}
+function oznaciTacku(ctx, g, x, y, boja, txtX, txtY){
+  const p = gTacka(g, x, y);
+  ctx.strokeStyle = boja; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x, g.y+g.h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(g.x, p.y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = boja;
+  ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, 7); ctx.fill();
+  labela(ctx, txtX, p.x, p.y+22, boja, 13, "center", true);
+  labela(ctx, txtY, p.x-12, p.y-12, boja, 13, "right", true);
+}
+
+/* =====================================================================
+   RÉSZECSKÉK — fizikai szimuláció (közös az összes jelenet számára)
+   ===================================================================== */
+const cestice = [];
+function initCestice(){
+  cestice.length = 0;
+  for (let i=0;i<CONFIG.brojCestica;i++){
+    const ug = Math.random()*Math.PI*2;
+    const f  = 1 + (Math.random()*2-1)*CONFIG.rasponBrzina;
+    cestice.push({ x:0, y:0,
+                   vx:Math.cos(ug)*CONFIG.osnovnaBrzina*f,
+                   vy:Math.sin(ug)*CONFIG.osnovnaBrzina*f });
+  }
+  const u = unutrasnjost(stanje.sud, stanje.klip);
+  for (const c of cestice){ c.x = u.x + Math.random()*u.w; c.y = u.y + Math.random()*u.h; }
+}
+function unutrasnjost(s, klip){           // a gáz belső tartománya (a dugattyútól balra)
+  const desno = s.x + s.w*klip;
+  return { x:s.x+5, y:s.y+5, w:desno-s.x-10, h:s.h-10 };
+}
+function koraciCestica(dt, u, brzMul, udarci){
+  let desno = 0;
+  const r = CONFIG.precnikCestice/2;
+  for (const c of cestice){
+    c.x += c.vx*brzMul*dt;  c.y += c.vy*brzMul*dt;
+    if (c.x < u.x+r)      { c.x = u.x+r;      c.vx =  Math.abs(c.vx); }
+    if (c.x > u.x+u.w-r)  { c.x = u.x+u.w-r;
+        if (c.vx > 0){ desno++; if (udarci && udarci.length<80) udarci.push({x:u.x+u.w, y:c.y, t:0}); }
+        c.vx = -Math.abs(c.vx); }
+    if (c.y < u.y+r)      { c.y = u.y+r;      c.vy =  Math.abs(c.vy); }
+    if (c.y > u.y+u.h-r)  { c.y = u.y+u.h-r;  c.vy = -Math.abs(c.vy); }
+  }
+  return desno;
+}
+
+/* =====================================================================
+   JELENETEK — sorrend, mint a szerb változatban:
+   I. Boyle–Mariotte (izoterm) → II. Gay-Lussac (izochor) →
+   III. Charles (izobár) → egyesített gáztörvény
+   A képlet blokkokból épül fel: .red (sor) → .clan / .frac / .jednako
+   ===================================================================== */
+const SCENE = [
+
+/* ---------- 1. JELENET: Az ideális gáz modellje ---------- */
+{ naslov: "Az ideális gáz modellje",
+  tekst: "A gázt rengeteg apró, pontszerű részecskék halmazaként képzeljük el, amelyek szabadon mozognak és tökéletesen rugalmasan ütköznek — a teljes kinetikus energia megmarad. Az egyetlen kölcsönhatás a részecskék egymás közti és a tartály falával való ütközése.",
+  formula: '<div class="red">'
+         + '<span class="clan"><b class="cp">p</b>&hairsp;·&hairsp;<b class="cv">V</b></span>'
+         + '<span class="jednako">=</span>'
+         + '<span class="clan"><span class="frac"><span>1</span><span>3</span></span>&hairsp;<i>N</i>&hairsp;·&hairsp;<i>m</i>&hairsp;·&hairsp;⟨<i>v</i><sup>2</sup>⟩</span>'
+         + '</div>'
+         + '<small>az MKT alapegyenlete &middot; ⟨v²⟩ — a részecskesebesség négyzetátlaga</small>',
+  klipCilj: null,
+  crtaj(ctx, W, H, lt, dt){
+    const s = stanje.sud;
+    koraciCestica(dt, unutrasnjost(s, stanje.klip), 1);
+    crtajZidove(ctx, s);
+    crtajCestice(ctx);
+    const c = cestice[Math.floor(lt*1.2) % cestice.length];   // kiemelt részecske + sebességvektor
+    crtajStrelicu(ctx, c.x, c.y, c.x+c.vx*0.28, c.y+c.vy*0.28, C.akcenat, 2);
+    labela(ctx, "v", c.x+c.vx*0.28+8, c.y+c.vy*0.28, C.akcenat, 15, "left", true);
+    labela(ctx, "a gáz = N pontszerű részecske a tartályban", s.x+s.w/2, s.y-26, C.cestice, 17, "center", true);
+    labela(ctx, "T = 300 K", s.x+s.w-10, s.y+18, C.temperatura, 15, "right", true);
+    const yy = Math.min(H-46, s.y+s.h+26);
+    crtajDvostruku(ctx, s.x, yy, s.x+s.w, yy, C.zapremina, 2);
+    labela(ctx, "V — a gáz térfogata", s.x+s.w/2, yy+18, C.zapremina, 15, "center", true);
+    labela(ctx, "tökéletesen rugalmas ütközések — a teljes energia megmarad", s.x+s.w/2, yy+40, "#9fb0bf", 13.5);
+  }
+},
+
+/* ---------- 2. JELENET: A gáz nyomása ---------- */
+{ naslov: "A gáz nyomása",
+  tekst: "Minden részecskeütés kis impulzust ad át a falnak. A nyomás az összes ütés átlagos ereje a fal egységnyi felületén — minél sűrűbben és gyorsabban ütik a részecskék a falat, a nyomás annál nagyobb.",
+  formula: '<div class="red">'
+         + '<b class="cp">p</b>'
+         + '<span class="jednako">=</span>'
+         + '<span class="frac"><span><i>F</i></span><span><i>S</i></span></span>'
+         + '</div>'
+         + '<small>mértékegysége: 1 Pa = 1 N/m² &middot; F — az S felületű falra ható erő</small>',
+  klipCilj: null,
+  crtaj(ctx, W, H, lt, dt){
+    const s = stanje.sud;
+    const udari = koraciCestica(dt, unutrasnjost(s, stanje.klip), 1, efekti);
+    if (dt > 0) merenje.ema += (udari/dt - merenje.ema) * Math.min(1, dt*2.5);
+    const p = Math.min(180, Math.max(50, merenje.ema*10));
+    crtajZidove(ctx, s);
+    ctx.strokeStyle = C.pritisak; ctx.lineWidth = CONFIG.debljinaZida + 2;   // kiemelt jobb fal
+    ctx.beginPath(); ctx.moveTo(s.x+s.w, s.y); ctx.lineTo(s.x+s.w, s.y+s.h); ctx.stroke();
+    for (const e of efekti){                       // gyűrűk — az ütések impulzusa
+      e.t += dt; const f = e.t/0.45;
+      if (f >= 1) continue;
+      ctx.globalAlpha = tekAlfa*(1-f);
+      ctx.strokeStyle = C.pritisak; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(e.x, e.y, 4+26*f, 0, 7); ctx.stroke();
+    }
+    ctx.globalAlpha = tekAlfa;
+    for (let i=efekti.length-1;i>=0;i--) if (efekti[i].t >= 0.45) efekti.splice(i,1);
+    const midY = s.y+s.h/2, duzF = 26 + p*0.35;    // az F erő a falon
+    crtajStrelicu(ctx, s.x+s.w+3, midY, s.x+s.w+3+duzF, midY, C.pritisak, 4);
+    labela(ctx, "F", s.x+s.w+12+duzF, midY, C.pritisak, 20, "left", true);
+    labela(ctx, "S felületű fal", s.x+s.w-10, s.y-22, C.pritisak, 14, "right");
+    const gx = W*0.80, gy = H*0.18, gh = H*0.50;   // nyomásmérő (oszlop)
+    ctx.strokeStyle = C.zid; ctx.lineWidth = 2; ctx.strokeRect(gx, gy, 18, gh);
+    const fh = (gh-4)*Math.min(1, p/200);
+    ctx.fillStyle = C.pritisak; ctx.fillRect(gx+2, gy+gh-2-fh, 14, fh);
+    labela(ctx, "p", gx+9, gy-16, C.pritisak, 19, "center", true);
+    labela(ctx, fmt(p)+" kPa", gx+9, gy+gh+38, C.pritisak, 17, "center", true);
+    labela(ctx, "N = "+CONFIG.brojCestica+"   ·   T = 300 K", s.x+10, s.y+18, "#9fb0bf", 14, "left");
+    labela(ctx, "minden ütközés impulzust ad át a falnak", s.x+s.w/2, s.y+s.h+26, "#9fb0bf", 14);
+  }
+},
+
+/* ---------- 3. JELENET: Hőmérséklet és kinetikus energia ---------- */
+{ naslov: "Hőmérséklet és kinetikus energia",
+  tekst: "A hőmérséklet a részecskék átlagos kinetikus energiájának mértéke: amikor a gázt melegítjük, a részecskék egyre gyorsabban mozognak. T = 0 K esetén a részecskék (klasszikusan) nyugalomban vannak.",
+  formula: '<div class="red">'
+         + '⟨<b class="ce">E<sub>k</sub></b>⟩'
+         + '<span class="jednako">=</span>'
+         + '<span class="clan"><span class="frac"><span>3</span><span>2</span></span>&hairsp;<i>k</i>&hairsp;·&hairsp;<b class="ct">T</b></span>'
+         + '</div>'
+         + '<small>k = 1,38·10⁻²³ J/K (Boltzmann-állandó)</small>',
+  klipCilj: null,
+  crtaj(ctx, W, H, lt, dt){
+    const s = stanje.sud;
+    const T = 300 + 150*Math.sin(OMEGA*lt);
+    koraciCestica(dt, unutrasnjost(s, stanje.klip), Math.sqrt(T/300));
+    crtajZidove(ctx, s);
+    crtajCestice(ctx);
+    labela(ctx, "T = "+fmt(T)+" K", s.x+s.w/2, s.y-26, C.temperatura, 18, "center", true);
+    labela(ctx, "⟨v⟩ ≈ "+fmt(500*Math.sqrt(T/300))+" m/s", s.x+s.w/2, s.y+s.h+26, C.cestice, 15, "center", true);
+    crtajTermometar(ctx, W*0.62, H*0.18, H*0.38, T);
+    labela(ctx, "⟨Eₖ⟩ = "+fmtNaucno(1.5*CONFIG.kBolcman*T)+" J", W*0.62, H*0.76, C.energija, 19, "center", true);
+    labela(ctx, "hőmérséklet ⇔ a részecskék átlagos kinetikus energiája", W*0.62, H*0.86, "#9fb0bf", 14);
+  }
+},
+
+/* ---------- 4. JELENET: Boyle–Mariotte törvény (izoterm) ---------- */
+{ naslov: "I. Boyle–Mariotte törvény (izoterm állapotváltozás)",
+  tekst: "Állandó hőmérséklet és állandó gázmennyiség mellett a nyomás a térfogattal fordítottan arányos: amikor a dugattyú összenyomja a gázt, a részecskék sűrűbben ütköznek a falakkal. A p(V) függvény grafikonja hiperbola.",
+  formula: '<div class="red">'
+         + '<span class="clan"><b class="cp">p</b>&hairsp;·&hairsp;<b class="cv">V</b></span>'
+         + '<span class="jednako">=</span>'
+         + '<span class="konst">állandó</span>'
+         + '</div>'
+         + '<small>izoterm állapotváltozás &middot; T = konst. és n = konst. &middot; grafikon: p(V) hiperbola</small>',
+  klipCilj: lt => 0.75 + 0.20*Math.sin(OMEGA*lt),
+  crtaj(ctx, W, H, lt, dt){
+    const s = stanje.sud;
+    const klipT = 0.75 + 0.20*Math.sin(OMEGA*lt);
+    const V = 30*klipT, p = 3000/V;
+    koraciCestica(dt, unutrasnjost(s, stanje.klip), 1);
+    crtajZidove(ctx, s);
+    crtajKlip(ctx, s, stanje.klip);
+    crtajCestice(ctx);
+    labela(ctx, "T = 300 K = konst.", s.x+s.w/2, s.y-26, C.temperatura, 16, "center", true);
+    const yy = Math.min(H-14, s.y+s.h+24);
+    crtajDvostruku(ctx, s.x, yy, s.x+s.w*stanje.klip, yy, C.zapremina, 2);
+    labela(ctx, "V = "+fmt(V,1)+" L", s.x+s.w*stanje.klip/2, yy+18, C.zapremina, 15, "center", true);
+    labela(ctx, "p = "+fmt(p)+" kPa", s.x+s.w*stanje.klip-12, s.y+18, C.pritisak, 15, "right", true);
+    const g = { x:W*0.58, y:H*0.16, w:W*0.34, h:H*0.56,
+                xMin:10, xMax:30, yMin:80, yMax:220,
+                xLab:"V (L)", yLab:"p (kPa)",
+                xPodela:[15,20,25,30], yPodela:[100,150,200] };
+    crtajGrafikOsnovu(ctx, g);
+    crtajKrivu(ctx, g, v => 3000/v, C.pritisak, 3000/220, 30);
+    oznaciTacku(ctx, g, V, p, C.pritisak, fmt(p)+" kPa", fmt(V,1)+" L");
+    labela(ctx, "izoterma: p·V = állandó", g.x+g.w*0.66, g.y+g.h*0.30, "#9fb0bf", 14);
+  }
+},
+
+/* ---------- 5. JELENET: Gay-Lussac II. törvénye (izochor) ---------- */
+{ naslov: "II. Gay-Lussac törvénye (izochor állapotváltozás)",
+  tekst: "Állandó térfogat mellett a nyomás a hőmérséklettel egyenesen arányosan nő — a gyorsabb részecskék erősebben ütköznek a változatlan falakkal. A meghosszabbított egyenes a −273,15 °C-on, az abszolút nulla ponton metszi a nullát.",
+  formula: '<div class="red">'
+         + '<span class="frac"><span><b class="cp">p</b></span><span><b class="ct">T</b></span></span>'
+         + '<span class="jednako">=</span>'
+         + '<span class="konst">állandó</span>'
+         + '</div>'
+         + '<small>izochor állapotváltozás &middot; V = konst. és n = konst. &middot; grafikon: p(T) egyenes</small>',
+  klipCilj: null,
+  crtaj(ctx, W, H, lt, dt){
+    const s = stanje.sud;
+    const T = 300 + 90*Math.sin(OMEGA*lt);
+    const p = 100*T/300;
+    koraciCestica(dt, unutrasnjost(s, stanje.klip), Math.sqrt(T/300));
+    crtajZidove(ctx, s);
+    crtajCestice(ctx);
+    plamenIliHladnja(ctx, s, lt);
+    labela(ctx, "V = 30 L = konst.", s.x+s.w/2, s.y-26, C.zapremina, 16, "center", true);
+    labela(ctx, "p = "+fmt(p)+" kPa", s.x+s.w/2, s.y+s.h+64, C.pritisak, 16, "center", true);
+    crtajTermometar(ctx, W*0.44, H*0.20, H*0.34, T);
+    const g = { x:W*0.58, y:H*0.16, w:W*0.34, h:H*0.52,
+                xMin:0, xMax:600, yMin:0, yMax:200,
+                xLab:"T (K)", yLab:"p (kPa)",
+                xPodela:[200,400,600], yPodela:[100,200] };
+    crtajGrafikOsnovu(ctx, g);
+    crtajKrivu(ctx, g, t => t/3, C.pritisak, 0, 600);
+    oznaciTacku(ctx, g, T, p, C.pritisak, fmt(p)+" kPa", fmt(T)+" K");
+    labela(ctx, "izochora: p ~ T", g.x+g.w*0.30, g.y+g.h*0.28, "#9fb0bf", 14);
+    labela(ctx, "0 K = −273,15 °C (abszolút nulla pont)", g.x+g.w*0.55, g.y+g.h+42, "#9fb0bf", 13);
+  }
+},
+
+/* ---------- 6. JELENET: Charles törvénye (izobár) ---------- */
+{ naslov: "III. Charles törvénye (izobár állapotváltozás)",
+  tekst: "Állandó nyomáson (a dugattyún állandó súlyok vannak) a térfogat a hőmérséklettel egyenesen arányosan nő. A felmelegedett gáz gyorsabb részecskéi erősebben nyomják a dugattyút, míg a nyomás újra kiegyenlítődik.",
+  formula: '<div class="red">'
+         + '<span class="frac"><span><b class="cv">V</b></span><span><b class="ct">T</b></span></span>'
+         + '<span class="jednako">=</span>'
+         + '<span class="konst">állandó</span>'
+         + '</div>'
+         + '<small>izobár állapotváltozás &middot; p = konst. és n = konst. &middot; grafikon: V(T) egyenes</small>',
+  klipCilj: lt => (30*(300+150*Math.sin(OMEGA*lt))/300)/45,
+  crtaj(ctx, W, H, lt, dt){
+    const s = stanje.sud;
+    const T = 300 + 150*Math.sin(OMEGA*lt);
+    const V = 30*T/300;                        // 15 … 45 L
+    koraciCestica(dt, unutrasnjost(s, stanje.klip), Math.sqrt(T/300));
+    crtajZidove(ctx, s);
+    crtajKlip(ctx, s, stanje.klip);
+    crtajTegove(ctx, s.x+s.w*stanje.klip, s.y-2, 3);
+    crtajCestice(ctx);
+    plamenIliHladnja(ctx, s, lt);
+    labela(ctx, "p = 100 kPa = konst.", s.x+s.w*stanje.klip, s.y-72, C.pritisak, 15, "center", true);
+    const yy = Math.min(H-14, s.y+s.h+24);
+    crtajDvostruku(ctx, s.x, yy, s.x+s.w*stanje.klip, yy, C.zapremina, 2);
+    labela(ctx, "V = "+fmt(V,1)+" L", s.x+s.w*stanje.klip/2, yy+18, C.zapremina, 15, "center", true);
+    labela(ctx, "T = "+fmt(T)+" K", s.x+10, s.y+18, C.temperatura, 14, "left", true);
+    crtajTermometar(ctx, W*0.44, H*0.20, H*0.34, T);
+    const g = { x:W*0.58, y:H*0.16, w:W*0.34, h:H*0.52,
+                xMin:0, xMax:500, yMin:0, yMax:50,
+                xLab:"T (K)", yLab:"V (L)",
+                xPodela:[250,500], yPodela:[25,50] };
+    crtajGrafikOsnovu(ctx, g);
+    crtajKrivu(ctx, g, t => t/10, C.zapremina, 0, 500);
+    oznaciTacku(ctx, g, T, V, C.zapremina, fmt(V,1)+" L", fmt(T)+" K");
+    labela(ctx, "izobára: V ~ T", g.x+g.w*0.34, g.y+g.h*0.30, "#9fb0bf", 14);
+    labela(ctx, "0 K = −273,15 °C", g.x+g.w*0.55, g.y+g.h+42, "#9fb0bf", 13);
+  }
+},
+
+/* ---------- 7. JELENET: Egyesített gáztörvény ---------- */
+{ naslov: "Egyesített gáztörvény és állapotegyenlet",
+  tekst: "A három törvény egyetlen összefüggésben egyesül: adott gázmennyiségre a p·V/T hányados állandó, akárhogy változnak is a p, V és T. Ebből következik az ideális gáz egyetemes állapotegyenlete: p·V = n·R·T.",
+  formula: '<div class="red">'
+         + '<span class="frac"><span><b class="cp">p</b>&hairsp;·&hairsp;<b class="cv">V</b></span><span><b class="ct">T</b></span></span>'
+         + '<span class="jednako">=</span>'
+         + '<span class="konst">állandó</span>'
+         + '</div>'
+         + '<div class="red">'
+         + '<span class="strelica">⟹</span>'
+         + '<span class="clan"><b class="cp">p</b>&hairsp;·&hairsp;<b class="cv">V</b></span>'
+         + '<span class="jednako">=</span>'
+         + '<span class="clan"><i>n</i>&hairsp;·&hairsp;<i>R</i>&hairsp;·&hairsp;<b class="ct">T</b></span>'
+         + '</div>'
+         + '<small>R = 8,314 J/(mol·K) &middot; az ideális gáz egyetemes állapotegyenlete</small>',
+  klipCilj: lt => (30+10*Math.cos(OMEGA*lt))/40,
+  crtaj(ctx, W, H, lt, dt){
+    const s = stanje.sud;
+    const T = 300 + 80*Math.sin(OMEGA*lt);
+    const V = 30 + 10*Math.cos(OMEGA*lt);
+    const p = 10*T/V;                          // p·V/T = 10 (állandó)
+    koraciCestica(dt, unutrasnjost(s, stanje.klip), Math.sqrt(T/300));
+    crtajZidove(ctx, s);
+    crtajKlip(ctx, s, stanje.klip);
+    crtajCestice(ctx);
+    plamenIliHladnja(ctx, s, lt);
+    labela(ctx, "n = konst.  ·  p·V/T = állandó", s.x+s.w/2, s.y-26, C.akcenat, 16, "center", true);
+    const vcx = W*0.585+95;                    // aktuális értékek, színezve
+    const stavke = [
+      ["p = "+fmt(p)+" kPa", C.pritisak],
+      ["V = "+fmt(V,1)+" L", C.zapremina],
+      ["T = "+fmt(T)+" K",   C.temperatura]
+    ];
+    stavke.forEach((st,i)=> labela(ctx, st[0], vcx, H*0.16+i*44, st[1], 23, "center", true));
+    const by = H*0.16 + 3*44 + 6;
+    crtajKutiju(ctx, W*0.585, by, 190, 56, C.akcenat);
+    labela(ctx, "p·V/T = "+fmt(p*V/T,1)+" kPa·L/K", vcx, by+22, C.akcenat, 16, "center", true);
+    labela(ctx, "= állandó", vcx, by+42, "#93a1af", 12.5);
+    const chips = [                            // emlékeztető: a három gáztörvény
+      ["I. Boyle–Mariotte — izoterm", "p·V = állandó", C.temperatura],
+      ["II. Gay-Lussac — izochor",    "p/T = állandó", C.zapremina],
+      ["III. Charles — izobár",       "V/T = állandó", C.pritisak]
+    ];
+    chips.forEach((c,i)=>{
+      const x = W*(0.06 + i*0.305), y = H*0.86, w = W*0.27, h = H*0.095;
+      crtajKutiju(ctx, x, y, w, h, c[2]);
+      labela(ctx, c[0], x+w/2, y+h*0.30, "#93a1af", 13);
+      labela(ctx, c[1], x+w/2, y+h*0.66, c[2], 16, "center", true);
+    });
+  }
+}
+];
+
+/* =====================================================================
+   JELENETGEOMETRIA — a tartály célpozíciói (simitva interpolálódnak)
+   ===================================================================== */
+function ciljZaScenu(i, W, H){
+  const sudovi = [
+    {x:W*0.30, y:H*0.13, w:W*0.40, h:H*0.64},  // 0 modell
+    {x:W*0.08, y:H*0.16, w:W*0.42, h:H*0.58},  // 1 nyomás
+    {x:W*0.07, y:H*0.15, w:W*0.36, h:H*0.60},  // 2 hőmérséklet
+    {x:W*0.06, y:H*0.16, w:W*0.36, h:H*0.58},  // 3 Boyle–Mariotte (izoterm)
+    {x:W*0.06, y:H*0.14, w:W*0.30, h:H*0.60},  // 4 Gay-Lussac (izochor)
+    {x:W*0.06, y:H*0.14, w:W*0.30, h:H*0.60},  // 5 Charles (izobár)
+    {x:W*0.06, y:H*0.10, w:W*0.30, h:H*0.50}   // 6 egyesített
+  ];
+  return sudovi[i];
+}
+
+/* =====================================================================
+   AZ ANIMÁCIÓ ÁLLAPOTA, a ciklus és a vezérlés
+   ===================================================================== */
+const platno = document.getElementById("platno");
+const ctx    = platno.getContext("2d");
+const vid    = { w:0, h:0, dpr:1 };
+
+const stanje   = { sud:null, klip:1 };   // aktuális (interpolált) tartály és dugattyúhelyzet
+const merenje  = { ema:9 };              // simított ütésszám/s („Nyomás” jelenet)
+const efekti   = [];                     // gyűrűk az ütközéseknél („Nyomás” jelenet)
+let vreme = 0, poslednje = 0, pauza = false, trenutna = -1, tekAlfa = 1;
+
+const el = id => document.getElementById(id);
+const sadrzaj = el("sadrzajScene"), popunjenost = el("popunjenost");
+
+function azurirajVelicinu(){
+  vid.dpr = window.devicePixelRatio || 1;
+  const r = platno.getBoundingClientRect();
+  vid.w = r.width; vid.h = r.height;
+  platno.width  = Math.round(r.width  * vid.dpr);
+  platno.height = Math.round(r.height * vid.dpr);
+}
+
+function alfaPrelaza(lt){                 // fade a jelenetek szélein
+  const f = CONFIG.trajanjeFadea, d = CONFIG.trajanjeScene;
+  if (lt < f)     return glatko(lt/f);
+  if (lt > d-f)   return glatko((d-lt)/f);
+  return 1;
+}
+
+function primeniScenu(i){                 // panel és haladásjelző szinkronizálása
+  const s = SCENE[i], n = SCENE.length;
+  el("naslovScene").textContent  = s.naslov;
+  el("tekstScene").textContent   = s.tekst;
+  el("formulaScene").innerHTML   = s.formula;
+  el("oznakaScene").textContent  = n + " jelenetből a " + (i+1) + ".";
+  el("labelaNapretka").textContent = "Jelenet " + (i+1) + "/" + n + " — " + s.naslov;
+  [...el("tacke").children].forEach((d,j)=> d.classList.toggle("aktivna", j===i));
+}
+
+function render(dt){
+  ctx.setTransform(vid.dpr, 0, 0, vid.dpr, 0, 0);
+  ctx.fillStyle = C.pozadina;
+  ctx.fillRect(0, 0, vid.w, vid.h);
+
+  const N = SCENE.length;
+  const idx = Math.floor(vreme / CONFIG.trajanjeScene) % N;
+  const lt  = vreme - Math.floor(vreme / CONFIG.trajanjeScene) * CONFIG.trajanjeScene;
+  tekAlfa = alfaPrelaza(lt);
+
+  /* a tartály és a dugattyú sima közelítése a célértékekhez (easing) */
+  const ciljSud = ciljZaScenu(idx, vid.w, vid.h);
+  const sc = SCENE[idx];
+  const ciljKlip = sc.klipCilj ? sc.klipCilj(lt) : 1;
+  if (dt > 0){
+    const k = 1 - Math.exp(-dt*5);
+    stanje.sud.x += (ciljSud.x - stanje.sud.x)*k;
+    stanje.sud.y += (ciljSud.y - stanje.sud.y)*k;
+    stanje.sud.w += (ciljSud.w - stanje.sud.w)*k;
+    stanje.sud.h += (ciljSud.h - stanje.sud.h)*k;
+    stanje.klip  += (ciljKlip - stanje.klip) * (1 - Math.exp(-dt*8));
+  }
+
+  if (idx !== trenutna){ trenutna = idx; primeniScenu(idx); }
+
+  ctx.globalAlpha = tekAlfa;
+  sc.crtaj(ctx, vid.w, vid.h, lt, dt);
+  ctx.globalAlpha = 1;
+
+  /* a panel és a haladássáv ugyanazt a fade-et követi, mint a vászon */
+  sadrzaj.style.opacity = tekAlfa;
+  popunjenost.style.width = (lt/CONFIG.trajanjeScene*100) + "%";
+}
+
+function petlja(now){
+  requestAnimationFrame(petlja);
+  let dt = (now - poslednje)/1000; poslednje = now;
+  dt = Math.min(Math.max(dt, 0), 0.05);      // delta-idő, 50 ms-ra korlátozva
+  if (pauza) dt = 0; else vreme += dt;
+  render(dt);
+}
+
+/* ---------- Gombok: szünet és újrakezdés (az egyetlen felhasználói beavatkozás) ---------- */
+el("btnPauza").addEventListener("click", ()=>{
+  pauza = !pauza;
+  el("btnPauza").textContent = pauza ? "Folytatás" : "Szünet";
+});
+el("btnPonovi").addEventListener("click", ()=>{
+  vreme = 0; poslednje = performance.now();
+  trenutna = -1; merenje.ema = 9; efekti.length = 0;
+});
+
+/* ---------- Színjelmagyarázat ---------- */
+(function(){
+  const stavke = [
+    ["p",  "nyomás (Pa)",                 C.pritisak],
+    ["V",  "térfogat (m³)",               C.zapremina],
+    ["T",  "hőmérséklet (K)",             C.temperatura],
+    ["Ek", "kinetikus energia (J)",       C.energija],
+    ["●",  "gázrészecskék",               C.cestice]
+  ];
+  el("legenda").innerHTML = stavke.map(s =>
+    '<span class="stavka"><span class="kvadrat" style="background:'+s[2]+'"></span>'
+    + '<b>'+s[0]+'</b>&nbsp;— '+s[1]+'</span>').join("");
+})();
+
+/* ---------- Haladáspontok és lábléc ---------- */
+el("tacke").innerHTML = SCENE.map(()=> '<div class="tacka"></div>').join("");
+el("podnozje").textContent =
+  "Az anyag automatikusan fut — a jelenetek " + CONFIG.trajanjeScene +
+  " másodpercenként váltanak, és a teljes ciklus folyamatosan ismétlődik.";
+
+/* ---------- Indítás ---------- */
+window.addEventListener("resize", azurirajVelicinu);
+azurirajVelicinu();
+stanje.sud = { ...ciljZaScenu(0, vid.w, vid.h) };
+stanje.klip = 1;
+initCestice();
+primeniScenu(0); trenutna = 0;
+poslednje = performance.now();
+requestAnimationFrame(petlja);
+</script>
+</body>
+</html>
