@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="sr-Cyrl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квантна природа електромагнетног зрачења - Радна свеска</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #0052D4;
+            --cyan: #00C6FB;
+            --purple: #9D50BB;
+            --green-turq: #00C6A0;
+            --text-dark: #1a1a1a;
+            --line-color: #b0b0b0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, rgba(0, 82, 212, 0.05) 0%, rgba(0, 198, 251, 0.08) 50%, rgba(157, 80, 187, 0.05) 100%);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            font-size: 2.4rem;
+            margin-bottom: 40px;
+            background: linear-gradient(to right, var(--blue), var(--cyan), var(--purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: var(--blue);
+            margin-top: 60px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(to right, var(--blue), var(--cyan), var(--purple));
+            border-image-slice: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--cyan);
+            border-radius: 50%;
+            margin-right: 15px;
+            box-shadow: 0 0 8px var(--cyan);
+        }
+
+        .glass-box {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid transparent;
+            border-image-slice: 1;
+            border-image-width: 0 0 0 5px;
+        }
+
+        .reminder-box {
+            border-image-source: linear-gradient(to bottom, var(--blue), var(--cyan));
+        }
+
+        .formula-box {
+            border-image-source: linear-gradient(to bottom, var(--purple), #c850c0);
+            margin-top: 15px;
+        }
+
+        .self-assess-box {
+            border-image-source: linear-gradient(to bottom, var(--green-turq), #20e3b2);
+        }
+
+        .box-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .reminder-box .box-title { color: var(--blue); }
+        .formula-box .box-title { color: var(--purple); }
+        .self-assess-box .box-title { color: var(--green-turq); }
+
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .task-section {
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .task-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--cyan);
+            padding-left: 15px;
+        }
+
+        /* Тачно/Нетачно */
+        .tf-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .tf-text {
+            width: 78%;
+            padding-right: 15px;
+        }
+
+        .tf-options {
+            width: 20%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 20px;
+            white-space: nowrap;
+        }
+
+        .chk-box {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--blue);
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .write-lines {
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        .line {
+            border-bottom: 1px solid var(--line-color);
+            height: 28px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .line.short {
+            width: 80%;
+            margin-left: 10%;
+        }
+
+        /* Повежи појмове */
+        .match-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .match-table td {
+            width: 50%;
+            vertical-align: top;
+            padding: 15px;
+        }
+
+        .match-item-left {
+            background: rgba(0, 198, 251, 0.05);
+            border-left: 4px solid var(--cyan);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .match-item-right {
+            background: rgba(157, 80, 187, 0.05);
+            border-left: 4px solid var(--purple);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        /* Рачунски задаци */
+        .calc-subtask {
+            margin-bottom: 40px;
+        }
+
+        .subtask-letter {
+            font-weight: bold;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        /* Самопроцена */
+        .assess-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .assess-text {
+            width: 85%;
+            font-weight: 500;
+        }
+
+        .assess-boxes {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+            h1, h2 {
+                -webkit-text-fill-color: black; /* За штампу боље црно да уштедимо мастило, или задржати боје? Задржавамо плаву за х2 */
+            }
+            h1 {
+                -webkit-text-fill-color: var(--blue);
+                background: none;
+            }
+            h2 {
+                border-bottom: 3px solid var(--blue);
+            }
+            .glass-box {
+                background: white;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            .chapter {
+                page-break-before: always;
+            }
+            .chapter:first-of-type {
+                page-break-before: avoid;
+            }
+            .task-section, .tf-item, .calc-subtask, .glass-box, tr, .match-item-left, .match-item-right {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Квантна природа електромагнетног зрачења</h1>
+
+    <!-- ПОГЛАВЉЕ 1 -->
+    <div class="chapter">
+        <h2>1. Топлотно зрачење и закони зрачења апсолутно црног тела</h2>
+
+        <div class="glass-box reminder-box">
+            <span class="box-title">Подсетник</span>
+            <p>Свако тело са температуром изнад апсолутне нуле емитује електромагнетно зрачење, које називамо топлотно зрачење. Расподела интензитета овог зрачења по фреквенцијама представља спектар. Да би се објаснио спектар усијаног чврстог тела, Макс Планк је увео радикалну идеју да енергија осцилатора не може да се мења непрекидно, већ само у малим, дискретним пакетима које називамо кванти.</p>
+            <div class="glass-box formula-box">
+                <span class="box-title">Кључне формуле / Појмови</span>
+                <p><span class="math">E = h &middot; &nu;</span> &mdash; Планкова формула кванта енергије. E је енергија, h је Планкова константа (<span class="math">h = 6,626 &middot; 10<sup>-34</sup> J&middot;s</span>), а &nu; је фреквенција.</p>
+                <p style="margin-top:10px;"><span class="math">&lambda;<sub>max</sub> &middot; T = b</span> &mdash; Винов закон померања. &lambda;<sub>max</sub> је таласна дужина максималне емисије, T је апсолутна температура, а b је Винова константа (<span class="math">b = 2,9 &middot; 10<sup>-3</sup> m&middot;K</span>).</p>
+                <p style="margin-top:10px;"><span class="math">P = &sigma; &middot; T<sup>4</sup></span> &mdash; Штефан-Болцманов закон. P је снага зрачења по јединици површине, T је апсолутна температура, а &sigma; је Штефан-Болцманова константа (<span class="math">&sigma; = 5,67 &middot; 10<sup>-8</sup> Wm<sup>-2</sup>K<sup>-4</sup></span>).</p>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.1. ЗАДАТАК 1 – ТАЧНО / НЕТАЧНО</div>
+            <p style="margin-bottom:20px;">Оцени тачност следећих тврдњи тако што ћеш заокружити слово Т (тачно) или Н (нетачно) и накратко образложети свој одговор.</p>
+
+            <div class="tf-item">
+                <div class="tf-text">Електромагнетни талас се састоји од електричног и магнетног поља која су међусобно нормална и нормална су на правац простирања.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Спектар зрачења усијаног гаса под ниским притиском представља континуални спектар у коме су присутне све таласне дужине.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Апсорпциона моћ апсолутно црног тела има вредност тачно једнаку нули за све таласне дужине.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Према Кирхофовом закону, тело које добро апсорбује зрачење одређене фреквенције мора такође и добро да га емитује.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Према Виновом закону, када се температура тела повећава, таласна дужина на којој је емисија највећа се такође повећава.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Ако се апсолутна температура тела удвостручи, укупна снага зрачења по јединици површине се повећава осам пута.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Класична Рејлеј-Џинсова формула је предвиђала да ће енергија зрачења на малим таласним дужинама тежити бесконачности, што је познато као ултраљубичаста катастрофа.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Планкова хипотеза тврди да осцилатор може да мења своју енергију непрекидно, у било ком малом износу, што је решило проблем спектра црног тела.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.2. ЗАДАТАК 2 – ПОВЕЖИ ПОЈМОВЕ</div>
+            <p style="margin-bottom:15px;">Повежи појмове из леве колоне са одговарајућим описима из десне колоне тако што ћеш повући линију од броја до одговарајућег слова.</p>
+            <table class="match-table">
+                <tr>
+                    <td>
+                        <div class="match-item-left">1. Емисиона моћ</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">А. Тело које у потпуности апсорбује свако зрачење које на њега падне.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">2. Апсолутно црно тело</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Б. Укупна снага зрачења по јединици површине сразмерна је четвртом степену температуре.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">3. Винов закон померања</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">В. Енергија коју тело израчи у јединици времена, са јединице површине, у интервалу фреквенција.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">4. Штефан-Болцманов закон</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Г. Производ таласне дужине максималне емисије и апсолутне температуре је константан.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">5. Планкова константа</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Д. Неуспех класичне физике да објасни спектар зрачења на малим таласним дужинама.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">6. Ултраљубичаста катастрофа</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Ђ. Пропорционалност између најмањег износа енергије осцилатора и његове фреквенције.</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.3. ЗАДАТАК 3 – РАЧУНСКИ ЗАДАЦИ СРЕДЊЕ ТЕЖИНЕ</div>
+            
+            <div class="calc-subtask">
+                <div class="subtask-letter">а)</div>
+                <p>Астроном посматра звезду Бетелгез и примећује да максимум емисије њеног топлотног зрачења пада на таласну дужину од 700 nm. Израчунај приближну температуру површине ове звезде.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">б)</div>
+                <p>У ливници се налазе два комада ливеног гвожђа. Први комад је загрејан на температуру од 1200 K, док је други загрејан на 1500 K. Израчунај колико пута је већа снага зрачења другог комада у поређењу са првим, претпостављајући да се оба понашају као апсолутно црно тело.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">в)</div>
+                <p>Истраживач у лабораторији користи ласерски зрак фреквенције 5 &middot; 10<sup>14</sup> Hz за загревање узорка. Израчунати енергију једног кванта тог зрачења које испоручује ласер.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">г)</div>
+                <p>Термална камера бележи зрачење људског тела чија је температура 310 K. Одреди на којој се таласној дужини налази максимум емисионе моћи тог тела.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.4. ЗАДАТАК 4 – ТЕШКИ РАЧУНСКИ ЗАДАЦИ</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">а)</div>
+                <p>Инжењер пројектује грејно тело које израчава укупну снагу од 5,67 &middot; 10<sup>4</sup> W са површине од 1 m<sup>2</sup>. Ако тело ради у вакууму где се може сматрати идеализованим апсолутно црним телом, израчунај температуру на којој то тело ради.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">б)</div>
+                <p>Узорак непознатог материјала се загрева док му максимум зрачења не падне на таласну дужину од 1,45 &middot; 10<sup>-3</sup> m. Ако укупна снага зрачења тог узорка износи 74,08 W, израчунај активну површину тог тела која зрачи, претпостављајући да је у питању апсолутно црно тело.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">в)</div>
+                <p>Експериментално је утврђено да је енергија једног кванта зрачења које емитује одређени осцилатор једнака 7,95 &middot; 10<sup>-19</sup> J. Одреди фреквенцију тог зрачења и на основу ње израчунај да ли оно припада видљивом делу спектра, образложивши одговор прорачуном Винове таласне дужине за претпоставку да је то зрачење црног тела на тој фреквенцији.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box self-assess-box">
+            <span class="box-title">Самопроцена</span>
+            <div class="assess-item">
+                <div class="assess-text">Разумем разлику између линијског и континуалног спектра.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да објасним појам апсолутно црно тело и знам вредност његове апсорпционе моћи.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам да формулишем и применим Винов закон померања.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам да формулишем и применим Штефан-Болцманов закон.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем шта је ултраљубичаста катастрофа и како ју је Планк решио.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да израчунам енергију кванта користећи Планкову формулу.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПОГЛАВЉЕ 2 -->
+    <div class="chapter">
+        <h2>2. Фотоелектрични ефекат</h2>
+
+        <div class="glass-box reminder-box">
+            <span class="box-title">Подсетник</span>
+            <p>Фотоелектрични ефекат је појава емисије електрона са површине метала када га обасја светлост одговарајуће фреквенције. Ајнштајн је ову појаву објаснио уводећи фотон, честицу светлости која носи тачно одређену енергију. Брзина избачених електрона не зависи од интензитета светлости, већ само од њене фреквенције, док интензитет утиче на број избачених електрона.</p>
+            <div class="glass-box formula-box">
+                <span class="box-title">Кључне формуле / Појмови</span>
+                <p><span class="math">h &middot; &nu; = A<sub>i</sub> + m&middot;v<sup>2</sup> / 2</span> &mdash; Ајнштајнова једначина фотоефекта (за метале). h&middot;&nu; је енергија фотона, A<sub>i</sub> је излазни рад метала, а m&middot;v<sup>2</sup>/2 је максимална кинетичка енергија избаченог фотоелектрона.</p>
+                <p style="margin-top:10px;"><span class="math">&nu;<sub>0</sub> = A<sub>i</sub> / h</span> &mdash; Црвена граница фотоефекта. &nu;<sub>0</sub> је гранична (минимална) фреквенција зрачења потребна да изазове фотоефекат на датом металу.</p>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.1. ЗАДАТАК 1 – ТАЧНО / НЕТАЧНО</div>
+            <p style="margin-bottom:20px;">Оцени тачност следећих тврдњи тако што ћеш заокружити слово Т (тачно) или Н (нетачно) и накратко образложити свој одговор.</p>
+
+            <div class="tf-item">
+                <div class="tf-text">Број фотоелектрона емитованих са метала у једници времена директно је сразмеран интензитету упадне светлости.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Брзина избачених фотоелектрона се повећава ако се повећа интензитет упадне светлости, док фреквенција остаје иста.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">За сваки метал постоји карактеристична минимална фреквенција испод које фотоелектрични ефекат није могућ, без обзира на интензитет светлости.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Излазни рад представља енергију која је потребна да се електрон ослободи привлачне силе позитивног наелектрисаног језгра из унутрашњости атома.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Црвена светлост веома великог интензитета увек може да изазове фотоелектрични ефекат на металима попут цинка.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Ако фотон не поседује довољно енергије да савлада излазни рад, вишак енергије се може надокнадити продуженим излагањем метала тој светлости.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Према Ајнштајновој једначини, ако фотон фреквенције једнаке граничној фреквенцији погоди метал, излетели електрони ће имати кинетичку енергију једнаку нули.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Фотоелектрични ефекат је појава која може да се објасни искључиво на бази класичне таласне теорије светлости.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.2. ЗАДАТАК 2 – ПОВЕЖИ ПОЈМОВЕ</div>
+            <p style="margin-bottom:15px;">Повежи појмове из леве колоне са одговарајућим описима из десне колоне.</p>
+            <table class="match-table">
+                <tr>
+                    <td>
+                        <div class="match-item-left">1. Фотоелектрични ефекат</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">А. Енергија потребна да слободан електрон напусти површину метала.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">2. Фотон</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Б. Минимална фреквенција зрачења потребна да изазове емисију електрона.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">3. Излазни рад</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">В. Појава емисије електрона са површине метала при обасјавању светлошћу.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">4. Црвена граница</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Г. Број фотона који пада на јединицу површине у јединици времена.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">5. Фотоелектрон</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Д. Квант електромагнетног зрачења који носи енергију h&middot;&nu;.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">6. Интензитет светлости</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Ђ. Електрон који је избачен са површине метала деловањем светлости.</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.3. ЗАДАТАК 3 – РАЧУНСКИ ЗАДАЦИ СРЕДЊЕ ТЕЖИНЕ</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">а)</div>
+                <p>Техничар у лабораторији испитуе узорак цезијума чији је излазни рад 3,2 &middot; 10<sup>-19</sup> J. Одреди граничну фреквенцију за појаву фотоелектричног ефекта на овом металу.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">б)</div>
+                <p>На фотокатоду у фотоћелији пада светлост чији фотони имају енергију од 5 &middot; 10<sup>-19</sup> J. Ако је излазни рад за материјал катоде 3 &middot; 10<sup>-19</sup> J, израчунати максималну кинетичку енергију емитованих фотоелектрона.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">в)</div>
+                <p>Сензор у аутоматским вратима користи ласерски зрак таласне дужине 600 nm. Израчунати енергију једног фотона те светлости.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">г)</div>
+                <p>Уколико је максимална кинетичка енергија избаченог фотоелектрона једнака 1,6 &middot; 10<sup>-19</sup> J, израчунати максималну брзину којом овај електрон напушта површину метала. (Маса електрона износи 9,1 &middot; 10<sup>-31</sup> kg.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.4. ЗАДАТАК 4 – ТЕШКИ РАЧУНСКИ ЗАДАЦИ</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">а)</div>
+                <p>Соларни панел је обасјан плавом светлошћу таласне дужине 400 nm. Ако електрони излазе са површине метала чији је излазни рад 4,5 &middot; 10<sup>-19</sup> J, израчунати максималну брзину тих фотоелектрона. (Маса електрона је 9,1 &middot; 10<sup>-31</sup> kg.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">б)</div>
+                <p>Приликом испитивања непознатог метала, уочено је да га светлост фреквенције 1,2 &middot; 10<sup>15</sup> Hz избацује електроне који имају максималну брзину од 4 &middot; 10<sup>5</sup> m/s. Израчунати вредност излазног рада за испитивани метал.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">в)</div>
+                <p>Испитивање показује да калијум има граничну таласну дужину од 564 nm. Одреди да ли ће светлост фреквенције 6 &middot; 10<sup>14</sup> Hz изазвати фотоелектрични ефекат на овом металу, и ако хоће, израчунај колика ће бити максимална кинетичка енергија избачених електрона.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box self-assess-box">
+            <span class="box-title">Самопроцена</span>
+            <div class="assess-item">
+                <div class="assess-text">Разумем три кључне законитости фотоелектричног ефекта.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам да објасним због чега класична физика не може да објасни фотоефекат.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да напишем и објасним Ајнштајнову једначину фотоефекта.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем поjam излазни рад и знам чиме се он мери.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам формулу за црвену границу фотоефекта и разумем њен физикални смисао.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да преходимо између фреквенције, таласне дужине и енергије фотона.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПОГЛАВЉЕ 3 -->
+    <div class="chapter">
+        <h2>3. Комптонов ефекат</h2>
+
+        <div class="glass-box reminder-box">
+            <span class="box-title">Подсетник</span>
+            <p>Комптонов ефекат је појава пораста таласне дужине електромагнетног зрачења (најчешће рендгенских или гама зракова) након што се расеје на слободним електронима. Ова појава коначно је потврдила да фотон не носи само енергију, већ и импулс, те се при судару са електроном понаша као права честица.</p>
+            <div class="glass-box formula-box">
+                <span class="box-title">Кључне формуле / Појмови</span>
+                <p><span class="math">&Delta;&lambda; = &lambda;' - &lambda; = (h / m<sub>e</sub>&middot;c) &middot; (1 - cos&phi;)</span> &mdash; Комптонова формула. &Delta;&lambda; је пораст таласне дужине, &lambda;' је таласна дужина након расејања, &lambda; је почетна таласна дужина, m<sub>e</sub> је маса електрона, c је брзина светлости, а &phi; је угао расејања фотона.</p>
+                <p style="margin-top:10px;"><span class="math">&lambda;<sub>c</sub> = h / (m<sub>e</sub>&middot;c) = 2,43 &middot; 10<sup>-12</sup> m</span> &mdash; Комптонова таласна дужина за електрон.</p>
+                <p style="margin-top:10px;"><span class="math">p = h / &lambda;</span> &mdash; Импулс фотона. p је импулс, h је Планкова константа, а &lambda; је таласна дужина.</p>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.1. ЗАДАТАК 1 – ТАЧНО / НЕТАЧНО</div>
+            <p style="margin-bottom:20px;">Оцени тачност следећих тврдњи тако што ћеш заокружити слово Т (тачно) или Н (нетачно) и накратко образложити свој одговор.</p>
+
+            <div class="tf-item">
+                <div class="tf-text">Приликом Комптоновог расејања, таласна дужина расејаног фотона је увек већа од таласне дужине упадног фотона.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Промена таласне дужине фотона приликом Комптоновог расејања не зависи од почетне таласне дужине упадног зрачења.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Највећи пораст таласне дужине фотона дешава се када се фотон расеје под углом од нула степени у односу на правац упадног зрака.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Комптонов ефекат је најизраженији код зрачења веома ниских фреквенција, попут радио-таласа.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Приликом еластичног судара фотона и електрона, део енергије и импулса фотона прелази на електрон.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Комптонова таласна дужина за електрон износи приближно 2,43 нанометра.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Класична Максвелова електродинамика у потпуности објашњава пораст таласне дужине приликом расејања светлости на електронима.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Електрон који учествује у Комптоновом судару, након судара има већу енергију него пре њега.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>Т
+                    <span class="chk-box"></span>Н
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.2. ЗАДАТАК 2 – ПОВЕЖИ ПОЈМОВЕ</div>
+            <p style="margin-bottom:15px;">Повежи појмове из леве колоне са одговарајућим описима из десне колоне.</p>
+            <table class="match-table">
+                <tr>
+                    <td>
+                        <div class="match-item-left">1. Комптонов ефекат</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">А. Врста зрачења при коме је промена таласне дужине услед расејања највише изражена.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">2. Импулс фотона</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Б. Угао између правца упадног и правца расејаног фотона.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">3. Комптонова таласна дужина</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">В. Особина фотона која се рачуна као количник Планкове константе и таласне дужине.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">4. Угао расејања</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Г. Појава пораста таласне дужине фотона при судару са електроном.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">5. Рендгенско зрачење</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Д. Вредност највећег могућег помераја таласне дужине при судару са електроном.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">6. Еластични судар</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">Ђ. Процес у ком се укупна енергија и укупан импулс система честица очувавају.</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.3. ЗАДАТАК 3 – РАЧУНСКИ ЗАДАЦИ СРЕДЊЕ ТЕЖИНЕ</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">а)</div>
+                <p>У медицинском уређају за рендгенско снимање, зраци се сударају са ткивом и расејавају се под углом од 90 степени. Колики је пораст таласне дужине фотона након овог судара? (Комптонова таласна дужина износи 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">б)</div>
+                <p>Упадни рендгенски зрак има почетну таласну дужину од 70 pm. Након расејања на електронима у мети, угао расејања износи 90 степени. Израчунати нову таласну дужину тог зрака након што је био расејан.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">в)</div>
+                <p>Истраживач мери импулс фотона гама зрачења које се користи у радиотерапији за лечење тумора. Ако тај фотон има таласну дужину од 2 &middot; 10<sup>-12</sup> m, израчунати његов импулс.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">г)</div>
+                <p>Током експеримента, фотон се судари са слободним електроном и расеје се уназад, под углом од 180 степени. Израчунати колики је укупан пораст таласне дужине тог фотона. (Комптонова таласна дужина износи 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.4. ЗАДАТАК 4 – ТЕШКИ РАЧУНСКИ ЗАДАЦИ</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">а)</div>
+                <p>Упадни рендгенски зрак таласне дужине 50 pm судари се са слободним електроном и расејава се под углом од 60 степени. Израчунати нову таласну дужину расејаног зрака. (Комптонова таласна дужина износи 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">б)</div>
+                <p>Фотон се сударио са електроном и након тога се измерило да је његова таласна дужина порасла за 2,43 &middot; 10<sup>-12</sup> m. Под којим углом у односу на правац упадног зрака се десило расејање тог фотона? Образложи прорачуном.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">в)</div>
+                <p>Расејани фотон рендгенског зрачења има таласну дужину од 75 pm након што се сударио са електроном и расејао под углом од 90 степени. Израчунати почетну таласну дужину упадног зрака пре него што се сударио са електроном. (Комптонова таласна дужина износи 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box self-assess-box">
+            <span class="box-title">Самопроцена</span>
+            <div class="assess-item">
+                <div class="assess-text">Разумем појаву Комптоновог ефекта и знам шта се дешава са таласном дужином фотона.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам да напишем и протумачим формулу за пораст таласне дужине.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разумем да Комптонов ефекат доказује да фотон има импулс као честица.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Знам под којим углом расејања је пораст таласне дужине највећи.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Разликујем поjam Комптонове таласне дужине од таласне дужине зрачења.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Могу да објасним важност примене Комптоновог ефекта у медицини и детекцији зрачења.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

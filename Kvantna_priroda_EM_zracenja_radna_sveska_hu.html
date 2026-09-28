@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Az elektromágneses sugárzás kvantumtermészete - Munkafüzet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #0052D4;
+            --cyan: #00C6FB;
+            --purple: #9D50BB;
+            --green-turq: #00C6A0;
+            --text-dark: #1a1a1a;
+            --line-color: #b0b0b0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, rgba(0, 82, 212, 0.05) 0%, rgba(0, 198, 251, 0.08) 50%, rgba(157, 80, 187, 0.05) 100%);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            font-size: 2.4rem;
+            margin-bottom: 40px;
+            background: linear-gradient(to right, var(--blue), var(--cyan), var(--purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            color: var(--blue);
+            margin-top: 60px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(to right, var(--blue), var(--cyan), var(--purple));
+            border-image-slice: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--cyan);
+            border-radius: 50%;
+            margin-right: 15px;
+            box-shadow: 0 0 8px var(--cyan);
+        }
+
+        .glass-box {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid transparent;
+            border-image-slice: 1;
+            border-image-width: 0 0 0 5px;
+        }
+
+        .reminder-box {
+            border-image-source: linear-gradient(to bottom, var(--blue), var(--cyan));
+        }
+
+        .formula-box {
+            border-image-source: linear-gradient(to bottom, var(--purple), #c850c0);
+            margin-top: 15px;
+        }
+
+        .self-assess-box {
+            border-image-source: linear-gradient(to bottom, var(--green-turq), #20e3b2);
+        }
+
+        .box-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .reminder-box .box-title { color: var(--blue); }
+        .formula-box .box-title { color: var(--purple); }
+        .self-assess-box .box-title { color: var(--green-turq); }
+
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .task-section {
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .task-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--cyan);
+            padding-left: 15px;
+        }
+
+        /* Igaz/Hamis */
+        .tf-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .tf-text {
+            width: 78%;
+            padding-right: 15px;
+        }
+
+        .tf-options {
+            width: 20%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 20px;
+            white-space: nowrap;
+        }
+
+        .chk-box {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--blue);
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .write-lines {
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        .line {
+            border-bottom: 1px solid var(--line-color);
+            height: 28px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .line.short {
+            width: 80%;
+            margin-left: 10%;
+        }
+
+        /* Párosítás */
+        .match-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .match-table td {
+            width: 50%;
+            vertical-align: top;
+            padding: 15px;
+        }
+
+        .match-item-left {
+            background: rgba(0, 198, 251, 0.05);
+            border-left: 4px solid var(--cyan);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .match-item-right {
+            background: rgba(157, 80, 187, 0.05);
+            border-left: 4px solid var(--purple);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        /* Számítási feladatok */
+        .calc-subtask {
+            margin-bottom: 40px;
+        }
+
+        .subtask-letter {
+            font-weight: bold;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        /* Önértékelés */
+        .assess-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .assess-text {
+            width: 85%;
+            font-weight: 500;
+        }
+
+        .assess-boxes {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+            h1, h2 {
+                -webkit-text-fill-color: black;
+            }
+            h1 {
+                -webkit-text-fill-color: var(--blue);
+                background: none;
+            }
+            h2 {
+                border-bottom: 3px solid var(--blue);
+            }
+            .glass-box {
+                background: white;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            .chapter {
+                page-break-before: always;
+            }
+            .chapter:first-of-type {
+                page-break-before: avoid;
+            }
+            .task-section, .tf-item, .calc-subtask, .glass-box, tr, .match-item-left, .match-item-right {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Az elektromágneses sugárzás kvantumtermészete</h1>
+
+    <!-- 1. FEJEZET -->
+    <div class="chapter">
+        <h2>1. Hősugárzás és az abszolút fekete test sugárzási törvényei</h2>
+
+        <div class="glass-box reminder-box">
+            <span class="box-title">Emlékeztető</span>
+            <p>Minden az abszolút nullafok feletti hőmérsékletű test elektromágneses sugárzást bocsát ki, amelyet hősugárzásnak nevezünk. A sugárzás intenzitásának frekvencia szerinti eloszlása a spektrum. Az izzó szilárd testek spektrumának magyarázatára Max Planck bevezette azt a radikális gondolatot, hogy az oszcillátor energiája nem változhat folyamatosan, hanem csak kis, diszkrét csomagokban, amelyeket kvantumoknak nevezünk.</p>
+            <div class="glass-box formula-box">
+                <span class="box-title">Kulcsképletek / Fogalmak</span>
+                <p><span class="math">E = h &middot; &nu;</span> &mdash; A Planck-féle kvantumenergia képlete. E az energia, h a Planck-állandó (<span class="math">h = 6,626 &middot; 10<sup>-34</sup> J&middot;s</span>), &nu; pedig a frekvencia.</p>
+                <p style="margin-top:10px;"><span class="math">&lambda;<sub>max</sub> &middot; T = b</span> &mdash; Wien-féle eltolódási törvény. &lambda;<sub>max</sub> a maximális emisszió hullámhossza, T az abszolút hőmérséklet, b pedig a Wien-állandó (<span class="math">b = 2,9 &middot; 10<sup>-3</sup> m&middot;K</span>).</p>
+                <p style="margin-top:10px;"><span class="math">P = &sigma; &middot; T<sup>4</sup></span> &mdash; Stefan-Boltzmann-törvény. P a felületegységre jutó sugárzási teljesítmény, T az abszolút hőmérséklet, &sigma; pedig a Stefan-Boltzmann-állandó (<span class="math">&sigma; = 5,67 &middot; 10<sup>-8</sup> Wm<sup>-2</sup>K<sup>-4</sup></span>).</p>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.1. FELADAT 1 – IGAZ / HAMIS</div>
+            <p style="margin-bottom:20px;">Értékeld az alábbi állítások igazságosságát úgy, hogy bekarikázod az I (igaz) vagy a H (hamis) betűt, és röviden indokold a válaszodat.</p>
+
+            <div class="tf-item">
+                <div class="tf-text">Az elektromágneses hullám elektromos és mágneses térből áll, amelyek egymásra és a terjedés irányára is merőlegesek.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Az alacsony nyomású izzó gáz spektruma folytonos spektrum, amely minden hullámhosszt tartalmaz.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Az abszolút fekete test abszorpciós képessége minden hullámhosszon pontosan nulla értékű.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A Kirchhoff-törvény szerint az a test, amely egy adott frekvenciájú sugárzást jól elnyel, azt a frekvenciát jól kell kibocsátania is.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A Wien-féle eltolódási törvény szerint a test hőmérsékletének növekedésével a maximális emisszió hullámhossza is növekszik.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Ha a test abszolút hőmérséklete megkétszereződik, a felületegységre jutó teljes sugárzási teljesítmény nyolcszorosára nő.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A klasszikus Rayleigh-Jeans formula azt jósolta, hogy a sugárzás energiája rövid hullámhosszakon a végtelenbe tart, ami ultraibolya katasztrófaként ismert.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Planck hipotézise szerint az oszcillátor energiája folytonosan, bármilyen kis mennyiségben változhat, ami megoldotta a fekete test spektrumának problémáját.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.2. FELADAT 2 – PÁROSÍTSD A FOGALMAKAT</div>
+            <p style="margin-bottom:15px;">Kösd össze a bal oldali oszlopban lévő fogalmakat a jobb oldali oszlopban lévő megfelelő leírásokkal úgy, hogy vonalat húzol a számtól a megfelelő betűhöz.</p>
+            <table class="match-table">
+                <tr>
+                    <td>
+                        <div class="match-item-left">1. Emissziós képesség</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">A. Az a test, amely minden ráeső sugárzást teljes mértékben elnyel.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">2. Abszolút fekete test</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">B. A felületegységre jutó teljes sugárzási teljesítmény egyenesen arányos a hőmérséklet negyedik hatványával.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">3. Wien-féle eltolódási törvény</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">C. Az az energia, amelyet a test időegység alatt, egységnyi felületről, egy frekvenciatartományban kisugároz.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">4. Stefan-Boltzmann-törvény</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">D. A maximális emisszió hullámhosszának és az abszolút hőmérséklet szorzata állandó.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">5. Planck-állandó</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">E. A klasszikus fizika kudarca a sugárzási spektrum rövid hullámhosszakon történő magyarázatában.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">6. Ultraibolya katasztrófa</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">F. Arányosság az oszcillátor legkisebb energiamennyisége és a frekvenciája között.</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.3. FELADAT 3 – KÖZÉPSŐ NEHÉZSÉGŰ SZÁMÍTÁSI FELADATOK</div>
+            
+            <div class="calc-subtask">
+                <div class="subtask-letter">a)</div>
+                <p>Egy csillagász a Betelgeuse csillagot figyeli meg, és észreveszi, hogy a csillag hősugárzásának emissziónak maximuma 700 nm hullámhosszon található. Számítsd ki a csillag felszínének becsült hőmérsékletét.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">b)</div>
+                <p>Egy öntödében két darab öntöttvas található. Az első darabot 1200 K-re, a másodikat 1500 K-re hevítik. Számítsd ki, hányszor nagyobb a második darab sugárzási teljesítménye az elsőhöz képest, feltételezve, hogy mindkettő abszolút fekete testként viselkedik.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">c)</div>
+                <p>Egy kutató egy 5 &middot; 10<sup>14</sup> Hz frekvenciájú lézersugarat használ egy minta melegítésére. Számítsd ki a lézer által kibocsátott egy sugárzási kvantum energiáját.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">d)</div>
+                <p>Egy hőkamera egy emberi test 310 K-es hőmérsékletének sugárzását rögzíti. Határozd meg, hogy ez a test emissziós képességének maximuma melyik hullámhosszon található.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">1.4. FELADAT 4 – NEHÉZ SZÁMÍTÁSI FELADATOK</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">a)</div>
+                <p>Egy mérnök egy olyan fűtőtestet tervez, amely 1 m<sup>2</sup> felületről 5,67 &middot; 10<sup>4</sup> W teljes sugárzási teljesítményt bocsát ki. Ha a test vákuumban működik, ahol ideális abszolút fekete testnek tekinthető, számítsd ki azt a hőmérsékletet, amelyen ez a test működik.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">b)</div>
+                <p>Egy ismeretlen anyagmintát addig hevítenek, amíg a sugárzás maximuma 1,45 &middot; 10<sup>-3</sup> m hullámhosszra nem esik. Ha a test teljes sugárzási teljesítménye 74,08 W, számítsd ki a sugárzó aktív felületet, feltéve, hogy abszolút fekete testről van szó.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">c)</div>
+                <p>Kísérletileg megállapították, hogy egy oszcillátor által kibocsátott egy kvantum energiája 7,95 &middot; 10<sup>-19</sup> J. Határozd meg a sugárzás frekvenciáját, és annak alapján számítsd ki, hogy a sugárzás a spektrum látható tartományába tartozik-e, a Wien-féle eltolódási törvény alkalmazásával.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box self-assess-box">
+            <span class="box-title">Önértékelés</span>
+            <div class="assess-item">
+                <div class="assess-text">Megértem a vonalas és a folytonos spektrum közötti különbséget.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom magyarázni az abszolút fekete test fogalmát, és ismerem az abszorpciós képességének értékét.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom felírni és alkalmazni a Wien-féle eltolódási törvényt.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom felírni és alkalmazni a Stefan-Boltzmann-törvényt.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Megértem, mi az ultraibolya katasztrófa, és hogyan oldotta meg Planck.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom kiszámítani egy kvantum energiáját a Planck-féle képlet használatával.</div>
+                <div class="assess-boxes">
+                    <span class="chk-box"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. FEJEZET -->
+    <div class="chapter">
+        <h2>2. Fotoelektromos jelenség</h2>
+
+        <div class="glass-box reminder-box">
+            <span class="box-title">Emlékeztető</span>
+            <p>A fotoelektromos jelenség elektronok kibocsátása fémek felületéről, amikor azokat megfelelő frekvenciájú fénnyel megvilágítják. Einstein ezt a jelenséget a foton, a fény részecske fogalmának bevezetésével magyarázta, amely meghatározott energiát hordoz. A kilépő elektronok sebessége nem a fény intenzitásától, hanem csak a frekvenciájától függ, míg az intenzitás a kilépő elektronok számára hat.</p>
+            <div class="glass-box formula-box">
+                <span class="box-title">Kulcsképletek / Fogalmak</span>
+                <p><span class="math">h &middot; &nu; = A<sub>i</sub> + m&middot;v<sup>2</sup> / 2</span> &mdash; Einstein-féle fotoeffektus egyenlet (fémekre). h&middot;&nu; a foton energiája, A<sub>i</sub> a fém kilépési munkája, m&middot;v<sup>2</sup>/2 pedig a kilépett fotoelektron maximális mozgási energiája.</p>
+                <p style="margin-top:10px;"><span class="math">&nu;<sub>0</sub> = A<sub>i</sub> / h</span> &mdash; A fotoeffektus vörös határa. &nu;<sub>0</sub> a jelenség kiváltásához szükséges minimális (határ) frekvencia.</p>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.1. FELADAT 1 – IGAZ / HAMIS</div>
+            <p style="margin-bottom:20px;">Értékeld az alábbi állítások igazságosságát úgy, hogy bekarikázod az I (igaz) vagy a H (hamis) betűt, és röviden indokold a válaszodat.</p>
+
+            <div class="tf-item">
+                <div class="tf-text">A fém felületéről időegység alatt kibocsátott fotoelektronok száma egyenesen arányos a beeső fény intenzitásával.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A kilépett fotoelektronok sebessége akkor nő, ha a beeső fény intenzitása nő, miközben a frekvencia változatlan marad.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Minden fémhez jellemző egy minimális frekvencia, amely alatt a fotoelektromos jelenség nem következhet be, függetlenül a fény intenzitásától.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A kilépési munka az az energia, amely szükséges ahhoz, hogy egy elektron megszabaduljon az atommag vonzóerejétől az atom belsejében.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Nagy intenzitású piros fény mindig kiválthat fotoelektromos jelenséget olyan fémeken, mint a cink.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Ha egy foton nem rendelkezik elegendő energiával a kilépési munka leküzdésére, a hiányzó energia a fém fényvel történő hosszabb besugárzásával pótolható.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Einstein egyenlete szerint, ha egy olyan foton találkozik a fémmel, amelynek frekvenciája egyenlő a határfrekvenciával, a kilépő elektronok mozgási energiája nulla lesz.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A fotoelektromos jelenség olyan jelenség, amely kizárólag a klasszikus hullámelmélet alapján magyarázható.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.2. FELADAT 2 – PÁROSÍTSD A FOGALMAKAT</div>
+            <p style="margin-bottom:15px;">Kösd össze a bal oldali oszlopban lévő fogalmakat a jobb oldali oszlopban lévő megfelelő leírásokkal.</p>
+            <table class="match-table">
+                <tr>
+                    <td>
+                        <div class="match-item-left">1. Fotoelektromos jelenség</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">A. Az az energia, amely szükséges ahhoz, hogy egy szabad elektron elhagyja a fém felületét.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">2. Foton</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">B. A minimális frekvencia, amely elektronkibocsátást vált ki.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">3. Kilépési munka</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">C. Elektronok kibocsátása fém felületéről fény hatására.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">4. Vörös határ</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">D. A fotonok száma, amely egységnyi felületre egységnyi idő alatt esik.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">5. Fotoelektron</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">E. Az elektromágneses sugárzás kvantuma, amely h&middot;&nu; energiát hordoz.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">6. Fény intenzitása</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">F. Elektron, amelyet a fény hatása kilök a fém felületéről.</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.3. FELADAT 3 – KÖZÉPSŐ NEHÉZSÉGŰ SZÁMÍTÁSI FELADATOK</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">a)</div>
+                <p>Egy laboratóriumi technikus egy cégiummintát vizsgál, amelynek kilépési munkája 3,2 &middot; 10<sup>-19</sup> J. Határozd meg a fotoelektromos jelenség kiváltásának határfrekvenciáját ezen a fémen.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">b)</div>
+                <p>A fotocella fotokatódjára olyan fény esik, amelynek fotonjai 5 &middot; 10<sup>-19</sup> J energiájúak. Ha a katód anyagának kilépési munkája 3 &middot; 10<sup>-19</sup> J, számítsd ki a kibocsátott fotoelektronok maximális mozgási energiáját.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">c)</div>
+                <p>Az automatikus ajtókérzékelője 600 nm hullámhosszú lézersugarat használ. Számítsd ki ezen fény egyetlen fotonjának energiáját.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">d)</div>
+                <p>Ha a kilépett fotoelektron maximális mozgási energiája 1,6 &middot; 10<sup>-19</sup> J, számítsd ki azt a maximális sebességet, amellyel ez az elektron elhagyja a fém felületét. (Az elektron tömege 9,1 &middot; 10<sup>-31</sup> kg.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">2.4. FELADAT 4 – NEHÉZ SZÁMÍTÁSI FELADATOK</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">a)</div>
+                <p>Egy napelemet 400 nm hullámhosszú kék fénnyel világítanak meg. Ha az elektronok egy 4,5 &middot; 10<sup>-19</sup> J kilépési munkával rendelkező fém felületéről lépnek ki, számítsd ki ezeknek a fotoelektronoknak a maximális sebességét. (Az elektron tömege 9,1 &middot; 10<sup>-31</sup> kg.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">b)</div>
+                <p>Egy ismeretlen fém vizsgálatakor észrevették, hogy az 1,2 &middot; 10<sup>15</sup> Hz frekvenciájú fény olyan elektronokat hoz ki, amelyek maximális sebessége 4 &middot; 10<sup>5</sup> m/s. Számítsd ki a vizsgált fém kilépési munkáját.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">c)</div>
+                <p>A vizsgálat azt mutatja, hogy a káliumnak 564 nm-es határhullámhossza van. Határozd meg, hogy a 6 &middot; 10<sup>14</sup> Hz frekvenciájú fény kivált-e fotoelektromos jelenséget ezen a fémen, és ha igen, számítsd ki a kilépő elektronok maximális mozgási energiáját.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box self-assess-box">
+            <span class="box-title">Önértékelés</span>
+            <div class="assess-item">
+                <div class="assess-text">Megértem a fotoelektromos jelenség három kulcsszabályszerűségét.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom magyarázni, miért nem tudja a klasszikus fizika magyarázni a fotoeffektust.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom felírni és megmagyarázni Einstein fotoeffektus egyenletét.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Megértem a kilépési munka fogalmát, és tudom, mivel mérik.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Ismerni a fotoeffektus vörös határának képletét és megértem annak fizikai jelentését.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudok átkonvertálni a foton frekvenciája, hullámhossza és energiája között.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. FEJEZET -->
+    <div class="chapter">
+        <h2>3. Compton-jelenség</h2>
+
+        <div class="glass-box reminder-box">
+            <span class="box-title">Emlékeztető</span>
+            <p>A Compton-jelenség az elektromágneses sugárzás (leggyakrabban röntgen- vagy gamma-sugarak) hullámhosszának növekedése, miután szabad elektronokon szóródik. Ez a jelenség véglegesen megerősítette, hogy a foton nemcsak energiát, hanem impulzust is hordoz, így az elektronnal való ütközéskor valódi részecskeként viselkedik.</p>
+            <div class="glass-box formula-box">
+                <span class="box-title">Kulcsképletek / Fogalmak</span>
+                <p><span class="math">&Delta;&lambda; = &lambda;' - &lambda; = (h / m<sub>e</sub>&middot;c) &middot; (1 - cos&phi;)</span> &mdash; Compton-képlet. &Delta;&lambda; a hullámhossz növekedése, &lambda;' a szórás utáni hullámhossz, &lambda; a kezdeti hullámhossz, m<sub>e</sub> az elektron tömege, c a fénysebesség, &phi; pedig a foton szórásának szöge.</p>
+                <p style="margin-top:10px;"><span class="math">&lambda;<sub>c</sub> = h / (m<sub>e</sub>&middot;c) = 2,43 &middot; 10<sup>-12</sup> m</span> &mdash; Compton-hullámhossz az elektronra.</p>
+                <p style="margin-top:10px;"><span class="math">p = h / &lambda;</span> &mdash; A foton impulzusa. p az impulzus, h a Planck-állandó, &lambda; pedig a hullámhossz.</p>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.1. FELADAT 1 – IGAZ / HAMIS</div>
+            <p style="margin-bottom:20px;">Értékeld az alábbi állítások igazságosságát úgy, hogy bekarikázod az I (igaz) vagy a H (hamis) betűt, és röviden indokold a válaszodat.</p>
+
+            <div class="tf-item">
+                <div class="tf-text">Compton-szórás során a szórt foton hullámhossza mindig nagyobb, mint a beeső foton hullámhossza.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A Compton-szórás során bekövetkező foton hullámhosszának változása nem függ a beeső sugárzás kezdeti hullámhosszától.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A foton hullámhosszának legnagyobb növekedése akkor következik be, amikor a foton a beeső sugár irányához képest nulla fokos szögben szóródik.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A Compton-jelenség leginkább nagyon alacsony frekvenciájú, például rádióhullámoknál figyelhető meg.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A foton és az elektron rugalmas ütközésekor a foton energia- és impulzusának egy része az elektronra kerül.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">Az elektron Compton-hullámhossza megközelítőleg 2,43 nanométer.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A klasszikus Maxwell-féle elektrodinamika teljes mértékben magyarázza a fény elektronokon történő szóródásakor fellépő hullámhossz-növekedést.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+
+            <div class="tf-item">
+                <div class="tf-text">A Compton-ütközésben részt vevő elektron az ütközés után nagyobb energiával rendelkezik, mint azelőtt.</div>
+                <div class="tf-options">
+                    <span class="chk-box"></span>I
+                    <span class="chk-box"></span>H
+                </div>
+            </div>
+            <div class="write-lines"><div class="line"></div></div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.2. FELADAT 2 – PÁROSÍTSD A FOGALMAKAT</div>
+            <p style="margin-bottom:15px;">Kösd össze a bal oldali oszlopban lévő fogalmakat a jobb oldali oszlopban lévő megfelelő leírásokkal.</p>
+            <table class="match-table">
+                <tr>
+                    <td>
+                        <div class="match-item-left">1. Compton-jelenség</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">A. Olyan sugárzás, amelynél a szóródás miatti hullámhossz-változás a legkifejezettebb.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">2. Foton impulzusa</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">B. A beeső és a szórt foton iránya közötti szög.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">3. Compton-hullámhossz</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">C. A foton olyan tulajdonsága, amely a Planck-állandó és a hullámhossz hányadosaként számítható.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">4. Szórási szög</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">D. A foton hullámhosszának növekedése elektronnal való ütközéskor.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">5. Röntgensugárzás</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">E. A maximális lehetséges hullámhossz-változás értéke elektronnal való ütközéskor.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="match-item-left">6. Rugalmas ütközés</div>
+                    </td>
+                    <td>
+                        <div class="match-item-right">F. Olyan folyamat, amelyben a részecskék rendszerének teljes energiája és impulzusa megmarad.</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.3. FELADAT 3 – KÖZÉPSŐ NEHÉZSÉGŰ SZÁMÍTÁSI FELADATOK</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">a)</div>
+                <p>Egy röntgenvizsgálatra használt orvosi készülékben a sugarak szövettel ütköznek, és 90 fokos szögben szóródnak. Mekkora a foton hullámhosszának növekedése ezen ütközés után? (A Compton-hullámhossz 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">b)</div>
+                <p>A beeső röntgensugár kezdeti hullámhossza 70 pm. A céltárgy elektronjain történő szóródás után a szórási szög 90 fok. Számítsd ki a sugárzás új hullámhosszát a szóródás után.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">c)</div>
+                <p>Egy kutató méri a sugárterápiában daganatok kezelésére használt gamma-sugárzás fotonjainak impulzusát. Ha a foton hullámhossza 2 &middot; 10<sup>-12</sup> m, számítsd ki az impulzusát.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">d)</div>
+                <p>Egy kísérlet során a foton egy szabad elektronnal ütközik, és hátrafelé, 180 fokos szögben szóródik. Számítsd ki a foton hullámhosszának teljes növekedését. (A Compton-hullámhossz 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="task-title">3.4. FELADAT 4 – NEHÉZ SZÁMÍTÁSI FELADATOK</div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">a)</div>
+                <p>Az 50 pm hullámhosszú beeső röntgensugár egy szabad elektronnal ütközik, és 60 fokos szögben szóródik. Számítsd ki a szórt sugárzás új hullámhosszát. (A Compton-hullámhossz 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">b)</div>
+                <p>A foton elektronnal ütközött, és utána mért hullámhossza 2,43 &middot; 10<sup>-12</sup> m-rel megnőtt. Milyen szögben, a beeső sugár irányához képest történt a foton szóródása? Indokold számítással.</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+
+            <div class="calc-subtask">
+                <div class="subtask-letter">c)</div>
+                <p>A szórt röntgensugár hullámhossza 75 pm, miután elektronnal ütközött és 90 fokos szögben szóródott. Számítsd ki a beeső sugár kezdeti hullámhosszát, mielőtt az elektronnal ütközött volna. (A Compton-hullámhossz 2,43 &middot; 10<sup>-12</sup> m.)</p>
+                <div class="write-lines">
+                    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box self-assess-box">
+            <span class="box-title">Önértékelés</span>
+            <div class="assess-item">
+                <div class="assess-text">Megértem a Compton-jelenség lényegét, és tudom, mi történik a foton hullámhosszával.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom felírni és értelmezni a hullámhossz növekedésének képletét.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Megértem, hogy a Compton-jelenség bizonyítja, hogy a foton impulzussal rendelkező részecske.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom, melyik szórási szögnél legnagyobb a hullámhossz növekedése.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Különbséget tudok tenni a Compton-hullámhossz és a sugárzás hullámhossza fogalma között.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+            <div class="assess-item">
+                <div class="assess-text">Tudom magyarázni a Compton-jelenség orvosi és sugárzásérzékelési jelentőségét.</div>
+                <div class="assess-boxes"><span class="chk-box"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
