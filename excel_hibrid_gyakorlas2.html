@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iskolai büfé – Excel gyakorlás: Kezdőlap + Beszúrás + Lapelrendezés</title>
+<style>
+:root{
+  --g9:#0e2748; --g8:#13407a; --g7:#1a4f94; --g6:#2563b0; --g5:#3b82d0;
+  --g2:#cfdff3; --g1:#e7effa; --g0:#f3f7fd;
+  --bg:#e4eaf4; --line:#d0d9e8; --ink:#1b2433; --mut:#566377; --amber:#ffb900;
+  --e:#2f9e5f; --eb:#e3f4ea;
+  --m:#7b4fc4; --mb:#efe8fb;
+  --k:#d98200; --kb:#fff1d6;
+  --h:#a8386b; --hb:#fae6ef;
+  --font:Calibri,Carlito,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:118px}
+body{margin:0;overflow-x:hidden;font-family:var(--font);font-size:17px;line-height:1.58;color:var(--ink);background:var(--bg);padding-bottom:64px}
+body[data-lang="hu"] .sr, body[data-lang="sr"] .hu{display:none !important}
+strong{font-weight:700}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+code{font-family:var(--mono);font-size:.86em;background:var(--g1);color:var(--g8);border:1px solid var(--g2);padding:0 6px;border-radius:5px;white-space:nowrap}
+
+/* ---------- felső sáv ---------- */
+.ribbon{position:sticky;top:0;z-index:40;background:var(--g6);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.ribbon .r1{max-width:1120px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:14px}
+.ribbon .r1 > div:not(.langs){min-width:0}
+.ribbon svg.logo{width:30px;height:30px;flex:none}
+.ribbon .name{font-weight:700;font-size:1.12rem;line-height:1.2}
+.ribbon .sub{font-size:.85rem;color:#d9e7fa;line-height:1.2}
+.langs{margin-left:auto;display:flex;border:1px solid rgba(255,255,255,.55);border-radius:999px;overflow:hidden}
+.langs button{font:inherit;font-size:.9rem;font-weight:600;background:transparent;color:#fff;border:0;padding:5px 15px;cursor:pointer}
+.langs button[aria-pressed="true"]{background:#fff;color:var(--g7)}
+.langs button:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+.tabs{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{color:#e3eefb;text-decoration:none;padding:7px 18px 6px;font-size:.95rem;border-radius:8px 8px 0 0;white-space:nowrap}
+.tabs a:hover{background:rgba(255,255,255,.14)}
+.tabs a.on{background:var(--bg);color:var(--g7);font-weight:700;box-shadow:inset 0 -3px 0 var(--amber)}
+.tabs a.opt{font-style:normal}
+.tabs a:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px 40px;min-width:0}
+
+/* ---------- kártyák ---------- */
+.panelc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px 32px;margin-bottom:20px;box-shadow:0 1px 2px rgba(14,39,72,.05)}
+.hero{position:relative;overflow:hidden;padding:36px 36px 30px}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--g2),var(--g1) 60%,transparent 72%);opacity:.9;pointer-events:none}
+.hero > *{position:relative;z-index:1}
+h1{font-size:clamp(1.9rem,3.7vw,2.7rem);line-height:1.12;margin:0 0 16px;color:var(--g8);font-weight:700;letter-spacing:-.012em;max-width:22ch}
+.lead{font-size:1.1rem;max-width:66ch;margin:0 0 10px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.stat{display:inline-flex;align-items:center;gap:9px;padding:7px 16px 7px 12px;border-radius:999px;background:var(--g0);border:1px solid var(--g2);font-size:.98rem}
+.stat b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.stat i{width:11px;height:11px;border-radius:50%;background:var(--c);display:inline-block}
+.stat.s-must{--c:var(--g6)} .stat.s-extra{--c:var(--k)} .stat.s-bonus{--c:var(--h)}
+.stat.ver{background:var(--g8);border-color:var(--g8);color:#fff;font-weight:600}
+.panelc h2{margin:0 0 8px;font-size:1.3rem;color:var(--g8);line-height:1.25}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px}
+.two .panelc{margin-bottom:0}
+.legend{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.legend li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:8px 12px;border-radius:10px;background:var(--bg2,#f5f8fd);border:1px solid var(--line)}
+.legend .d{font-size:.94rem;color:var(--mut)}
+.legend .req{font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.req.must{background:var(--g6);color:#fff} .req.extra{background:var(--kb);color:#8a5200;border:1px solid #f0c66b} .req.bonus{background:var(--hb);color:#7d2450;border:1px solid #e3a9c3}
+.ul{list-style:none;margin:10px 0 0;padding:0}
+.ul li{padding:5px 0 5px 20px;position:relative}
+.ul li::before{content:"";position:absolute;left:0;top:.95em;width:8px;height:8px;border-radius:50%;background:var(--g5)}
+.ul li.note{color:var(--mut);font-size:.95rem}
+.ul li.note::before{background:var(--amber)}
+
+/* ---------- adattáblák ---------- */
+.views{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:26px 34px;align-items:start;margin-top:16px}
+.view{margin:0;min-width:0}
+.view figcaption{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px}
+.view .vt{font-weight:700;color:var(--g8);font-size:1.05rem}
+.view .vw{color:var(--mut);font-size:.9rem}
+.copy{margin-left:auto;font:inherit;font-size:.88rem;font-weight:600;color:var(--g7);background:#fff;border:1.5px solid var(--g6);border-radius:999px;padding:3px 14px;cursor:pointer}
+.copy:hover{background:var(--g6);color:#fff}
+.copy:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy .lbl-ok{display:none}
+.copy.copied{background:var(--g6);color:#fff}
+.copy.copied .lbl{display:none} .copy.copied .lbl-ok{display:inline}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-bottom:0;background:#fff;border-radius:8px 8px 0 0}
+table.xl{border-collapse:collapse;width:100%;font-size:.98rem;background:#fff}
+.xl th{background:#e5eaf3;color:#47566b;font-weight:400;border:1px solid var(--line);padding:2px 10px;text-align:center;font-size:.82rem}
+.xl th.rn{width:34px;padding:2px 6px}
+.xl th.corner{width:34px}
+.xl td{border:1px solid #dbe3ef;padding:4px 12px;white-space:nowrap}
+.xl td.n{text-align:right}
+.sheettab{display:flex;background:#e5eaf3;border:1px solid var(--line);border-radius:0 0 8px 8px;overflow:hidden}
+.sheettab span{background:#fff;color:var(--g7);font-weight:700;font-size:.9rem;padding:4px 18px 3px;border-bottom:3px solid var(--g6);border-right:1px solid var(--line)}
+
+/* ---------- órák, szakaszok ---------- */
+.sec{margin-top:34px}
+.lband{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,var(--g9),var(--g7));color:#fff;border-radius:16px;padding:22px 28px;box-shadow:0 2px 6px rgba(14,39,72,.2)}
+.lband .big{flex:none;width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center;font-size:2rem;font-weight:700;line-height:1}
+.lband h2{margin:0;font-size:1.5rem;line-height:1.2;color:#fff}
+.lband p{margin:5px 0 0;color:#d3e3f8;max-width:72ch}
+.lband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 11px;border-radius:999px;font-size:.86rem;border:1px solid rgba(255,255,255,.45);color:#fff;white-space:nowrap}
+.pill svg.i{font-size:.95em}
+.xband{display:flex;align-items:center;gap:20px;border-radius:16px;padding:22px 28px}
+.xband .big{flex:none;width:64px;height:64px;border-radius:16px;display:grid;place-items:center;font-size:1.9rem}
+.xband h2{margin:0;font-size:1.5rem;line-height:1.2}
+.xband p{margin:5px 0 0;max-width:72ch}
+.xband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.xband.extra{background:var(--kb);border:2px dashed #eab35a;color:#5a3600}
+.xband.extra .big{background:#fff;color:var(--k);border:1px solid #eab35a}
+.xband.extra h2{color:#7a4700}
+.xband.extra .pill{border-color:#d7a04a;color:#7a4700;background:#fff}
+.xband.bonus{background:linear-gradient(120deg,#3e1730,#6d2148);color:#f8e6ef;border:2px dashed #d190b0}
+.xband.bonus .big{background:rgba(255,255,255,.12);color:var(--amber);border:1px solid rgba(255,255,255,.35)}
+.xband.bonus h2{color:#fff}
+.xband.bonus .pill{border-color:rgba(255,255,255,.5);color:#fff}
+
+.pband{display:flex;align-items:center;gap:16px;margin:30px 0 16px;padding:12px 18px;background:var(--g1);border:1px solid var(--g2);border-radius:12px}
+.pband .pn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--g6);color:#fff;font-weight:700;display:grid;place-items:center;font-size:1rem}
+.pband .pb{flex:1;min-width:0}
+.pband h3{margin:0;font-size:1.15rem;color:var(--g8);line-height:1.25}
+.pband p{margin:1px 0 0;color:var(--mut);font-size:.94rem}
+.pband .ptag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right}
+.ptab{font-size:.84rem;color:var(--g7);font-weight:700;background:#fff;border:1px solid var(--g2);padding:1px 11px;border-radius:999px}
+.pcount{font-size:.88rem;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcount.full{color:var(--g6);font-weight:700}
+.xband .pcount{color:inherit;font-size:.86rem}
+.xband .pcount.full{color:inherit;font-weight:700}
+
+/* ---------- feladatkártyák ---------- */
+.tasks{position:relative;margin-top:20px}
+.pband + .tasks{margin-top:0}
+.tasks::before{content:"";position:absolute;left:21px;top:22px;bottom:30px;width:2px;background:var(--g2)}
+.task{--c:var(--e);--cb:var(--eb);display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 16px;margin-bottom:14px;position:relative}
+.task.lv-e{--c:var(--e);--cb:var(--eb)} .task.lv-m{--c:var(--m);--cb:var(--mb)}
+.task.lv-k{--c:var(--k);--cb:var(--kb)} .task.lv-h{--c:var(--h);--cb:var(--hb)}
+.num{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;font-size:1rem;display:grid;place-items:center;font-variant-numeric:tabular-nums;border:4px solid var(--bg);box-shadow:0 0 0 1px var(--c)}
+.num svg{display:none;width:20px;height:20px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.task.done .num{background:var(--g6);box-shadow:0 0 0 1px var(--g6)}
+.task.done .num .n{display:none} .task.done .num svg{display:block}
+
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:16px 22px 14px;box-shadow:0 1px 2px rgba(14,39,72,.05);min-width:0;transition:box-shadow .15s,border-color .15s}
+.task:hover .card{box-shadow:0 3px 10px rgba(14,39,72,.1)}
+.task.kind-extra .card{background:#fffaf0;border-style:dashed;border-left-style:solid;border-color:#eab35a;border-left-color:var(--k)}
+.task.kind-bonus .card{background:#fdf5f9;border-style:dashed;border-left-style:solid;border-color:#dfa8c1;border-left-color:var(--h)}
+.task.done .card{background:var(--g0);border-color:var(--g5);border-left-color:var(--g6);border-style:solid}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap}
+.head h4{margin:0;font-size:1.16rem;line-height:1.3;color:var(--g8);flex:1 1 240px}
+.chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lv{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--c);background:var(--cb);padding:2px 11px 2px 9px;border-radius:999px;white-space:nowrap}
+.lv i{width:8px;height:8px;border-radius:50%;background:var(--c);display:inline-block}
+.tag{font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.tag.extra{background:var(--k);color:#fff} .tag.bonus{background:var(--h);color:#fff}
+
+.path{display:flex;align-items:flex-start;gap:8px;margin:9px 0 11px;font-size:.86rem}
+.path > span{display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px}
+.path .pi{color:var(--g5);font-size:1.15rem;margin-top:3px}
+.crumb{background:var(--g1);color:var(--g8);border:1px solid var(--g2);border-radius:6px;padding:1px 9px;line-height:1.5}
+.crumb:first-of-type{background:var(--g6);border-color:var(--g6);color:#fff;font-weight:600}
+.sep{color:#8aa0bd;font-style:normal;font-weight:700}
+.txt{margin:0;max-width:82ch}
+.txt strong{color:var(--g9)}
+
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;margin-top:14px;padding-top:11px;border-top:1px dashed #d7e1ef}
+.helps{display:flex;gap:8px;flex-wrap:wrap;min-height:30px}
+.hbtn{font:inherit;font-size:.88rem;font-weight:700;display:inline-flex;align-items:center;gap:7px;padding:4px 13px 4px 10px;border-radius:999px;cursor:pointer;background:#fff;border:1.5px solid var(--bc);color:var(--bt)}
+.hbtn.tipb{--bc:#e7b64a;--bt:#8a5200}
+.hbtn.chkb{--bc:var(--g5);--bt:var(--g7)}
+.hbtn:hover,.hbtn[aria-expanded="true"]{background:var(--bc);color:#fff}
+.hbtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.hbtn svg.i{font-size:1.1em}
+.panel{margin-top:10px;padding:10px 14px 10px 14px;border-radius:10px;font-size:.97rem;max-width:74ch}
+.panel p{margin:0}
+.panel .plab{display:block;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.panel.tip{background:#fff8e6;border:1px solid #f0d38a} .panel.tip .plab{color:#8a5200}
+.panel.chk{background:var(--g0);border:1px solid var(--g2)} .panel.chk .plab{color:var(--g7)}
+.panel[hidden]{display:none}
+
+.ok{position:relative;display:inline-flex;align-items:center;gap:9px;padding:5px 16px 5px 8px;border:1.5px solid #9fb2cc;border-radius:999px;background:#fff;cursor:pointer;font-weight:700;color:var(--g7);margin-left:auto;transition:background .12s,color .12s,border-color .12s}
+.ok input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.ok .box{width:22px;height:22px;border-radius:50%;border:2px solid #9aaec8;background:#fff;display:grid;place-items:center}
+.ok .box svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.ok:hover{border-color:var(--g6)}
+.ok input:focus-visible + .box{outline:3px solid var(--amber);outline-offset:3px}
+.task.done .ok{background:var(--g6);border-color:var(--g6);color:#fff}
+.task.done .ok .box{background:#fff;border-color:#fff}
+.task.done .ok .box svg{opacity:1;stroke:var(--g6)}
+
+/* ---------- mérföldkő ---------- */
+.milestone{position:relative;margin:34px 0 0;padding:20px 26px;border-radius:16px;background:#fff;border:2px dashed #9fb2cc;display:flex;align-items:center;gap:18px}
+.milestone .mi{flex:none;width:52px;height:52px;border-radius:50%;background:var(--g1);color:var(--g6);display:grid;place-items:center;font-size:1.6rem}
+.milestone h2{margin:0;font-size:1.3rem;color:var(--g8)}
+.milestone p{margin:3px 0 0;color:var(--mut)}
+.milestone .m-done{display:none}
+.milestone.done{background:var(--g6);border:2px solid var(--g7);color:#fff}
+.milestone.done .mi{background:#fff;color:var(--g6)}
+.milestone.done h2,.milestone.done p{color:#fff}
+.milestone.done .m-todo{display:none} .milestone.done .m-done{display:block}
+.done-band{display:none;margin-top:24px;background:linear-gradient(120deg,var(--g9),var(--g6));color:#fff;padding:24px 30px;border-radius:16px}
+.done-band.show{display:block}
+.done-band h2{margin:0 0 4px;font-size:1.5rem}
+.done-band p{margin:0}
+.endnote{padding:22px 4px 0;color:var(--mut);font-size:.9rem}
+
+/* ---------- alsó állapotsor ---------- */
+.status{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--g8);color:#fff;font-size:.95rem;box-shadow:0 -2px 8px rgba(0,0,0,.15)}
+.status .in{max-width:1120px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:14px}
+.status b{font-variant-numeric:tabular-nums}
+.status .opt{color:#ffe7ae;white-space:nowrap}
+.track{flex:1;height:9px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;min-width:60px}
+.fill{height:100%;width:0;background:var(--amber);transition:width .25s,background .25s}
+.fill.full{background:#7be0a5}
+.reset{font:inherit;font-size:.86rem;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:2px 12px;cursor:pointer;white-space:nowrap}
+.reset:hover{background:rgba(255,255,255,.16)}
+.reset:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+/* ---------- kisebb képernyő ---------- */
+@media (max-width:860px){
+  body{font-size:16.5px}
+  .wrap{padding:16px 12px 30px}
+  .panelc{padding:20px 18px}
+  .hero{padding:26px 20px 22px}
+  .two,.views{grid-template-columns:minmax(0,1fr)}
+  .tasks::before{left:15px}
+  .task{grid-template-columns:32px minmax(0,1fr);gap:0 10px}
+  .num{width:32px;height:32px;font-size:.85rem;border-width:3px}
+  .num svg{width:15px;height:15px}
+  .card{padding:14px 15px 12px}
+  .lband,.xband{padding:18px 16px;gap:14px;align-items:flex-start}
+  .lband .big,.xband .big{width:46px;height:46px;font-size:1.4rem;border-radius:12px}
+  .lband h2,.xband h2{font-size:1.25rem}
+  .pband{flex-wrap:wrap;gap:8px 12px;padding:10px 12px}
+  .pband .ptag{flex-direction:row;align-items:center;gap:10px;margin-left:46px}
+  .ribbon .sub{display:none}
+  .ribbon .r1{padding:8px 12px}
+  .ribbon .name{font-size:1rem}
+  .langs button{padding:5px 11px}
+  .tabs{padding:0 8px}
+  .tabs a{padding:7px 12px 6px}
+  .view figcaption .copy{margin-left:0}
+  .milestone{flex-direction:column;align-items:flex-start;padding:18px}
+  .status .in{gap:8px;padding:7px 12px;font-size:.85rem}
+  .status .opt .lab{display:none}
+  .legend li{grid-template-columns:1fr auto}
+  .legend .d{grid-column:1 / -1;order:3}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
+
+/* ---------- nyomtatás ---------- */
+@media print{
+  body{background:#fff;padding:0;font-size:12pt}
+  .ribbon,.status,.copy,.ok,.hbtn,.panel.chk{display:none !important}
+  .panel.tip[hidden]{display:block !important}
+  .wrap{padding:0}
+  .card,.panelc{box-shadow:none}
+  .task{break-inside:avoid}
+  .lband,.xband,.num,.crumb,.lv,.tag,.pband{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body data-lang="hu">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 3 1.1-6.2L3 9.7l6.2-.9z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C10 4 4 9 4 15a5 5 0 0 0 5 5c6 0 11-6 11-16zM4 20c3-5 7-8 11-10"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 14v4M8 21h8M10 18h4"/></symbol>
+  <symbol id="i-dash" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></symbol>
+</svg>
+
+<header class="ribbon">
+  <div class="r1">
+    <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="1.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+    </svg>
+    <div>
+      <div class="name"><span class="hu">Iskolai büfé – Excel gyakorlás</span><span class="sr">Školski bife – Excel vežba</span></div>
+      <div class="sub"><span class="hu">Kezdőlap + Beszúrás + Lapelrendezés · Excel 2019 / 2021 · három tanórára</span><span class="sr">Početna + Umetanje + Raspored stranice · Excel 2019 / 2021 · za tri školska časa</span></div>
+    </div>
+    <div class="langs" role="group" aria-label="Nyelv / Jezik">
+      <button type="button" id="btn-hu" aria-pressed="true">Magyar</button>
+      <button type="button" id="btn-sr" aria-pressed="false">Srpski</button>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Navigáció">
+    <a href="#data" class="on"><span class="hu">Adatok</span><span class="sr">Podaci</span></a>
+    <a href="#lesson1"><span class="hu">1. óra</span><span class="sr">1. čas</span></a>
+    <a href="#lesson2"><span class="hu">2. óra</span><span class="sr">2. čas</span></a>
+    <a href="#lesson3"><span class="hu">3. óra</span><span class="sr">3. čas</span></a>
+    <a href="#extra" class="opt"><span class="hu">Ráadás</span><span class="sr">Dodatno</span></a>
+    <a href="#bonus" class="opt"><span class="hu">Bónusz</span><span class="sr">Bonus</span></a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="panelc hero" id="top">
+    <h1><span class="hu">Iskolai büfé: heti eladások Excelben</span><span class="sr">Školski bife: nedeljna prodaja u Excelu</span></h1>
+    <p class="lead">
+      <span class="hu">Az iskolai büfé vezetője megkért, hogy dolgozd fel a heti eladásokat: készíts rendezett, megformázott táblázatot, néhány diagramot, és állítsd be úgy a nyomtatást, hogy a jelentés kiférjen a papírra.</span>
+      <span class="sr">Upravnik školskog bifea zamolio te je da obradiš nedeljnu prodaju: napravi uređenu, formatiranu tabelu, nekoliko grafikona i podesi štampu tako da izveštaj stane na papir.</span>
+    </p>
+    <p class="lead">
+      <span class="hu">A feladatsor három tanórára készült. A <strong>könnyű és a közepes feladatok kötelezők</strong>. A <strong>ráadás</strong> és a <strong>bónusz</strong> azoknak szól, akik hamarabb végeznek.</span>
+      <span class="sr">Zadaci su pripremljeni za tri školska časa. <strong>Laki i srednji zadaci su obavezni</strong>. <strong>Dodatni</strong> i <strong>bonus</strong> zadaci namenjeni su onima koji ranije završe.</span>
+    </p>
+    <div class="stats">
+      <span class="stat s-must"><i></i><b>41</b> <span class="hu">kötelező feladat</span><span class="sr">obaveznih zadataka</span></span>
+      <span class="stat s-extra"><i></i><b>4</b> <span class="hu">ráadás</span><span class="sr">dodatna</span></span>
+      <span class="stat s-bonus"><i></i><b>2</b> <span class="hu">bónusz</span><span class="sr">bonus</span></span>
+      <span class="stat ver"><svg class="i"><use href="#i-dash"/></svg> Excel 2019 · 2021</span>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="panelc">
+      <h2><span class="hu">Hogyan haladj?</span><span class="sr">Kako da napreduješ?</span></h2>
+      <ul class="legend">
+        <li style="--c:var(--e);--cb:var(--eb)"><span class="lv task-lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span><span class="d"><span class="hu">egy-két lépés, ismétlés</span><span class="sr">jedan-dva koraka, ponavljanje</span></span><span class="req must"><span class="hu">kötelező</span><span class="sr">obavezno</span></span></li>
+        <li style="--c:var(--m);--cb:var(--mb)"><span class="lv task-lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span><span class="d"><span class="hu">több lépés vagy új funkció</span><span class="sr">više koraka ili nova funkcija</span></span><span class="req must"><span class="hu">kötelező</span><span class="sr">obavezno</span></span></li>
+        <li style="--c:var(--k);--cb:var(--kb)"><span class="lv task-lv"><i></i><span class="hu">Közepesen nehéz</span><span class="sr">Srednje teško</span></span><span class="d"><span class="hu">kevesebb útmutató, több önállóság</span><span class="sr">manje uputstva, više samostalnosti</span></span><span class="req extra"><span class="hu">ráadás</span><span class="sr">dodatno</span></span></li>
+        <li style="--c:var(--h);--cb:var(--hb)"><span class="lv task-lv"><i></i><span class="hu">Nehéz</span><span class="sr">Teško</span></span><span class="d"><span class="hu">szabály és magyarázat, önálló gondolkodás</span><span class="sr">pravilo i objašnjenje, samostalno razmišljanje</span></span><span class="req bonus"><span class="hu">bónusz</span><span class="sr">bonus</span></span></li>
+      </ul>
+      <ul class="ul">
+        <li><span class="hu">Ha kész egy feladat, pipáld ki a kártya alján a <strong>Kész</strong> gombot. A lap alján látod, hol tartasz.</span><span class="sr">Kad završiš zadatak, klikni na dugme <strong>Gotovo</strong> na dnu kartice. Na dnu stranice vidiš dokle si stigao/la.</span></li>
+        <li><span class="hu">Az <strong>Ellenőrzés</strong> részt akkor nyisd le, ha már megoldottad: ott látod, minek kell kijönnie.</span><span class="sr">Deo <strong>Provera</strong> otvori tek kad rešiš zadatak: tamo vidiš šta treba da dobiješ.</span></li>
+        <li><span class="hu"><code>A1:E7</code> az A1-től E7-ig tartó terület. A <strong>Ctrl</strong> nyomva tartásával több területet is kijelölhetsz.</span><span class="sr"><code>A1:E7</code> je oblast od A1 do E7. Držeći taster <strong>Ctrl</strong> možeš da označiš više oblasti.</span></li>
+      </ul>
+    </section>
+
+    <section class="panelc">
+      <h2><span class="hu">Mit használunk?</span><span class="sr">Šta koristimo?</span></h2>
+      <ul class="ul">
+        <li><span class="hu"><strong>Kezdőlap:</strong> Betűtípus, Igazítás, Szám, Stílusok (cellastílusok és alap feltételes formázás) és Szerkesztés (automatikus összegzés, rendezés és szűrés).</span><span class="sr"><strong>Početna:</strong> Font, Poravnanje, Broj, Stilovi (stilovi ćelija i osnovno uslovno oblikovanje) i Izmena (automatski zbir, sortiranje i filtriranje).</span></li>
+        <li><span class="hu"><strong>Beszúrás › Diagramok:</strong> csak három típus: oszlopdiagram, vonaldiagram és kördiagram.</span><span class="sr"><strong>Umetanje › Grafikoni:</strong> samo tri tipa: stubičasti, linijski i kružni grafikon.</span></li>
+        <li><span class="hu"><strong>Lapelrendezés › Oldalbeállítás:</strong> margók, tájolás és méret.</span><span class="sr"><strong>Raspored stranice › Podešavanje stranice:</strong> margine, orijentacija i veličina.</span></li>
+        <li><span class="hu">Kimutatást (PivotTable) és kimutatásdiagramot (PivotChart) most nem használunk.</span><span class="sr">Izvedene tabele (PivotTable) i izvedene grafikone (PivotChart) sada ne koristimo.</span></li>
+        <li class="note"><span class="hu">A menük és gombok nevei az <strong>Excel 2019</strong> és az <strong>Excel 2021</strong> magyar felületére épülnek. A diagramhoz tartozó lapfül (csak akkor látszik, ha kijelölsz egy diagramot) <strong>Tervezés</strong> a 2019-es, <strong>Diagramtervezés</strong> a 2021-es verzióban, mellette ott a <strong>Formátum</strong> lap. A zárójelben álló angol név segít, ha a program más nyelvű.</span><span class="sr">Nazivi menija i dugmadi zasnovani su na programima <strong>Excel 2019</strong> i <strong>Excel 2021</strong>. Kartica za grafikone (vidi se samo kad je grafikon označen) zove se <strong>Dizajn</strong> u Excelu 2019, a <strong>Dizajn grafikona</strong> u Excelu 2021; pored nje je kartica <strong>Format</strong>. Engleski naziv u zagradi pomaže ako je program na drugom jeziku.</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <section class="panelc" id="data" style="margin-top:20px">
+    <h2><span class="hu">Kiindulási adatok</span><span class="sr">Polazni podaci</span></h2>
+    <p style="margin:0;font-size:1rem">
+      <span class="hu">Az 1. táblázatot az első órán, a 2. táblázatot a második órán fogod használni. Kattints a <strong>Másolás Excelbe</strong> gombra, majd illeszd be (<strong>Ctrl+V</strong>) az Excelben az <code>A1</code> cellába.</span>
+      <span class="sr">Tabelu 1 koristiš na prvom, a tabelu 2 na drugom času. Klikni na <strong>Kopiraj u Excel</strong>, pa nalepi (<strong>Ctrl+V</strong>) u Excelu u ćeliju <code>A1</code>.</span>
+    </p>
+    <div class="views">
+
+    <figure class="view">
+      <figcaption>
+        <span class="vt"><span class="hu">1. táblázat</span><span class="sr">Tabela 1</span></span>
+        <span class="vw"><span class="hu">Az első munkalapra, az A1 cellától</span><span class="sr">Na prvi list, od ćelije A1</span></span>
+        <button type="button" class="copy" data-tbl="tbl1">
+          <span class="lbl"><span class="hu">Másolás Excelbe</span><span class="sr">Kopiraj u Excel</span></span>
+          <span class="lbl-ok"><span class="hu">Másolva ✓</span><span class="sr">Kopirano ✓</span></span>
+        </button>
+      </figcaption>
+      <div class="scroll"><div class="hu"><table class="xl" id="tbl1-hu"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr></thead><tbody><tr><th class="rn">1</th><td>Termék</td><td>Hétfő</td><td>Kedd</td><td>Szerda</td><td>Csütörtök</td><td>Péntek</td></tr><tr><th class="rn">2</th><td>Szendvics</td><td class="n">42</td><td class="n">38</td><td class="n">45</td><td class="n">40</td><td class="n">55</td></tr><tr><th class="rn">3</th><td>Pogácsa</td><td class="n">30</td><td class="n">35</td><td class="n">28</td><td class="n">33</td><td class="n">40</td></tr><tr><th class="rn">4</th><td>Gyümölcslé</td><td class="n">25</td><td class="n">30</td><td class="n">27</td><td class="n">32</td><td class="n">45</td></tr><tr><th class="rn">5</th><td>Alma</td><td class="n">18</td><td class="n">22</td><td class="n">20</td><td class="n">25</td><td class="n">15</td></tr><tr><th class="rn">6</th><td>Joghurt</td><td class="n">12</td><td class="n">15</td><td class="n">18</td><td class="n">14</td><td class="n">20</td></tr><tr><th class="rn">7</th><td>Kakaós csiga</td><td class="n">35</td><td class="n">28</td><td class="n">32</td><td class="n">30</td><td class="n">48</td></tr></tbody></table></div><div class="sr"><table class="xl" id="tbl1-sr"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr></thead><tbody><tr><th class="rn">1</th><td>Proizvod</td><td>Ponedeljak</td><td>Utorak</td><td>Sreda</td><td>Četvrtak</td><td>Petak</td></tr><tr><th class="rn">2</th><td>Sendvič</td><td class="n">42</td><td class="n">38</td><td class="n">45</td><td class="n">40</td><td class="n">55</td></tr><tr><th class="rn">3</th><td>Pogačica</td><td class="n">30</td><td class="n">35</td><td class="n">28</td><td class="n">33</td><td class="n">40</td></tr><tr><th class="rn">4</th><td>Sok</td><td class="n">25</td><td class="n">30</td><td class="n">27</td><td class="n">32</td><td class="n">45</td></tr><tr><th class="rn">5</th><td>Jabuka</td><td class="n">18</td><td class="n">22</td><td class="n">20</td><td class="n">25</td><td class="n">15</td></tr><tr><th class="rn">6</th><td>Jogurt</td><td class="n">12</td><td class="n">15</td><td class="n">18</td><td class="n">14</td><td class="n">20</td></tr><tr><th class="rn">7</th><td>Kifla sa kakaom</td><td class="n">35</td><td class="n">28</td><td class="n">32</td><td class="n">30</td><td class="n">48</td></tr></tbody></table></div></div>
+      <div class="sheettab"><span><span class="hu">Heti eladás (db)</span><span class="sr">Nedeljna prodaja (kom)</span></span></div>
+    </figure>
+
+
+    <figure class="view">
+      <figcaption>
+        <span class="vt"><span class="hu">2. táblázat</span><span class="sr">Tabela 2</span></span>
+        <span class="vw"><span class="hu">A 2. órán, új munkalapra, az A1 cellától</span><span class="sr">Na 2. času, na novi list, od ćelije A1</span></span>
+        <button type="button" class="copy" data-tbl="tbl2">
+          <span class="lbl"><span class="hu">Másolás Excelbe</span><span class="sr">Kopiraj u Excel</span></span>
+          <span class="lbl-ok"><span class="hu">Másolva ✓</span><span class="sr">Kopirano ✓</span></span>
+        </button>
+      </figcaption>
+      <div class="scroll"><div class="hu"><table class="xl" id="tbl2-hu"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead><tbody><tr><th class="rn">1</th><td>Termék</td><td>Egységár</td><td>Eladott (db)</td><td>Bevétel (Ft)</td></tr><tr><th class="rn">2</th><td>Szendvics</td><td class="n">200</td><td class="n">220</td><td class="n">44000</td></tr><tr><th class="rn">3</th><td>Pogácsa</td><td class="n">150</td><td class="n">166</td><td class="n">24900</td></tr><tr><th class="rn">4</th><td>Gyümölcslé</td><td class="n">200</td><td class="n">159</td><td class="n">31800</td></tr><tr><th class="rn">5</th><td>Alma</td><td class="n">100</td><td class="n">100</td><td class="n">10000</td></tr><tr><th class="rn">6</th><td>Joghurt</td><td class="n">170</td><td class="n">79</td><td class="n">13430</td></tr><tr><th class="rn">7</th><td>Kakaós csiga</td><td class="n">150</td><td class="n">173</td><td class="n">25950</td></tr></tbody></table></div><div class="sr"><table class="xl" id="tbl2-sr"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead><tbody><tr><th class="rn">1</th><td>Proizvod</td><td>Cena</td><td>Prodato (kom)</td><td>Prihod (RSD)</td></tr><tr><th class="rn">2</th><td>Sendvič</td><td class="n">200</td><td class="n">220</td><td class="n">44000</td></tr><tr><th class="rn">3</th><td>Pogačica</td><td class="n">150</td><td class="n">166</td><td class="n">24900</td></tr><tr><th class="rn">4</th><td>Sok</td><td class="n">200</td><td class="n">159</td><td class="n">31800</td></tr><tr><th class="rn">5</th><td>Jabuka</td><td class="n">100</td><td class="n">100</td><td class="n">10000</td></tr><tr><th class="rn">6</th><td>Jogurt</td><td class="n">170</td><td class="n">79</td><td class="n">13430</td></tr><tr><th class="rn">7</th><td>Kifla sa kakaom</td><td class="n">150</td><td class="n">173</td><td class="n">25950</td></tr></tbody></table></div></div>
+      <div class="sheettab"><span><span class="hu">Árbevétel</span><span class="sr">Prihod</span></span></div>
+    </figure>
+
+    </div>
+  </section>
+
+  <section class="sec" id="lesson1">
+    <header class="lband">
+      <div class="big">1</div>
+      <div>
+        <h2><span class="hu">1. óra – Táblázat, betűtípus és igazítás</span><span class="sr">1. čas – Tabela, font i poravnanje</span></h2>
+        <p><span class="hu">Begépeled a heti eladásokat, összegzel, majd megformázod a táblázatot: betűtípus, szegély, kitöltés, igazítás.</span><span class="sr">Uneseš nedeljnu prodaju, napraviš zbirove, a zatim formatiraš tabelu: font, ivice, popuna, poravnanje.</span></p>
+        <div class="meta">
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><span class="hu">kb. 45 perc</span><span class="sr">oko 45 minuta</span></span>
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>13 <span class="hu">kötelező feladat</span><span class="sr">obaveznih zadataka</span></span>
+        </div>
+      </div>
+    </header>
+    <div class="pband" id="part1">
+      <span class="pn">1</span>
+      <div class="pb">
+        <h3><span class="hu">Mentés és összegzés</span><span class="sr">Čuvanje i zbirovi</span></h3>
+        <p><span class="hu">Adatbevitel, mentés, automatikus összegzés sorra és oszlopra.</span><span class="sr">Unos podataka, čuvanje, automatski zbir za redove i kolone.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Kezdőlap</span><span class="sr">Početna</span></span><span class="pcount" data-pc="1" data-total="3">0 / 3</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-e kind-must" id="t1" data-part="1" data-kind="must">
+        <div class="num"><span class="n">1</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Adatok bevitele és mentés</span><span class="sr">Unos podataka i čuvanje</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Fájl</span><i class="sep">›</i><span class="crumb">Mentés másként</span></span><span class="sr"><span class="crumb">Fajl</span><i class="sep">›</i><span class="crumb">Sačuvaj kao</span></span></div>
+          <p class="txt"><span class="hu">Nyiss egy új Excel munkafüzetet. Másold be az <strong>1. táblázatot</strong> (Heti eladás) az <code>A1</code> cellától kezdve. Nevezd át a munkalapot <strong>Heti eladás</strong> névre (duplakattintás a lapfülön). Mentsd el a fájlt <strong>iskolai_bufe_vezeteknev.xlsx</strong> néven, és munka közben időnként nyomd meg a <strong>Ctrl+S</strong> billentyűkombinációt.</span><span class="sr">Otvori novu Excel radnu svesku. Prekopiraj <strong>tabelu 1</strong> (Nedeljna prodaja) počevši od ćelije <code>A1</code>. Preimenuj list u <strong>Nedeljna prodaja</strong> (dvoklik na karticu lista). Sačuvaj fajl pod imenom <strong>skolski_bife_prezime.xlsx</strong> i tokom rada povremeno pritisni <strong>Ctrl+S</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="1" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t2" data-part="1" data-kind="must">
+        <div class="num"><span class="n">2</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Összesen oszlop</span><span class="sr">Kolona Ukupno</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Szerkesztés</span><i class="sep">›</i><span class="crumb">Automatikus összegzés</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Izmena</span><i class="sep">›</i><span class="crumb">Automatski zbir</span></span></div>
+          <p class="txt"><span class="hu">Írd a <code>G1</code> cellába: <strong>Összesen</strong>. Jelöld ki a <code>G2:G7</code> cellákat, és kattints az <strong>Automatikus összegzés</strong> (AutoSum, Σ) gombra. Így minden termékre megkapod az öt nap együttes eladását.</span><span class="sr">U ćeliju <code>G1</code> upiši: <strong>Ukupno</strong>. Označi ćelije <code>G2:G7</code> i klikni na dugme <strong>Automatski zbir</strong> (AutoSum, Σ). Tako za svaki proizvod dobijaš zbir prodaje za svih pet dana.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk2"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="2" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk2" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu"><code>G2</code> = 220, <code>G5</code> = 100, <code>G7</code> = 173.</span><span class="sr"><code>G2</code> = 220, <code>G5</code> = 100, <code>G7</code> = 173.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t3" data-part="1" data-kind="must">
+        <div class="num"><span class="n">3</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Összesen sor</span><span class="sr">Red Ukupno</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Szerkesztés</span><i class="sep">›</i><span class="crumb">Automatikus összegzés</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Izmena</span><i class="sep">›</i><span class="crumb">Automatski zbir</span></span></div>
+          <p class="txt"><span class="hu">Írd az <code>A8</code> cellába: <strong>Összesen</strong>. Jelöld ki a <code>B8:G8</code> cellákat, és kattints az <strong>Automatikus összegzés</strong> (Σ) gombra. Így minden napra megkapod az összes eladást.</span><span class="sr">U ćeliju <code>A8</code> upiši: <strong>Ukupno</strong>. Označi ćelije <code>B8:G8</code> i klikni na dugme <strong>Automatski zbir</strong> (Σ). Tako za svaki dan dobijaš ukupnu prodaju.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk3"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="3" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk3" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu"><code>B8</code> = 162, <code>F8</code> = 223, a jobb alsó sarokban <code>G8</code> = 897.</span><span class="sr"><code>B8</code> = 162, <code>F8</code> = 223, a u donjem desnom uglu <code>G8</code> = 897.</span></p></div>
+        </div>
+      </article>
+    </div>
+    <div class="pband" id="part2">
+      <span class="pn">2</span>
+      <div class="pb">
+        <h3><span class="hu">Betűtípus</span><span class="sr">Font</span></h3>
+        <p><span class="hu">Félkövér, betűszín, kitöltőszín, betűtípus és méret, szegélyek.</span><span class="sr">Podebljano, boja fonta, boja popune, font i veličina, ivice.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Kezdőlap</span><span class="sr">Početna</span></span><span class="pcount" data-pc="2" data-total="5">0 / 5</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-e kind-must" id="t4" data-part="2" data-kind="must">
+        <div class="num"><span class="n">4</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Fejléc formázása</span><span class="sr">Formatiranje zaglavlja</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Betűtípus</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Font</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A1:G1</code> cellákat. Legyen <strong>Félkövér</strong> (Bold), a betűszín (Font Color) <strong>fehér</strong>, a <strong>Kitöltőszín</strong> (Fill Color) pedig <strong>sötétkék</strong>.</span><span class="sr">Označi ćelije <code>A1:G1</code>. Neka bude <strong>Podebljano</strong> (Bold), boja fonta (Font Color) <strong>bela</strong>, a <strong>Boja popune</strong> (Fill Color) <strong>tamnoplava</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="4" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t5" data-part="2" data-kind="must">
+        <div class="num"><span class="n">5</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Betűtípus és betűméret</span><span class="sr">Font i veličina slova</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Betűtípus</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Font</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A1:G8</code> területet. A <strong>Betűtípus</strong> (Font) listából válaszd az <strong>Arial</strong> fontot, a <strong>Betűméret</strong> (Font Size) legyen <strong>11</strong>.</span><span class="sr">Označi oblast <code>A1:G8</code>. Iz liste <strong>Font</strong> izaberi <strong>Arial</strong>, a <strong>Veličina fonta</strong> (Font Size) neka bude <strong>11</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn tipb" aria-expanded="false" aria-controls="tip5"><svg class="i"><use href="#i-bulb"/></svg><span class="hu">Tipp</span><span class="sr">Savet</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="5" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel tip" id="tip5" hidden><p><span class="plab"><span class="hu">Tipp</span><span class="sr">Savet</span></span><span class="hu">Ha a fejléc betűszíne visszaváltozna feketére, ne aggódj: csak a betűtípus és a méret változik, a szín nem. Ha mégis, állítsd vissza fehérre.</span><span class="sr">Ako se boja zaglavlja vrati na crnu, ne brini: menjaju se samo font i veličina, boja ne. Ako se ipak promeni, vrati je na belu.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t6" data-part="2" data-kind="must">
+        <div class="num"><span class="n">6</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Szegélyek</span><span class="sr">Ivice</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Betűtípus</span><i class="sep">›</i><span class="crumb">Szegélyek</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Font</span><i class="sep">›</i><span class="crumb">Ivice</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A1:G8</code> területet, és a <strong>Szegélyek</strong> (Borders) menüből válaszd a <strong>Minden szegély</strong> (All Borders) lehetőséget.</span><span class="sr">Označi oblast <code>A1:G8</code> i iz menija <strong>Ivice</strong> (Borders) izaberi <strong>Sve ivice</strong> (All Borders).</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="6" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t7" data-part="2" data-kind="must">
+        <div class="num"><span class="n">7</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Az Összesen sor kiemelése</span><span class="sr">Isticanje reda Ukupno</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Betűtípus</span><i class="sep">›</i><span class="crumb">Szegélyek</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Font</span><i class="sep">›</i><span class="crumb">Ivice</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A8:G8</code> cellákat. Legyen <strong>félkövér</strong> és <strong>világoskék</strong> kitöltésű. A <strong>Szegélyek</strong> menüből válaszd a <strong>Felül egyszeres, alul dupla szegély</strong> (Top and Double Bottom Border) lehetőséget.</span><span class="sr">Označi ćelije <code>A8:G8</code>. Neka budu <strong>podebljane</strong> i sa <strong>svetloplavom</strong> popunom. Iz menija <strong>Ivice</strong> izaberi <strong>Gornja jednostruka i donja dvostruka ivica</strong> (Top and Double Bottom Border).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk7"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="7" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk7" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Az utolsó sor alatt dupla vonal látszik, felette egyszeres.</span><span class="sr">Ispod poslednjeg reda vidi se dvostruka linija, a iznad jednostruka.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t8" data-part="2" data-kind="must">
+        <div class="num"><span class="n">8</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Zebracsíkos sorok</span><span class="sr">Naizmenično obojeni redovi</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Betűtípus</span><i class="sep">›</i><span class="crumb">Kitöltőszín</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Font</span><i class="sep">›</i><span class="crumb">Boja popune</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A3:G3</code> sort, majd a <strong>Ctrl</strong> nyomva tartásával az <code>A5:G5</code> és az <code>A7:G7</code> sort is. Adj nekik <strong>halványkék</strong> kitöltést (a Téma színei között a kék oszlop legvilágosabb árnyalata). Így könnyebb követni a sorokat.</span><span class="sr">Označi red <code>A3:G3</code>, pa uz držanje tastera <strong>Ctrl</strong> i redove <code>A5:G5</code> i <code>A7:G7</code>. Dodeli im <strong>bledoplavu</strong> popunu (najsvetlija nijansa plave kolone u Bojama teme). Tako se redovi lakše prate.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="8" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+    </div>
+    <div class="pband" id="part3">
+      <span class="pn">3</span>
+      <div class="pb">
+        <h3><span class="hu">Igazítás</span><span class="sr">Poravnanje</span></h3>
+        <p><span class="hu">Középre igazítás, behúzás, automatikus oszlopszélesség, sortörés, cellaegyesítés.</span><span class="sr">Poravnanje na sredinu, uvlačenje, automatska širina kolone, prelamanje teksta, spajanje ćelija.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Kezdőlap</span><span class="sr">Početna</span></span><span class="pcount" data-pc="3" data-total="5">0 / 5</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-e kind-must" id="t9" data-part="3" data-kind="must">
+        <div class="num"><span class="n">9</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Középre igazítás</span><span class="sr">Poravnanje na sredinu</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Igazítás</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Poravnanje</span></span></div>
+          <p class="txt"><span class="hu">Az <code>A1:G1</code> fejlécet igazítsd <strong>vízszintesen és függőlegesen is középre</strong>. A számokat tartalmazó <code>B2:G8</code> területet igazítsd vízszintesen középre.</span><span class="sr">Zaglavlje <code>A1:G1</code> poravnaj <strong>i vodoravno i uspravno na sredinu</strong>. Oblast sa brojevima <code>B2:G8</code> poravnaj vodoravno na sredinu.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="9" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t10" data-part="3" data-kind="must">
+        <div class="num"><span class="n">10</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Behúzás</span><span class="sr">Uvlačenje teksta</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Igazítás</span><i class="sep">›</i><span class="crumb">Behúzás növelése</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Poravnanje</span><i class="sep">›</i><span class="crumb">Povećaj uvlačenje</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A2:A7</code> cellákat (a terméknevek), és kattints egyszer a <strong>Behúzás növelése</strong> (Increase Indent) gombra.</span><span class="sr">Označi ćelije <code>A2:A7</code> (nazivi proizvoda) i klikni jednom na dugme <strong>Povećaj uvlačenje</strong> (Increase Indent).</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="10" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t11" data-part="3" data-kind="must">
+        <div class="num"><span class="n">11</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Oszlopszélesség automatikusan</span><span class="sr">Automatska širina kolone</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Cellák</span><i class="sep">›</i><span class="crumb">Formátum</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Ćelije</span><i class="sep">›</i><span class="crumb">Format</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <strong>A:G</strong> oszlopokat az oszlopfejlécekkel, majd kattints duplán két oszlopfejléc közötti határvonalra. (Ugyanez a menüből: <strong>Formátum › Oszlopszélesség automatikus méretezése</strong>, AutoFit Column Width.) A <em>Kakaós csiga</em> felirat ezután teljesen látszik.</span><span class="sr">Označi kolone <strong>A:G</strong> preko zaglavlja kolona, pa dvaput klikni na liniju između dva zaglavlja. (Isto iz menija: <strong>Format › Automatsko prilagođavanje širine kolone</strong>, AutoFit Column Width.) Naziv <em>Kifla sa kakaom</em> sada se vidi u celosti.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="11" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t12" data-part="3" data-kind="must">
+        <div class="num"><span class="n">12</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Sortöréssel több sorba</span><span class="sr">Prelamanje teksta</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Igazítás</span><i class="sep">›</i><span class="crumb">Sortöréssel több sorba</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Poravnanje</span><i class="sep">›</i><span class="crumb">Prelomi tekst</span></span></div>
+          <p class="txt"><span class="hu">Írd át a <code>G1</code> cellát: <strong>Összesen a héten (db)</strong>. Jelöld ki a cellát, és kattints a <strong>Sortöréssel több sorba</strong> (Wrap Text) gombra. A fejléc két sorban jelenik meg, a sor magasabb lesz.</span><span class="sr">Promeni ćeliju <code>G1</code>: <strong>Ukupno za nedelju (kom)</strong>. Označi ćeliju i klikni na dugme <strong>Prelomi tekst</strong> (Wrap Text). Zaglavlje se prikazuje u dva reda, a red postaje viši.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn tipb" aria-expanded="false" aria-controls="tip12"><svg class="i"><use href="#i-bulb"/></svg><span class="hu">Tipp</span><span class="sr">Savet</span></button><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk12"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="12" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel tip" id="tip12" hidden><p><span class="plab"><span class="hu">Tipp</span><span class="sr">Savet</span></span><span class="hu">Ha a szöveg mégsem látszik teljesen, a Kezdőlap › Cellák › Formátum › Sormagasság automatikus méretezése segít.</span><span class="sr">Ako se tekst ipak ne vidi u celosti, pomaže Početna › Ćelije › Format › Automatsko prilagođavanje visine reda.</span></p></div><div class="panel chk" id="chk12" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A <code>G1</code> cellában a szöveg két sorban, középre igazítva látszik.</span><span class="sr">U ćeliji <code>G1</code> tekst se vidi u dva reda, poravnat na sredinu.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t13" data-part="3" data-kind="must">
+        <div class="num"><span class="n">13</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Táblázatfelirat egyesítéssel</span><span class="sr">Naslov tabele spajanjem ćelija</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Igazítás</span><i class="sep">›</i><span class="crumb">Egyesítés és középre</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Poravnanje</span><i class="sep">›</i><span class="crumb">Spoji i centriraj</span></span></div>
+          <p class="txt"><span class="hu">Írd az <code>A10</code> cellába: <strong>1. táblázat: Az iskolai büfé heti eladásai (db)</strong>. Jelöld ki az <code>A10:G10</code> cellákat, és kattints az <strong>Egyesítés és középre</strong> (Merge &amp; Center) gombra. A felirat legyen <strong>félkövér</strong>, 12 pontos.</span><span class="sr">U ćeliju <code>A10</code> upiši: <strong>Tabela 1: Nedeljna prodaja školskog bifea (kom)</strong>. Označi ćelije <code>A10:G10</code> i klikni na dugme <strong>Spoji i centriraj</strong> (Merge &amp; Center). Naslov neka bude <strong>podebljan</strong>, veličine 12.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk13"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="13" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk13" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A felirat az <code>A10:G10</code> sávban, középen jelenik meg, egyetlen cellában.</span><span class="sr">Naslov se prikazuje u traci <code>A10:G10</code>, na sredini, u jednoj ćeliji.</span></p></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="lesson2">
+    <header class="lband">
+      <div class="big">2</div>
+      <div>
+        <h2><span class="hu">2. óra – Számformátum, rendezés, stílusok, feltételes formázás</span><span class="sr">2. čas – Format broja, sortiranje, stilovi, uslovno oblikovanje</span></h2>
+        <p><span class="hu">Új táblázatot dolgozol fel: számformátumok, rendezés, szűrés, cellastílusok és a legalapvetőbb feltételes formázások.</span><span class="sr">Obrađuješ novu tabelu: formati brojeva, sortiranje, filtriranje, stilovi ćelija i osnovna uslovna oblikovanja.</span></p>
+        <div class="meta">
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><span class="hu">kb. 45 perc</span><span class="sr">oko 45 minuta</span></span>
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>12 <span class="hu">kötelező feladat</span><span class="sr">obaveznih zadataka</span></span>
+        </div>
+      </div>
+    </header>
+    <div class="pband" id="part4">
+      <span class="pn">4</span>
+      <div class="pb">
+        <h3><span class="hu">Számformátumok</span><span class="sr">Formati brojeva</span></h3>
+        <p><span class="hu">Új munkalap, ezres elválasztó, pénznem és százalék.</span><span class="sr">Novi list, separator hiljada, valuta i procenat.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Kezdőlap</span><span class="sr">Početna</span></span><span class="pcount" data-pc="4" data-total="4">0 / 4</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-e kind-must" id="t14" data-part="4" data-kind="must">
+        <div class="num"><span class="n">14</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Új munkalap és adatok</span><span class="sr">Novi list i podaci</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Lapfülek · + gomb</span></span><span class="sr"><span class="crumb">Kartice listova · dugme +</span></span></div>
+          <p class="txt"><span class="hu">Kattints a lapfülek melletti <strong>+</strong> gombra (új munkalap). Másold be a <strong>2. táblázatot</strong> (Árbevétel) az <code>A1</code> cellától kezdve, nevezd át a lapot <strong>Árbevétel</strong> névre, és kattints duplán az oszlopfejlécek határára, hogy minden szöveg látszódjon.</span><span class="sr">Klikni na dugme <strong>+</strong> pored kartica listova (novi list). Prekopiraj <strong>tabelu 2</strong> (Prihod) počevši od ćelije <code>A1</code>, preimenuj list u <strong>Prihod</strong> i dvaput klikni na granicu zaglavlja kolona da se sav tekst vidi.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk14"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="14" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk14" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Az <code>A1:D7</code> területen 6 termék és 4 oszlop van.</span><span class="sr">U oblasti <code>A1:D7</code> nalazi se 6 proizvoda i 4 kolone.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t15" data-part="4" data-kind="must">
+        <div class="num"><span class="n">15</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Ezres elválasztó</span><span class="sr">Separator hiljada</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Szám</span><i class="sep">›</i><span class="crumb">Ezres elválasztó</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Broj</span><i class="sep">›</i><span class="crumb">Stil zareza</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki a <code>D2:D7</code> cellákat, és kattints az <strong>Ezres elválasztó</strong> (Comma Style, <strong>,</strong> jel) gombra. Ez két tizedeshelyet is mutat, ezért kattints kétszer a <strong>Tizedeshelyek csökkentése</strong> (Decrease Decimal) gombra.</span><span class="sr">Označi ćelije <code>D2:D7</code> i klikni na dugme <strong>Stil zareza</strong> (Comma Style, znak <strong>,</strong>). Ono prikazuje i dve decimale, zato dvaput klikni na dugme <strong>Smanji broj decimala</strong> (Decrease Decimal).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk15"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="15" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk15" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A <code>D2</code> cellában 44 000 látszik (tizedesek nélkül).</span><span class="sr">U ćeliji <code>D2</code> vidi se 44.000 (bez decimala).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t16" data-part="4" data-kind="must">
+        <div class="num"><span class="n">16</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Pénznem formátum</span><span class="sr">Format valute</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Cellák formázása</span><i class="sep">›</i><span class="crumb">Szám (Ctrl+1)</span></span><span class="sr"><span class="crumb">Format ćelija</span><i class="sep">›</i><span class="crumb">Broj (Ctrl+1)</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki a <code>B2:B7</code> cellákat, nyomd meg a <strong>Ctrl+1</strong> billentyűkombinációt, és a <strong>Szám</strong> lapon válaszd a <strong>Pénznem</strong> (Currency) kategóriát: <strong>0 tizedeshely</strong>, szimbólum: <strong>Ft</strong>.</span><span class="sr">Označi ćelije <code>B2:B7</code>, pritisni <strong>Ctrl+1</strong> i na kartici <strong>Broj</strong> izaberi kategoriju <strong>Valuta</strong> (Currency): <strong>0 decimala</strong>, simbol: <strong>RSD</strong> (ili din.).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk16"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="16" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk16" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A <code>B2</code> cellában 200 Ft látszik.</span><span class="sr">U ćeliji <code>B2</code> vidi se 200 RSD.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t17" data-part="4" data-kind="must">
+        <div class="num"><span class="n">17</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Százalék stílus</span><span class="sr">Stil procenta</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Szám</span><i class="sep">›</i><span class="crumb">Százalék stílus</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Broj</span><i class="sep">›</i><span class="crumb">Stil procenta</span></span></div>
+          <p class="txt"><span class="hu">Írd az <code>F1</code> cellába: <strong>Diákkedvezmény</strong>, az <code>F2</code> cellába pedig: <strong>0,15</strong>. Jelöld ki az <code>F2</code> cellát, és kattints a <strong>Százalék stílus</strong> (Percent Style, <strong>%</strong>) gombra. Utána a <strong>Tizedeshelyek növelése</strong> (Increase Decimal) gombbal jeleníts meg egy tizedest, majd csökkentsd vissza.</span><span class="sr">U ćeliju <code>F1</code> upiši: <strong>Popust za učenike</strong>, a u ćeliju <code>F2</code>: <strong>0,15</strong>. Označi ćeliju <code>F2</code> i klikni na dugme <strong>Stil procenta</strong> (Percent Style, <strong>%</strong>). Zatim dugmetom <strong>Povećaj broj decimala</strong> (Increase Decimal) prikaži jednu decimalu, pa je ponovo smanji.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk17"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="17" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk17" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Az <code>F2</code> cellában 15% látszik, a cella értéke továbbra is 0,15.</span><span class="sr">U ćeliji <code>F2</code> vidi se 15%, a vrednost ćelije je i dalje 0,15.</span></p></div>
+        </div>
+      </article>
+    </div>
+    <div class="pband" id="part5">
+      <span class="pn">5</span>
+      <div class="pb">
+        <h3><span class="hu">Rendezés, szűrés, stílusok, feltételes formázás</span><span class="sr">Sortiranje, filtriranje, stilovi, uslovno oblikovanje</span></h3>
+        <p><span class="hu">Rendezés és szűrés, cellastílusok, nagyobb mint, első 3 érték, adatsávok.</span><span class="sr">Sortiranje i filtriranje, stilovi ćelija, veće od, prva 3 vrednosti, trake podataka.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Kezdőlap</span><span class="sr">Početna</span></span><span class="pcount" data-pc="5" data-total="8">0 / 8</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t18" data-part="5" data-kind="must">
+        <div class="num"><span class="n">18</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Rendezés nagyság szerint</span><span class="sr">Sortiranje po veličini</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Szerkesztés</span><i class="sep">›</i><span class="crumb">Rendezés és szűrés</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Izmena</span><i class="sep">›</i><span class="crumb">Sortiraj i filtriraj</span></span></div>
+          <p class="txt"><span class="hu">Kattints egy cellába a <strong>Bevétel (Ft)</strong> oszlopban (pl. <code>D3</code>), majd válaszd a <strong>Rendezés és szűrés › Rendezés a legnagyobbtól a legkisebbig</strong> (Sort Largest to Smallest) parancsot. A további feladatok már ebből a sorrendből indulnak.</span><span class="sr">Klikni na ćeliju u koloni <strong>Prihod (RSD)</strong> (npr. <code>D3</code>) i izaberi <strong>Sortiraj i filtriraj › Sortiraj od najvećeg do najmanjeg</strong> (Sort Largest to Smallest). Sledeći zadaci polaze od ovog redosleda.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk18"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="18" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk18" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Sorrend: Szendvics (44 000), Gyümölcslé (31 800), Kakaós csiga (25 950), Pogácsa (24 900), Joghurt (13 430), Alma (10 000).</span><span class="sr">Redosled: Sendvič (44.000), Sok (31.800), Kifla sa kakaom (25.950), Pogačica (24.900), Jogurt (13.430), Jabuka (10.000).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t19" data-part="5" data-kind="must">
+        <div class="num"><span class="n">19</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Szűrés</span><span class="sr">Filtriranje</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Szerkesztés</span><i class="sep">›</i><span class="crumb">Rendezés és szűrés</span><i class="sep">›</i><span class="crumb">Szűrő</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Izmena</span><i class="sep">›</i><span class="crumb">Sortiraj i filtriraj</span><i class="sep">›</i><span class="crumb">Filter</span></span></div>
+          <p class="txt"><span class="hu">Kattints az <code>A1</code> cellába, és válaszd a <strong>Rendezés és szűrés › Szűrő</strong> (Filter) parancsot. A <strong>Bevétel (Ft)</strong> fejléc nyilánál válaszd a <strong>Számszűrők › Nagyobb, mint…</strong> (Greater Than) lehetőséget, és írd be: <strong>25000</strong>. Nézd meg, mely sorok maradtak, majd kapcsold ki a szűrőt (<strong>Rendezés és szűrés › Szűrő</strong>), hogy minden sor újra látsszon.</span><span class="sr">Klikni na ćeliju <code>A1</code> i izaberi <strong>Sortiraj i filtriraj › Filter</strong> (Filter). Na strelici zaglavlja <strong>Prihod (RSD)</strong> izaberi <strong>Filteri za brojeve › Veće od…</strong> (Greater Than) i upiši: <strong>25000</strong>. Pogledaj koji su redovi ostali, pa isključi filter (<strong>Sortiraj i filtriraj › Filter</strong>) da se svi redovi ponovo vide.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn tipb" aria-expanded="false" aria-controls="tip19"><svg class="i"><use href="#i-bulb"/></svg><span class="hu">Tipp</span><span class="sr">Savet</span></button><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk19"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="19" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel tip" id="tip19" hidden><p><span class="plab"><span class="hu">Tipp</span><span class="sr">Savet</span></span><span class="hu">A szűrés nem töröl semmit, csak elrejti a sorokat. A sorszámok kékre színeződnek, amíg szűrés aktív.</span><span class="sr">Filtriranje ništa ne briše, samo sakriva redove. Brojevi redova su plavi dok je filter aktivan.</span></p></div><div class="panel chk" id="chk19" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Szűrés közben 3 sor látszik: Szendvics, Gyümölcslé, Kakaós csiga. A szűrő kikapcsolása után újra mind a 6 sor.</span><span class="sr">Tokom filtriranja vide se 3 reda: Sendvič, Sok, Kifla sa kakaom. Nakon isključivanja filtera ponovo svih 6 redova.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t20" data-part="5" data-kind="must">
+        <div class="num"><span class="n">20</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Fejléc cellastílusa</span><span class="sr">Stil ćelije za zaglavlje</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Stílusok</span><i class="sep">›</i><span class="crumb">Cellastílusok</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Stilovi</span><i class="sep">›</i><span class="crumb">Stilovi ćelija</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A1:D1</code> cellákat, és a <strong>Cellastílusok</strong> (Cell Styles) galériából alkalmazd a <strong>Címsor 3</strong> (Heading 3) stílust.</span><span class="sr">Označi ćelije <code>A1:D1</code> i iz galerije <strong>Stilovi ćelija</strong> (Cell Styles) primeni stil <strong>Naslov 3</strong> (Heading 3).</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="20" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t21" data-part="5" data-kind="must">
+        <div class="num"><span class="n">21</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Jó és Rossz stílus</span><span class="sr">Stilovi Dobro i Loše</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Stílusok</span><i class="sep">›</i><span class="crumb">Cellastílusok</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Stilovi</span><i class="sep">›</i><span class="crumb">Stilovi ćelija</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A2</code> cellát (a legtöbb bevételt hozó termék), és alkalmazd rá a <strong>Jó</strong> (Good) cellastílust. Az <code>A7</code> cellára (a legkevesebb) alkalmazd a <strong>Rossz</strong> (Bad) stílust.</span><span class="sr">Označi ćeliju <code>A2</code> (proizvod sa najvećim prihodom) i primeni stil ćelije <strong>Dobro</strong> (Good). Na ćeliju <code>A7</code> (najmanji prihod) primeni stil <strong>Loše</strong> (Bad).</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="21" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t22" data-part="5" data-kind="must">
+        <div class="num"><span class="n">22</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Feltételes formázás: nagyobb, mint</span><span class="sr">Uslovno oblikovanje: veće od</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Stílusok</span><i class="sep">›</i><span class="crumb">Feltételes formázás</span><i class="sep">›</i><span class="crumb">Cellakijelölési szabályok</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Stilovi</span><i class="sep">›</i><span class="crumb">Uslovno oblikovanje</span><i class="sep">›</i><span class="crumb">Pravila za isticanje ćelija</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki a <code>D2:D7</code> cellákat, és válaszd a <strong>Feltételes formázás › Cellakijelölési szabályok › Nagyobb, mint…</strong> (Greater Than) parancsot. Az értéke legyen <strong>25000</strong>, a formátum pedig <strong>Zöld kitöltés sötétzöld szöveggel</strong> (Green Fill with Dark Green Text).</span><span class="sr">Označi ćelije <code>D2:D7</code> i izaberi <strong>Uslovno oblikovanje › Pravila za isticanje ćelija › Veće od…</strong> (Greater Than). Vrednost neka bude <strong>25000</strong>, a format <strong>Zelena popuna sa tamnozelenim tekstom</strong> (Green Fill with Dark Green Text).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk22"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="22" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk22" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Zöld háttérrel látszik a <code>D2</code>, <code>D3</code> és <code>D4</code> cella. A <code>D5</code> (24 900) nem zöld.</span><span class="sr">Zelenu pozadinu imaju ćelije <code>D2</code>, <code>D3</code> i <code>D4</code>. Ćelija <code>D5</code> (24.900) nije zelena.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t23" data-part="5" data-kind="must">
+        <div class="num"><span class="n">23</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Feltételes formázás: első 3 érték</span><span class="sr">Uslovno oblikovanje: prva 3 vrednosti</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Stílusok</span><i class="sep">›</i><span class="crumb">Feltételes formázás</span><i class="sep">›</i><span class="crumb">Első/utolsó szabályok</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Stilovi</span><i class="sep">›</i><span class="crumb">Uslovno oblikovanje</span><i class="sep">›</i><span class="crumb">Gornja/donja pravila</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki a <code>C2:C7</code> cellákat (az eladott darabszám), és válaszd a <strong>Feltételes formázás › Első/utolsó szabályok › Első 10 elem…</strong> (Top 10 Items) parancsot. A számot írd át <strong>3</strong>-ra, a formátum legyen <strong>Sárga kitöltés sötétsárga szöveggel</strong> (Yellow Fill with Dark Yellow Text).</span><span class="sr">Označi ćelije <code>C2:C7</code> (prodate količine) i izaberi <strong>Uslovno oblikovanje › Gornja/donja pravila › Prvih 10 stavki…</strong> (Top 10 Items). Broj promeni u <strong>3</strong>, a format neka bude <strong>Žuta popuna sa tamnožutim tekstom</strong> (Yellow Fill with Dark Yellow Text).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk23"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="23" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk23" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Sárga a <code>C2</code> (220), a <code>C4</code> (173) és a <code>C5</code> (166) cella.</span><span class="sr">Žute su ćelije <code>C2</code> (220), <code>C4</code> (173) i <code>C5</code> (166).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t24" data-part="5" data-kind="must">
+        <div class="num"><span class="n">24</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Adatsávok</span><span class="sr">Trake podataka</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Stílusok</span><i class="sep">›</i><span class="crumb">Feltételes formázás</span><i class="sep">›</i><span class="crumb">Adatsávok</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Stilovi</span><i class="sep">›</i><span class="crumb">Uslovno oblikovanje</span><i class="sep">›</i><span class="crumb">Trake podataka</span></span></div>
+          <p class="txt"><span class="hu">Térj vissza a <strong>Heti eladás</strong> lapra. Jelöld ki a <code>G2:G7</code> cellákat, és válaszd a <strong>Feltételes formázás › Adatsávok</strong> (Data Bars) menüpontot: legyen <strong>kék színátmenetes</strong> adatsáv.</span><span class="sr">Vrati se na list <strong>Nedeljna prodaja</strong>. Označi ćelije <code>G2:G7</code> i izaberi <strong>Uslovno oblikovanje › Trake podataka</strong> (Data Bars): neka bude <strong>plava traka sa prelazom</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk24"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="24" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk24" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A Szendvics cellájában a leghosszabb, az Almáéban a legrövidebb a sáv az Összesen oszlopon belül.</span><span class="sr">U ćeliji za Sendvič traka je najduža, a u ćeliji za Jabuku najkraća u koloni Ukupno.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t25" data-part="5" data-kind="must">
+        <div class="num"><span class="n">25</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Szabályok törlése</span><span class="sr">Brisanje pravila</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Stílusok</span><i class="sep">›</i><span class="crumb">Feltételes formázás</span><i class="sep">›</i><span class="crumb">Szabályok törlése</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Stilovi</span><i class="sep">›</i><span class="crumb">Uslovno oblikovanje</span><i class="sep">›</i><span class="crumb">Obriši pravila</span></span></div>
+          <p class="txt"><span class="hu">Lépj át az <strong>Árbevétel</strong> lapra, jelöld ki a <code>C2:C7</code> cellákat, és válaszd a <strong>Feltételes formázás › Szabályok törlése › Kijelölt cellák szabályainak törlése</strong> (Clear Rules from Selected Cells) parancsot. A sárga kiemelés eltűnik, a <code>D</code> oszlop zöld kiemelése megmarad.</span><span class="sr">Pređi na list <strong>Prihod</strong>, označi ćelije <code>C2:C7</code> i izaberi <strong>Uslovno oblikovanje › Obriši pravila › Obriši pravila iz izabranih ćelija</strong> (Clear Rules from Selected Cells). Žuto isticanje nestaje, a zeleno isticanje u koloni <code>D</code> ostaje.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="25" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="lesson3">
+    <header class="lband">
+      <div class="big">3</div>
+      <div>
+        <h2><span class="hu">3. óra – Diagramok és oldalbeállítás</span><span class="sr">3. čas – Grafikoni i podešavanje stranice</span></h2>
+        <p><span class="hu">Oszlop-, vonal- és kördiagramot készítesz, majd beállítod a nyomtatást: margók, tájolás, papírméret.</span><span class="sr">Praviš stubičasti, linijski i kružni grafikon, a zatim podešavaš štampu: margine, orijentaciju, veličinu papira.</span></p>
+        <div class="meta">
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><span class="hu">kb. 45 perc</span><span class="sr">oko 45 minuta</span></span>
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>16 <span class="hu">kötelező feladat</span><span class="sr">obaveznih zadataka</span></span>
+        </div>
+      </div>
+    </header>
+    <div class="pband" id="part6">
+      <span class="pn">6</span>
+      <div class="pb">
+        <h3><span class="hu">Oszlop- és vonaldiagram</span><span class="sr">Stubičasti i linijski grafikon</span></h3>
+        <p><span class="hu">Oszlopdiagram, tengelycímek, sor/oszlop váltás, vonaldiagram, adatfeliratok.</span><span class="sr">Stubičasti grafikon, nazivi osa, zamena redova i kolona, linijski grafikon, oznake podataka.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Beszúrás</span><span class="sr">Umetanje</span></span><span class="pcount" data-pc="6" data-total="7">0 / 7</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-e kind-must" id="t26" data-part="6" data-kind="must">
+        <div class="num"><span class="n">26</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Oszlopdiagram</span><span class="sr">Stubičasti grafikon</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Beszúrás</span><i class="sep">›</i><span class="crumb">Diagramok</span><i class="sep">›</i><span class="crumb">Oszlop- vagy sávdiagram</span></span><span class="sr"><span class="crumb">Umetanje</span><i class="sep">›</i><span class="crumb">Grafikoni</span><i class="sep">›</i><span class="crumb">Stubičasti ili trakasti</span></span></div>
+          <p class="txt"><span class="hu">A <strong>Heti eladás</strong> lapon jelöld ki az <code>A1:F7</code> cellákat (a terméknevek és a napok – az Összesen sort és oszlopot ne jelöld ki!). Válaszd a <strong>Beszúrás › Csoportos oszlop</strong> (Clustered Column) diagramot.</span><span class="sr">Na listu <strong>Nedeljna prodaja</strong> označi ćelije <code>A1:F7</code> (nazivi proizvoda i dani – ne označavaj red i kolonu Ukupno!). Izaberi <strong>Umetanje › Klasterisani stubičasti grafikon</strong> (Clustered Column).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk26"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="26" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk26" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A vízszintes tengelyen 6 termék látszik, mindegyikhez 5 oszlop (hétfőtől péntekig) tartozik.</span><span class="sr">Na horizontalnoj osi je 6 proizvoda, a uz svaki po 5 stubića (od ponedeljka do petka).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t27" data-part="6" data-kind="must">
+        <div class="num"><span class="n">27</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Elhelyezés és méretezés</span><span class="sr">Postavljanje i veličina</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Diagram kijelölése, húzás</span></span><span class="sr"><span class="crumb">Označen grafikon, prevlačenje</span></span></div>
+          <p class="txt"><span class="hu">Húzd a diagramot a táblázat alá (kb. az <code>A12</code> cellához), és a sarkainál fogva méretezd át úgy, hogy nagyjából az <code>A12:G28</code> területet töltse ki. Ha közben nyomva tartod az <strong>Alt</strong> billentyűt, a diagram a cellák széléhez igazodik.</span><span class="sr">Prevuci grafikon ispod tabele (otprilike do ćelije <code>A12</code>) i uhvativši ga za uglove promeni mu veličinu tako da otprilike ispuni oblast <code>A12:G28</code>. Ako pritom držiš taster <strong>Alt</strong>, grafikon se poravnava sa ivicama ćelija.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="27" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t28" data-part="6" data-kind="must">
+        <div class="num"><span class="n">28</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Diagramcím módosítása</span><span class="sr">Izmena naslova grafikona</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Diagramcím</span></span><span class="sr"><span class="crumb">Naslov grafikona</span></span></div>
+          <p class="txt"><span class="hu">Kattints a diagram címére, jelöld ki a szöveget, és írd át: <strong>Heti eladások termékenként (db)</strong>.</span><span class="sr">Klikni na naslov grafikona, označi tekst i promeni ga u: <strong>Nedeljna prodaja po proizvodima (kom)</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="28" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t29" data-part="6" data-kind="must">
+        <div class="num"><span class="n">29</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Tengelycímek</span><span class="sr">Nazivi osa</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Tervezés</span><i class="sep">›</i><span class="crumb">Diagramelem hozzáadása</span></span><span class="sr"><span class="crumb">Dizajn</span><i class="sep">›</i><span class="crumb">Dodaj element grafikona</span></span></div>
+          <p class="txt"><span class="hu">Kattints az oszlopdiagramra, és a <strong>Tervezés</strong> lapon (Excel 2021-ben <strong>Diagramtervezés</strong>) válaszd a <strong>Diagramelem hozzáadása › Tengelycímek</strong> parancsot. A függőleges tengely címe legyen <strong>Eladott mennyiség (db)</strong>, a vízszinteseé <strong>Termék</strong>.</span><span class="sr">Klikni na stubičasti grafikon i na kartici <strong>Dizajn</strong> (u Excelu 2021 <strong>Dizajn grafikona</strong>) izaberi <strong>Dodaj element grafikona › Nazivi osa</strong>. Naziv vertikalne ose neka bude <strong>Prodata količina (kom)</strong>, a horizontalne <strong>Proizvod</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="29" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t30" data-part="6" data-kind="must">
+        <div class="num"><span class="n">30</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Sor/oszlop váltása</span><span class="sr">Zamena redova i kolona</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Tervezés</span><i class="sep">›</i><span class="crumb">Adatok</span></span><span class="sr"><span class="crumb">Dizajn</span><i class="sep">›</i><span class="crumb">Podaci</span></span></div>
+          <p class="txt"><span class="hu">Kattints az oszlopdiagramra, és a <strong>Tervezés</strong> lapon válaszd a <strong>Sor/oszlop váltása</strong> (Switch Row/Column) parancsot. Nézd meg, mi került a vízszintes tengelyre! Melyik változat mutatja jobban, melyik napon fogy a legtöbb? Végül váltsd vissza az eredeti nézetre.</span><span class="sr">Klikni na stubičasti grafikon i na kartici <strong>Dizajn</strong> izaberi <strong>Zameni red/kolonu</strong> (Switch Row/Column). Pogledaj šta je sada na horizontalnoj osi! Koja varijanta bolje pokazuje kojim danom se najviše prodaje? Na kraju vrati prvobitni prikaz.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk30"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="30" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk30" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Eredeti nézet: a termékek vannak a tengelyen, a napok külön színek. Váltott nézet: a napok vannak a tengelyen, a termékek külön színek.</span><span class="sr">Prvobitni prikaz: na osi su proizvodi, a dani su različite boje. Zamenjeni prikaz: na osi su dani, a proizvodi su različite boje.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t31" data-part="6" data-kind="must">
+        <div class="num"><span class="n">31</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Vonaldiagram</span><span class="sr">Linijski grafikon</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Beszúrás</span><i class="sep">›</i><span class="crumb">Diagramok</span><i class="sep">›</i><span class="crumb">Vonal- vagy területdiagram</span></span><span class="sr"><span class="crumb">Umetanje</span><i class="sep">›</i><span class="crumb">Grafikoni</span><i class="sep">›</i><span class="crumb">Linijski ili površinski</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki az <code>A1:F2</code> cellákat (napok + Szendvics), és szúrj be <strong>Vonal jelölőkkel</strong> (Line with Markers) diagramot. A címe: <strong>A szendvicsek eladása napról napra (db)</strong>. Helyezd az oszlopdiagram alá (kb. az <code>A30</code> cellához).</span><span class="sr">Označi ćelije <code>A1:F2</code> (dani + Sendvič) i umetni <strong>Linijski grafikon sa markerima</strong> (Line with Markers). Naslov: <strong>Prodaja sendviča iz dana u dan (kom)</strong>. Postavi ga ispod stubičastog grafikona (otprilike kod ćelije <code>A30</code>).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk31"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="31" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk31" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A vonalon 5 pont van; a legmagasabb pont pénteken van (55 db).</span><span class="sr">Na liniji je 5 tačaka; najviša tačka je u petak (55 kom).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t32" data-part="6" data-kind="must">
+        <div class="num"><span class="n">32</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Adatfeliratok és diagramstílus</span><span class="sr">Oznake podataka i stil grafikona</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Diagramelemek (+)</span><i class="sep">›</i><span class="crumb">Adatfeliratok</span></span><span class="sr"><span class="crumb">Elementi grafikona (+)</span><i class="sep">›</i><span class="crumb">Oznake podataka</span></span></div>
+          <p class="txt"><span class="hu">Kattints a vonaldiagramra, nyisd meg a <strong>+</strong> (Diagramelemek) gombot, és kapcsold be az <strong>Adatfeliratok</strong> (Data Labels) elemet <strong>Felül</strong> (Above) elhelyezéssel. A <strong>Tervezés</strong> lap <strong>Diagramstílusok</strong> galériájából válassz egy másik stílust, amelyik szerinted jobban olvasható.</span><span class="sr">Klikni na linijski grafikon, otvori dugme <strong>+</strong> (Elementi grafikona) i uključi <strong>Oznake podataka</strong> (Data Labels) sa položajem <strong>Iznad</strong> (Above). Iz galerije <strong>Stilovi grafikona</strong> na kartici <strong>Dizajn</strong> izaberi drugi stil koji je, po tvom mišljenju, čitljiviji.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="32" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+    </div>
+    <div class="pband" id="part7">
+      <span class="pn">7</span>
+      <div class="pb">
+        <h3><span class="hu">Kördiagram</span><span class="sr">Kružni grafikon</span></h3>
+        <p><span class="hu">Kördiagram, százalékos feliratok, egy szelet színezése.</span><span class="sr">Kružni grafikon, procentualne oznake, bojenje jednog isečka.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Beszúrás</span><span class="sr">Umetanje</span></span><span class="pcount" data-pc="7" data-total="3">0 / 3</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t33" data-part="7" data-kind="must">
+        <div class="num"><span class="n">33</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Kördiagram</span><span class="sr">Kružni grafikon</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Beszúrás</span><i class="sep">›</i><span class="crumb">Diagramok</span><i class="sep">›</i><span class="crumb">Kör- vagy fánkdiagram</span></span><span class="sr"><span class="crumb">Umetanje</span><i class="sep">›</i><span class="crumb">Grafikoni</span><i class="sep">›</i><span class="crumb">Kružni ili prstenasti</span></span></div>
+          <p class="txt"><span class="hu">Az <strong>Árbevétel</strong> lapon jelöld ki az <code>A1:A7</code> cellákat, majd <strong>Ctrl</strong>-lal a <code>D1:D7</code> cellákat is (Termék + Bevétel, a többi oszlopot kihagyva). Szúrj be <strong>Kördiagramot</strong> (Pie). A címe: <strong>Az árbevétel megoszlása termékenként</strong>. Helyezd a táblázat alá (kb. az <code>A10</code> cellához).</span><span class="sr">Na listu <strong>Prihod</strong> označi ćelije <code>A1:A7</code>, pa uz <strong>Ctrl</strong> i <code>D1:D7</code> (Proizvod + Prihod, bez ostalih kolona). Umetni <strong>Kružni grafikon</strong> (Pie). Naslov: <strong>Raspodela prihoda po proizvodima</strong>. Postavi ga ispod tabele (otprilike kod ćelije <code>A10</code>).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk33"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="33" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk33" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">6 szelet van; a legnagyobb a Szendvicsé (kb. 29%).</span><span class="sr">Ima 6 isečaka; najveći pripada Sendviču (oko 29%).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t34" data-part="7" data-kind="must">
+        <div class="num"><span class="n">34</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Adatfeliratok százalékkal</span><span class="sr">Oznake podataka sa procentima</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Diagramelemek (+)</span><i class="sep">›</i><span class="crumb">Adatfeliratok</span><i class="sep">›</i><span class="crumb">További beállítások</span></span><span class="sr"><span class="crumb">Elementi grafikona (+)</span><i class="sep">›</i><span class="crumb">Oznake podataka</span><i class="sep">›</i><span class="crumb">Više opcija</span></span></div>
+          <p class="txt"><span class="hu">Adj a kördiagramhoz <strong>Adatfeliratokat</strong>, majd az <strong>Adatfeliratok formázása</strong> panelen jelöld be a <strong>Kategórianév</strong> és a <strong>Százalék</strong> négyzetet, az <strong>Érték</strong> pipáját pedig vedd ki. Ezután a <strong>Jelmagyarázat</strong> felesleges: töröld.</span><span class="sr">Dodaj kružnom grafikonu <strong>Oznake podataka</strong>, pa u oknu <strong>Oblikovanje oznaka podataka</strong> označi <strong>Naziv kategorije</strong> i <strong>Procenat</strong>, a kvačicu kod <strong>Vrednost</strong> ukloni. Zatim je <strong>Legenda</strong> suvišna: obriši je.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk34"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="34" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk34" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A Szendvics 29%, az Alma 7% (a szeletek mellett a terméknév is látszik).</span><span class="sr">Sendvič 29%, Jabuka 7% (uz isečke se vidi i naziv proizvoda).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t35" data-part="7" data-kind="must">
+        <div class="num"><span class="n">35</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Egy szelet színezése</span><span class="sr">Bojenje jednog isečka</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Formátum</span><i class="sep">›</i><span class="crumb">Alakzatkitöltés</span></span><span class="sr"><span class="crumb">Format</span><i class="sep">›</i><span class="crumb">Popuna oblika</span></span></div>
+          <p class="txt"><span class="hu">Kattints kétszer az <strong>Alma</strong> szeletére (először az egész adatsor, másodszor csak a szelet jelölődik ki). A <strong>Formátum</strong> lapon válaszd az <strong>Alakzatkitöltés</strong> (Shape Fill) parancsot, és színezd <strong>narancssárgára</strong>.</span><span class="sr">Klikni dvaput na isečak <strong>Jabuka</strong> (prvi klik označava celu seriju, drugi samo isečak). Na kartici <strong>Format</strong> izaberi <strong>Popuna oblika</strong> (Shape Fill) i oboji ga <strong>narandžasto</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="35" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+    </div>
+    <div class="pband" id="part8">
+      <span class="pn">8</span>
+      <div class="pb">
+        <h3><span class="hu">Oldalbeállítás</span><span class="sr">Podešavanje stranice</span></h3>
+        <p><span class="hu">Margók, egyéni margók, tájolás, papírméret, nyomtatási kép.</span><span class="sr">Margine, prilagođene margine, orijentacija, veličina papira, pregled pre štampe.</span></p>
+      </div>
+      <div class="ptag"><span class="ptab"><span class="hu">Lapelrendezés</span><span class="sr">Raspored stranice</span></span><span class="pcount" data-pc="8" data-total="6">0 / 6</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-e kind-must" id="t36" data-part="8" data-kind="must">
+        <div class="num"><span class="n">36</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Margók: előre beállított</span><span class="sr">Margine: unapred podešene</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Lapelrendezés</span><i class="sep">›</i><span class="crumb">Oldalbeállítás</span><i class="sep">›</i><span class="crumb">Margók</span></span><span class="sr"><span class="crumb">Raspored stranice</span><i class="sep">›</i><span class="crumb">Podešavanje stranice</span><i class="sep">›</i><span class="crumb">Margine</span></span></div>
+          <p class="txt"><span class="hu">Térj vissza a <strong>Heti eladás</strong> lapra. A <strong>Lapelrendezés › Oldalbeállítás › Margók</strong> (Margins) menüből válaszd a <strong>Keskeny</strong> (Narrow) lehetőséget. Nyisd meg újra a menüt, és nézd meg, melyik sor van kijelölve.</span><span class="sr">Vrati se na list <strong>Nedeljna prodaja</strong>. Iz menija <strong>Raspored stranice › Podešavanje stranice › Margine</strong> (Margins) izaberi <strong>Uske</strong> (Narrow). Ponovo otvori meni i pogledaj koji je red označen.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk36"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="36" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk36" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A menüben a Keskeny sor van bejelölve.</span><span class="sr">U meniju je označen red Uske.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t37" data-part="8" data-kind="must">
+        <div class="num"><span class="n">37</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Egyéni margók és középre igazítás</span><span class="sr">Prilagođene margine i centriranje</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Közepes</span><span class="sr">Srednje</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Margók</span><i class="sep">›</i><span class="crumb">Egyéni margók</span></span><span class="sr"><span class="crumb">Margine</span><i class="sep">›</i><span class="crumb">Prilagođene margine</span></span></div>
+          <p class="txt"><span class="hu">A <strong>Margók</strong> menüben válaszd az <strong>Egyéni margók…</strong> (Custom Margins) parancsot. Állítsd be: <strong>Felső 2,5</strong>, <strong>Alsó 2</strong>, <strong>Bal 2</strong>, <strong>Jobb 2</strong> cm. Alul, a <strong>Középre az oldalon</strong> (Center on page) résznél jelöld be a <strong>Vízszintesen</strong> (Horizontally) négyzetet. Kattints az <strong>OK</strong> gombra.</span><span class="sr">U meniju <strong>Margine</strong> izaberi <strong>Prilagođene margine…</strong> (Custom Margins). Podesi: <strong>Gornja 2,5</strong>, <strong>Donja 2</strong>, <strong>Leva 2</strong>, <strong>Desna 2</strong> cm. Pri dnu, u delu <strong>Centriraj na stranici</strong> (Center on page), označi <strong>Horizontalno</strong> (Horizontally). Klikni na <strong>OK</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn tipb" aria-expanded="false" aria-controls="tip37"><svg class="i"><use href="#i-bulb"/></svg><span class="hu">Tipp</span><span class="sr">Savet</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="37" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel tip" id="tip37" hidden><p><span class="plab"><span class="hu">Tipp</span><span class="sr">Savet</span></span><span class="hu">Az egyéni margók beállítása után a Margók menüben az Utolsó egyéni beállítás sor jelenik meg.</span><span class="sr">Nakon podešavanja prilagođenih margina, u meniju Margine pojavljuje se red Poslednja prilagođena podešavanja.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t38" data-part="8" data-kind="must">
+        <div class="num"><span class="n">38</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Tájolás</span><span class="sr">Orijentacija</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Lapelrendezés</span><i class="sep">›</i><span class="crumb">Oldalbeállítás</span><i class="sep">›</i><span class="crumb">Tájolás</span></span><span class="sr"><span class="crumb">Raspored stranice</span><i class="sep">›</i><span class="crumb">Podešavanje stranice</span><i class="sep">›</i><span class="crumb">Orijentacija</span></span></div>
+          <p class="txt"><span class="hu">A <strong>Heti eladás</strong> lapon válaszd a <strong>Lapelrendezés › Oldalbeállítás › Tájolás › Fekvő</strong> (Landscape) lehetőséget, mert a táblázat és a diagramok szélesek.</span><span class="sr">Na listu <strong>Nedeljna prodaja</strong> izaberi <strong>Raspored stranice › Podešavanje stranice › Orijentacija › Položeno</strong> (Landscape), jer su tabela i grafikoni široki.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="38" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t39" data-part="8" data-kind="must">
+        <div class="num"><span class="n">39</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Papírméret</span><span class="sr">Veličina papira</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Lapelrendezés</span><i class="sep">›</i><span class="crumb">Oldalbeállítás</span><i class="sep">›</i><span class="crumb">Méret</span></span><span class="sr"><span class="crumb">Raspored stranice</span><i class="sep">›</i><span class="crumb">Podešavanje stranice</span><i class="sep">›</i><span class="crumb">Veličina</span></span></div>
+          <p class="txt"><span class="hu">A <strong>Méret</strong> (Size) menüből válaszd az <strong>A4</strong> lehetőséget (21 × 29,7 cm).</span><span class="sr">Iz menija <strong>Veličina</strong> (Size) izaberi <strong>A4</strong> (21 × 29,7 cm).</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk39"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="39" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk39" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A Méret menüben az A4 sor van kijelölve.</span><span class="sr">U meniju Veličina označen je red A4.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t40" data-part="8" data-kind="must">
+        <div class="num"><span class="n">40</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Másik munkalap: álló A4</span><span class="sr">Drugi list: uspravni A4</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Oldalbeállítás</span><i class="sep">›</i><span class="crumb">Margók · Tájolás · Méret</span></span><span class="sr"><span class="crumb">Podešavanje stranice</span><i class="sep">›</i><span class="crumb">Margine · Orijentacija · Veličina</span></span></div>
+          <p class="txt"><span class="hu">Lépj át az <strong>Árbevétel</strong> lapra. Itt legyen a tájolás <strong>Álló</strong> (Portrait), a méret <strong>A4</strong>, a margók pedig <strong>Normál</strong> (Normal). Az oldalbeállítás munkalaponként külön érvényes!</span><span class="sr">Pređi na list <strong>Prihod</strong>. Ovde neka orijentacija bude <strong>Uspravno</strong> (Portrait), veličina <strong>A4</strong>, a margine <strong>Normalne</strong> (Normal). Podešavanje stranice važi posebno za svaki list!</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="40" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-e kind-must" id="t41" data-part="8" data-kind="must">
+        <div class="num"><span class="n">41</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Nyomtatási kép és mentés</span><span class="sr">Pregled pre štampe i čuvanje</span></h4><div class="chips"><span class="lv"><i></i><span class="hu">Könnyű</span><span class="sr">Lako</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Fájl</span><i class="sep">›</i><span class="crumb">Nyomtatás</span></span><span class="sr"><span class="crumb">Fajl</span><i class="sep">›</i><span class="crumb">Štampa</span></span></div>
+          <p class="txt"><span class="hu">Nyisd meg a <strong>Fájl › Nyomtatás</strong> nézetet, és mindkét munkalapnál nézd meg a nyomtatási képet (a munkalapot a Beállítások alatt válthatod). Minden diagram teljes egészében látszik? Ha egy diagram átlóg a következő oldalra, kicsinyítsd vagy húzd feljebb. Mentsd el a fájlt (<strong>Ctrl+S</strong>), és mutasd meg a tanárodnak! Ezzel a kötelező rész kész.</span><span class="sr">Otvori prikaz <strong>Datoteka › Štampa</strong> i za oba lista pogledaj pregled pre štampe (list možeš da promeniš ispod Podešavanja). Vidi li se svaki grafikon u celosti? Ako neki grafikon prelazi na sledeću stranicu, smanji ga ili pomeri više. Sačuvaj fajl (<strong>Ctrl+S</strong>) i pokaži ga nastavniku! Time je obavezni deo gotov.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="41" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="milestone" id="mustDone" aria-live="polite">
+    <div class="mi"><svg class="i"><use href="#i-flag"/></svg></div>
+    <div>
+      <div class="m-todo">
+        <h2><span class="hu">Itt ér véget a kötelező rész</span><span class="sr">Ovde se završava obavezni deo</span></h2>
+        <p><span class="hu">Még <b id="mustLeft">41</b> kötelező feladat van hátra. Ami ezután jön, az nem kötelező: ráadás és bónusz azoknak, akik gyorsan végeztek.</span><span class="sr">Preostalo je još <b class="mustLeft2">41</b> obaveznih zadataka. Ono što sledi nije obavezno: dodatni i bonus zadaci za one koji su brzo završili.</span></p>
+      </div>
+      <div class="m-done">
+        <h2><span class="hu">Kész a kötelező rész!</span><span class="sr">Obavezni deo je gotov!</span></h2>
+        <p><span class="hu">Mentsd el a munkafüzetet, és mutasd meg a tanárodnak. Ha maradt időd, jöhet a ráadás, majd a bónusz.</span><span class="sr">Sačuvaj radnu svesku i pokaži je nastavniku. Ako ti je ostalo vremena, sledi dodatni deo, pa bonus.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="extra">
+    <header class="xband extra">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg></div>
+      <div>
+        <h2><span class="hu">Ráadás – közepesen nehéz feladatok</span><span class="sr">Dodatno – srednje teški zadaci</span></h2>
+        <p><span class="hu">Nem kötelező. Ha a kötelező rész kész, itt tovább gyakorolhatsz: formátummásoló, színskála, szelet kiemelése és a nyomtatási kép.</span><span class="sr">Nije obavezno. Kad je obavezni deo gotov, ovde možeš da vežbaš dalje: kopiranje formata, skala boja, izvlačenje isečka i pregled pre štampe.</span></p>
+        <div class="meta">
+          <span class="pill"><span class="hu">Nem kötelező</span><span class="sr">Nije obavezno</span></span>
+          <span class="pill"><span class="pcount" data-pc="9" data-total="4">0 / 4</span></span>
+        </div>
+      </div>
+    </header>
+    <div class="tasks" style="margin-top:20px">
+      <article class="task lv-k kind-extra" id="t42" data-part="9" data-kind="extra">
+        <div class="num"><span class="n">42</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Formátummásoló</span><span class="sr">Kopiranje formata</span></h4><div class="chips"><span class="tag extra"><span class="hu">Ráadás</span><span class="sr">Dodatno</span></span><span class="lv"><i></i><span class="hu">Közepesen nehéz</span><span class="sr">Srednje teško</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Vágólap</span><i class="sep">›</i><span class="crumb">Formátummásoló</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Klipbord</span><i class="sep">›</i><span class="crumb">Kopiraj format</span></span></div>
+          <p class="txt"><span class="hu">Jelöld ki a <strong>Heti eladás</strong> lapon az <code>A1:G1</code> fejlécet, és kattints duplán a <strong>Formátummásoló</strong> (Format Painter) ecset ikonjára. Lépj át az <strong>Árbevétel</strong> lapra, és húzd végig az <code>A1:D1</code> cellákon. Nyomd meg az <strong>Esc</strong> billentyűt, ha végeztél.</span><span class="sr">Na listu <strong>Nedeljna prodaja</strong> označi zaglavlje <code>A1:G1</code> i dvaput klikni na ikonu četkice <strong>Kopiraj format</strong> (Format Painter). Pređi na list <strong>Prihod</strong> i prevuci preko ćelija <code>A1:D1</code>. Kad završiš, pritisni <strong>Esc</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk42"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="42" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk42" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Az Árbevétel lap fejléce is sötétkék alapon fehér, félkövér szöveg lett.</span><span class="sr">Zaglavlje lista Prihod sada je takođe bela podebljana slova na tamnoplavoj pozadini.</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-extra" id="t43" data-part="9" data-kind="extra">
+        <div class="num"><span class="n">43</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Színskála a napi adatokon</span><span class="sr">Skala boja na dnevnim podacima</span></h4><div class="chips"><span class="tag extra"><span class="hu">Ráadás</span><span class="sr">Dodatno</span></span><span class="lv"><i></i><span class="hu">Közepesen nehéz</span><span class="sr">Srednje teško</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Kezdőlap</span><i class="sep">›</i><span class="crumb">Stílusok</span><i class="sep">›</i><span class="crumb">Feltételes formázás</span><i class="sep">›</i><span class="crumb">Színskálák</span></span><span class="sr"><span class="crumb">Početna</span><i class="sep">›</i><span class="crumb">Stilovi</span><i class="sep">›</i><span class="crumb">Uslovno oblikovanje</span><i class="sep">›</i><span class="crumb">Skale boja</span></span></div>
+          <p class="txt"><span class="hu">A <strong>Heti eladás</strong> lapon jelöld ki a <code>B2:F7</code> cellákat, és válaszd a <strong>Feltételes formázás › Színskálák</strong> (Color Scales) menüpontból a <strong>Fehér–Kék</strong> (White – Blue) típusút. Keresd meg a legsötétebb és a legvilágosabb cellát, és írd le, mit jelentenek.</span><span class="sr">Na listu <strong>Nedeljna prodaja</strong> označi ćelije <code>B2:F7</code> i iz menija <strong>Uslovno oblikovanje › Skale boja</strong> (Color Scales) izaberi tip <strong>Bela–plava</strong> (White – Blue). Nađi najtamniju i najsvetliju ćeliju i zapiši šta znače.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk43"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="43" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk43" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">A legsötétebb a Szendvics pénteki értéke (55), az egyik legvilágosabb az Alma pénteki értéke (15).</span><span class="sr">Najtamnija je petak za Sendvič (55), a među najsvetlijima je petak za Jabuku (15).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-extra" id="t44" data-part="9" data-kind="extra">
+        <div class="num"><span class="n">44</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Szelet kiemelése és kezdőszög</span><span class="sr">Izvlačenje isečka i početni ugao</span></h4><div class="chips"><span class="tag extra"><span class="hu">Ráadás</span><span class="sr">Dodatno</span></span><span class="lv"><i></i><span class="hu">Közepesen nehéz</span><span class="sr">Srednje teško</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Adatsor formázása</span></span><span class="sr"><span class="crumb">Oblikovanje serije podataka</span></span></div>
+          <p class="txt"><span class="hu">Az <strong>Árbevétel</strong> lap kördiagramján kattints kétszer a <strong>Szendvics</strong> szeletre, és húzd egy kicsit kifelé. Az <strong>Adatsor formázása</strong> panelen állítsd az <strong>Első szelet szöge</strong> (Angle of first slice) értéket <strong>90°</strong>-ra, és figyeld meg a változást.</span><span class="sr">Na kružnom grafikonu lista <strong>Prihod</strong> klikni dvaput na isečak <strong>Sendvič</strong> i malo ga izvuci. U oknu <strong>Oblikovanje serije podataka</strong> postavi <strong>Ugao prvog isečka</strong> (Angle of first slice) na <strong>90°</strong> i posmatraj promenu.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="44" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+      <article class="task lv-k kind-extra" id="t45" data-part="9" data-kind="extra">
+        <div class="num"><span class="n">45</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Margók húzása a nyomtatási képen</span><span class="sr">Pomeranje margina u pregledu</span></h4><div class="chips"><span class="tag extra"><span class="hu">Ráadás</span><span class="sr">Dodatno</span></span><span class="lv"><i></i><span class="hu">Közepesen nehéz</span><span class="sr">Srednje teško</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Fájl</span><i class="sep">›</i><span class="crumb">Nyomtatás</span><i class="sep">›</i><span class="crumb">Margók megjelenítése</span></span><span class="sr"><span class="crumb">Fajl</span><i class="sep">›</i><span class="crumb">Štampa</span><i class="sep">›</i><span class="crumb">Prikaži margine</span></span></div>
+          <p class="txt"><span class="hu">A <strong>Fájl › Nyomtatás</strong> nézetben, a nyomtatási kép jobb alsó sarkában kattints a <strong>Margók megjelenítése</strong> (Show Margins) gombra. Húzd a bal margóvonalat kicsit beljebb, majd nézd meg a <strong>Lapelrendezés › Margók › Egyéni margók</strong> ablakban, hogyan változott a <strong>Bal</strong> érték.</span><span class="sr">U prikazu <strong>Datoteka › Štampa</strong>, u donjem desnom uglu pregleda, klikni na dugme <strong>Prikaži margine</strong> (Show Margins). Prevuci levu liniju margine malo udesno, pa u prozoru <strong>Raspored stranice › Margine › Prilagođene margine</strong> pogledaj kako se promenila vrednost <strong>Leva</strong>.</span></p>
+          <div class="foot">
+            <div class="helps"></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="45" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="bonus">
+    <header class="xband bonus">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg></div>
+      <div>
+        <h2><span class="hu">Bónusz – nehéz feladatok</span><span class="sr">Bonus – teški zadaci</span></h2>
+        <p><span class="hu">Nem kötelező, és önálló gondolkodást kér: szabály képlettel, szűrt adatok a diagramon.</span><span class="sr">Nije obavezno i traži samostalno razmišljanje: pravilo pomoću formule, filtrirani podaci na grafikonu.</span></p>
+        <div class="meta">
+          <span class="pill"><span class="hu">Nem kötelező</span><span class="sr">Nije obavezno</span></span>
+          <span class="pill"><span class="pcount" data-pc="10" data-total="2">0 / 2</span></span>
+        </div>
+      </div>
+    </header>
+    <div class="tasks" style="margin-top:20px">
+      <article class="task lv-h kind-bonus" id="t46" data-part="10" data-kind="bonus">
+        <div class="num"><span class="n">46</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Sorok kiemelése képlettel</span><span class="sr">Isticanje redova pomoću formule</span></h4><div class="chips"><span class="tag bonus"><span class="hu">Bónusz</span><span class="sr">Bonus</span></span><span class="lv"><i></i><span class="hu">Nehéz</span><span class="sr">Teško</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Feltételes formázás</span><i class="sep">›</i><span class="crumb">Új szabály</span><i class="sep">›</i><span class="crumb">Képlet használata</span></span><span class="sr"><span class="crumb">Uslovno oblikovanje</span><i class="sep">›</i><span class="crumb">Novo pravilo</span><i class="sep">›</i><span class="crumb">Korišćenje formule</span></span></div>
+          <p class="txt"><span class="hu">A <strong>Heti eladás</strong> lapon jelöld ki az <code>A2:G7</code> cellákat. Válaszd a <strong>Feltételes formázás › Új szabály…</strong> (New Rule) parancsot, majd a <strong>Képlet használata a formázandó cellák kijelöléséhez</strong> (Use a formula to determine which cells to format) típust. A képlet: <code>=$G2&gt;=170</code>. A formátum legyen <strong>sárga kitöltés és félkövér</strong>. Magyarázd el, miért áll a <code>G</code> előtt dollárjel, a <code>2</code> előtt pedig nem.</span><span class="sr">Na listu <strong>Nedeljna prodaja</strong> označi ćelije <code>A2:G7</code>. Izaberi <strong>Uslovno oblikovanje › Novo pravilo…</strong> (New Rule), pa tip <strong>Koristi formulu za određivanje ćelija za oblikovanje</strong> (Use a formula to determine which cells to format). Formula: <code>=$G2&gt;=170</code>. Format neka bude <strong>žuta popuna i podebljano</strong>. Objasni zašto ispred <code>G</code> stoji znak dolara, a ispred <code>2</code> ne stoji.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn tipb" aria-expanded="false" aria-controls="tip46"><svg class="i"><use href="#i-bulb"/></svg><span class="hu">Tipp</span><span class="sr">Savet</span></button><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk46"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="46" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel tip" id="tip46" hidden><p><span class="plab"><span class="hu">Tipp</span><span class="sr">Savet</span></span><span class="hu">A dollárjel rögzíti az oszlopot: minden sorban a G oszlop értékét vizsgálja a szabály, de a sor száma soronként változik.</span><span class="sr">Znak dolara zaključava kolonu: u svakom redu pravilo proverava vrednost iz kolone G, a broj reda se menja od reda do reda.</span></p></div><div class="panel chk" id="chk46" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">Két teljes sor sárga: a Szendvics (220) és a Kakaós csiga (173) sora.</span><span class="sr">Dva cela reda su žuta: red za Sendvič (220) i red za Kiflu sa kakaom (173).</span></p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t47" data-part="10" data-kind="bonus">
+        <div class="num"><span class="n">47</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4><span class="hu">Szűrt adatok a diagramon</span><span class="sr">Filtrirani podaci na grafikonu</span></h4><div class="chips"><span class="tag bonus"><span class="hu">Bónusz</span><span class="sr">Bonus</span></span><span class="lv"><i></i><span class="hu">Nehéz</span><span class="sr">Teško</span></span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span class="hu"><span class="crumb">Rendezés és szűrés</span><i class="sep">›</i><span class="crumb">Szűrő</span><i class="sep">›</i><span class="crumb">Diagram</span></span><span class="sr"><span class="crumb">Sortiraj i filtriraj</span><i class="sep">›</i><span class="crumb">Filter</span><i class="sep">›</i><span class="crumb">Grafikon</span></span></div>
+          <p class="txt"><span class="hu">Az <strong>Árbevétel</strong> lapon kapcsold be a <strong>Szűrőt</strong>, és a <strong>Bevétel (Ft)</strong> oszlopon szűrj <strong>25000-nél nagyobb</strong> értékekre. Nézd meg a kördiagramot! Hány szelet maradt, és hogyan változtak a százalékok? Magyarázd el, miért. Végül kapcsold ki a szűrőt.</span><span class="sr">Na listu <strong>Prihod</strong> uključi <strong>Filter</strong> i u koloni <strong>Prihod (RSD)</strong> filtriraj vrednosti <strong>veće od 25000</strong>. Pogledaj kružni grafikon! Koliko je isečaka ostalo i kako su se promenili procenti? Objasni zašto. Na kraju isključi filter.</span></p>
+          <div class="foot">
+            <div class="helps"><button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="chk47"><svg class="i"><use href="#i-check"/></svg><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></button></div>
+            <label class="ok" title="Kész / Gotovo">
+              <input type="checkbox" data-n="47" aria-label="Kész / Gotovo">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt"><span class="hu">Kész</span><span class="sr">Gotovo</span></span>
+            </label>
+          </div>
+          <div class="panel chk" id="chk47" hidden><p><span class="plab"><span class="hu">Ellenőrzés – ennek kell kijönnie</span><span class="sr">Provera – ovo treba da dobiješ</span></span><span class="hu">3 szelet marad: Szendvics 43%, Gyümölcslé 31%, Kakaós csiga 26%. A diagram csak a látható sorokat mutatja.</span><span class="sr">Ostaju 3 isečka: Sendvič 43%, Sok 31%, Kifla sa kakaom 26%. Grafikon prikazuje samo vidljive redove.</span></p></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="done-band" id="allDone" aria-live="polite">
+    <h2><span class="hu">Minden feladat kész, a ráadás és a bónusz is!</span><span class="sr">Svi zadaci su gotovi, i dodatni i bonus!</span></h2>
+    <p><span class="hu">Nagyon ügyes vagy. Mentsd el a munkafüzetet, és mutasd meg a tanárodnak.</span><span class="sr">Odlično ti je išlo. Sačuvaj radnu svesku i pokaži je nastavniku.</span></p>
+  </section>
+  <div class="endnote"><span class="hu">Gyakorlati feladatsor a Kezdőlap, a Beszúrás (oszlop-, vonal- és kördiagram) és a Lapelrendezés (oldalbeállítás) menühöz (Excel 2019 / 2021). Tanulási céllal készült.</span><span class="sr">Praktični zadaci za menije Početna, Umetanje (stubičasti, linijski i kružni grafikon) i Raspored stranice (podešavanje stranice) (Excel 2019 / 2021). Napravljeno u edukativne svrhe.</span></div>
+
+</main>
+
+<footer class="status">
+  <div class="in">
+    <span><span class="lab"><span class="hu">Kötelező:</span><span class="sr">Obavezno:</span></span> <b id="doneN">0</b> / 41</span>
+    <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="41" aria-valuenow="0" id="bar"><div class="fill" id="fill"></div></div>
+    <span class="opt"><svg class="i" aria-hidden="true" style="vertical-align:-.12em"><use href="#i-star"/></svg> <span class="lab"><span class="hu">Ráadás + bónusz:</span><span class="sr">Dodatno + bonus:</span></span> <b id="doneO">0</b> / 6</span>
+    <button type="button" class="reset" id="reset"><span class="hu">Újrakezdés</span><span class="sr">Ispočetka</span></button>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var MUST = 41;
+  var KEY = 'iskolai-bufe-excel-v1', LANGKEY = 'iskolai-bufe-lang';
+  function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+
+  /* nyelv */
+  var body = document.body;
+  var TITLES = {hu:'Iskolai büfé – Excel gyakorlás: Kezdőlap + Beszúrás + Lapelrendezés', sr:'Školski bife – Excel vežba: Početna + Umetanje + Raspored stranice'};
+  function setLang(l){
+    body.setAttribute('data-lang', l);
+    document.documentElement.lang = (l === 'hu') ? 'hu' : 'sr';
+    document.title = TITLES[l];
+    document.getElementById('btn-hu').setAttribute('aria-pressed', l === 'hu');
+    document.getElementById('btn-sr').setAttribute('aria-pressed', l === 'sr');
+    lsSet(LANGKEY, l);
+  }
+  document.getElementById('btn-hu').addEventListener('click', function(){ setLang('hu'); });
+  document.getElementById('btn-sr').addEventListener('click', function(){ setLang('sr'); });
+  var saved = lsGet(LANGKEY); setLang(saved === 'sr' ? 'sr' : 'hu');
+
+  /* haladás */
+  var state = {};
+  try{ state = JSON.parse(lsGet(KEY) || '{}') || {}; }catch(e){ state = {}; }
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+  function refresh(){
+    var must = 0, opt = 0, per = {}, tot = {}, all = 0;
+    boxes.forEach(function(b){
+      var t = b.closest('.task'), p = t.getAttribute('data-part'), k = t.getAttribute('data-kind');
+      tot[p] = (tot[p]||0) + 1;
+      t.classList.toggle('done', b.checked);
+      if(b.checked){ per[p] = (per[p]||0) + 1; all++; if(k === 'must'){ must++; } else { opt++; } }
+    });
+    document.getElementById('doneN').textContent = must;
+    document.getElementById('doneO').textContent = opt;
+    var fill = document.getElementById('fill');
+    fill.style.width = (100*must/MUST) + '%';
+    fill.classList.toggle('full', must === MUST);
+    document.getElementById('bar').setAttribute('aria-valuenow', must);
+    Array.prototype.forEach.call(document.querySelectorAll('.pcount'), function(el){
+      var p = el.getAttribute('data-pc'), d = per[p]||0, t = tot[p]||0;
+      el.textContent = d + ' / ' + t;
+      el.classList.toggle('full', d === t && t > 0);
+    });
+    document.getElementById('mustDone').classList.toggle('done', must === MUST);
+    Array.prototype.forEach.call(document.querySelectorAll('#mustLeft,.mustLeft2'), function(el){ el.textContent = (MUST - must); });
+    document.getElementById('allDone').classList.toggle('show', all === boxes.length);
+  }
+  boxes.forEach(function(b){
+    var n = b.getAttribute('data-n');
+    b.checked = !!state[n];
+    b.addEventListener('change', function(){
+      if(b.checked){ state[n] = 1; } else { delete state[n]; }
+      lsSet(KEY, JSON.stringify(state));
+      refresh();
+    });
+  });
+  refresh();
+  document.getElementById('reset').addEventListener('click', function(){
+    var msg = body.getAttribute('data-lang') === 'sr' ? 'Da li da obrišem sve oznake?' : 'Törlöd az összes pipát?';
+    if(window.confirm(msg)){
+      state = {}; lsSet(KEY, '{}');
+      boxes.forEach(function(b){ b.checked = false; });
+      refresh();
+    }
+  });
+
+  /* Tipp / Ellenőrzés panelek */
+  Array.prototype.forEach.call(document.querySelectorAll('.hbtn'), function(btn){
+    btn.addEventListener('click', function(){
+      var p = document.getElementById(btn.getAttribute('aria-controls'));
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      if(open){ p.setAttribute('hidden',''); } else { p.removeAttribute('hidden'); }
+    });
+  });
+
+  /* táblázat másolása (TSV, Excelbe illeszthető) */
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly',''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.getAttribute('data-tbl') + '-' + body.getAttribute('data-lang');
+      var rows = [];
+      Array.prototype.forEach.call(document.getElementById(id).querySelectorAll('tr'), function(tr){
+        var cells = tr.querySelectorAll('td');
+        if(cells.length){ rows.push(Array.prototype.map.call(cells, function(c){ return c.textContent.trim(); }).join('\t')); }
+      });
+      var text = rows.join('\n');
+      function ok(){ btn.classList.add('copied'); setTimeout(function(){ btn.classList.remove('copied'); }, 1800); }
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(ok, function(){ fallbackCopy(text); ok(); });
+      } else { fallbackCopy(text); ok(); }
+    });
+  });
+
+  /* navigációs fülek követik a görgetést */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.tabs a'));
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+          var on = document.querySelector('.tabs a.on');
+          if(on && on.scrollIntoView && window.innerWidth < 700){ try{ on.scrollIntoView({block:'nearest', inline:'nearest'}); }catch(err){} }
+        }
+      });
+    }, {rootMargin:'-130px 0px -65% 0px'});
+    ['data','lesson1','lesson2','lesson3','extra','bonus'].forEach(function(id){ var el = document.getElementById(id); if(el) io.observe(el); });
+  }
+})();
+</script>
+</body>
+</html>
