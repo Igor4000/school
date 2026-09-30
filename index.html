@@ -1,480 +1,1501 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Üdvözlet | TECHSCIENCE</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Fizika és informatika tananyag diákoknak, MI-eszközök tanároknak.">
+<title>Techscience – Showreel</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctext y=%2726%27 font-size=%2728%27%3E%E2%9A%9B%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("pre");setTimeout(function(){document.documentElement.classList.remove("pre")},3500);</script>
+<style>
+/* ==========================================================
+   Techscience – stílus / stil
+   Színek és méretek: lásd :root / boje i mere: vidi :root
+   ========================================================== */
 
-        body {
-            background: linear-gradient(145deg, #f0f7ff 0%, #e6f2fc 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
-            padding: 1.5rem;
-            margin: 0;
-            color: #1a2b3c;
-            line-height: 1.6;
-        }
+:root {
+  --paper: #EEF2F7;
+  --panel: rgba(255, 255, 255, .68);
+  --line: rgba(15, 27, 45, .12);
+  --ink: #0F1B2D;
+  --steel: #52627A;
+  --cobalt: #1F4FD8;
+  --cobalt-deep: #12318C;
+  --teal: #0E8F9A;
+  --teal-deep: #075D66;
+  --indigo: #4B44C9;
+  --amber: #B7791F;
+  --radius: 24px;
+  --gut: clamp(16px, 4.5vw, 32px);
 
-        .welcome-container {
-            position: relative;
-            max-width: 1100px;
-            width: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 2.5rem;
-            padding: 2.5rem 2.5rem 2rem;
-            box-shadow: 0 30px 50px rgba(0, 20, 40, 0.12), 0 10px 25px rgba(0, 100, 150, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            transition: all 0.3s ease;
-        }
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
 
-        /* Nyelvváltó kapcsoló */
-        .language-toggle {
-            position: absolute;
-            top: 1.8rem;
-            right: 2.2rem;
-            display: flex;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 3rem;
-            padding: 0.3rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(41, 128, 185, 0.15);
-            z-index: 10;
-        }
+*, *::before, *::after { box-sizing: border-box; }
 
-        .lang-btn {
-            background: transparent;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 2.5rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.4px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-family: inherit;
-        }
+html {
+  height: 100%;
+  scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 90px);
+  scroll-behavior: smooth;
+}
 
-        .lang-btn i {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: #EEF2F7;
+  color: var(--ink);
+  font-family: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(16px, 0.35vw + 15px, 17px);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  position: relative;
+}
 
-        .lang-btn.active {
-            background: #1e4a6b;
-            color: white;
-            box-shadow: 0 6px 14px rgba(30, 74, 107, 0.3);
-        }
+/* mérnöki rács, amely az egeret követi / mrežа koja prati miša */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 55% 50% at var(--mx, 70%) var(--my, 28%), #000 10%, transparent 75%);
+          mask-image: radial-gradient(ellipse 55% 50% at var(--mx, 70%) var(--my, 28%), #000 10%, transparent 75%);
+  opacity: .6;
+}
 
-        .lang-btn.active i {
-            color: white;
-            opacity: 1;
-        }
 
-        .welcome-title {
-            font-size: clamp(2.8rem, 8vw, 4.8rem);
-            font-weight: 750;
-            text-align: center;
-            margin-bottom: 1.8rem;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #1e4a6b, #1f7b4d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.1;
-            padding-right: 120px;
-        }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: 12px; }
 
-        @media (max-width: 600px) {
-            .welcome-title {
-                padding-right: 0;
-                margin-top: 1rem;
-            }
-        }
+.wrap { position: relative; z-index: 1; width: min(1240px, 100% - 2 * var(--gut) - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); margin-inline: auto; }
 
-        .content-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 2.8rem;
-            margin: 2rem 0 1.8rem;
-            flex-wrap: wrap;
-        }
+/* ---------- NAV ---------- */
+.nav-shell { position: sticky; top: 8px; z-index: 30; padding-top: 10px; }
+.nav {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 8px 10px 8px clamp(14px, 2.4vw, 20px);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .66);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+          backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: 0 12px 34px rgba(15, 27, 45, .09), inset 0 0 0 1px var(--line);
+}
+.brand { display: flex; align-items: center; gap: 11px; font-family: "Sora", sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.02em; }
+.brand svg { width: 28px; height: 28px; }
 
-        .welcome-image {
-            flex: 0 0 280px;
-            height: 280px;
-            border-radius: 2rem;
-            object-fit: cover;
-            box-shadow: 0 25px 35px -10px rgba(0, 100, 120, 0.3);
-            border: 3px solid rgba(255, 255, 255, 0.9);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            background: #cbdde8;
-        }
+.lang { display: flex; padding: 3px; border-radius: 999px; background: rgba(15, 27, 45, .07); }
+.lang button {
+  border: 0; background: transparent; cursor: pointer;
+  padding: 6px 14px; border-radius: 999px;
+  font: 600 13px/1 "Hanken Grotesk", system-ui, sans-serif; color: var(--steel);
+  transition: background .2s, color .2s;
+}
+.lang button[aria-pressed="true"] { background: var(--ink); color: #fff; }
 
-        .welcome-image:hover {
-            transform: scale(1.03) translateY(-6px);
-            box-shadow: 0 30px 45px rgba(20, 100, 120, 0.35);
-        }
+/* ---------- HERO ---------- */
+.hero { display: grid; grid-template-columns: 1.02fr 1fr; align-items: center; gap: clamp(8px, 2vw, 24px); min-height: min(640px, calc(100vh - 110px)); padding: clamp(16px, 3vw, 40px) 0 clamp(64px, 9vw, 130px); }
+.hero-space { position: relative; align-self: stretch; min-height: 560px; }
+.hero h1 { font-family: "Sora", sans-serif; font-weight: 700; font-size: clamp(34px, 5.6vw, 74px); line-height: 1.04; letter-spacing: -0.045em; margin: 0 0 clamp(14px, 2vw, 24px); text-wrap: balance; }
+.hero p { font-size: clamp(16px, 1.3vw + 7px, 20px); color: var(--steel); max-width: 27em; margin: 0; }
 
-        .text-content {
-            flex: 1;
-            min-width: 260px;
-        }
+.btn { white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 16px; transition: transform .2s ease, box-shadow .2s ease, background .2s; }
+.btn:hover { transform: translateY(-2px); }
+.btn.ghost { background: var(--panel); color: var(--ink); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px var(--line); }
+.btn.small { padding: 9px 18px; font-size: 15px; }
 
-        .welcome-message {
-            font-size: 2rem;
-            font-weight: 650;
-            margin-bottom: 0.8rem;
-            color: #0a3144;
-            line-height: 1.3;
-        }
+/* ---------- SECTION HEAD ---------- */
+.section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin: 6px 0 clamp(18px, 2.6vw, 36px); }
+.section-head h2 { font-family: "Sora", sans-serif; font-weight: 600; font-size: clamp(22px, 2.2vw + 10px, 38px); letter-spacing: -0.03em; margin: 0; line-height: 1.1; min-width: 0; }
+.section-head span { color: var(--steel); max-width: 22em; text-align: right; font-size: 15px; }
 
-        .welcome-description {
-            font-size: 1.2rem;
-            margin-bottom: 0.8rem;
-            color: #1e4056;
-            font-weight: 450;
-        }
+.news .section-head { align-items: center; margin-bottom: clamp(16px, 2.2vw, 22px); }
 
-        .welcome-details {
-            font-size: 1.05rem;
-            margin-bottom: 0.6rem;
-            color: #2c4b60;
-            line-height: 1.7;
-        }
+/* ---------- 3D TILES ---------- */
+.grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(14px, 2vw, 22px); perspective: 1200px; padding-bottom: clamp(48px, 7vw, 80px); }
 
-        /* ---- NAVIGÁCIÓS GOMBOK ---- */
-        .nav-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 1.8rem 0 2rem;
-        }
+.tile {
+  --rx: 0deg; --ry: 0deg;
+  position: relative;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: clamp(18px, 2.2vw, 26px); min-height: clamp(180px, 17vw, 210px);
+  border-radius: var(--radius);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform .35s cubic-bezier(.2, .7, .2, 1), box-shadow .35s ease;
+  will-change: transform;
+}
+.tile.hot { transition: transform .07s linear, box-shadow .35s ease; }
 
-        .nav-card {
-            flex: 1;
-            min-width: 200px;
-            max-width: 300px;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 1.8rem;
-            padding: 1.8rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-            border: 2px solid rgba(30, 74, 107, 0.15);
-            box-shadow: 0 12px 28px rgba(0, 40, 60, 0.08);
-            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            cursor: pointer;
-            color: inherit;
-        }
+/* a háttér külön réteg, hogy az elemek kiléphessenek a kártyából */
+.tile-bg { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; }
+.tile-bg::after { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .3s; background: radial-gradient(480px circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, .30), transparent 60%); }
+.tile.hot .tile-bg::after { opacity: 1; }
 
-        .nav-card:hover {
-            transform: translateY(-8px);
-            border-color: #1e4a6b;
-            box-shadow: 0 22px 38px rgba(30, 74, 107, 0.18);
-            background: rgba(255, 255, 255, 0.85);
-        }
+.tile h3 { position: relative; font-family: "Sora", sans-serif; font-weight: 700; font-size: clamp(22px, 2.3vw, 32px); line-height: 1.08; letter-spacing: -0.035em; margin: 0 0 6px; text-wrap: balance; overflow-wrap: break-word; hyphens: auto; transform: translate(calc(var(--px, 0) * 4px), calc(var(--py, 0) * 3px)); transition: transform .15s linear; }
+.tile p { position: relative; margin: 0; max-width: min(25em, calc(100% - 66px)); font-size: 15px; line-height: 1.45; text-wrap: pretty; transform: translate(calc(var(--px, 0) * 2px), calc(var(--py, 0) * 1.5px)); transition: transform .15s linear; }
+.tile .go { position: absolute; right: 20px; bottom: 20px; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; transform: translate(calc(var(--px, 0) * 8px), calc(var(--py, 0) * 6px)); transition: transform .15s linear, scale .25s ease; }
+.tile .go svg { width: 18px; height: 18px; }
+.tile:hover .go { scale: 1.08; }
+.tile .art { position: absolute; right: clamp(12px, 1.6vw, 18px); top: 14px; width: 40%; max-width: 210px; transform: translate(calc(var(--px, 0) * 16px), calc(var(--py, 0) * 12px)); transition: transform .15s linear; pointer-events: none; filter: drop-shadow(0 22px 22px rgba(15, 27, 45, .22)); }
 
-        .nav-card-physics:hover {
-            border-color: #e67e22;
-            box-shadow: 0 22px 38px rgba(230, 126, 34, 0.2);
-        }
+.t-fizika { grid-column: 1 / 4; min-height: clamp(220px, 21vw, 270px); color: #fff; box-shadow: 0 22px 40px rgba(18, 49, 140, .28); }
+.t-fizika .tile-bg { background: linear-gradient(150deg, #2D63F0 0%, #12318C 100%); }
+.t-info   { grid-column: 4 / 7; min-height: clamp(220px, 21vw, 270px); color: #fff; box-shadow: 0 22px 40px rgba(7, 93, 102, .26); }
+.t-info .tile-bg { background: linear-gradient(150deg, #13AAB6 0%, #075D66 100%); }
+.t-ai     { grid-column: 1 / 5; color: var(--ink); box-shadow: 0 22px 46px rgba(15, 27, 45, .12); }
+.t-news   { grid-column: 5 / 7; color: var(--ink); box-shadow: 0 22px 46px rgba(15, 27, 45, .12); }
+.t-ai .tile-bg, .t-news .tile-bg { background: var(--panel); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: inset 0 0 0 1px var(--line); }
 
-        .nav-card-informatics:hover {
-            border-color: #2980b9;
-            box-shadow: 0 22px 38px rgba(41, 128, 185, 0.22);
-        }
+.t-fizika p, .t-info p { color: rgba(255, 255, 255, .88); }
+.t-ai p, .t-news p { color: var(--steel); }
+.t-fizika .go, .t-info .go { background: #fff; color: var(--ink); box-shadow: 0 12px 24px rgba(0, 0, 0, .2); }
+.t-ai .go { background: var(--indigo); color: #fff; box-shadow: 0 12px 24px rgba(75, 68, 201, .38); }
+.t-news .go { background: var(--ink); color: #fff; box-shadow: 0 12px 24px rgba(15, 27, 45, .32); }
+.t-ai:hover, .t-news:hover { box-shadow: 0 34px 62px rgba(15, 27, 45, .18); }
 
-        .nav-icon {
-            font-size: 2.8rem;
-            background: linear-gradient(135deg, #1e4a6b, #1f7b4d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            transition: transform 0.35s ease;
-        }
+/* ---------- NEWS ---------- */
+.news { padding-bottom: clamp(44px, 6vw, 70px); }
+.news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 1.8vw, 20px); perspective: 1200px; }
+.news-card {
+  --rx: 0deg; --ry: 0deg;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+  padding: clamp(20px, 2.4vw, 26px); min-height: 210px; border-radius: var(--radius);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  box-shadow: 0 18px 40px rgba(15, 27, 45, .09), inset 0 0 0 1px var(--line);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform .35s cubic-bezier(.2, .7, .2, 1), box-shadow .35s ease;
+}
+.news-card.hot { transition: transform .07s linear, box-shadow .35s ease; }
+.news-card h3 { font-family: "Sora", sans-serif; font-weight: 600; font-size: 20px; line-height: 1.25; letter-spacing: -0.02em; margin: 6px 0 0; }
+.news-card p { margin: 0; color: var(--steel); font-size: 16px; }
+.news-card time { margin-top: auto; padding-top: 10px; font-size: 14px; color: var(--steel); }
+.chip { font-size: 13px; font-weight: 600; padding: 4px 11px; border-radius: 999px; }
+.c-cobalt { background: rgba(31, 79, 216, .11); color: var(--cobalt-deep); }
+.c-teal   { background: rgba(14, 143, 154, .13); color: var(--teal-deep); }
+.c-indigo { background: rgba(75, 68, 201, .12); color: #37309E; }
 
-        .nav-card-physics .nav-icon {
-            background: linear-gradient(135deg, #e67e22, #d35400);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 22px 0 40px; color: var(--steel); font-size: 14px; border-top: 1px solid var(--line); }
 
-        .nav-card-informatics .nav-icon {
-            background: linear-gradient(135deg, #2980b9, #1e4a6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+/* ---------- ENTRANCE (egyszeri / jednokratno) ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 
-        .nav-card:hover .nav-icon {
-            transform: scale(1.15);
-        }
+/* ---------- OPTIKAI IGAZÍTÁS ---------- */
+.hero h1, .section-head h2, .tile h3, .news-card h3 { margin-left: -0.045em; }
+.hero p, .news-card p { text-wrap: pretty; }
+.news-card h3 { text-wrap: balance; overflow-wrap: break-word; hyphens: auto; }
 
-        .nav-label {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            color: #122b3b;
-            text-align: center;
-        }
+/* ---------- RESPONSIVE ----------
+   1024+   : asztali, 6 oszlopos kártyarács, hero két oszlopban
+   640-1023: tablet, 2x2 kártya, a 3D mező a szöveg fölött
+   <640    : telefon, egy oszlop
+   ------------------------------------------------ */
+@media (max-width: 1023px) {
+  .hero { grid-template-columns: 1fr; min-height: 0; gap: 0; padding-top: 8px; }
+  .hero-space { order: 1; min-height: 0; height: clamp(300px, 56vw, 480px); }
+  .hero-text { order: 2; }
+  .hero-text p { max-width: 34em; }
 
-        .nav-sublabel {
-            font-size: 0.9rem;
-            color: #4a6274;
-            text-align: center;
-            font-weight: 450;
-            line-height: 1.5;
-        }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .t-fizika, .t-info, .t-ai, .t-news { grid-column: auto; min-height: clamp(240px, 36vw, 270px); }
+  .tile .art { width: 42%; }
+  .section-head span { display: none; }
+}
 
-        .highlight-box {
-            background: linear-gradient(120deg, rgba(30, 74, 107, 0.08), rgba(39, 174, 96, 0.1));
-            padding: 1.8rem 2rem;
-            border-radius: 2rem;
-            margin: 1.5rem 0 1.8rem;
-            border-left: 6px solid #1f7b4d;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            background: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 10px 20px rgba(0, 80, 70, 0.08);
-        }
+@media (max-width: 899px) {
+  .news-grid { grid-template-columns: 1fr; }
+  .news-card { min-height: 0; }
+}
 
-        .highlight-text {
-            font-size: 1.2rem;
-            font-style: italic;
-            font-weight: 500;
-            color: #122b3b;
-            line-height: 1.7;
-        }
+@media (max-width: 639px) {
+  .grid { grid-template-columns: 1fr; }
+  .t-fizika, .t-info { min-height: 210px; }
+  .t-ai, .t-news { min-height: 180px; }
+  .tile .art { width: 36%; }
+  .tile .go { width: 40px; height: 40px; right: 16px; bottom: 16px; }
+  .tile p { max-width: 80%; font-size: 14.5px; }
+  .section-head span { display: none; }
+  .lang button { padding: 6px 12px; }
+  .brand { font-size: 17px; gap: 9px; }
+  .brand svg { width: 24px; height: 24px; }
+  footer { flex-direction: column; }
+}
 
-        .welcome-subtitle {
-            font-size: 0.95rem;
-            color: #3a5568;
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(41, 128, 185, 0.2);
-            font-weight: 450;
-            letter-spacing: 0.2px;
-        }
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-space { height: clamp(220px, 60vh, 340px); }
+}
 
-        /* Reszponzív finomítások */
-        @media (max-width: 850px) {
-            .content-wrapper {
-                flex-direction: column;
-                text-align: center;
-            }
-            .text-content {
-                text-align: center;
-            }
-            .welcome-image {
-                flex: 0 0 220px;
-                width: 100%;
-                max-width: 350px;
-                height: 220px;
-            }
-            .language-toggle {
-                top: 1.2rem;
-                right: 1.5rem;
-            }
-            .nav-card {
-                min-width: 160px;
-                padding: 1.4rem 1.2rem;
-            }
-        }
+@media (min-width: 640px) and (max-width: 1279px) {
+  .tile p { min-height: calc(3 * 1.45em); }
+}
 
-        @media (max-width: 550px) {
-            .welcome-container {
-                padding: 2rem 1.2rem;
-            }
-            .language-toggle {
-                position: relative;
-                top: auto;
-                right: auto;
-                justify-content: center;
-                margin-bottom: 1.5rem;
-                width: fit-content;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .welcome-title {
-                margin-top: 0.5rem;
-                font-size: 2.4rem;
-            }
-            .welcome-message {
-                font-size: 1.6rem;
-            }
-            .nav-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-            .nav-card {
-                max-width: 100%;
-                width: 100%;
-                flex-direction: row;
-                justify-content: center;
-                gap: 1rem;
-                padding: 1.2rem 1.5rem;
-                border-radius: 2rem;
-            }
-            .nav-icon {
-                font-size: 2.2rem;
-            }
-            .nav-label {
-                font-size: 1.1rem;
-            }
-            .nav-sublabel {
-                display: none;
-            }
-        }
-    </style>
+/* érintőképernyő: nincs dőlés, egyszerű lenyomás-visszajelzés */
+@media (hover: none) {
+  .section-head span { display: none; }
+  .tile, .news-card { transform: none !important; }
+  .tile h3, .tile p, .tile .go, .tile .art { transform: none; }
+  .tile:hover .go { transform: none; }
+  .tile:active, .news-card:active { transform: scale(.985) !important; transition: transform .12s ease; }
+  .tile .art { filter: none; }
+}
+
+@media (min-width: 1024px) and (hover: hover) {
+  .tile .art { top: -14px; }
+}
+
+@media (min-width: 1700px) {
+  .hero-space { min-height: 640px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero h1, .hero p { animation: none; }
+  .tile, .tile.hot, .news-card, .news-card.hot, .tile .go { transition: none; }
+}
+
+</style>
+<style>
+/* ==========================================================
+   Showreel – HUD, titlovi, otkrivanje stranice
+   ========================================================== */
+
+:root { --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+
+html.pre .wrap { opacity: 0; }
+
+#scene {
+  position: fixed; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  display: block; pointer-events: none;
+}
+
+body { transition: background-color .6s linear; }
+body.is-reel { overflow: hidden; }
+
+/* ---------- otkrivanje stranice / reveal ---------- */
+.wrap > *, .hero-text > * {
+  transition: opacity 1s cubic-bezier(.2, .7, .2, 1), transform 1s cubic-bezier(.2, .7, .2, 1);
+}
+body.is-reel .wrap > *,
+body.is-reel .hero-text > * { opacity: 0; transform: translateY(26px); }
+body.is-reel .wrap { pointer-events: none; }
+
+body.is-done .nav-shell { transition-delay: .15s; }
+body.is-done .hero-text > :nth-child(1) { transition-delay: .35s; }
+body.is-done .hero-text > :nth-child(2) { transition-delay: .5s; }
+body.is-done .hero-text > :nth-child(3) { transition-delay: .65s; }
+body.is-done .wrap > .section-head { transition-delay: .8s; }
+body.is-done .wrap > .grid { transition-delay: .95s; }
+body.is-done .wrap > .news, body.is-done .wrap > footer { transition-delay: 1.1s; }
+body.instant .wrap > *, body.instant .hero-text > * { transition: none !important; }
+
+.hero h1, .hero p { animation: none; }
+
+/* ---------- replay dugme ---------- */
+.replay {
+  margin-top: clamp(20px, 2.4vw, 30px);
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 7px 16px 7px 7px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 600 14.5px/1 "Hanken Grotesk", system-ui, sans-serif; color: var(--ink);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px var(--line), 0 8px 20px rgba(15, 27, 45, .07);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.replay:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px var(--line), 0 12px 26px rgba(15, 27, 45, .12); }
+.replay-ic { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: #fff; }
+.replay-ic svg { width: 14px; height: 14px; margin-left: 2px; }
+
+/* ==========================================================
+   HUD
+   ========================================================== */
+.reel {
+  position: fixed; inset: 0; z-index: 40;
+  pointer-events: none;
+  opacity: 0; visibility: hidden;
+  transition: opacity .7s ease, visibility 0s linear .7s;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+body.is-reel .reel { opacity: 1; visibility: visible; transition: opacity .4s ease; }
+
+.reel-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--sx, 64%) var(--sy, 45%), var(--glow, rgba(31, 79, 216, .16)), transparent 42%);
+  transition: background .8s linear;
+}
+
+.corner { position: absolute; width: 22px; height: 22px; border-color: rgba(15, 27, 45, .35); border-style: solid; border-width: 0; }
+.corner.tl { top: 16px; left: 16px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.corner.tr { top: 16px; right: 16px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.corner.bl { bottom: 16px; left: 16px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.corner.br { bottom: 16px; right: 16px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+/* gornja traka */
+.reel-top {
+  position: absolute; left: clamp(20px, 4vw, 56px); right: clamp(20px, 4vw, 56px); top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 3vw, 34px));
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.reel-brand { display: flex; align-items: center; gap: 10px; font: 700 18px/1 "Sora", sans-serif; letter-spacing: -0.02em; }
+.reel-brand svg { width: 26px; height: 26px; }
+.reel-tag {
+  display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; padding-left: 14px;
+  border-left: 1px solid var(--line);
+  font: 500 11.5px/1 var(--mono); font-style: normal; letter-spacing: .14em; text-transform: uppercase; color: var(--steel);
+}
+.reel-tag b { font-weight: 500; }
+.reel-tag i { width: 7px; height: 7px; border-radius: 50%; background: #E0364F; animation: rec 1.2s steps(2, jump-none) infinite; }
+@keyframes rec { 50% { opacity: .15; } }
+
+.reel-actions { display: flex; align-items: center; gap: 8px; pointer-events: auto; }
+.reel-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 16px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 600 14px/1 "Hanken Grotesk", system-ui, sans-serif;
+  transition: transform .2s ease, background .2s, color .2s;
+}
+.reel-btn svg { width: 17px; height: 17px; }
+.reel-btn:hover { transform: translateY(-1px); }
+.reel-btn.sound { background: rgba(255, 255, 255, .7); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.reel-btn.sound .w1 { display: none; }
+.reel-btn.sound[aria-pressed="true"] .w1 { display: inline; }
+.reel-btn.sound[aria-pressed="true"] .x { display: none; }
+.reel-btn.skip { background: var(--ink); color: #fff; box-shadow: 0 10px 22px rgba(15, 27, 45, .25); }
+.reel .lang { background: rgba(255, 255, 255, .7); box-shadow: inset 0 0 0 1px var(--line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+
+/* reticle */
+.reticle {
+  position: absolute; left: 0; top: 0; width: 200px; height: 200px;
+  opacity: 0; transition: opacity .6s ease;
+  will-change: transform;
+}
+.reticle.on { opacity: 1; }
+.reticle svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.reticle .r-dash { stroke: rgba(31, 79, 216, .45); stroke-width: .8; stroke-dasharray: 2 6; vector-effect: non-scaling-stroke; transform-origin: 100px 100px; animation: spin 18s linear infinite; }
+.reticle .r-thin { stroke: rgba(15, 27, 45, .12); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.reticle .r-tick { stroke: rgba(15, 27, 45, .45); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.reticle-label, .reticle-read {
+  position: absolute; font: 500 11.5px/1.3 var(--mono); color: var(--steel); white-space: nowrap; letter-spacing: .04em;
+}
+.reticle-label { right: 6%; top: 4%; color: var(--cobalt-deep); font-size: 13px; }
+.reticle-read { right: 2%; bottom: 6%; text-align: right; }
+
+/* titlovi */
+.reel-cap {
+  position: absolute; left: clamp(20px, 5vw, 72px); bottom: clamp(96px, 13vh, 150px);
+  max-width: min(36vw, 600px);
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  visibility: hidden;
+}
+.reel-cap.in, .reel-cap.out { visibility: visible; }
+.reel-cap .k {
+  display: inline-flex; align-items: center; gap: 12px; white-space: nowrap;
+  font: 500 12.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--cobalt-deep);
+}
+.reel-cap .k::before { content: ""; width: 34px; height: 1.5px; background: currentColor; transform-origin: left; }
+.reel-cap .t {
+  margin: 0 0 0 -0.05em;
+  font: 700 clamp(46px, 6.3vw, 112px)/.95 "Sora", sans-serif; letter-spacing: -0.055em; color: var(--ink);
+}
+.reel-cap .t:empty { display: none; }
+.reel-cap .t .w { display: inline-block; white-space: nowrap; }
+.reel-cap .t .ch { display: inline-block; }
+.reel-cap .s { font: 500 clamp(16px, 1.4vw, 21px)/1.4 "Sora", sans-serif; color: var(--steel); letter-spacing: -0.01em; }
+.reel-cap.code .s { font: 500 clamp(14px, 1.2vw, 18px)/1.4 var(--mono); color: var(--teal-deep); background: rgba(255, 255, 255, .6); padding: 8px 12px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); }
+.reel-cap .caret { display: inline-block; width: .6em; height: 1.1em; margin-left: 2px; vertical-align: -0.2em; background: currentColor; animation: rec .9s steps(2, jump-none) infinite; }
+
+.reel-cap.in .k { animation: kIn .7s cubic-bezier(.2, .8, .2, 1) both; }
+.reel-cap.in .k::before { animation: lineIn .8s cubic-bezier(.2, .8, .2, 1) both; }
+.reel-cap.in .ch { animation: chIn .85s cubic-bezier(.16, .9, .2, 1) both; animation-delay: calc(80ms + var(--i) * 34ms); }
+.reel-cap.in .s { animation: sIn .8s cubic-bezier(.2, .8, .2, 1) .35s both; }
+.reel-cap.out { animation: capOut .42s cubic-bezier(.5, 0, .75, 0) both; }
+
+@keyframes kIn { from { opacity: 0; transform: translateX(-14px); } }
+@keyframes lineIn { from { transform: scaleX(0); } }
+@keyframes chIn { from { opacity: 0; transform: translateY(.55em) rotate(6deg); filter: blur(8px); } }
+@keyframes sIn { from { opacity: 0; transform: translateY(10px); } }
+@keyframes capOut { to { opacity: 0; transform: translateY(-14px); filter: blur(10px); } }
+
+.reel-cap.center {
+  left: 50%; right: auto; bottom: auto; top: var(--capTop, 62%);
+  transform: translateX(-50%);
+  max-width: min(92vw, 760px); align-items: center; text-align: center;
+}
+.reel-cap.center.out { animation: capOutC .42s cubic-bezier(.5, 0, .75, 0) both; }
+@keyframes capOutC { to { opacity: 0; transform: translate(-50%, -14px); filter: blur(10px); } }
+
+/* sweep pri prelazu */
+.reel-sweep {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 38vw; opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .0) 30%, rgba(255, 255, 255, .75) 50%, rgba(31, 79, 216, .10) 52%, transparent 70%);
+  transform: translateX(-40vw) skewX(-12deg);
+}
+.reel-sweep.go { animation: sweep 1.05s cubic-bezier(.6, 0, .3, 1) both; }
+@keyframes sweep { 0% { opacity: 1; transform: translateX(-40vw) skewX(-12deg); } 100% { opacity: 1; transform: translateX(110vw) skewX(-12deg); } }
+
+/* donja traka */
+.reel-bottom {
+  position: absolute; left: clamp(20px, 4vw, 56px); right: clamp(20px, 4vw, 56px); bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(22px, 3.4vw, 40px));
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: clamp(14px, 2vw, 28px);
+  font: 500 12.5px/1 var(--mono); letter-spacing: .1em; color: var(--steel);
+}
+.reel-bottom .tc { color: var(--ink); }
+.segs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-width: 520px; width: 100%; justify-self: center; }
+.segs i { display: block; height: 3px; border-radius: 3px; background: rgba(15, 27, 45, .12); overflow: hidden; }
+.segs b { display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(0); background: var(--ink); }
+
+/* ---------- mobilni ---------- */
+@media (max-width: 759px), (max-aspect-ratio: 4/5) {
+  .reel-tag { display: none; }
+  .reel-brand span { display: none; }
+  .reel-btn { height: 34px; padding: 0 12px; font-size: 13px; }
+  .reel-btn.sound span { display: none; }
+  .reel-btn.sound { width: 34px; padding: 0; justify-content: center; }
+  .reel-cap { max-width: calc(100vw - 40px); bottom: clamp(84px, 12vh, 120px); }
+  .reel-cap .t { font-size: clamp(40px, 12vw, 64px); }
+  .reticle-read { display: none; }
+  .corner { width: 16px; height: 16px; }
+  .corner.tl, .corner.tr { top: 10px; } .corner.bl, .corner.br { bottom: 10px; }
+  .corner.tl, .corner.bl { left: 10px; } .corner.tr, .corner.br { right: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-cap.in .ch, .reel-cap.in .k, .reel-cap.in .s { animation-duration: .01s; animation-delay: 0s; }
+  .reticle .r-dash { animation: none; }
+}
+
+</style>
 </head>
 <body>
-    <div class="welcome-container">
 
-        <!-- Nyelvválasztó gombok -->
-        <div class="language-toggle" id="languageToggle">
-            <button class="lang-btn active" id="btnHu"><i class="fas fa-globe"></i> HU</button>
-            <button class="lang-btn" id="btnSr"><i class="fas fa-language"></i> SR</button>
-        </div>
+<!-- 3D čestice (showreel + hero) -->
+<canvas id="scene" aria-hidden="true"></canvas>
 
-        <h1 class="welcome-title">TECHSCIENCE</h1>
+<!-- SHOWREEL HUD -->
+<div class="reel" id="reel" role="region" aria-label="Showreel">
+  <div class="reel-glow"></div>
+  <div class="reel-sweep" id="reelSweep"></div>
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
 
-        <div class="content-wrapper">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-            alt="Technológia és oktatás"
-            class="welcome-image">
-
-            <div class="text-content">
-                <div class="welcome-message" data-lang="hu">
-                    Üdvözöljük a TECHSCIENCE közösségében!
-                </div>
-                <div class="welcome-message" data-lang="sr" style="display: none;">
-                    Dobrodošli u TECHSCIENCE zajednicu!
-                </div>
-
-                <div class="welcome-description" data-lang="hu">
-                    Egy dinamikus platform középiskolások számára, ahol a technológia, informatika és tudomány világa tárul eléd.
-                </div>
-                <div class="welcome-description" data-lang="sr" style="display: none;">
-                    Dinamična platforma za srednjoškolce na kojoj se otvara svet tehnologije, informatike i nauke.
-                </div>
-
-                <div class="welcome-details" data-lang="hu">
-                    Célunk, hogy inspiráló és könnyen érthető anyagokkal segítsük a digitális készségeid fejlesztését. Itt megtalálod a legfontosabb ismereteket a programozás alapjaitól a kiberbiztonság kihívásaiig.
-                </div>
-                <div class="welcome-details" data-lang="sr" style="display: none;">
-                    Naš cilj je da ti pomognemo da razviješ digitalne veštine kroz inspirativne i lako razumljive materijale. Ovde ćeš pronaći ključna znanja od osnova programiranja do izazova sajber bezbednosti.
-                </div>
-            </div>
-        </div>
-
-        <!-- ---- NAVIGÁCIÓS GOMBOK: FIZIKA ÉS INFORMATIKA ---- -->
-        <div class="nav-buttons">
-            <!-- Fizika kártya -->
-            <a href="fizika home.html" class="nav-card nav-card-physics" title="Fizika oldal">
-                <span class="nav-icon"><i class="fas fa-atom"></i></span>
-                <span class="nav-label" data-lang="hu">Fizika</span>
-                <span class="nav-label" data-lang="sr" style="display: none;">Fizika</span>
-                <span class="nav-sublabel" data-lang="hu">Bevezető a fizika világába</span>
-                <span class="nav-sublabel" data-lang="sr" style="display: none;">Uvod u svet fizike</span>
-            </a>
-
-            <!-- Informatika kártya -->
-            <a href="informatika home.html" class="nav-card nav-card-informatics" title="Informatika oldal">
-                <span class="nav-icon"><i class="fas fa-laptop-code"></i></span>
-                <span class="nav-label" data-lang="hu">Informatika</span>
-                <span class="nav-label" data-lang="sr" style="display: none;">Informatika</span>
-                <span class="nav-sublabel" data-lang="hu">Programozás, hálózatok, adatbiztonság</span>
-                <span class="nav-sublabel" data-lang="sr" style="display: none;">Programiranje, mreže, bezbednost podataka</span>
-            </a>
-        </div>
-
-        <div class="highlight-box">
-            <div class="highlight-text" data-lang="hu">
-                "A jövő nem varázslat, hanem kód. A technológia nem csoda, hanem megértés. Itt kezdődik az utad a digitális mesternövévé váláshoz."
-            </div>
-            <div class="highlight-text" data-lang="sr" style="display: none;">
-                „Budućnost nije magija, već kod. Tehnologija nije čudo, već razumevanje. Ovde počinje tvoj put ka tome da postaneš digitalni majstor.”
-            </div>
-        </div>
-
-        <div class="welcome-subtitle">
-            <span data-lang="hu">Középiskolások számára készült informatikai tartalmak | Folyamatosan bővülő anyaggyűjtemény | Gyakorlati példák és megoldások</span>
-            <span data-lang="sr" style="display: none;">Informatički sadržaji namenjeni srednjoškolcima | Kolekcija materijala koja se stalno proširuje | Praktični primeri i rešenja</span>
-        </div>
-         <div style="width: 100%; text-align: center;">
-
-            <div class="counter-title">
-                Broj poseta sajtu
-            </div>
-                <img
-                class="visitor-counter"
-                src="https://visitor-badge.laobi.icu/badge?page_id=igor4000.school"
-                alt="Broj poseta sajtu"
-                >
-        </div>
+  <div class="reel-top">
+    <div class="reel-brand">
+      <svg viewBox="0 0 32 32" fill="none" stroke="#0F1B2D" stroke-width="1.8" aria-hidden="true">
+        <ellipse cx="16" cy="16" rx="13" ry="5.2"/>
+        <ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(60 16 16)"/>
+        <ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(120 16 16)"/>
+        <circle cx="16" cy="16" r="2.8" fill="#1F4FD8" stroke="none"/>
+      </svg>
+      <span>Techscience</span>
+      <em class="reel-tag"><i></i><b data-i18n="reel.tag">Showreel</b> 2026</em>
     </div>
+    <div class="reel-actions">
+      <div class="lang" role="group" aria-label="Nyelv / Jezik">
+        <button type="button" data-lang="hu" aria-pressed="true">HU</button>
+        <button type="button" data-lang="sr" aria-pressed="false">SR</button>
+      </div>
+      <button type="button" class="reel-btn sound" id="reelSound" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="w1" d="M16.5 8.5a5 5 0 0 1 0 7"/><path class="x" d="M17 9l5 6M22 9l-5 6"/></svg>
+        <span data-i18n="reel.sound">Hang</span>
+      </button>
+      <button type="button" class="reel-btn skip" id="reelSkip">
+        <span data-i18n="reel.skip">Kihagyás</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l7 6-7 6M16 6v12"/></svg>
+      </button>
+    </div>
+  </div>
 
-    <script>
-        (function() {
-            const btnHu = document.getElementById('btnHu');
-            const btnSr = document.getElementById('btnSr');
+  <div class="reticle" id="reticle" aria-hidden="true">
+    <svg viewBox="0 0 200 200" fill="none">
+      <circle class="r-dash" cx="100" cy="100" r="96" />
+      <circle class="r-thin" cx="100" cy="100" r="80" />
+      <path class="r-tick" d="M100 0v14M100 186v14M0 100h14M186 100h14"/>
+    </svg>
+    <span class="reticle-label" id="reticleLabel"></span>
+    <span class="reticle-read" id="reticleRead"></span>
+  </div>
 
-            // Minden elem, ami rendelkezik data-lang attribútummal
-            const elementsHu = document.querySelectorAll('[data-lang="hu"]');
-            const elementsSr = document.querySelectorAll('[data-lang="sr"]');
+  <div class="reel-cap" id="reelCap" aria-live="polite">
+    <span class="k" id="capK"></span>
+    <h2 class="t" id="capT"></h2>
+    <span class="s" id="capS"></span>
+  </div>
 
-            function setLanguage(lang) {
-                if (lang === 'hu') {
-                    elementsHu.forEach(el => el.style.display = '');
-                    elementsSr.forEach(el => el.style.display = 'none');
-                    btnHu.classList.add('active');
-                    btnSr.classList.remove('active');
-                    document.documentElement.lang = 'hu';
-                } else {
-                    elementsHu.forEach(el => el.style.display = 'none');
-                    elementsSr.forEach(el => el.style.display = '');
-                    btnSr.classList.add('active');
-                    btnHu.classList.remove('active');
-                    document.documentElement.lang = 'sr';
-                }
-            }
+  <div class="reel-bottom">
+    <span class="tc" id="reelTC">00:00:00</span>
+    <div class="segs" id="reelSegs"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+    <span class="sc" id="reelSC">01 / 05</span>
+  </div>
+</div>
 
-            btnHu.addEventListener('click', () => setLanguage('hu'));
-            btnSr.addEventListener('click', () => setLanguage('sr'));
+<div class="wrap">
 
-            // Böngészőnyelv alapján automatikus váltás
-            if (navigator.language && navigator.language.startsWith('sr')) {
-                setLanguage('sr');
-            } else {
-                setLanguage('hu');
-            }
-        })();
-    </script>
+  <header class="nav-shell">
+    <nav class="nav" aria-label="Main">
+      <a class="brand" href="#top" aria-label="Techscience">
+        <svg viewBox="0 0 32 32" fill="none" stroke="#0F1B2D" stroke-width="1.8" aria-hidden="true">
+          <ellipse cx="16" cy="16" rx="13" ry="5.2"/>
+          <ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(60 16 16)"/>
+          <ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(120 16 16)"/>
+          <circle cx="16" cy="16" r="2.8" fill="#1F4FD8" stroke="none"/>
+        </svg>
+        Techscience
+      </a>
+      <div class="lang" role="group" aria-label="Nyelv / Jezik">
+        <button type="button" data-lang="hu" aria-pressed="true">HU</button>
+        <button type="button" data-lang="sr" aria-pressed="false">SR</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-text">
+      <h1 data-i18n="hero.title">Fizika és informatika. Pontosan, érthetően.</h1>
+      <p data-i18n="hero.sub">Tananyag, szimulációk és gyakorlófeladatok diákoknak. Módszertani anyagok és MI-eszközök tanároknak.</p>
+      <button type="button" class="replay" id="replay">
+        <span class="replay-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg></span>
+        <span data-i18n="hero.replay">Showreel lejátszása</span>
+      </button>
+    </div>
+    <!-- 3D jelenet: csak ebben a mezőben él, a szöveg nem fedi / 3D scena živi samo u ovom polju -->
+    <div class="hero-space" aria-hidden="true"></div>
+  </section>
+
+  <div class="section-head">
+    <h2 data-i18n="tiles.title">Válaszd ki a témát</h2>
+    <span data-i18n="tiles.hint">A kártyák követik az egér mozgását.</span>
+  </div>
+
+  <main class="grid">
+
+    <a class="tile t-fizika" id="fizika" href="fizika home.html" data-tilt="11">
+      <span class="tile-bg"></span>
+      <svg class="art" viewBox="0 0 220 140" fill="none" stroke-linecap="round" aria-hidden="true">
+        <path d="M10 70 H210 M20 10 V130" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <path d="M20 70 C50 -6 80 -6 110 70 S170 146 200 70" stroke="#fff" stroke-width="3.5"/>
+        <path d="M20 70 C40 34 60 34 80 70 S120 106 140 70 S180 34 200 70" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-dasharray="2 7"/>
+        <circle cx="110" cy="70" r="6" fill="#fff"/>
+      </svg>
+      <h3 data-i18n="physics.title">Fizika</h3>
+      <p data-i18n="physics.text">Jegyzetek, feladatok és interaktív szimulációk, évfolyamonként rendezve.</p>
+      <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="tile t-info" id="informatika" href="informatika home.html" data-tilt="11">
+      <span class="tile-bg"></span>
+      <svg class="art" viewBox="0 0 220 140" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="14" y="10" width="192" height="120" rx="10" fill="rgba(7,93,102,.35)" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/>
+        <path d="M14 34 H206" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/>
+        <path d="M40 60 L28 74 L40 88" stroke="#fff" stroke-width="3.5"/>
+        <path d="M56 60 H120 M56 78 H164 M56 96 H100" stroke="rgba(255,255,255,.8)" stroke-width="3.5"/>
+        <circle cx="30" cy="22" r="3" fill="rgba(255,255,255,.8)"/><circle cx="42" cy="22" r="3" fill="rgba(255,255,255,.55)"/><circle cx="54" cy="22" r="3" fill="rgba(255,255,255,.35)"/>
+      </svg>
+      <h3 data-i18n="cs.title">Informatika</h3>
+      <p data-i18n="cs.text">Adatbázisok, programozás és gyakorlás, közvetlenül a böngészőben.</p>
+      <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="tile t-ai" id="ai" href="#" data-tilt="11">
+      <span class="tile-bg"></span>
+      <svg class="art" viewBox="0 0 220 140" fill="none" stroke-linecap="round" aria-hidden="true">
+        <g stroke="rgba(75,68,201,.35)" stroke-width="1.5">
+          <path d="M30 30 L100 20 M30 30 L100 70 M30 30 L100 120 M30 70 L100 20 M30 70 L100 70 M30 70 L100 120 M30 110 L100 20 M30 110 L100 70 M30 110 L100 120"/>
+          <path d="M100 20 L190 45 M100 20 L190 95 M100 70 L190 45 M100 70 L190 95 M100 120 L190 45 M100 120 L190 95"/>
+        </g>
+        <g fill="#fff" stroke="#4B44C9" stroke-width="2.5">
+          <circle cx="30" cy="30" r="8"/><circle cx="30" cy="70" r="8"/><circle cx="30" cy="110" r="8"/>
+          <circle cx="100" cy="20" r="8"/><circle cx="100" cy="70" r="8"/><circle cx="100" cy="120" r="8"/>
+          <circle cx="190" cy="45" r="8"/><circle cx="190" cy="95" r="8" fill="#4B44C9"/>
+        </g>
+      </svg>
+      <h3 data-i18n="ai.title">MI tanároknak</h3>
+      <p data-i18n="ai.text">Útmutatók, promptok és gyakorlati példák a mesterséges intelligencia tanórai használatához.</p>
+      <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="tile t-news" id="hirek" href="#news" data-tilt="11">
+      <span class="tile-bg"></span>
+      <svg class="art" viewBox="0 0 220 140" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 122 H206 M14 10 V122" stroke="rgba(15,27,45,.25)" stroke-width="1.5"/>
+        <path d="M14 98 L60 78 L100 90 L148 40 L206 22" stroke="#0F1B2D" stroke-width="3.5"/>
+        <g fill="#fff" stroke="#0F1B2D" stroke-width="2.5"><circle cx="60" cy="78" r="5"/><circle cx="100" cy="90" r="5"/><circle cx="148" cy="40" r="5"/><circle cx="206" cy="22" r="6" fill="#B7791F" stroke="#B7791F"/></g>
+      </svg>
+      <h3 data-i18n="news.title">Hírek</h3>
+      <p data-i18n="news.text">Újdonságok az oldalról, a fizika és az informatika világából.</p>
+      <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+  </main>
+
+  <section id="news" class="news" aria-labelledby="news-h">
+    <div class="section-head">
+      <h2 id="news-h" data-i18n="latest.title">Legfrissebb hírek</h2>
+      <a class="btn ghost small" href="#" data-i18n="latest.all">Minden hír</a>
+    </div>
+    <div class="news-grid">
+      <article class="news-card" data-tilt="6">
+        <span class="chip c-cobalt" data-i18n="n1.tag">Az oldalról</span>
+        <h3 data-i18n="n1.title">Új szimulációk a hullámtanhoz</h3>
+        <p data-i18n="n1.text">Interferencia és állóhullámok kipróbálható modellje.</p>
+        <time datetime="2026-09" data-i18n="date.sep">2026. szeptember</time>
+      </article>
+      <article class="news-card" data-tilt="6">
+        <span class="chip c-teal" data-i18n="n2.tag">Informatika</span>
+        <h3 data-i18n="n2.title">SQL gyakorlófeladatok kezdőknek</h3>
+        <p data-i18n="n2.text">Lépésről lépésre a lekérdezésektől az összekapcsolásig.</p>
+        <time datetime="2026-09" data-i18n="date.sep">2026. szeptember</time>
+      </article>
+      <article class="news-card" data-tilt="6">
+        <span class="chip c-indigo" data-i18n="n3.tag">MI tanároknak</span>
+        <h3 data-i18n="n3.title">Mire jó az MI az óratervezésben?</h3>
+        <p data-i18n="n3.text">Rövid útmutató példákkal és promptmintákkal.</p>
+        <time datetime="2026-09" data-i18n="date.sep">2026. szeptember</time>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Techscience</span>
+    <span data-i18n="footer.tag">Fizika és informatika tananyag</span>
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ==========================================================
+   Fordítások / Prevodi
+   Új nyelv hozzáadása: másolj egy blokkot, és írd át.
+   Za novi jezik: kopiraj jedan blok i prevedi ga.
+   ========================================================== */
+window.TS_I18N = {
+  hu: {
+    'meta.title': 'Techscience – Fizika és informatika',
+    'meta.desc': 'Fizika és informatika tananyag diákoknak, MI-eszközök tanároknak.',
+
+    'hero.title': 'Fizika és informatika. Pontosan, érthetően.',
+    'hero.sub': 'Tananyag, szimulációk és gyakorlófeladatok diákoknak. Módszertani anyagok és MI-eszközök tanároknak.',
+
+    'tiles.title': 'Válaszd ki a témát',
+    'tiles.hint': 'A kártyák követik az egér mozgását.',
+
+    'physics.title': 'Fizika',
+    'physics.text': 'Jegyzetek, feladatok és interaktív szimulációk, évfolyamonként rendezve.',
+    'cs.title': 'Informatika',
+    'cs.text': 'Adatbázisok, programozás és gyakorlás, közvetlenül a böngészőben.',
+    'ai.title': 'MI tanároknak',
+    'ai.text': 'Útmutatók, promptok és gyakorlati példák a mesterséges intelligencia tanórai használatához.',
+    'news.title': 'Hírek',
+    'news.text': 'Újdonságok az oldalról, a fizika és az informatika világából.',
+
+    'latest.title': 'Legfrissebb hírek',
+    'latest.all': 'Minden hír',
+    'date.sep': '2026. szeptember',
+    'n1.tag': 'Az oldalról',
+    'n1.title': 'Új szimulációk a hullámtanhoz',
+    'n1.text': 'Interferencia és állóhullámok kipróbálható modellje.',
+    'n2.tag': 'Informatika',
+    'n2.title': 'SQL gyakorlófeladatok kezdőknek',
+    'n2.text': 'Lépésről lépésre a lekérdezésektől az összekapcsolásig.',
+    'n3.tag': 'MI tanároknak',
+    'n3.title': 'Mire jó az MI az óratervezésben?',
+    'n3.text': 'Rövid útmutató példákkal és promptmintákkal.',
+
+    'footer.tag': 'Fizika és informatika tananyag',
+
+    'hero.replay': 'Showreel lejátszása',
+    'reel.tag': 'Showreel',
+    'reel.skip': 'Kihagyás',
+    'reel.sound': 'Hang',
+    'reel.s1.kicker': '01 · Hullámok',
+    'reel.s1.title': 'Fizika',
+    'reel.s1.sub': 'y = A·sin(ω·t − k·x)',
+    'reel.s2.kicker': '02 · Anyag',
+    'reel.s2.title': 'Az atom belsejében',
+    'reel.s2.sub': 'E = h·ν',
+    'reel.s3.kicker': '03 · Adatok',
+    'reel.s3.title': 'Informatika',
+    'reel.s3.sub': 'SELECT * FROM meresek;',
+    'reel.s4.kicker': '04 · Gépi tanulás',
+    'reel.s4.title': 'MI tanároknak',
+    'reel.s4.sub': 'Eszközök, promptok és példák az órákhoz.',
+    'reel.s5.kicker': '05 · Techscience',
+    'reel.s5.title': '',
+    'reel.s5.sub': 'Fizika és informatika. Pontosan, érthetően.'
+  },
+
+  sr: {
+    'meta.title': 'Techscience – Fizika i informatika',
+    'meta.desc': 'Nastavni materijal iz fizike i informatike za učenike, VI alati za nastavnike.',
+
+    'hero.title': 'Fizika i informatika. Precizno, razumljivo.',
+    'hero.sub': 'Nastavni materijali, simulacije i zadaci za učenike. Metodički materijali i VI alati za nastavnike.',
+
+    'tiles.title': 'Izaberi temu',
+    'tiles.hint': 'Kartice prate pokrete miša.',
+
+    'physics.title': 'Fizika',
+    'physics.text': 'Beleške, zadaci i interaktivne simulacije, razvrstane po razredima.',
+    'cs.title': 'Informatika',
+    'cs.text': 'Baze podataka, programiranje i vežbanje, direktno u pregledaču.',
+    'ai.title': 'VI za nastavnike',
+    'ai.text': 'Vodiči, promptovi i praktični primeri za korišćenje veštačke inteligencije na času.',
+    'news.title': 'Vesti',
+    'news.text': 'Novosti sa sajta i iz sveta fizike i informatike.',
+
+    'latest.title': 'Najnovije vesti',
+    'latest.all': 'Sve vesti',
+    'date.sep': 'septembar 2026.',
+    'n1.tag': 'Sa sajta',
+    'n1.title': 'Nove simulacije za talase',
+    'n1.text': 'Interaktivni model interferencije i stojećih talasa.',
+    'n2.tag': 'Informatika',
+    'n2.title': 'SQL zadaci za početnike',
+    'n2.text': 'Korak po korak, od upita do spajanja tabela.',
+    'n3.tag': 'VI za nastavnike',
+    'n3.title': 'Čemu služi VI u planiranju časa?',
+    'n3.text': 'Kratak vodič sa primerima i uzorcima promptova.',
+
+    'footer.tag': 'Nastavni materijal iz fizike i informatike',
+
+    'hero.replay': 'Pusti showreel',
+    'reel.tag': 'Showreel',
+    'reel.skip': 'Preskoči',
+    'reel.sound': 'Zvuk',
+    'reel.s1.kicker': '01 · Talasi',
+    'reel.s1.title': 'Fizika',
+    'reel.s1.sub': 'y = A·sin(ω·t − k·x)',
+    'reel.s2.kicker': '02 · Materija',
+    'reel.s2.title': 'Unutar atoma',
+    'reel.s2.sub': 'E = h·ν',
+    'reel.s3.kicker': '03 · Podaci',
+    'reel.s3.title': 'Informatika',
+    'reel.s3.sub': 'SELECT * FROM merenja;',
+    'reel.s4.kicker': '04 · Mašinsko učenje',
+    'reel.s4.title': 'VI za nastavnike',
+    'reel.s4.sub': 'Alati, promptovi i primeri za čas.',
+    'reel.s5.kicker': '05 · Techscience',
+    'reel.s5.title': '',
+    'reel.s5.sub': 'Fizika i informatika. Precizno, razumljivo.'
+  }
+};
+
+</script>
+<script>
+/* ==========================================================
+   Fő szkript / Glavna skripta
+   - nyelvváltó HU / SR (a választást megjegyzi a böngésző)
+   - 3D dőlés a kártyákon
+   - egérkövető rács a háttérben
+   ========================================================== */
+(function () {
+  'use strict';
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var dict = window.TS_I18N || {};
+  var STORE_KEY = 'techscience-lang';
+
+  /* egybetűs szavak (i, u, a, s ...) után nem törünk sort / posle jednoslovnih reči nema preloma */
+  function bind(s) {
+    return s.replace(/(^|\s)([iuoaksz])\s/gi, '$1$2\u00A0');
+  }
+
+  /* ---------- nyelv / jezik ---------- */
+  function setLang(lang) {
+    if (!dict[lang]) lang = 'hu';
+    var d = dict[lang];
+
+    document.documentElement.lang = (lang === 'sr') ? 'sr-Latn' : lang;
+    document.title = d['meta.title'] || document.title;
+
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta && d['meta.desc']) meta.setAttribute('content', d['meta.desc']);
+
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      if (d[key] !== undefined) el.textContent = bind(d[key]);
+    });
+
+    document.querySelectorAll('.lang button').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false');
+    });
+
+    try { localStorage.setItem(STORE_KEY, lang); } catch (e) { /* nincs tárhely / nema skladišta */ }
+    document.dispatchEvent(new CustomEvent('ts:lang', { detail: lang }));
+  }
+
+  function initialLang() {
+    var saved = null;
+    try { saved = localStorage.getItem(STORE_KEY); } catch (e) {}
+    if (saved && dict[saved]) return saved;
+    return (navigator.language || '').toLowerCase().indexOf('sr') === 0 ? 'sr' : 'hu';
+  }
+
+  document.querySelectorAll('.lang button').forEach(function (b) {
+    b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
+  });
+
+  setLang(initialLang());
+
+  /* ---------- 3D dőlés / 3D naginjanje ---------- */
+  document.querySelectorAll('[data-tilt]').forEach(function (el) {
+    var amount = parseFloat(el.getAttribute('data-tilt')) || 10;
+
+    el.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch' || reduce) return;
+      var r = el.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width;
+      var py = (e.clientY - r.top) / r.height;
+      el.classList.add('hot');
+      el.style.setProperty('--ry', ((px - 0.5) * amount).toFixed(2) + 'deg');
+      el.style.setProperty('--rx', ((0.5 - py) * amount).toFixed(2) + 'deg');
+      el.style.setProperty('--px', ((px - 0.5) * 2).toFixed(3));
+      el.style.setProperty('--py', ((py - 0.5) * 2).toFixed(3));
+      el.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+      el.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+    });
+
+    el.addEventListener('pointerleave', function () {
+      el.classList.remove('hot');
+      el.style.setProperty('--rx', '0deg');
+      el.style.setProperty('--ry', '0deg');
+      el.style.setProperty('--px', '0');
+      el.style.setProperty('--py', '0');
+    });
+  });
+
+  /* ---------- egérkövető rács / mreža prati miša ---------- */
+  if (!reduce) {
+    var root = document.documentElement;
+    window.addEventListener('pointermove', function (e) {
+      root.style.setProperty('--mx', (e.clientX / window.innerWidth * 100).toFixed(1) + '%');
+      root.style.setProperty('--my', (e.clientY / window.innerHeight * 100).toFixed(1) + '%');
+    }, { passive: true });
+  }
+})();
+
+</script>
+<script>
+/* ==========================================================
+   Techscience – showreel motor (Three.js r128)
+   Hiljade čestica se preoblikuju kroz 5 scena (~14 s):
+   oblak → talas → atom → kristalna rešetka → neuronska mreža
+   → logotip "Techscience" → atom u hero polju stranice.
+   Test: ?t=6.2 zamrzava vreme na datoj sekundi.
+   ========================================================== */
+(function () {
+  'use strict';
+
+  var html = document.documentElement;
+  var body = document.body;
+  var canvas = document.getElementById('scene');
+  var heroSpace = document.querySelector('.hero-space');
+  var DICT = window.TS_I18N || {};
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var params = new URLSearchParams(location.search);
+  var freezeT = parseFloat(params.get('t'));
+  var SEEN_KEY = 'ts-reel-seen';
+
+  function unpre() { html.classList.remove('pre'); }
+  function fail() {
+    unpre();
+    body.classList.remove('is-reel');
+    body.classList.add('is-done', 'instant');
+    var r = document.getElementById('replay'); if (r) r.style.display = 'none';
+  }
+
+  if (!canvas || !window.THREE) { fail(); return; }
+
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  } catch (e) { fail(); return; }
+  renderer.setClearColor(0x000000, 0);
+
+  /* ---------------- vremenska linija ---------------- */
+  var SEQ = [
+    { id: 'cloud',   start: 0,     arrive: 0 },
+    { id: 'wave',    start: 0.25,  arrive: 1.45 },
+    { id: 'atom',    start: 2.75,  arrive: 3.95 },
+    { id: 'lattice', start: 5.35,  arrive: 6.55 },
+    { id: 'neural',  start: 7.95,  arrive: 9.15 },
+    { id: 'text',    start: 10.55, arrive: 11.85 },
+    { id: 'final',   start: 13.05, arrive: 14.35 }
+  ];
+  var REVEAL_AT = 13.05, END_AT = 14.35;
+  var CAPS = [[0.45, 2.62], [3.3, 5.22], [5.9, 7.82], [8.5, 10.42], [11.75, 13.0]];
+  var SEGS = [[0.25, 2.75], [2.75, 5.35], [5.35, 7.95], [7.95, 10.55], [10.55, 13.05]];
+  var TINT = {
+    cloud: [238, 242, 247], wave: [229, 236, 251], atom: [236, 240, 250],
+    lattice: [226, 242, 243], neural: [236, 234, 251], text: [240, 243, 248], final: [238, 242, 247]
+  };
+  var GLOW = {
+    cloud: '31,79,216', wave: '31,79,216', atom: '75,68,201',
+    lattice: '14,143,154', neural: '75,68,201', text: '31,79,216', final: '31,79,216'
+  };
+  var LABEL = { wave: 'ψ(x, t)', atom: 'Z = 6', lattice: 'n = 216', neural: 'w ∈ ℝ⁷⁸' };
+  var CHIME = { wave: 392, atom: 440, lattice: 523.25, neural: 587.33, text: 659.25, final: 783.99 };
+
+  /* ---------------- boje ---------------- */
+  function hex(h) { return [((h >> 16) & 255) / 255, ((h >> 8) & 255) / 255, (h & 255) / 255]; }
+  var C = {
+    ink: hex(0x0F1B2D), cobalt: hex(0x1F4FD8), cobaltDeep: hex(0x12318C), teal: hex(0x0E8F9A),
+    indigo: hex(0x4B44C9), amber: hex(0xC98A1F), softInk: hex(0x8E9AB2), softCobalt: hex(0x7F98E6),
+    softIndigo: hex(0x9F99E6)
+  };
+  var ORB = [C.cobalt, C.teal, C.indigo];
+
+  /* ---------------- čestice ---------------- */
+  var small = Math.min(window.innerWidth, window.innerHeight) < 700;
+  var N = small ? 4200 : 7800;
+
+  var RND = new Float32Array(N * 4);
+  var SW = new Float32Array(N * 3);
+  var DL = new Float32Array(N);
+  var DSP = new Float32Array(N * 2);
+  for (var i = 0; i < N; i++) {
+    RND[i * 4] = Math.random(); RND[i * 4 + 1] = Math.random(); RND[i * 4 + 2] = Math.random(); RND[i * 4 + 3] = Math.random();
+    var gx = Math.random() * 2 - 1, gy = Math.random() * 2 - 1, gz = Math.random() * 2 - 1;
+    var gl = Math.sqrt(gx * gx + gy * gy + gz * gz) || 1;
+    SW[i * 3] = gx / gl; SW[i * 3 + 1] = gy / gl; SW[i * 3 + 2] = gz / gl;
+    DL[i] = Math.random();
+  }
+
+  function makeBuf() { return { p: new Float32Array(N * 3), c: new Float32Array(N * 3), s: new Float32Array(N), a: new Float32Array(N), scale: 1 }; }
+  var A = makeBuf(), B = makeBuf(), SNAP = makeBuf();
+
+  var P = new Float32Array(N * 3), COL = new Float32Array(N * 3), SIZ = new Float32Array(N), ALP = new Float32Array(N);
+  var geo = new THREE.BufferGeometry();
+  function attr(name, arr, n) { var a = new THREE.BufferAttribute(arr, n); a.setUsage(THREE.DynamicDrawUsage); geo.setAttribute(name, a); return a; }
+  var aPos = attr('position', P, 3), aCol = attr('aCol', COL, 3), aSize = attr('aSize', SIZ, 1), aAlpha = attr('aAlpha', ALP, 1);
+
+  var mat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, depthTest: false,
+    uniforms: { uPx: { value: 1 }, uZ: { value: 20 } },
+    vertexShader: [
+      'attribute vec3 aCol; attribute float aSize; attribute float aAlpha;',
+      'uniform float uPx; uniform float uZ;',
+      'varying vec3 vC; varying float vA;',
+      'void main() {',
+      '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
+      '  gl_PointSize = max(1.0, aSize * uPx * (uZ / -mv.z));',
+      '  gl_Position = projectionMatrix * mv;',
+      '  vC = aCol; vA = aAlpha;',
+      '}'
+    ].join('\n'),
+    fragmentShader: [
+      'varying vec3 vC; varying float vA;',
+      'void main() {',
+      '  float r = length(gl_PointCoord - 0.5);',
+      '  if (r > 0.5) discard;',
+      '  gl_FragColor = vec4(vC, vA * smoothstep(0.5, 0.22, r));',
+      '}'
+    ].join('\n')
+  });
+  var points = new THREE.Points(geo, mat);
+  points.frustumCulled = false;
+
+  var scene = new THREE.Scene();
+  scene.add(points);
+  var FOV = 40, CAMZ = 20, TAN = Math.tan(FOV * Math.PI / 360);
+  var camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200);
+  camera.position.set(0, 0, CAMZ);
+
+  /* ---------------- oblici ---------------- */
+  var o = { x: 0, y: 0, z: 0, r: 0, g: 0, b: 0, s: 2, a: 1 };
+  function setC(c) { o.r = c[0]; o.g = c[1]; o.b = c[2]; }
+  function mixC(c1, c2, k) { o.r = c1[0] + (c2[0] - c1[0]) * k; o.g = c1[1] + (c2[1] - c1[1]) * k; o.b = c1[2] + (c2[2] - c1[2]) * k; }
+
+  function shCloud(i, t) {
+    var r0 = RND[i * 4], r1 = RND[i * 4 + 1], r2 = RND[i * 4 + 2], r3 = RND[i * 4 + 3];
+    var rad = 1.25 * Math.cbrt(r0), th = 6.2832 * r1 + t * 0.12, ph = Math.acos(2 * r2 - 1);
+    o.x = rad * Math.sin(ph) * Math.cos(th);
+    o.y = rad * Math.cos(ph) + 0.03 * Math.sin(t * 1.3 + i);
+    o.z = rad * Math.sin(ph) * Math.sin(th);
+    mixC(C.softInk, C.cobalt, r3 * r3); o.s = 1.2 + 2.0 * r3; o.a = 0.5 + 0.45 * r3;
+  }
+
+  function shWave(i, t) {
+    var r0 = RND[i * 4], r1 = RND[i * 4 + 1], r2 = RND[i * 4 + 2], r3 = RND[i * 4 + 3];
+    if (r3 < 0.7) {
+      var u = r0 * 2.6 - 1.3, v = (r1 - 0.5) * 0.6;
+      o.x = u; o.z = v;
+      o.y = 0.36 * Math.sin(4.2 * u - 2.8 * t + v * 1.6) * (1 - 0.3 * Math.abs(v));
+      mixC(C.cobalt, C.teal, r0); o.s = 1.9 + 1.3 * r2; o.a = 0.92;
+    } else if (r3 < 0.9) {
+      var q = (Math.floor(r0 * 46) + r1 * 0.5) / 46, u2 = q * 2.6 - 1.3;
+      o.x = u2; o.y = 0.2 * Math.sin(8.4 * u2 + 2.2 * t); o.z = 0.34;
+      setC(C.indigo); o.s = 1.8; o.a = 0.8;
+    } else {
+      if (r3 > 0.965) { o.x = -1.32; o.y = (r1 - 0.5) * 1.1; } else { o.x = r0 * 2.8 - 1.4; o.y = 0; }
+      o.z = 0; setC(C.softInk); o.s = 1.1; o.a = 0.75;
+    }
+  }
+
+  var NUC = [[0, 0, 0], [.5, .3, .2], [-.5, .3, .3], [.15, -.5, .35], [-.25, -.1, -.5], [.4, -.2, -.5], [-.5, -.4, -.1], [.05, .55, -.3]];
+  var CX12 = Math.cos(1.2), SX12 = Math.sin(1.2);
+  function shAtom(i, t) {
+    var r0 = RND[i * 4], r1 = RND[i * 4 + 1], r2 = RND[i * 4 + 2], r3 = RND[i * 4 + 3];
+    if (r3 < 0.17) {
+      var k = Math.floor(r0 * 8), n = NUC[k], rr = 0.135 * Math.cbrt(r1);
+      var x = n[0] * 0.27 + SW[i * 3] * rr, y = n[1] * 0.27 + SW[i * 3 + 1] * rr, z = n[2] * 0.27 + SW[i * 3 + 2] * rr;
+      var ca = Math.cos(t * 0.9), sa = Math.sin(t * 0.9);
+      o.x = x * ca + z * sa; o.y = y; o.z = -x * sa + z * ca;
+      setC(k % 2 ? C.teal : C.cobalt); o.s = 2.8 + 1.6 * r2; o.a = 1;
+      return;
+    }
+    var orb = Math.floor(r1 * 3), e = t * (1.5 + 0.45 * orb) + orb * 2.1, ang;
+    if (r2 < 0.42) {
+      var tr = r0 * r0; ang = e - tr * 2.5;
+      setC(ORB[orb]); o.s = 1.1 + 3.6 * (1 - tr); o.a = 0.3 + 0.7 * (1 - tr);
+    } else {
+      ang = r0 * 6.2832; setC(C.softInk); o.s = 1.3; o.a = 0.72;
+    }
+    var R0 = 0.92, px = R0 * Math.cos(ang), py = R0 * Math.sin(ang);
+    var y1 = py * CX12, z1 = py * SX12;
+    var rz = orb * 1.0472, cz = Math.cos(rz), sz = Math.sin(rz);
+    o.x = px * cz - y1 * sz; o.y = px * sz + y1 * cz; o.z = z1;
+  }
+
+  var LN = 6, LNODES = [], LEDGES = [];
+  (function () {
+    var x, y, z;
+    for (x = 0; x < LN; x++) for (y = 0; y < LN; y++) for (z = 0; z < LN; z++) LNODES.push([-0.75 + x * 0.3, -0.75 + y * 0.3, -0.75 + z * 0.3]);
+    for (x = 0; x < LN; x++) for (y = 0; y < LN; y++) for (z = 0; z < LN; z++) {
+      var id = (x * LN + y) * LN + z;
+      if (x < LN - 1) LEDGES.push([id, id + LN * LN]);
+      if (y < LN - 1) LEDGES.push([id, id + LN]);
+      if (z < LN - 1) LEDGES.push([id, id + 1]);
+    }
+  })();
+  function shLattice(i, t) {
+    var r0 = RND[i * 4], r1 = RND[i * 4 + 1], r2 = RND[i * 4 + 2], r3 = RND[i * 4 + 3];
+    if (r3 < 0.45) {
+      var n = Math.floor(r0 * LNODES.length), p = LNODES[n];
+      o.x = p[0] + SW[i * 3] * 0.02; o.y = p[1] + SW[i * 3 + 1] * 0.02; o.z = p[2] + SW[i * 3 + 2] * 0.02;
+      var pulse = Math.pow(Math.max(0, Math.sin(t * 2.2 + n * 1.7)), 8);
+      mixC(C.cobalt, C.teal, pulse); o.s = 2.4 + 2.0 * pulse; o.a = 0.95;
+    } else {
+      var e = LEDGES[Math.floor(r0 * LEDGES.length)], a = LNODES[e[0]], b = LNODES[e[1]], u = r1;
+      if (r2 > 0.94) { u = (r1 + t * 0.8) % 1; setC(C.amber); o.s = 2.7; o.a = 1; }
+      else { setC(C.softCobalt); o.s = 1.3; o.a = 0.72; }
+      o.x = a[0] + (b[0] - a[0]) * u; o.y = a[1] + (b[1] - a[1]) * u; o.z = a[2] + (b[2] - a[2]) * u;
+    }
+  }
+
+  var NL = [4, 6, 6, 3], NX = [-1, -0.34, 0.34, 1], NNODES = [], NEDGES = [];
+  (function () {
+    var start = [], idx = 0, l, j;
+    for (l = 0; l < NL.length; l++) { start.push(idx); for (j = 0; j < NL[l]; j++) { NNODES.push([NX[l], (j - (NL[l] - 1) / 2) * 0.32, 0, l]); idx++; } }
+    for (l = 0; l < NL.length - 1; l++) for (var a = 0; a < NL[l]; a++) for (var b = 0; b < NL[l + 1]; b++) NEDGES.push([start[l] + a, start[l + 1] + b, l]);
+  })();
+  function shNeural(i, t) {
+    var r0 = RND[i * 4], r1 = RND[i * 4 + 1], r2 = RND[i * 4 + 2], r3 = RND[i * 4 + 3];
+    var ph = ((t * 0.75) % 1) * 3.6 - 0.3;
+    if (r3 < 0.32) {
+      var p = NNODES[Math.floor(r0 * NNODES.length)], rr = 0.062 * Math.cbrt(r1);
+      o.x = p[0] + SW[i * 3] * rr; o.y = p[1] + SW[i * 3 + 1] * rr; o.z = SW[i * 3 + 2] * rr;
+      var act = Math.exp(-Math.pow((ph - p[3]) * 2.2, 2));
+      mixC(C.indigo, C.teal, act); o.s = 2.0 + 2.0 * act; o.a = 1;
+    } else {
+      var e = NEDGES[Math.floor(r0 * NEDGES.length)], a = NNODES[e[0]], b = NNODES[e[1]], u = r1;
+      o.x = a[0] + (b[0] - a[0]) * u; o.y = a[1] + (b[1] - a[1]) * u; o.z = (r2 - 0.5) * 0.03;
+      var q = ph - e[2], br = (q > -0.1 && q < 1.2) ? 0.85 * Math.exp(-Math.pow((u - q) * 4, 2)) : 0;
+      mixC(C.softIndigo, C.cobalt, br); o.s = 1.3 + 2.4 * br; o.a = 0.68 + 0.32 * br;
+    }
+  }
+
+  var TX = new Float32Array(N), TY = new Float32Array(N), textAspect = 0.2;
+  function sampleText() {
+    var cw = 1400, ch = 380, cv = document.createElement('canvas');
+    cv.width = cw; cv.height = ch;
+    var cx = cv.getContext('2d');
+    cx.fillStyle = '#000';
+    cx.font = '700 250px Sora, "Hanken Grotesk", system-ui, sans-serif';
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    var w = Math.min(cw - 20, cx.measureText('Techscience').width);
+    cx.fillText('Techscience', cw / 2, ch / 2, cw - 20);
+    var d = cx.getImageData(0, 0, cw, ch).data, pts = [];
+    for (var y = 0; y < ch; y += 2) for (var x = 0; x < cw; x += 2) if (d[(y * cw + x) * 4 + 3] > 140) pts.push(x, y);
+    var n = pts.length / 2;
+    if (!n) return;
+    var half = w / 2, minY = 1e9, maxY = -1e9;
+    for (var i = 0; i < N; i++) {
+      var k = Math.floor(Math.random() * n);
+      TX[i] = (pts[k * 2] - cw / 2 + (Math.random() - 0.5) * 2) / half;
+      TY[i] = -(pts[k * 2 + 1] - ch / 2 + (Math.random() - 0.5) * 2) / half;
+      if (TY[i] < minY) minY = TY[i]; if (TY[i] > maxY) maxY = TY[i];
+    }
+    textAspect = (maxY - minY) / 2;
+  }
+  function shText(i, t) {
+    o.x = TX[i]; o.y = TY[i];
+    o.z = (RND[i * 4 + 2] - 0.5) * 0.05 + 0.025 * Math.sin(t * 2.4 + TX[i] * 6);
+    mixC(C.ink, C.cobalt, Math.min(1, Math.max(0, (TX[i] + 1) * 0.5)));
+    o.s = 2.1 + 1.0 * RND[i * 4 + 3]; o.a = 0.95;
+  }
+
+  var SH = { cloud: shCloud, wave: shWave, atom: shAtom, lattice: shLattice, neural: shNeural, text: shText, final: shAtom };
+
+  /* ---------------- raspored / layout ---------------- */
+  var W = 1, H = 1, K = 0.01, mobile = false;
+  var X = { cx: 0, cy: 0, s: 1, ry: 0, rx: 0 };
+  var ptr = { x: 0, y: 0, sx: 0, sy: 0, px: -9999, py: -9999, active: false };
+
+  function stage() {
+    return mobile
+      ? { x: W * 0.5, y: H * 0.37, R: Math.min(W * 0.42, H * 0.24) }
+      : { x: W * 0.655, y: H * 0.45, R: Math.min(W * 0.25, H * 0.34) };
+  }
+  function textHalf() { return mobile ? W * 0.44 : Math.min(W * 0.38, H * 0.95); }
+  function textCenterY() { return H * (mobile ? 0.4 : 0.42); }
+
+  function setX(px, py, spx, ry, rx) {
+    X.cx = (px - W / 2) * K; X.cy = -(py - H / 2) * K; X.s = spx * K; X.ry = ry; X.rx = rx;
+  }
+  var heroRect = { l: 0, t: 0, w: 1, h: 1 };
+  function readHero() {
+    if (!heroSpace) return;
+    var r = heroSpace.getBoundingClientRect();
+    heroRect.l = r.left; heroRect.t = r.top; heroRect.w = r.width; heroRect.h = r.height;
+  }
+
+  function xf(id, t) {
+    var st = stage();
+    switch (id) {
+      case 'cloud': setX(st.x, st.y, st.R, t * 0.15, 0.2); break;
+      case 'wave': setX(st.x, st.y, st.R * (mobile ? 0.8 : 1.05), -0.45 + 0.12 * Math.sin(t * 0.7), 0.34); break;
+      case 'atom': setX(st.x, st.y, st.R * 1.12, t * 0.45, 0.25 + 0.1 * Math.sin(t * 0.5)); break;
+      case 'lattice': setX(st.x, st.y, st.R * 0.82, 0.6 + t * 0.35, 0.42); break;
+      case 'neural': setX(st.x, st.y, st.R * 1.0, 0.22 * Math.sin(t * 0.8), 0.1); break;
+      case 'text': setX(W * 0.5, textCenterY(), textHalf(), 0.12 * Math.sin(t * 0.6), 0.06 * Math.sin(t * 0.45)); break;
+      case 'final':
+        var R = Math.min(heroRect.w, heroRect.h) * 0.4;
+        setX(heroRect.l + heroRect.w / 2, heroRect.t + heroRect.h / 2, R * 1.08, t * 0.3 + ptr.sx * 0.5, 0.25 + ptr.sy * 0.3);
+        break;
+    }
+  }
+
+  function evalShape(id, t, buf) {
+    var f = SH[id];
+    xf(id, t);
+    var cy = Math.cos(X.ry), sy = Math.sin(X.ry), cx = Math.cos(X.rx), sx = Math.sin(X.rx), s = X.s, ox = X.cx, oy = X.cy;
+    var p = buf.p, c = buf.c, sz = buf.s, al = buf.a;
+    for (var i = 0; i < N; i++) {
+      f(i, t);
+      var x1 = o.x * cy + o.z * sy, z1 = -o.x * sy + o.z * cy;
+      var y2 = o.y * cx - z1 * sx, z2 = o.y * sx + z1 * cx;
+      var j = i * 3;
+      p[j] = ox + x1 * s; p[j + 1] = oy + y2 * s; p[j + 2] = z2 * s;
+      c[j] = o.r; c[j + 1] = o.g; c[j + 2] = o.b;
+      sz[i] = o.s; al[i] = o.a;
+    }
+    buf.scale = s;
+  }
+
+  function copyBuf(src) { P.set(src.p); COL.set(src.c); SIZ.set(src.s); ALP.set(src.a); }
+  function snapshot() { SNAP.p.set(P); SNAP.c.set(COL); SNAP.s.set(SIZ); SNAP.a.set(ALP); SNAP.scale = B.scale || 1; }
+
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function easeIO(k) { return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
+
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    mobile = W < 760 || W / H < 0.8;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(W, H, false);
+    mat.uniforms.uPx.value = dpr * (mobile ? 0.9 : 1) * Math.max(0.85, Math.min(1.3, Math.min(W, H) / 820));
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+    K = (2 * CAMZ * TAN) / H;
+    readHero();
+    reel.style.setProperty('--capTop', ((textCenterY() + textHalf() * textAspect) / H * 100 + 4).toFixed(1) + '%');
+    dirty = true;
+  }
+
+  /* ---------------- HUD ---------------- */
+  var reel = document.getElementById('reel');
+  var capEl = document.getElementById('reelCap'), capK = document.getElementById('capK'), capT = document.getElementById('capT'), capS = document.getElementById('capS');
+  var tcEl = document.getElementById('reelTC'), scEl = document.getElementById('reelSC');
+  var segFills = Array.prototype.slice.call(document.querySelectorAll('#reelSegs b'));
+  var reticle = document.getElementById('reticle'), retLabel = document.getElementById('reticleLabel'), retRead = document.getElementById('reticleRead');
+  var sweep = document.getElementById('reelSweep');
+  var soundBtn = document.getElementById('reelSound'), skipBtn = document.getElementById('reelSkip'), replayBtn = document.getElementById('replay');
+
+  function lang() { return (html.lang || 'hu').indexOf('sr') === 0 ? 'sr' : 'hu'; }
+  function tr(key) { var d = DICT[lang()] || DICT.hu || {}; return d[key] !== undefined ? d[key] : ''; }
+
+  var capIdx = -1, capState = '', typedFull = '', typedShown = -1;
+  function fillCap(idx) {
+    var n = idx + 1;
+    capK.textContent = tr('reel.s' + n + '.kicker');
+    var title = tr('reel.s' + n + '.title'), words = title ? title.split(' ') : [], ci = 0;
+    capT.innerHTML = '';
+    words.forEach(function (w, wi) {
+      var ws = document.createElement('span'); ws.className = 'w';
+      for (var k = 0; k < w.length; k++) {
+        var s = document.createElement('span'); s.className = 'ch'; s.textContent = w[k];
+        s.style.setProperty('--i', ci++); ws.appendChild(s);
+      }
+      capT.appendChild(ws);
+      if (wi < words.length - 1) capT.appendChild(document.createTextNode(' '));
+    });
+    capEl.className = 'reel-cap' + (idx === 4 ? ' center' : '') + (idx === 2 ? ' code' : '');
+    typedShown = -1;
+    if (idx === 2) { typedFull = tr('reel.s3.sub'); capS.textContent = ''; }
+    else { typedFull = ''; capS.textContent = tr('reel.s' + n + '.sub'); }
+    void capEl.offsetWidth;
+    capState = '';
+  }
+
+  function updateCaps(t) {
+    var idx = -1, st = '';
+    for (var c = 0; c < CAPS.length; c++) {
+      if (t >= CAPS[c][0] && t < CAPS[c][1]) { idx = c; st = t < CAPS[c][1] - 0.42 ? 'in' : 'out'; break; }
+    }
+    if (idx !== capIdx) { capIdx = idx; if (idx >= 0) fillCap(idx); else { capEl.className = 'reel-cap'; capState = ''; } }
+    if (idx >= 0 && st !== capState) { capEl.classList.remove('in', 'out'); capEl.classList.add(st); capState = st; }
+    if (idx === 2 && typedFull) {
+      var k = Math.floor(clamp01((t - CAPS[2][0] - 0.45) / 1.1) * typedFull.length);
+      if (k !== typedShown) {
+        typedShown = k;
+        capS.textContent = typedFull.slice(0, k);
+        var caret = document.createElement('span'); caret.className = 'caret'; capS.appendChild(caret);
+      }
+    }
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  var lastScene = -1, lastArrive = -1, frameN = 0;
+
+  function updateHud(t, j, id) {
+    var sec = Math.floor(t), fr = Math.floor((t - sec) * 25);
+    tcEl.textContent = '00:' + pad(sec) + ':' + pad(fr);
+    var sIdx = 0;
+    for (var s = 0; s < SEGS.length; s++) {
+      var f = clamp01((t - SEGS[s][0]) / (SEGS[s][1] - SEGS[s][0]));
+      segFills[s].style.transform = 'scaleX(' + f.toFixed(3) + ')';
+      if (t >= SEGS[s][0]) sIdx = s;
+    }
+    scEl.textContent = pad(sIdx + 1) + ' / 05';
+
+    var st = stage();
+    var showRet = (id === 'wave' || id === 'atom' || id === 'lattice' || id === 'neural') && t < SEQ[5].start;
+    reticle.classList.toggle('on', showRet);
+    var size = Math.min(st.R * 2.25, H * 0.78, W * 0.92);
+    reticle.style.width = size + 'px'; reticle.style.height = size + 'px';
+    reticle.style.transform = 'translate(' + (st.x - size / 2).toFixed(1) + 'px,' + (st.y - size / 2).toFixed(1) + 'px)';
+    if (LABEL[id]) retLabel.textContent = LABEL[id];
+    if (frameN % 4 === 0) {
+      var q = 777 * 3;
+      retRead.textContent = 'x ' + (P[q] / K / 100).toFixed(3) + '   y ' + (P[q + 1] / K / 100).toFixed(3) + '   z ' + (P[q + 2] / K / 100).toFixed(3);
+    }
+    var gx = id === 'text' ? W * 0.5 : st.x, gy = id === 'text' ? textCenterY() : st.y;
+    reel.style.setProperty('--sx', gx.toFixed(0) + 'px');
+    reel.style.setProperty('--sy', gy.toFixed(0) + 'px');
+    reel.style.setProperty('--glow', 'rgba(' + GLOW[id] + ',.17)');
+
+    if (j !== lastScene) {
+      lastScene = j;
+      if (j > 0) {
+        sweep.classList.remove('go'); void sweep.offsetWidth; sweep.classList.add('go');
+        whoosh();
+      }
+    }
+    if (t >= SEQ[j].arrive && lastArrive !== j && j > 0) { lastArrive = j; chime(CHIME[SEQ[j].id]); }
+    updateCaps(t);
+  }
+
+  /* ---------------- zvuk (Web Audio, samo na zahtev) ---------------- */
+  var ac = null, soundOn = false;
+  function ensureAudio() {
+    if (!ac) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; ac = new AC(); }
+    if (ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+  function whoosh() {
+    if (!soundOn || !ac) return;
+    var dur = 1.1, now = ac.currentTime, len = Math.floor(ac.sampleRate * dur);
+    var buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    var src = ac.createBufferSource(); src.buffer = buf;
+    var bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.3;
+    bp.frequency.setValueAtTime(240, now); bp.frequency.exponentialRampToValueAtTime(2600, now + dur * 0.85);
+    var g = ac.createGain(); g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.08, now + 0.35); g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    src.connect(bp); bp.connect(g); g.connect(ac.destination); src.start(now); src.stop(now + dur);
+  }
+  function chime(f) {
+    if (!soundOn || !ac || !f) return;
+    var now = ac.currentTime;
+    [[f, 0.05, 'sine'], [f * 1.5, 0.02, 'triangle'], [f * 2, 0.012, 'sine']].forEach(function (v) {
+      var osc = ac.createOscillator(), g = ac.createGain();
+      osc.type = v[2]; osc.frequency.value = v[0];
+      g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(v[1], now + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+      osc.connect(g); g.connect(ac.destination); osc.start(now); osc.stop(now + 1.7);
+    });
+  }
+
+  /* ---------------- kontrola toka ---------------- */
+  var t0 = performance.now(), revealed = false, snapFor = -1, dirty = true, playing = false;
+
+  function now() { return performance.now(); }
+  function curT() { return isFinite(freezeT) ? freezeT : (now() - t0) / 1000; }
+
+  function reveal(instant) {
+    if (revealed) return;
+    revealed = true;
+    if (instant) body.classList.add('instant');
+    body.classList.remove('is-reel');
+    body.classList.add('is-done');
+    body.style.backgroundColor = '';
+    try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+    if (instant) setTimeout(function () { body.classList.remove('instant'); }, 50);
+  }
+
+  function play() {
+    snapshot();
+    snapFor = 1;
+    t0 = now();
+    revealed = false; playing = true;
+    capIdx = -1; lastScene = -1; lastArrive = -1;
+    body.classList.remove('is-done', 'instant');
+    body.classList.add('is-reel');
+    window.scrollTo(0, 0);
+    readHero();
+  }
+
+  function skip() {
+    var t = curT();
+    if (t >= REVEAL_AT) return;
+    snapshot();
+    snapFor = SEQ.length - 1;
+    t0 = now() - REVEAL_AT * 1000;
+    capEl.className = 'reel-cap'; capIdx = -1;
+  }
+
+  skipBtn.addEventListener('click', skip);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && body.classList.contains('is-reel')) skip();
+  });
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+    if (soundOn) { ensureAudio(); chime(523.25); }
+  });
+  if (replayBtn) replayBtn.addEventListener('click', play);
+  document.addEventListener('ts:lang', function () { if (capIdx >= 0) { fillCap(capIdx); capState = ''; } dirty = true; });
+
+  window.addEventListener('pointermove', function (e) {
+    ptr.x = (e.clientX / W - 0.5) * 2; ptr.y = (e.clientY / H - 0.5) * 2;
+    ptr.px = e.clientX; ptr.py = e.clientY; ptr.active = e.pointerType === 'mouse';
+    dirty = true;
+  }, { passive: true });
+  document.addEventListener('pointerleave', function () { ptr.active = false; });
+  window.addEventListener('scroll', function () { dirty = true; }, { passive: true });
+  window.addEventListener('resize', resize);
+
+  /* ---------------- glavna petlja ---------------- */
+  function frame() {
+    requestAnimationFrame(frame);
+    var t = curT();
+    var inReel = !revealed || t < END_AT;
+
+    if (!inReel && reduce && !dirty && !playing) return;
+    dirty = false;
+    if (t >= END_AT) playing = false;
+
+    readHero();
+    if (revealed && t >= END_AT && heroRect.t + heroRect.h < -40) return; // hero van ekrana
+
+    var tt = reduce && !playing ? END_AT + 0.5 : t;
+    ptr.sx += (ptr.x - ptr.sx) * 0.05; ptr.sy += (ptr.y - ptr.sy) * 0.05;
+
+    var j = 0;
+    for (var q = SEQ.length - 1; q >= 0; q--) if (tt >= SEQ[q].start) { j = q; break; }
+    var cur = SEQ[j], gE = 1, fromId = j > 0 ? SEQ[j - 1].id : 'cloud';
+
+    if (j === 0 && snapFor === 1) {
+      copyBuf(SNAP);
+    } else if (j > 0 && tt < cur.arrive) {
+      var from = (snapFor === j) ? SNAP : (evalShape(SEQ[j - 1].id, tt, A), A);
+      evalShape(cur.id, tt, B);
+      var L = (tt - cur.start) / (cur.arrive - cur.start);
+      gE = easeIO(clamp01(L));
+      var amp = 0.3 * (from.scale + B.scale) * 0.5;
+      for (var i = 0; i < N; i++) {
+        var e = easeIO(clamp01((L - DL[i] * 0.35) / 0.65)), w = Math.sin(Math.PI * e) * amp, m = i * 3;
+        P[m] = from.p[m] + (B.p[m] - from.p[m]) * e + SW[m] * w;
+        P[m + 1] = from.p[m + 1] + (B.p[m + 1] - from.p[m + 1]) * e + SW[m + 1] * w;
+        P[m + 2] = from.p[m + 2] + (B.p[m + 2] - from.p[m + 2]) * e + SW[m + 2] * w;
+        COL[m] = from.c[m] + (B.c[m] - from.c[m]) * e;
+        COL[m + 1] = from.c[m + 1] + (B.c[m + 1] - from.c[m + 1]) * e;
+        COL[m + 2] = from.c[m + 2] + (B.c[m + 2] - from.c[m + 2]) * e;
+        SIZ[i] = from.s[i] + (B.s[i] - from.s[i]) * e;
+        ALP[i] = from.a[i] + (B.a[i] - from.a[i]) * e;
+      }
+    } else {
+      if (snapFor === j) snapFor = -1;
+      evalShape(cur.id, tt, B);
+      copyBuf(B);
+    }
+
+    /* odbijanje od kursora u hero atomu */
+    if (cur.id === 'final') {
+      var mxw = (ptr.px - W / 2) * K, myw = -(ptr.py - H / 2) * K, rad = B.scale * 0.6, r2 = rad * rad;
+      for (var n = 0; n < N; n++) {
+        var k3 = n * 3, dx = P[k3] - mxw, dy = P[k3 + 1] - myw, d2 = dx * dx + dy * dy, tx = 0, ty = 0;
+        if (ptr.active && d2 < r2) { var d = Math.sqrt(d2) + 1e-4, f = 1 - d / rad; f = f * f * rad * 0.55; tx = dx / d * f; ty = dy / d * f; }
+        DSP[n * 2] += (tx - DSP[n * 2]) * 0.12; DSP[n * 2 + 1] += (ty - DSP[n * 2 + 1]) * 0.12;
+        P[k3] += DSP[n * 2]; P[k3 + 1] += DSP[n * 2 + 1];
+      }
+    }
+
+    aPos.needsUpdate = aCol.needsUpdate = aSize.needsUpdate = aAlpha.needsUpdate = true;
+    renderer.render(scene, camera);
+    frameN++;
+
+    if (!revealed) {
+      var c0 = TINT[fromId], c1 = TINT[cur.id];
+      body.style.backgroundColor = 'rgb(' + Math.round(c0[0] + (c1[0] - c0[0]) * gE) + ',' + Math.round(c0[1] + (c1[1] - c0[1]) * gE) + ',' + Math.round(c0[2] + (c1[2] - c0[2]) * gE) + ')';
+      updateHud(t, j, cur.id);
+      if (t >= REVEAL_AT) reveal(false);
+    }
+  }
+
+  /* ---------------- start ---------------- */
+  sampleText();
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load('700 250px Sora').then(function () { if (curT() < SEQ[5].start - 0.2 || revealed) sampleText(); }).catch(function () {});
+  }
+
+  resize();
+
+  var seen = false;
+  try { seen = sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
+  unpre();
+
+  if (isFinite(freezeT)) {
+    if (freezeT < REVEAL_AT) { body.classList.add('is-reel'); playing = true; } else { reveal(true); }
+  } else if (seen || reduce) {
+    t0 = now() - (END_AT + 0.01) * 1000;
+    reveal(true);
+  } else {
+    body.classList.add('is-reel');
+    playing = true;
+    t0 = now();
+  }
+  requestAnimationFrame(frame);
+})();
+
+</script>
 </body>
 </html>
