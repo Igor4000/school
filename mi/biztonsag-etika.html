@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hu" data-theme="dark">
+<html lang="hu" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +15,7 @@
   try {
     var t = localStorage.getItem('techscience-theme');
     var l = localStorage.getItem('techscience-lang');
-    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
     document.documentElement.setAttribute('lang', l === 'sr' ? 'sr-Latn' : 'hu');
   } catch (e) {}
 })();
@@ -441,7 +441,7 @@ table.levels { width: 100%; border-collapse: collapse; font-size: 16.5px; }
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
-  var theme = lsGet(K_THEME) === 'light' ? 'light' : 'dark';
+  var theme = lsGet(K_THEME) === 'dark' ? 'dark' : 'light';
   var lang = lsGet(K_LANG) === 'sr' ? 'sr' : 'hu';
 
   var T = {
