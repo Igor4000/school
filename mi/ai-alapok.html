@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI alapok — Techscience · AI tanároknak</title>
+<meta name="description" content="Az AI legfontosabb fogalmai egyszerűen, tanári szemmel: kereshető és szűrhető fogalomtár középiskolai tanároknak.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28' fill='none' stroke='%23b8834f' stroke-width='1.6'%3E%3Ccircle cx='14' cy='14' r='1.8'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(60 14 14)'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(120 14 14)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<script>
+/* A téma és a nyelv beállítása még a megjelenítés előtt, hogy ne villanjon fel a rossz változat. */
+(function () {
+  try {
+    var t = localStorage.getItem('techscience-theme');
+    var l = localStorage.getItem('techscience-lang');
+    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    document.documentElement.setAttribute('lang', l === 'sr' ? 'sr-Latn' : 'hu');
+  } catch (e) {}
+})();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0f15;
+  --surface: #141a24;
+  --border: rgba(184, 196, 214, .14);
+  --text: #c7d0dc;
+  --text-strong: #f2f5f9;
+  --text-muted: rgba(199, 208, 220, .58);
+  --accent: #b8834f;
+  /* Származtatott árnyalatok a 4.5:1 kontraszt betartásához (lásd a tájékoztatót) */
+  --accent-text: #b8834f;
+  --text-soft: #8b96a6;
+  --on-accent: #0b0f15;
+  --grid: rgba(255, 255, 255, .035);
+  --shadow: 0 18px 50px rgba(0, 0, 0, .5);
+  --overlay: rgba(5, 8, 12, .72);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f1e7;
+  --surface: #ffffff;
+  --border: rgba(30, 41, 59, .12);
+  --text: #374151;
+  --text-strong: #111827;
+  --text-muted: rgba(55, 65, 81, .62);
+  --accent: #9c6530;
+  --accent-text: #8a5626;
+  --text-soft: #5b6472;
+  --on-accent: #ffffff;
+  --grid: rgba(0, 0, 0, .035);
+  --shadow: 0 18px 50px rgba(17, 24, 39, .18);
+  --overlay: rgba(17, 24, 39, .45);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html.lock { overflow: hidden; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  color: var(--text);
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.65;
+}
+h1, h2, h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  line-height: 1.2;
+}
+p { margin: 0; }
+a { color: inherit; }
+svg { display: block; flex: none; }
+
+.wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
+.skip {
+  position: absolute; left: 12px; top: -60px; z-index: 100;
+  padding: 10px 16px; background: var(--accent); color: var(--on-accent);
+  border-radius: 4px; font-weight: 600; text-decoration: none;
+}
+.skip:focus { top: 12px; }
+
+/* ---------- Felső sáv ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.bar {
+  width: min(1120px, 100% - 40px);
+  margin-inline: auto;
+  display: flex; flex-wrap: wrap; align-items: center;
+  column-gap: 28px; row-gap: 4px;
+  padding: 10px 0;
+}
+.logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--text-strong); text-decoration: none;
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif;
+  font-weight: 600; font-size: 20px; line-height: 1.2;
+  color: var(--text-strong);
+}
+.logo svg { color: var(--accent); }
+.nav {
+  display: flex; gap: 22px; flex: 1 1 auto;
+  overflow-x: auto; white-space: nowrap; scrollbar-width: thin;
+}
+.nav a {
+  display: inline-block; padding: 10px 2px 8px;
+  border-bottom: 2px solid transparent;
+  color: var(--text); text-decoration: none; font-size: 15px; font-weight: 500;
+  transition: color .2s ease, border-color .2s ease;
+}
+.nav a:hover { color: var(--text-strong); border-bottom-color: var(--border); }
+.nav a[aria-current="page"] { color: var(--accent-text); border-bottom-color: var(--accent); }
+.controls { display: flex; gap: 8px; margin-left: auto; }
+.icon-btn, .lang-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 44px; min-height: 44px; padding: 0 12px;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px;
+  font: 600 14px/1 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+.icon-btn:hover, .lang-btn:hover { border-color: var(--accent); color: var(--text-strong); }
+.lang-btn .on { color: var(--accent-text); }
+.lang-btn .off { color: var(--text-soft); font-weight: 500; }
+.lang-btn .sep { color: var(--text-muted); font-weight: 400; }
+
+@media (max-width: 820px) {
+  .bar { column-gap: 12px; }
+  .nav { order: 3; flex: 0 0 100%; gap: 20px; padding-bottom: 2px; }
+  .nav a { padding: 8px 2px 6px; }
+}
+
+/* ---------- Kicker ---------- */
+.kicker {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--text-soft);
+}
+.kicker::before { content: ""; width: 36px; height: 2px; background: var(--accent); flex: none; }
+
+/* ---------- Gombok ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 11px 22px;
+  border: 1px solid var(--accent); border-radius: 4px;
+  font: 600 15px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  text-decoration: none; cursor: pointer;
+  transition: background-color .2s ease, filter .2s ease;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: transparent; color: var(--accent-text); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+/* ---------- Hero ---------- */
+.hero { padding: 76px 0 44px; }
+.hero h1 {
+  margin-top: 22px;
+  font-size: clamp(44px, 8vw, 76px);
+  font-weight: 700; letter-spacing: -.01em;
+}
+.lead {
+  max-width: 60ch; margin-top: 22px;
+  font-size: clamp(17px, 2.2vw, 20px); line-height: 1.7;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+
+/* ---------- Fogalomtár ---------- */
+.glossary { padding: 28px 0 88px; scroll-margin-top: 90px; }
+.glossary-head { margin-bottom: 24px; }
+.toolbar { display: grid; gap: 16px; margin-bottom: 14px; }
+.search { position: relative; max-width: 560px; }
+.search > svg.lens {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--accent); pointer-events: none;
+}
+.search input {
+  width: 100%; min-height: 48px; padding: 12px 48px 12px 46px;
+  background: var(--surface); color: var(--text-strong);
+  border: 1px solid var(--border); border-radius: 4px;
+  font: 400 16px/1.4 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  transition: border-color .2s ease;
+  -webkit-appearance: none; appearance: none;
+}
+.search input::placeholder { color: var(--text); opacity: .72; }
+.search input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+.search input:hover { border-color: var(--accent); }
+.search input:focus-visible { outline-offset: 2px; border-color: var(--accent); }
+.search .clear {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; display: none; align-items: center; justify-content: center;
+  background: transparent; border: 0; border-radius: 4px; color: var(--text); cursor: pointer;
+}
+.search .clear.show { display: inline-flex; }
+.search .clear:hover { color: var(--text-strong); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  min-height: 40px; padding: 8px 16px;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px;
+  font: 500 14px/1.3 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer;
+  transition: border-color .2s ease, background-color .2s ease, color .2s ease;
+}
+.chip:hover { border-color: var(--accent); color: var(--text-strong); }
+.chip[aria-pressed="true"] {
+  background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600;
+}
+.count { min-height: 26px; margin-bottom: 18px; font-size: 14px; color: var(--text-soft); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr)); gap: 18px; }
+.card {
+  display: flex; flex-direction: column; gap: 10px; text-align: left;
+  padding: 22px 22px 18px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px;
+  font: inherit; cursor: pointer;
+  transition: border-color .25s ease, transform .25s ease;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; color: var(--accent); }
+.num {
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif;
+  font-style: italic; font-weight: 500; font-size: 26px; line-height: 1; color: var(--accent-text);
+}
+.card-cat { font-size: 12px; color: var(--text-soft); line-height: 1.4; }
+.card-title {
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif;
+  font-weight: 600; font-size: 21px; line-height: 1.25; color: var(--text-strong);
+}
+.card-text {
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: 15px; line-height: 1.6;
+}
+.card-more {
+  margin-top: auto; padding-top: 10px;
+  font-size: 14px; font-weight: 600; color: var(--accent-text);
+}
+.empty {
+  display: none; padding: 36px 24px; text-align: center;
+  background: var(--surface); border: 1px dashed var(--border); border-radius: 4px;
+}
+.empty.show { display: block; }
+
+/* ---------- Modal ---------- */
+dialog {
+  width: min(700px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px); max-height: calc(100dvh - 28px);
+  padding: 0; margin: auto;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px;
+  box-shadow: var(--shadow); overflow: hidden;
+}
+dialog[open] { display: flex; flex-direction: column; animation: pop .22s ease; }
+dialog::backdrop { background: var(--overlay); }
+@keyframes pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.m-head {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 20px 14px 28px; flex: none;
+}
+.m-head .icon { color: var(--accent); }
+.m-head .cat { flex: 1; font-size: 13px; color: var(--text-soft); line-height: 1.4; }
+.m-close {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+.m-close:hover { border-color: var(--accent); color: var(--text-strong); }
+.m-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 4px 28px 28px; }
+.m-scroll h2 { font-size: clamp(26px, 5vw, 34px); font-weight: 700; margin-bottom: 22px; }
+.m-block { margin-top: 22px; }
+.m-block h3 {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 18px; margin-bottom: 8px;
+}
+.m-block h3::before { content: ""; width: 20px; height: 2px; background: var(--accent); flex: none; }
+.m-block p { max-width: 64ch; font-size: 16.5px; line-height: 1.75; }
+.m-example p { padding: 14px 18px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+.m-teacher p { padding: 14px 18px; border-left: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.m-actions { margin-top: 28px; }
+
+/* ---------- Lábléc ---------- */
+.site-footer {
+  margin-top: auto; border-top: 1px solid var(--border);
+  background: var(--bg);
+  padding: 24px 0; font-size: 14px; color: var(--text-soft);
+}
+.site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; }
+  .card:hover { transform: none; }
+}
+@media (max-width: 480px) {
+  .hero { padding-top: 48px; }
+  .m-head { padding: 14px 14px 10px 20px; }
+  .m-scroll { padding: 2px 20px 22px; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main" data-i18n="skip">Ugrás a tartalomhoz</a>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="1.8"/><ellipse cx="14" cy="14" rx="11" ry="4.3"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(60 14 14)"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(120 14 14)"/></svg>
+      <span data-i18n="logo">AI Tanároknak</span>
+    </a>
+    <nav class="nav" data-i18n-aria="navLabel" aria-label="AI tanároknak – oldalak">
+      <a href="ai-alapok.html" aria-current="page" data-i18n="navBasics">AI alapok</a>
+      <a href="modellek.html" data-i18n="navModels">Modellek</a>
+      <a href="prompt-kozpont.html" data-i18n="navPrompt">Prompt</a>
+      <a href="tanitasban.html" data-i18n="navTeaching">Tanításban</a>
+      <a href="biztonsag-etika.html" data-i18n="navEthics">Etika</a>
+    </nav>
+    <div class="controls">
+      <button type="button" class="lang-btn" id="langBtn" aria-label="Váltás szerb nyelvre (latin írás)">
+        <span id="langHu" aria-hidden="true">HU</span><span class="sep" aria-hidden="true">/</span><span id="langSr" aria-hidden="true">SR</span>
+      </button>
+      <button type="button" class="icon-btn" id="themeBtn" aria-label="Váltás világos témára"></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker" data-i18n="kicker">Techscience — AI tanároknak</p>
+      <h1 data-i18n="h1">AI alapok</h1>
+      <p class="lead" data-i18n="lead">A mesterséges intelligencia nem varázslat, hanem statisztika és nyelv találkozása. Ez a rész a legfontosabb fogalmakat tisztázza — egyszerűen, tanári szemmel, felesleges dagályosság nélkül.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#concepts" data-i18n="ctaBrowse">Fogalmak böngészése</a>
+        <a class="btn btn-secondary" href="modellek.html" data-i18n="ctaNext">Következő: AI modellek</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="glossary" id="concepts" aria-labelledby="gTitle">
+    <div class="wrap">
+      <div class="glossary-head">
+        <p class="kicker" id="gTitle" data-i18n="sectionKicker">Fogalomtár</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg class="lens" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+          <label class="sr-only" for="q" data-i18n="searchLabel">Keresés a fogalmak között</label>
+          <input id="q" type="search" autocomplete="off" spellcheck="false" data-i18n-ph="searchPh" placeholder="Keress egy fogalmat, például: token, hallucináció…">
+          <button type="button" class="clear" id="clearBtn" data-i18n-aria="clear" aria-label="Keresés törlése">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <div class="chips" id="chips" role="group" data-i18n-aria="filterLabel" aria-label="Szűrés témakör szerint"></div>
+      </div>
+
+      <p class="count" id="count" role="status" aria-live="polite"></p>
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty" data-i18n="none">Nincs találat.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span data-i18n="footL">Techscience · AI tanároknak</span>
+    <span data-i18n="footR">Készítette: Marković Igor</span>
+  </div>
+</footer>
+
+<dialog id="modal" aria-labelledby="mTitle">
+  <div class="m-head">
+    <span class="icon" id="mIcon"></span>
+    <span class="num" id="mNum"></span>
+    <span class="cat" id="mCat"></span>
+    <button type="button" class="m-close" id="mClose" data-i18n-aria="close" aria-label="Bezárás">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="m-scroll">
+    <h2 id="mTitle"></h2>
+    <section class="m-block"><h3 data-i18n="mSimple">Egyszerű magyarázat</h3><p id="mSimple"></p></section>
+    <section class="m-block m-example"><h3 data-i18n="mExample">Példa</h3><p id="mExample"></p></section>
+    <section class="m-block m-teacher"><h3 data-i18n="mTeacher">Tanári vonatkozás</h3><p id="mTeacher"></p></section>
+    <div class="m-actions"><button type="button" class="btn btn-secondary" id="mClose2" data-i18n="close">Bezárás</button></div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Tárolás (ugyanazok a kulcsok, mint a többi aloldalon) ---------- */
+  var K_THEME = 'techscience-theme';
+  var K_LANG = 'techscience-lang';
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  var theme = lsGet(K_THEME) === 'light' ? 'light' : 'dark';
+  var lang = lsGet(K_LANG) === 'sr' ? 'sr' : 'hu';
+
+  /* ---------- Felületi szövegek ---------- */
+  var UI = {
+    hu: {
+      title: 'AI alapok — Techscience · AI tanároknak',
+      desc: 'Az AI legfontosabb fogalmai egyszerűen, tanári szemmel: kereshető és szűrhető fogalomtár középiskolai tanároknak.',
+      skip: 'Ugrás a tartalomhoz',
+      logo: 'AI Tanároknak',
+      navLabel: 'AI tanároknak – oldalak',
+      navBasics: 'AI alapok', navModels: 'Modellek', navPrompt: 'Prompt', navTeaching: 'Tanításban', navEthics: 'Etika',
+      themeToLight: 'Váltás világos témára', themeToDark: 'Váltás sötét témára',
+      langLabel: 'Váltás szerb nyelvre (latin írás)',
+      kicker: 'Techscience — AI tanároknak',
+      h1: 'AI alapok',
+      lead: 'A mesterséges intelligencia nem varázslat, hanem statisztika és nyelv találkozása. Ez a rész a legfontosabb fogalmakat tisztázza — egyszerűen, tanári szemmel, felesleges dagályosság nélkül.',
+      ctaBrowse: 'Fogalmak böngészése',
+      ctaNext: 'Következő: AI modellek',
+      sectionKicker: 'Fogalomtár',
+      searchLabel: 'Keresés a fogalmak között',
+      searchPh: 'Keress egy fogalmat, például: token, hallucináció…',
+      clear: 'Keresés törlése',
+      filterLabel: 'Szűrés témakör szerint',
+      all: 'Összes',
+      cats: {
+        what: 'Mi az AI valójában',
+        think: 'Hogyan „gondolkodik” egy chatbot',
+        types: 'Modelltípusok',
+        myths: 'Tévhitek'
+      },
+      none: 'Nincs találat. Próbálj másik kulcsszót, vagy válaszd az „Összes” szűrőt.',
+      noneCount: 'Nincs találat',
+      details: 'Részletek',
+      close: 'Bezárás',
+      mSimple: 'Egyszerű magyarázat',
+      mExample: 'Példa',
+      mTeacher: 'Tanári vonatkozás',
+      footL: 'Techscience · AI tanároknak',
+      footR: 'Készítette: Marković Igor'
+    },
+    sr: {
+      title: 'AI osnove — Techscience · AI za nastavnike',
+      desc: 'Najvažniji pojmovi o veštačkoj inteligenciji jednostavno, iz ugla nastavnika: pojmovnik s pretragom i filterima za nastavnike srednjih škola.',
+      skip: 'Pređi na sadržaj',
+      logo: 'AI za nastavnike',
+      navLabel: 'AI za nastavnike – stranice',
+      navBasics: 'AI osnove', navModels: 'Modeli', navPrompt: 'Prompt', navTeaching: 'U nastavi', navEthics: 'Etika',
+      themeToLight: 'Prebaci na svetlu temu', themeToDark: 'Prebaci na tamnu temu',
+      langLabel: 'Promeni jezik na mađarski',
+      kicker: 'Techscience — AI za nastavnike',
+      h1: 'AI osnove',
+      lead: 'Veštačka inteligencija nije magija, već susret statistike i jezika. Ovaj deo razjašnjava najvažnije pojmove — jednostavno, iz ugla nastavnika, bez nepotrebne pompe.',
+      ctaBrowse: 'Pregledaj pojmove',
+      ctaNext: 'Sledeće: AI modeli',
+      sectionKicker: 'Pojmovnik',
+      searchLabel: 'Pretraga pojmova',
+      searchPh: 'Potraži pojam, na primer: token, halucinacija…',
+      clear: 'Obriši pretragu',
+      filterLabel: 'Filtriranje po temi',
+      all: 'Sve',
+      cats: {
+        what: 'Šta je AI zapravo',
+        think: 'Kako „razmišlja” četbot',
+        types: 'Tipovi modela',
+        myths: 'Zablude'
+      },
+      none: 'Nema rezultata. Pokušaj s drugom ključnom rečju ili izaberi filter „Sve”.',
+      noneCount: 'Nema rezultata',
+      details: 'Detalji',
+      close: 'Zatvori',
+      mSimple: 'Jednostavno objašnjenje',
+      mExample: 'Primer',
+      mTeacher: 'Šta to znači za nastavnika',
+      footL: 'Techscience · AI za nastavnike',
+      footR: 'Izradio: Igor Marković'
+    }
+  };
+
+  function countText(n) {
+    if (lang === 'hu') return n + ' fogalom';
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return n + ' pojam';
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return n + ' pojma';
+    return n + ' pojmova';
+  }
+
+  /* ---------- Ikonok (vonalrajz, currentColor) ---------- */
+  function svg(inner, size, vb) {
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + vb + ' ' + vb + '" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + '</svg>';
+  }
+  var ICONS = {
+    atom: '<circle cx="14" cy="14" r="1.8"/><ellipse cx="14" cy="14" rx="11" ry="4.3"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(60 14 14)"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(120 14 14)"/>',
+    layers: '<path d="M14 3.5 3 9.5l11 6 11-6z"/><path d="M3 14.5l11 6 11-6"/><path d="M3 19.5l11 6 11-6"/>',
+    chat: '<path d="M4 5.5h20a1 1 0 0 1 1 1v12.5a1 1 0 0 1-1 1H12.5L7 24.5V20H4a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1z"/><path d="M8 11h12M8 15h7"/>',
+    branch: '<circle cx="6.5" cy="14" r="2.6"/><circle cx="21.5" cy="6" r="2.6"/><circle cx="21.5" cy="22" r="2.6"/><path d="M9 12.7l10.2-5.4M9 15.3l10.2 5.4"/>',
+    shield: '<path d="M14 3 5 6.6v7c0 5.4 3.8 9.4 9 11.4 5.2-2 9-6 9-11.4v-7z"/><path d="M10.5 10.5l7 7M17.5 10.5l-7 7"/>'
+  };
+  var SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';
+  var MOON = '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>';
+
+  /* ---------- Adatok: 16 fogalom, mindegyik HU és SR nyelven ---------- */
+  var CONCEPTS = [
+    {
+      id: 'ml', cat: 'what', icon: 'atom',
+      hu: {
+        title: 'Gépi tanulás',
+        simple: 'A gépi tanulás során a program nem előre megírt szabályokat követ, hanem nagy mennyiségű adatból maga ismeri fel az összefüggéseket és a mintázatokat. Minél több és jobb példát lát, annál pontosabb lesz — de csak azon a területen, amelyet az adatok lefednek.',
+        example: 'Egy levelezőprogram úgy tanulja meg kiszűrni a kéretlen leveleket, hogy több millió, spamként vagy szokásos levélként megjelölt üzenetet lát. Senki nem írta le neki a szabályt, hogy melyik szó gyanús.',
+        teacher: 'Ha egy diák azt kérdezi, „ki programozta be ezt a választ?”, érdemes elmondani, hogy senki: a modell mintázatokat tanult, ezért a viselkedése nem mindig jósolható meg előre.'
+      },
+      sr: {
+        title: 'Mašinsko učenje',
+        simple: 'Kod mašinskog učenja program ne sledi unapred napisana pravila, već iz velike količine podataka sam prepoznaje zakonitosti i obrasce. Što vidi više dobrih primera, to postaje precizniji — ali samo u oblasti koju podaci pokrivaju.',
+        example: 'Program za e-poštu nauči da izdvaja neželjenu poštu tako što vidi milione poruka označenih kao neželjene ili kao uobičajene. Niko mu nije napisao pravilo o tome koja je reč sumnjiva.',
+        teacher: 'Kada učenik pita „ko je isprogramirao ovaj odgovor?”, vredi objasniti da niko — model je naučio obrasce, pa se njegovo ponašanje ne može uvek unapred predvideti.'
+      }
+    },
+    {
+      id: 'llm', cat: 'what', icon: 'atom',
+      hu: {
+        title: 'Nagy nyelvi modell (LLM)',
+        simple: 'Az LLM egy hatalmas mennyiségű szövegen betanított program, amely megtanulta, hogy egy mondatrész után statisztikailag milyen szó szokott következni. Nem adatbázisszerűen tárol „tudást”, hanem mintázatokat.',
+        example: 'Amikor beírod, hogy „Newton I. törvénye kimondja, hogy…”, a modell nem egy lexikonból idéz, hanem a tanítóadataiban látott hasonló mondatok alapján folytatja a szöveget — általában helyesen, de nem garantáltan.',
+        teacher: 'Ezért érdemes a diákoknak is megtanítani, hogy egy AI-válasz nem „forrás”, hanem egy jól informált találgatás, amelyet érdemes ellenőrizni.'
+      },
+      sr: {
+        title: 'Veliki jezički model (LLM)',
+        simple: 'LLM je program obučen na ogromnoj količini teksta, koji je naučio koja reč statistički obično sledi posle nekog dela rečenice. On ne čuva „znanje” kao baza podataka, već obrasce.',
+        example: 'Kada upišeš „Prvi Njutnov zakon kaže da…”, model ne citira iz enciklopedije, već nastavlja tekst na osnovu sličnih rečenica koje je video u podacima za obuku — obično tačno, ali bez garancije.',
+        teacher: 'Zato je dobro i učenicima objasniti da odgovor veštačke inteligencije nije „izvor”, već dobro obaveštena pretpostavka koju vredi proveriti.'
+      }
+    },
+    {
+      id: 'token', cat: 'what', icon: 'atom',
+      hu: {
+        title: 'Token',
+        simple: 'A token a szöveg feldarabolásának alapegysége: lehet egy egész szó, egy szótag vagy akár egyetlen írásjel. A modell nem betűket és szavakat, hanem tokeneket dolgoz fel, és a használat sebessége, valamint költsége is ezek számától függ.',
+        example: 'Egy rövid angol szó gyakran egyetlen token, egy hosszú, sok toldalékot viselő magyar szó viszont több darabra esik szét — ezért ugyanaz a mondat magyarul általában több tokenből áll, mint angolul.',
+        teacher: 'Nem kell tokeneket számolnod, de jó tudni, hogy a hosszú dokumentumok, valamint a magyar vagy szerb szövegek gyorsabban megtöltik a modell kontextusablakát, mint gondolnád.'
+      },
+      sr: {
+        title: 'Token',
+        simple: 'Token je osnovna jedinica na koju se tekst deli: može biti cela reč, slog ili samo znak interpunkcije. Model ne obrađuje slova i reči, već tokene, a od njihovog broja zavise i brzina rada i cena korišćenja.',
+        example: 'Kratka engleska reč je često jedan token, a dugačka reč s mnogo nastavaka raspada se na nekoliko delova — zato ista rečenica na srpskom ili mađarskom obično ima više tokena nego na engleskom.',
+        teacher: 'Ne moraš da brojiš tokene, ali je korisno znati da dugi dokumenti i tekstovi na srpskom ili mađarskom brže popunjavaju kontekstni prozor modela nego što bi se očekivalo.'
+      }
+    },
+    {
+      id: 'data', cat: 'what', icon: 'layers',
+      hu: {
+        title: 'Tanítóadat',
+        simple: 'A tanítóadat az a hatalmas szöveg-, kép- és kódgyűjtemény, amelyből a modell a betanítás során megtanulta a mintázatokat. Amit nem tartalmazott, arról a modell nem tud; ami hibás volt benne, azt pedig akár hibásan is megtanulhatta. Az adatgyűjtés egy adott napon lezárul, ezért a modell tudása is ott megáll.',
+        example: 'Ha egy modell főként angol nyelvű forrásokból tanult, a vajdasági helytörténeti vagy a helyi tantervi kérdésekre általában pontatlanabb választ ad, mint egy általános, nemzetközi témájú kérdésre.',
+        teacher: 'Ha a feladat helyi, hazai tananyagra épül, ne feltételezd, hogy a modell ismeri; adj neki forrásszöveget, és kérd, hogy csak abból dolgozzon.'
+      },
+      sr: {
+        title: 'Podaci za obuku',
+        simple: 'Podaci za obuku su ogromna zbirka tekstova, slika i koda iz koje je model tokom obuke naučio obrasce. O onome što u njoj nije bilo model ne zna ništa, a greške koje su se u njoj nalazile mogao je da usvoji kao tačne. Prikupljanje podataka se završava određenog dana, pa se i znanje modela zaustavlja na tom datumu.',
+        example: 'Ako je model učio uglavnom iz engleskih izvora, na pitanja o vojvođanskoj lokalnoj istoriji ili o domaćem nastavnom planu obično odgovara nepreciznije nego na opšte, međunarodne teme.',
+        teacher: 'Ako se zadatak oslanja na lokalno, domaće gradivo, ne pretpostavljaj da ga model poznaje: daj mu izvorni tekst i zatraži da radi samo na osnovu njega.'
+      }
+    },
+    {
+      id: 'prompt', cat: 'think', icon: 'chat',
+      hu: {
+        title: 'Prompt',
+        simple: 'A prompt az az utasítás vagy kérdés, amelyet a modellnek írsz. A megfogalmazás érdemben befolyásolja a válasz minőségét: a homályos kérésre általános, a pontosra használhatóbb válasz érkezik.',
+        example: '„Írj dolgozatot elektromosságtanból” helyett jobb eredményt ad ez: „Készíts 15 perces, négy feladatból álló kis dolgozatot az Ohm-törvényről, középiskolás szinten, megoldókulccsal.”',
+        teacher: 'A jó prompt megadja a célt, a célközönséget és a kívánt formát — erről a Prompt rovatban részletesen olvashatsz.'
+      },
+      sr: {
+        title: 'Prompt',
+        simple: 'Prompt je uputstvo ili pitanje koje upisuješ u model. Formulacija bitno utiče na kvalitet odgovora: na nejasan zahtev stiže opšti odgovor, a na precizan upotrebljiviji.',
+        example: 'Umesto „Napiši test iz elektriciteta”, bolji rezultat daje ovo: „Napravi kratak test od četiri zadatka o Omovom zakonu, za srednju školu, u trajanju od 15 minuta, sa ključem rešenja.”',
+        teacher: 'Dobar prompt navodi cilj, ciljnu publiku i željeni oblik odgovora — o tome više možeš pročitati u rubrici Prompt.'
+      }
+    },
+    {
+      id: 'context', cat: 'think', icon: 'chat',
+      hu: {
+        title: 'Kontextusablak',
+        simple: 'A kontextusablak azt mutatja meg, mennyi szöveget „lát” a modell egyszerre: a beszélgetés eddigi részét, a csatolt dokumentumokat és a saját válaszait is beleértve. Ha a beszélgetés túllépi ezt a határt, a legkorábbi részek kiesnek, és a modell úgy viselkedik, mintha elfelejtette volna őket.',
+        example: 'Egy nagyon hosszú beszélgetés végén a modell már nem tartja be az elején megfogalmazott kérésedet, például azt, hogy minden feladathoz megoldást is írjon.',
+        teacher: 'Hosszú anyag készítésekor érdemes időnként új beszélgetést kezdeni, és az elején röviden összefoglalni a már eldöntött részleteket.'
+      },
+      sr: {
+        title: 'Kontekstni prozor',
+        simple: 'Kontekstni prozor pokazuje koliko teksta model „vidi” odjednom: dotadašnji tok razgovora, priložene dokumente i sopstvene odgovore. Kada razgovor pređe tu granicu, najraniji delovi ispadaju i model se ponaša kao da ih je zaboravio.',
+        example: 'Na kraju veoma dugog razgovora model više ne poštuje zahtev koji si postavio na početku, na primer da uz svaki zadatak napiše i rešenje.',
+        teacher: 'Kada pripremaš dugačak materijal, povremeno započni novi razgovor i na početku kratko sažmi ono što je već dogovoreno.'
+      }
+    },
+    {
+      id: 'cutoff', cat: 'think', icon: 'chat',
+      hu: {
+        title: 'Tudáshatár (cutoff dátum)',
+        simple: 'A modell csak a betanításáig begyűjtött adatokról tud: minden, ami utána történt, számára ismeretlen. Kivétel, ha a chatbot internetes keresést is használhat — ilyenkor frissebb forrásokat is olvashat.',
+        example: 'Ha egy keresési lehetőség nélküli modellt a legutóbb módosított tantervről vagy egy friss rendeletről kérdezel, vagy hibás, vagy elavult választ kaphatsz.',
+        teacher: 'Aktuális információnál — tantervek, rendeletek, pályázatok, határidők — mindig ellenőrizd az eredeti, hivatalos forrásban.'
+      },
+      sr: {
+        title: 'Datum granice znanja (cutoff)',
+        simple: 'Model zna samo ono što je prikupljeno do završetka obuke, a sve što se dogodilo posle toga njemu je nepoznato. Izuzetak je slučaj kada četbot može da pretražuje internet — tada može da čita i novije izvore.',
+        example: 'Ako modelu bez mogućnosti pretrage postaviš pitanje o nedavno izmenjenom nastavnom planu ili o svežem pravilniku, možeš dobiti netačan ili zastareo odgovor.',
+        teacher: 'Kada su u pitanju aktuelne informacije — planovi i programi, pravilnici, konkursi, rokovi — uvek proveri izvorni, zvanični dokument.'
+      }
+    },
+    {
+      id: 'halluc', cat: 'think', icon: 'chat',
+      hu: {
+        title: 'Hallucináció',
+        simple: 'Hallucinációnak nevezzük, amikor egy AI-modell magabiztos hangnemben olyan tényt, idézetet vagy hivatkozást állít, amely nem létezik vagy hamis. Nem „hazugság”, mert a modellnek nincs szándéka: egyszerűen statisztikailag valószínűnek tűnő, de téves választ ad.',
+        example: 'Egy tanár megkérdezi egy chatbottól egy konkrét törvénycikk számát, és a chatbot magabiztosan egy nem létező számot ad meg.',
+        teacher: 'Soha ne használj AI által adott konkrét adatot — évszámot, törvényhelyet, idézetet — ellenőrzés nélkül tananyagban.'
+      },
+      sr: {
+        title: 'Halucinacija',
+        simple: 'Halucinacija nastaje kada model veštačke inteligencije samouvereno tvrdi činjenicu, citat ili izvor koji ne postoji ili je netačan. To nije „laž”, jer model nema nameru: on jednostavno daje statistički verovatan, ali pogrešan odgovor.',
+        example: 'Nastavnik pita četbot za broj određenog člana zakona, a odgovor samouvereno navodi broj koji ne postoji.',
+        teacher: 'Nikada ne koristi konkretan podatak koji je dala veštačka inteligencija — godinu, član zakona, citat — u nastavnom materijalu bez provere.'
+      }
+    },
+    {
+      id: 'multimodal', cat: 'types', icon: 'branch',
+      hu: {
+        title: 'Multimodális modell',
+        simple: 'A multimodális modell nemcsak szöveget ért, hanem képet, hangot vagy akár egy teljes dokumentumot is fel tud dolgozni. Ugyanabban a beszélgetésben tehát fényképet is megmutathatsz neki, és kérdezhetsz róla.',
+        example: 'Lefényképezed a táblán hagyott vázlatot vagy egy diák kézzel írt fizikafeladat-megoldását, és megkéred a modellt, hogy írja át gépelt szöveggé, vagy keresse meg benne a hibát.',
+        teacher: 'Ez időt spórol a papíralapú anyagok digitalizálásánál, de a kézírás és a rajzok értelmezését is ellenőrizned kell: a modell gyakran téved egy rosszul olvasható jelnél.'
+      },
+      sr: {
+        title: 'Multimodalni model',
+        simple: 'Multimodalni model ne razume samo tekst, već može da obradi i sliku, zvuk ili čak ceo dokument. U istom razgovoru, dakle, možeš da mu pokažeš fotografiju i postaviš pitanje o njoj.',
+        example: 'Fotografišeš skicu sa table ili rukom pisano učeničko rešenje zadatka iz fizike i zamoliš model da ga prepiše kao otkucani tekst ili da u njemu pronađe grešku.',
+        teacher: 'To štedi vreme pri digitalizaciji papirnih materijala, ali i čitanje rukopisa i crteža treba da proveriš: model često greši kod nečitkog znaka.'
+      }
+    },
+    {
+      id: 'reasoning', cat: 'types', icon: 'branch',
+      hu: {
+        title: 'Gondolkodó (reasoning) modell',
+        simple: 'A gondolkodó modell a bonyolultabb kérdéseket több belső lépésben dolgozza fel, mielőtt válaszol. Emiatt lassabb, de matematikai, logikai vagy többlépéses feladatoknál általában alaposabb eredményt ad.',
+        example: 'Egy többlépéses mechanikai feladatnál — például ferde hajításnál, ahol több összefüggést kell egymás után alkalmazni — a gondolkodó modell jellemzően megbízhatóbb, mint egy gyors, hagyományos modell.',
+        teacher: 'Feladatmegoldáshoz és hibakereséshez érdemes gondolkodó módot választani, egy rövid levél megfogalmazásához viszont elég a gyors modell. A lépések ettől még nem garantáltan helyesek, ezért a végeredményt mindig ellenőrizd.'
+      },
+      sr: {
+        title: 'Model koji „razmišlja” (reasoning)',
+        simple: 'Model koji razmišlja složenija pitanja obrađuje kroz više unutrašnjih koraka, pre nego što odgovori. Zato je sporiji, ali kod matematičkih, logičkih i višekoračnih zadataka obično daje pažljiviji rezultat.',
+        example: 'Kod višekoračnog zadatka iz mehanike, na primer kosog hica, gde se više relacija primenjuje redom, model koji razmišlja obično je pouzdaniji od brzog, klasičnog modela.',
+        teacher: 'Za rešavanje zadataka i traženje grešaka vredi izabrati režim razmišljanja, a za kratko pismo dovoljan je brz model. Koraci ipak nisu zagarantovano tačni, pa konačan rezultat uvek proveri.'
+      }
+    },
+    {
+      id: 'openweight', cat: 'types', icon: 'branch',
+      hu: {
+        title: 'Nyílt súlyú (open-weight) modell',
+        simple: 'A nyílt súlyú modell megtanult paramétereit (a „súlyokat”) bárki letöltheti, így a modell saját gépen is futtatható. A zárt modellekhez ezzel szemben csak a szolgáltató felületén vagy programozói felületen (API) keresztül férhetsz hozzá.',
+        example: 'Ha egy nyílt súlyú modell az iskola saját szerverén fut, a diákok kérdései nem hagyják el az intézmény hálózatát, míg egy felhőszolgáltatásnál a beírt szöveg a szolgáltató szervereire kerül.',
+        teacher: 'Ha adatvédelmi okból nem küldhetsz szöveget külső szolgáltatónak, a helyben futtatható modell alternatíva lehet — de beállítása informatikai tudást igényel, és gyakran gyengébb a legjobb zárt modelleknél.'
+      },
+      sr: {
+        title: 'Model otvorenih težina (open-weight)',
+        simple: 'Kod modela otvorenih težina naučeni parametri („težine”) mogu se preuzeti, pa se model može pokrenuti i na sopstvenom računaru. Za razliku od toga, zatvorenim modelima pristupaš samo preko platforme pružaoca usluge ili programerskog interfejsa (API).',
+        example: 'Kada se model otvorenih težina pokreće na školskom serveru, pitanja učenika ne napuštaju mrežu ustanove, dok se kod usluge u oblaku upisani tekst šalje na servere pružaoca usluge.',
+        teacher: 'Ako zbog zaštite ličnih podataka ne smeš da šalješ tekst spoljnom pružaocu usluge, model koji se pokreće lokalno može biti alternativa — ali njegovo podešavanje zahteva informatičko znanje, a često je slabiji od najboljih zatvorenih modela.'
+      }
+    },
+    {
+      id: 'agent', cat: 'types', icon: 'branch',
+      hu: {
+        title: 'Ágens (agent)',
+        simple: 'Az ágens olyan AI-rendszer, amely nem csupán válaszol, hanem önállóan, több lépésben, eszközök (például böngésző, fájlkezelő, táblázat) használatával dolgozik egy cél elérése érdekében. A lépéseket maga tervezi meg, és menet közben módosíthatja is.',
+        example: 'Megkéred az ágenst, hogy gyűjtse össze a dolgozat eredményeit egy táblázatba, számítsa ki az átlagokat, és készítsen rövid összefoglalót — ehhez több fájlt megnyit, számol, majd új dokumentumot ment.',
+        teacher: 'Az ágens valódi műveleteket hajt végre a fájljaiddal és a fiókjaiddal, ezért kezdetben kis kockázatú feladatokra használd, mindig nézd át, mit csinált, és a diákok személyes adatait ne bízd rá.'
+      },
+      sr: {
+        title: 'Agent (agent)',
+        simple: 'Agent je AI sistem koji ne samo da odgovara, već samostalno, u više koraka i uz pomoć alata (na primer pregledača, upravljača datotekama, tabele) radi na postizanju cilja. Korake sam planira i u hodu ih može menjati.',
+        example: 'Zamoliš agenta da prikupi rezultate kontrolnog u tabelu, izračuna proseke i napravi kratak rezime — za to otvara više datoteka, računa, a zatim čuva novi dokument.',
+        teacher: 'Agent izvršava stvarne radnje nad tvojim datotekama i nalozima, zato ga na početku koristi za zadatke sa malim rizikom, uvek pregledaj šta je uradio i ne poveravaj mu lične podatke učenika.'
+      }
+    },
+    {
+      id: 'm-think', cat: 'myths', icon: 'shield',
+      hu: {
+        title: '„Az AI úgy gondolkodik, mint az ember”',
+        simple: 'A hasonlat azért félrevezető, mert az AI nem érti a világot, nincsenek élményei, céljai vagy meggyőződései. Olyan mintázatokat követ, amelyeket a tanítóadatokból tanult meg, és ezekből állít elő valószínű szöveget.',
+        example: 'Amikor a modell azt írja, hogy „úgy gondolom” vagy „sajnálom”, ez beszédfordulat, nem belső élmény beszámolója.',
+        teacher: 'A diákokkal érdemes tisztázni, hogy a „gondolkodik”, „tanul” és „megért” szavak az AI esetében képletes kifejezések; így kevésbé fogják tévedhetetlen tanácsadónak tekinteni.'
+      },
+      sr: {
+        title: '„AI razmišlja kao čovek”',
+        simple: 'Poređenje je obmanjujuće jer AI ne shvata svet, nema iskustva, ciljeva ni uverenja. On sledi obrasce koje je naučio iz podataka za obuku i na osnovu njih proizvodi verovatan tekst.',
+        example: 'Kada model napiše „mislim” ili „žao mi je”, to je jezički obrt, a ne opis unutrašnjeg doživljaja.',
+        teacher: 'Sa učenicima vredi razjasniti da su reči „razmišlja”, „uči” i „razume” kod AI figurativne; tako će ga manje doživljavati kao nepogrešivog savetnika.'
+      }
+    },
+    {
+      id: 'm-true', cat: 'myths', icon: 'shield',
+      hu: {
+        title: '„Amit mond, az igaz”',
+        simple: 'A magabiztos, gördülékeny hangnem nem garancia a pontosságra. A modell ugyanolyan meggyőzően fogalmaz, amikor téved, mint amikor helyesen válaszol — a stílusból tehát nem lehet következtetni a tartalom megbízhatóságára.',
+        example: 'A modell hibás képletet ír fel egy fizikai összefüggésre, de a levezetés szabályosnak és következetesnek tűnik, ezért a diák el is hiszi az eredményt.',
+        teacher: 'Tanítsd meg a diákokat a „két forrás” szabályra: ami fontos, azt vesd össze legalább egy független, megbízható forrással (tankönyv, szakmai oldal).'
+      },
+      sr: {
+        title: '„Ono što kaže, tačno je”',
+        simple: 'Samouveren i tečan ton nije garancija tačnosti. Model se jednako ubedljivo izražava kada greši kao i kada odgovara tačno, pa se iz stila ne može zaključiti koliko je sadržaj pouzdan.',
+        example: 'Model pogrešno zapisuje formulu za neku fizičku zavisnost, ali izvođenje deluje uredno i dosledno, pa učenik rezultat prihvata kao tačan.',
+        teacher: 'Nauči učenike pravilu „dva izvora”: ono što je važno uporedi bar s jednim nezavisnim, pouzdanim izvorom (udžbenik, stručni sajt).'
+      }
+    },
+    {
+      id: 'm-creative', cat: 'myths', icon: 'shield',
+      hu: {
+        title: 'Kreatív és tényszerű használat',
+        simple: 'Az AI kiváló ötletgeneráló és szövegformáló segéd, de megbízhatatlan tényforrás. Ugyanaz a tulajdonsága — hogy valószínű folytatásokat állít elő — a kreatív munkában előny, a tények közlésénél viszont kockázat.',
+        example: 'Jó felhasználás: tíz különböző kísérleti ötletet kérni a hőtan tanításához. Kockázatos felhasználás: megkérni, hogy sorolja fel egy fizikus pontos életrajzi adatait és publikációit.',
+        teacher: 'Használat előtt kérdezd meg magadtól: ötletre vagy tényre van szükségem? Ötletet bátran kérj, tényt pedig mindig ellenőrizz.'
+      },
+      sr: {
+        title: 'Kreativna i činjenična upotreba',
+        simple: 'AI je odličan pomoćnik za smišljanje ideja i oblikovanje teksta, ali nepouzdan izvor činjenica. Ista osobina — stvaranje verovatnih nastavaka — u kreativnom radu je prednost, a pri iznošenju činjenica rizik.',
+        example: 'Dobra upotreba: zatražiti deset različitih ideja za eksperiment iz termodinamike. Rizična upotreba: zatražiti da navede tačne biografske podatke i radove nekog fizičara.',
+        teacher: 'Pre upotrebe se zapitaj: treba li mi ideja ili činjenica? Ideje slobodno traži, a činjenice uvek proveri.'
+      }
+    },
+    {
+      id: 'm-bias', cat: 'myths', icon: 'shield',
+      hu: {
+        title: '„Az AI semleges és elfogulatlan”',
+        simple: 'A modell a tanítóadatokból tanul, azokban pedig benne vannak az emberi társadalom torzításai: hogy mely nézőpontok, nyelvek és kultúrák szerepelnek többször, és melyek ritkábban. Ezek a torzítások átöröklődnek a válaszokba.',
+        example: 'Ha arra kéred a modellt, hogy írjon le egy „tipikus tudóst”, gyakran egy férfi, nyugati szereplőt kapsz, mert a tanítóadatokban az ilyen példák voltak túlsúlyban.',
+        teacher: 'Ha a modellel tananyagot vagy értékelést készítesz, olvasd át a kimenetet az elfogultság szempontjából is: kérj kifejezetten sokszínű példákat, és ne bízd a modellre a kényesebb témák mérlegelését.'
+      },
+      sr: {
+        title: '„AI je neutralan i nepristrasan”',
+        simple: 'Model uči iz podataka za obuku, a u njima su sadržane pristrasnosti ljudskog društva: koje su perspektive, jezici i kulture zastupljeniji, a koje manje. Te pristrasnosti prelaze u odgovore.',
+        example: 'Ako zatražiš od modela da opiše „tipičnog naučnika”, često dobiješ muškarca sa Zapada, jer su takvi primeri prevladavali u podacima za obuku.',
+        teacher: 'Kada pomoću modela pripremaš gradivo ili ocenjivanje, pročitaj rezultat i iz ugla pristrasnosti: izričito traži raznovrsne primere i ne prepuštaj modelu procenu osetljivih tema.'
+      }
+    }
+  ];
+
+  var CAT_ORDER = ['what', 'think', 'types', 'myths'];
+
+  /* ---------- Segédfüggvények ---------- */
+  function $(id) { return document.getElementById(id); }
+  function norm(s) {
+    return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
+  }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function pad(i) { return (i < 10 ? '0' : '') + i; }
+
+  var state = { cat: 'all', q: '' };
+  var currentId = null;
+  var lastFocus = null;
+
+  var gridEl = $('grid'), emptyEl = $('empty'), countEl = $('count');
+  var qEl = $('q'), clearBtn = $('clearBtn'), chipsEl = $('chips');
+  var dlg = $('modal');
+
+  /* ---------- Témaváltó ---------- */
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', theme);
+    var btn = $('themeBtn');
+    btn.innerHTML = svg(theme === 'dark' ? SUN : MOON, 22, 24);
+    btn.setAttribute('aria-label', theme === 'dark' ? UI[lang].themeToLight : UI[lang].themeToDark);
+  }
+
+  /* ---------- Szűrő-chipek ---------- */
+  function buildChips() {
+    var keys = ['all'].concat(CAT_ORDER);
+    keys.forEach(function (k) {
+      var b = el('button', 'chip');
+      b.type = 'button';
+      b.setAttribute('data-cat', k);
+      b.setAttribute('aria-pressed', k === state.cat ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        state.cat = k;
+        updateChipStates();
+        renderGrid();
+      });
+      chipsEl.appendChild(b);
+    });
+  }
+  function updateChipLabels() {
+    Array.prototype.forEach.call(chipsEl.children, function (b) {
+      var k = b.getAttribute('data-cat');
+      b.textContent = k === 'all' ? UI[lang].all : UI[lang].cats[k];
+    });
+  }
+  function updateChipStates() {
+    Array.prototype.forEach.call(chipsEl.children, function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-cat') === state.cat ? 'true' : 'false');
+    });
+  }
+
+  /* ---------- Kártyarács ---------- */
+  function matches(c, nq) {
+    if (state.cat !== 'all' && c.cat !== state.cat) return false;
+    if (!nq) return true;
+    var d = c[lang];
+    var hay = norm(d.title + ' ' + d.simple + ' ' + d.example + ' ' + d.teacher + ' ' + UI[lang].cats[c.cat]);
+    return nq.split(/\s+/).every(function (w) { return hay.indexOf(w) !== -1; });
+  }
+
+  function renderGrid() {
+    var nq = norm(state.q.trim());
+    gridEl.textContent = '';
+    var shown = 0;
+    CONCEPTS.forEach(function (c, i) {
+      if (!matches(c, nq)) return;
+      shown++;
+      var d = c[lang];
+      var card = el('button', 'card');
+      card.type = 'button';
+      card.setAttribute('data-id', c.id);
+      card.setAttribute('aria-haspopup', 'dialog');
+
+      var top = el('span', 'card-top');
+      var ic = el('span', 'icon');
+      ic.innerHTML = svg(ICONS[c.icon], 28, 28);
+      top.appendChild(ic);
+      top.appendChild(el('span', 'num', pad(i + 1)));
+      card.appendChild(top);
+
+      card.appendChild(el('span', 'card-cat', UI[lang].cats[c.cat]));
+      card.appendChild(el('span', 'card-title', d.title));
+      card.appendChild(el('span', 'card-text', d.simple));
+      card.appendChild(el('span', 'card-more', UI[lang].details));
+
+      card.addEventListener('click', function () { openModal(c.id, card); });
+      gridEl.appendChild(card);
+    });
+    emptyEl.classList.toggle('show', shown === 0);
+    gridEl.style.display = shown === 0 ? 'none' : '';
+    countEl.textContent = shown === 0 ? UI[lang].noneCount : countText(shown);
+    clearBtn.classList.toggle('show', state.q.length > 0);
+  }
+
+  /* ---------- Modal ---------- */
+  function findConcept(id) {
+    for (var i = 0; i < CONCEPTS.length; i++) if (CONCEPTS[i].id === id) return { c: CONCEPTS[i], i: i };
+    return null;
+  }
+  function fillModal() {
+    var f = findConcept(currentId);
+    if (!f) return;
+    var d = f.c[lang];
+    $('mIcon').innerHTML = svg(ICONS[f.c.icon], 28, 28);
+    $('mNum').textContent = pad(f.i + 1);
+    $('mCat').textContent = UI[lang].cats[f.c.cat];
+    $('mTitle').textContent = d.title;
+    $('mSimple').textContent = d.simple;
+    $('mExample').textContent = d.example;
+    $('mTeacher').textContent = d.teacher;
+  }
+  function openModal(id, opener) {
+    currentId = id;
+    lastFocus = opener || document.activeElement;
+    fillModal();
+    $('mTitle').closest('.m-scroll').scrollTop = 0;
+    if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+    document.documentElement.classList.add('lock');
+  }
+  function closeModal() {
+    if (typeof dlg.close === 'function' && dlg.open) dlg.close(); else dlg.removeAttribute('open');
+    afterClose();
+  }
+  function afterClose() {
+    document.documentElement.classList.remove('lock');
+    currentId = null;
+    if (lastFocus && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} }
+  }
+  dlg.addEventListener('close', afterClose);
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) closeModal(); });
+  $('mClose').addEventListener('click', closeModal);
+  $('mClose2').addEventListener('click', closeModal);
+
+  /* ---------- Nyelvváltó ---------- */
+  function applyLang() {
+    var t = UI[lang];
+    document.documentElement.setAttribute('lang', lang === 'sr' ? 'sr-Latn' : 'hu');
+    document.title = t.title;
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute('content', t.desc);
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (n) {
+      var v = t[n.getAttribute('data-i18n')];
+      if (v != null) n.textContent = v;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n-aria]'), function (n) {
+      var v = t[n.getAttribute('data-i18n-aria')];
+      if (v != null) n.setAttribute('aria-label', v);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n-ph]'), function (n) {
+      var v = t[n.getAttribute('data-i18n-ph')];
+      if (v != null) n.setAttribute('placeholder', v);
+    });
+
+    $('langBtn').setAttribute('aria-label', t.langLabel);
+    $('langHu').className = lang === 'hu' ? 'on' : 'off';
+    $('langSr').className = lang === 'sr' ? 'on' : 'off';
+
+    applyTheme();
+    updateChipLabels();
+    renderGrid();
+    if (currentId) fillModal();
+  }
+
+  /* ---------- Eseménykezelők ---------- */
+  $('themeBtn').addEventListener('click', function () {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    lsSet(K_THEME, theme);
+    applyTheme();
+  });
+  $('langBtn').addEventListener('click', function () {
+    lang = lang === 'hu' ? 'sr' : 'hu';
+    lsSet(K_LANG, lang);
+    applyLang();
+  });
+  qEl.addEventListener('input', function () {
+    state.q = qEl.value;
+    renderGrid();
+  });
+  qEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && qEl.value) { e.preventDefault(); qEl.value = ''; state.q = ''; renderGrid(); }
+  });
+  clearBtn.addEventListener('click', function () {
+    qEl.value = '';
+    state.q = '';
+    renderGrid();
+    qEl.focus();
+  });
+
+  /* ---------- Indítás ---------- */
+  buildChips();
+  applyLang();
+})();
+</script>
+</body>
+</html>

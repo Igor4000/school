@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biztonság és etika — Techscience · AI tanároknak</title>
+<meta name="description" content="Felelős AI-használat tanároknak: biztonsági útmutató három szinttel, adatvédelem, forráskritika és hallucináció, plágium és tanulói integritás, torzítás és elfogultság.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28' fill='none' stroke='%23b8834f' stroke-width='1.6'%3E%3Ccircle cx='14' cy='14' r='1.8'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(60 14 14)'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(120 14 14)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<script>
+/* Téma és nyelv beállítása megjelenítés előtt (ugyanazok a kulcsok, mint a többi aloldalon). */
+(function () {
+  try {
+    var t = localStorage.getItem('techscience-theme');
+    var l = localStorage.getItem('techscience-lang');
+    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    document.documentElement.setAttribute('lang', l === 'sr' ? 'sr-Latn' : 'hu');
+  } catch (e) {}
+})();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0f15;
+  --surface: #141a24;
+  --border: rgba(184, 196, 214, .14);
+  --text: #c7d0dc;
+  --text-strong: #f2f5f9;
+  --text-muted: rgba(199, 208, 220, .58);
+  --accent: #b8834f;
+  /* Származtatott árnyalatok a 4.5:1 kontraszt betartásához (a tokenek változatlanok) */
+  --accent-text: #b8834f;
+  --text-soft: #8b96a6;
+  --on-accent: #0b0f15;
+  --danger: #e58f88;
+  --ok: #6fbf8a;
+  --caution: #e0b252;
+  --grid: rgba(255, 255, 255, .035);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f1e7;
+  --surface: #ffffff;
+  --border: rgba(30, 41, 59, .12);
+  --text: #374151;
+  --text-strong: #111827;
+  --text-muted: rgba(55, 65, 81, .62);
+  --accent: #9c6530;
+  --accent-text: #8a5626;
+  --text-soft: #5b6472;
+  --on-accent: #ffffff;
+  --danger: #a8352f;
+  --ok: #2f7d4f;
+  --caution: #9a6a00;
+  --grid: rgba(0, 0, 0, .035);
+}
+
+/* A két nyelvi változat egymás mellett van a forrásban, a html[lang] dönti el, melyik látszik. */
+html[lang="hu"] .sr { display: none !important; }
+html[lang="sr-Latn"] .hu { display: none !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  color: var(--text);
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400; font-size: 16px; line-height: 1.65;
+}
+h1, h2, h3, h4 { margin: 0; color: var(--text-strong); }
+h1, h2, h3 { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; line-height: 1.2; }
+h4 { font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; font-weight: 600; line-height: 1.3; }
+p, figure, blockquote { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; }
+svg { display: block; flex: none; }
+
+.wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
+.skip {
+  position: absolute; left: 12px; top: -70px; z-index: 100;
+  padding: 10px 16px; background: var(--accent); color: var(--on-accent);
+  border-radius: 4px; font-weight: 600; text-decoration: none;
+}
+.skip:focus { top: 12px; }
+
+/* ---------- Felső sáv ---------- */
+.site-header { position: sticky; top: 0; z-index: 20; background: var(--surface); border-bottom: 1px solid var(--border); }
+.bar {
+  width: min(1120px, 100% - 40px); margin-inline: auto;
+  display: flex; flex-wrap: wrap; align-items: center; column-gap: 28px; row-gap: 4px; padding: 10px 0;
+}
+.logo {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; font-size: 20px; line-height: 1.2;
+  color: var(--text-strong);
+}
+.logo svg { color: var(--accent); }
+.nav { display: flex; gap: 22px; flex: 1 1 auto; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+.nav a {
+  display: inline-block; padding: 10px 2px 8px; border-bottom: 2px solid transparent;
+  color: var(--text); text-decoration: none; font-size: 15px; font-weight: 500;
+  transition: color .2s ease, border-color .2s ease;
+}
+.nav a:hover { color: var(--text-strong); border-bottom-color: var(--border); }
+.nav a[aria-current="page"] { color: var(--accent-text); border-bottom-color: var(--accent); }
+.controls { display: flex; gap: 8px; margin-left: auto; }
+.icon-btn, .lang-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 44px; min-height: 44px; padding: 0 12px; background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px; font: 600 14px/1 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer; transition: border-color .2s ease, color .2s ease;
+}
+.icon-btn:hover, .lang-btn:hover { border-color: var(--accent); color: var(--text-strong); }
+.lang-btn .on { color: var(--accent-text); }
+.lang-btn .off { color: var(--text-soft); font-weight: 500; }
+.lang-btn .sep { color: var(--text-muted); font-weight: 400; }
+@media (max-width: 820px) {
+  .bar { column-gap: 12px; }
+  .nav { order: 3; flex: 0 0 100%; gap: 20px; padding-bottom: 2px; }
+  .nav a { padding: 8px 2px 6px; }
+}
+
+/* ---------- Kicker + gombok ---------- */
+.kicker {
+  display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--text-soft);
+}
+.kicker::before { content: ""; width: 36px; height: 2px; background: var(--accent); flex: none; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 11px 22px;
+  border: 1px solid var(--accent); border-radius: 4px; font: 600 15px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  text-decoration: none; cursor: pointer; transition: background-color .2s ease, filter .2s ease;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: transparent; color: var(--accent-text); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+/* ---------- Hero ---------- */
+.hero { padding: 76px 0 36px; }
+.hero h1 { margin-top: 22px; font-size: clamp(44px, 8vw, 76px); font-weight: 700; letter-spacing: -.01em; }
+.lead { max-width: 62ch; margin-top: 22px; font-size: clamp(17px, 2.2vw, 20px); line-height: 1.7; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+
+/* ================= Biztonság és etika: oldalspecifikus elemek ================= */
+.hero { padding-bottom: 28px; }
+.hero-anchors { margin-top: 36px; }
+.anchors-label { font-size: 13px; font-weight: 600; color: var(--text-soft); margin-bottom: 12px; }
+.anchor-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.anchor {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 9px 16px;
+  background: var(--surface); color: var(--text); text-decoration: none;
+  border: 1px solid var(--border); border-radius: 4px; font-size: 15px; font-weight: 500;
+  transition: border-color .2s ease, transform .2s ease, color .2s ease;
+}
+.anchor:hover { border-color: var(--accent); color: var(--text-strong); transform: translateY(-2px); }
+
+.col { max-width: 880px; }
+.block { padding: 8px 0 56px; scroll-margin-top: 88px; }
+.block > .kicker { margin-bottom: 14px; }
+.block > h2 { font-size: clamp(28px, 4vw, 38px); }
+.block-intro { max-width: 68ch; margin-top: 14px; font-size: 17px; line-height: 1.75; }
+
+/* ---------- Biztonsági útmutató (háromszintű) ---------- */
+.guide { padding-top: 28px; }
+.table-wrap { margin-top: 24px; overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+table.levels { width: 100%; border-collapse: collapse; font-size: 16.5px; }
+.levels thead th { text-align: left; padding: 12px 20px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); border-bottom: 1px solid var(--border); }
+.levels tbody th, .levels tbody td { text-align: left; vertical-align: middle; padding: 18px 20px; border-bottom: 1px solid var(--border); }
+.levels tbody tr:last-child th, .levels tbody tr:last-child td { border-bottom: 0; }
+.levels tbody th { width: 24%; font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; font-size: 20px; color: var(--text-strong); border-left: 4px solid var(--lv, var(--accent)); }
+.levels td[data-k="sign"] { width: 12%; }
+.levels td[data-k="ex"] { color: var(--text-strong); }
+.lv-ok { --lv: var(--ok); }
+.lv-warn { --lv: var(--caution); }
+.lv-stop { --lv: var(--danger); }
+.dot { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; color: var(--on-accent); }
+.dot-ok { background: var(--ok); }
+.dot-warn { background: var(--caution); }
+.dot-stop { background: var(--danger); }
+.guide-note { margin-top: 16px; max-width: 72ch; padding: 12px 18px; border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; background: var(--surface); font-size: 16px; }
+.guide-note strong { color: var(--accent-text); }
+@media (max-width: 720px) {
+  .levels thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  .levels, .levels tbody { display: block; }
+  .levels tbody tr {
+    display: grid; grid-template-columns: auto 1fr; grid-template-areas: "dot name" "ex ex"; gap: 8px 14px; align-items: center;
+    padding: 16px; border-bottom: 1px solid var(--border); border-left: 4px solid var(--lv, var(--accent));
+  }
+  .levels tbody tr:last-child { border-bottom: 0; }
+  .levels tbody th { grid-area: name; display: block; width: auto; padding: 0; border: 0; font-size: 19px; }
+  .levels tbody td[data-k="sign"] { grid-area: dot; display: block; width: auto; padding: 0; border: 0; }
+  .levels tbody td[data-k="ex"] { grid-area: ex; display: block; padding: 0; border: 0; font-size: 16px; }
+}
+
+/* ---------- Szekciók ---------- */
+.sec-head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; color: var(--accent); }
+.sec-num { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 44px; line-height: 1; color: var(--accent-text); }
+.rule {
+  display: flex; align-items: flex-start; gap: 14px; margin-top: 26px; padding: 16px 20px;
+  background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; font-size: 17px;
+}
+.rule svg { color: var(--accent); margin-top: 2px; }
+.rule strong { color: var(--accent-text); }
+.blk { margin-top: 20px; padding: 26px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.blk > h3 { margin-bottom: 14px; font-size: 22px; }
+.blk p { font-size: 16.5px; line-height: 1.75; max-width: 68ch; }
+.blk p + p, .blk .after { margin-top: 12px; }
+.blk h4 { font-size: 16px; color: var(--text-strong); }
+
+.list { display: grid; gap: 10px; }
+.list li { position: relative; padding-left: 18px; font-size: 16px; line-height: 1.65; }
+.list li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 1px; background: var(--accent); }
+.blk .list + p { margin-top: 14px; }
+.steps { display: grid; gap: 10px; counter-reset: s; margin-top: 14px; }
+.steps li { position: relative; padding-left: 40px; font-size: 16px; line-height: 1.65; counter-increment: s; }
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 0; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--accent); border-radius: 50%; font-size: 14px; font-weight: 600; color: var(--accent-text);
+}
+.pri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+.pri li { padding: 14px 18px; background: var(--bg); border: 1px solid var(--border); border-top: 2px solid var(--accent); border-radius: 4px; }
+.pri li:last-child { grid-column: 1 / -1; }
+.pri h4 { margin-bottom: 4px; font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: 600; }
+.pri p { font-size: 15.5px; line-height: 1.65; }
+
+.cmp2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.side { padding: 18px 20px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+.side h4 { margin-bottom: 12px; font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 19px; font-weight: 600; }
+.side-pub { border-top: 3px solid var(--caution); }
+.side-closed { border-top: 3px solid var(--ok); }
+.side .list li { font-size: 15.5px; }
+
+.demo-ref { padding: 16px 20px; background: var(--bg); border: 1px dashed var(--border); border-radius: 4px; }
+.demo-label { margin-bottom: 8px; font-size: 12px !important; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-text); }
+.demo-q, .demo-a { font-size: 16px !important; }
+.demo-q strong, .demo-a strong { color: var(--text-strong); }
+.mono, .ptext { font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; }
+.mono { font-size: 14.5px; color: var(--text-strong); }
+
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.tiers li { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+.tier-n { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 30px; line-height: 1; color: var(--accent-text); }
+.tiers h4 { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 19px; font-weight: 600; }
+.tiers p { font-size: 15.5px !important; line-height: 1.65 !important; }
+
+.pbox { margin-top: 16px; background: var(--bg); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; }
+.pbox-label { padding: 8px 16px; border-bottom: 1px solid var(--border); font-size: 12px !important; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); }
+.ptext { padding: 14px 18px 16px; font-size: 14.5px !important; line-height: 1.75 !important; color: var(--text-strong); white-space: pre-wrap; overflow-wrap: anywhere; max-width: none !important; }
+.ph { color: var(--accent-text); background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: 3px; padding: 0 3px; font-weight: 500; }
+
+@media (max-width: 760px) {
+  .pri, .cmp2, .tiers { grid-template-columns: 1fr; }
+  .pri li:last-child { grid-column: auto; }
+  .blk { padding: 20px 16px; }
+}
+
+/* ---------- Összefoglaló ---------- */
+.summary { margin-top: 8px; padding: 26px; background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); border-radius: 4px; }
+.summary h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 16px; }
+.sum-list { display: grid; gap: 12px; }
+.sum-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 17px; line-height: 1.6; }
+.sum-n { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 1px solid var(--accent); border-radius: 50%; font-weight: 600; font-size: 14px; color: var(--accent-text); }
+
+@media (prefers-reduced-motion: reduce) { .anchor:hover { transform: none; } }
+
+/* ---------- Lapozó + lábléc ---------- */
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 8px 0 72px; }
+.pager a {
+  display: flex; align-items: center; gap: 14px; padding: 20px 24px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text-strong);
+  transition: border-color .25s ease, transform .25s ease;
+}
+.pager a:hover { border-color: var(--accent); transform: translateY(-2px); }
+.pager a svg { color: var(--accent); }
+.pager .next { justify-content: flex-end; text-align: right; }
+.pager small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--text-soft); }
+.pager strong { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; }
+@media (max-width: 600px) { .pager { grid-template-columns: 1fr; } }
+
+.site-footer { margin-top: auto; border-top: 1px solid var(--border); background: var(--bg); padding: 24px 0; font-size: 14px; color: var(--text-soft); }
+.site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; }
+  .pager a:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main"><span class="hu">Ugrás a tartalomhoz</span><span class="sr">Pređi na sadržaj</span></a>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="1.8"/><ellipse cx="14" cy="14" rx="11" ry="4.3"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(60 14 14)"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(120 14 14)"/></svg>
+      <span><span class="hu">AI Tanároknak</span><span class="sr">AI za nastavnike</span></span>
+    </a>
+    <nav class="nav" data-aria-hu="AI tanároknak – oldalak" data-aria-sr="AI za nastavnike – stranice" aria-label="AI tanároknak – oldalak">
+      <a href="ai-alapok.html"><span class="hu">AI alapok</span><span class="sr">AI osnove</span></a>
+      <a href="modellek.html"><span class="hu">Modellek</span><span class="sr">Modeli</span></a>
+      <a href="prompt-kozpont.html">Prompt</a>
+      <a href="tanitasban.html"><span class="hu">Tanításban</span><span class="sr">U nastavi</span></a>
+      <a href="biztonsag-etika.html" aria-current="page">Etika</a>
+    </nav>
+    <div class="controls">
+      <button type="button" class="lang-btn" id="langBtn" data-aria-hu="Váltás szerb nyelvre (latin írás)" data-aria-sr="Promeni jezik na mađarski" aria-label="Váltás szerb nyelvre (latin írás)">
+        <span id="langHu" aria-hidden="true">HU</span><span class="sep" aria-hidden="true">/</span><span id="langSr" aria-hidden="true">SR</span>
+      </button>
+      <button type="button" class="icon-btn" id="themeBtn" aria-label="Váltás világos témára"></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker"><span class="hu">Techscience — AI tanároknak</span><span class="sr">Techscience — AI za nastavnike</span></p>
+      <h1><span class="hu">Biztonság és etika</span><span class="sr">Bezbednost i etika</span></h1>
+      <p class="lead">
+        <span class="hu">Az AI hasznos eszköz, de nem mindenre való. Ez az oldal alapelveket ad ahhoz, hogy jogi vagy informatikai előképzettség nélkül is megalapozott döntést hozz arról, mit oszthatsz meg egy chatbottal, mire támaszkodhatsz, és hol kell kétszer is átgondolnod a lépésed. A felelősség mindig nálad marad: az AI csak vázlatot ad, a döntés és az aláírás a tiéd.</span>
+        <span class="sr">AI je koristan alat, ali nije za sve. Ova stranica daje principe na osnovu kojih možeš da doneseš utemeljenu odluku, bez pravnog ili informatičkog predznanja, o tome šta smeš da deliš sa četbotom, na šta možeš da se osloniš i gde treba dvaput da razmisliš. Odgovornost uvek ostaje kod tebe: AI daje samo nacrt, a odluka i potpis su tvoji.</span>
+      </p>
+      <nav class="hero-anchors" data-aria-hu="Ugrás a szakaszokhoz" data-aria-sr="Prelazak na odeljke" aria-label="Ugrás a szakaszokhoz">
+        <p class="anchors-label"><span class="hu">Ugrás a szakaszhoz</span><span class="sr">Idi na odeljak</span></p>
+        <ul class="anchor-list"><li><a class="anchor" href="#utmutato"><span class="hu">Biztonsági útmutató</span><span class="sr">Vodič za bezbednost</span></a></li><li><a class="anchor" href="#adatvedelem"><span class="hu">Adatvédelem</span><span class="sr">Zaštita podataka</span></a></li><li><a class="anchor" href="#forraskritika"><span class="hu">Forráskritika és hallucináció</span><span class="sr">Kritika izvora i halucinacije</span></a></li><li><a class="anchor" href="#integritas"><span class="hu">Plágium és integritás</span><span class="sr">Plagijat i integritet</span></a></li><li><a class="anchor" href="#torzitas"><span class="hu">Torzítás és elfogultság</span><span class="sr">Pristrasnost i predrasude</span></a></li></ul>
+      </nav>
+    </div>
+  </section>
+
+  <section class="guide block" id="utmutato" aria-labelledby="ut-h">
+    <div class="wrap">
+      <p class="kicker"><span class="hu">Biztonsági útmutató</span><span class="sr">Vodič za bezbednost</span></p>
+      <h2 id="ut-h"><span class="hu">Mit oszthatsz meg egy chatbottal?</span><span class="sr">Šta smeš da deliš sa četbotom?</span></h2>
+      <p class="block-intro">
+        <span class="hu">Három szint segít gyorsan eldönteni, mit másolhatsz be egy AI-chatbotba. Ha egy anyag nem illik egyértelműen egyik szintbe sem, a szigorúbbat alkalmazd.</span>
+        <span class="sr">Tri nivoa pomažu da brzo odlučiš šta smeš da nalepiš u AI četbot. Ako materijal ne spada jasno ni u jedan nivo, primeni stroži.</span>
+      </p>
+      
+        <div class="table-wrap">
+          <table class="levels">
+            <caption class="sr-only"><span class="hu">Biztonsági útmutató: mit oszthatsz meg egy chatbottal</span><span class="sr">Vodič za bezbednost: šta smeš da deliš sa četbotom</span></caption>
+            <thead><tr><th scope="col"><span class="hu">Szint</span><span class="sr">Nivo</span></th><th scope="col"><span class="hu">Jelzés</span><span class="sr">Oznaka</span></th><th scope="col"><span class="hu">Példák</span><span class="sr">Primeri</span></th></tr></thead>
+            <tbody><tr class="lv-ok"><th scope="row"><span class="hu">Általában rendben</span><span class="sr">Uglavnom u redu</span></th><td data-k="sign"><span class="dot dot-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5.5 12.5l4 4L18.5 8"/></svg></span><span class="sr-only"><span class="hu">zöld pont</span><span class="sr">zelena tačka</span></span></td><td data-k="ex"><span class="hu">Saját jegyzetek, általános tananyag-vázlatok, anonimizált mintafeladatok.</span><span class="sr">Sopstvene beleške, opšti nacrti nastavnog gradiva, anonimizovani primeri zadataka.</span></td></tr><tr class="lv-warn"><th scope="row"><span class="hu">Óvatosan</span><span class="sr">Oprezno</span></th><td data-k="sign"><span class="dot dot-warn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 7v6M12 16.5v.2"/></svg></span><span class="sr-only"><span class="hu">sárga pont</span><span class="sr">žuta tačka</span></span></td><td data-k="ex"><span class="hu">Intézményi belső dokumentumok részletei, még nem publikus tantervi tervezetek.</span><span class="sr">Delovi internih dokumenata ustanove, još neobjavljeni nacrti nastavnih planova.</span></td></tr><tr class="lv-stop"><th scope="row"><span class="hu">Ne töltsd fel</span><span class="sr">Ne otpremaj</span></th><td data-k="sign"><span class="dot dot-stop"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7 7 17"/></svg></span><span class="sr-only"><span class="hu">piros pont</span><span class="sr">crvena tačka</span></span></td><td data-k="ex"><span class="hu">Diákok neve és osztályzata együtt, személyes adatok, mások szerzői joga alatt álló teljes művek.</span><span class="sr">Imena učenika zajedno sa ocenama, lični podaci, celi radovi drugih autora zaštićeni autorskim pravom.</span></td></tr></tbody>
+          </table>
+        </div>
+      <p class="guide-note">
+        <strong><span class="hu">Fontos:</span><span class="sr">Važno:</span></strong>
+        <span class="hu">Ez irányadó lista, nem teljes körű: az iskola vagy a tankerület saját szabályzata mindig felülírja.</span>
+        <span class="sr">Ovo je orijentaciona lista, a ne potpuna: pravilnik tvoje škole ili školske uprave uvek ima prednost.</span>
+      </p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="col">
+
+      <section class="block" id="adatvedelem" aria-labelledby="adatvedelem-h">
+        <div class="sec-head"><span class="sec-num" aria-hidden="true">01</span><span class="sec-ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 5 6v6c0 4.5 3 7.7 7 9 4-1.3 7-4.5 7-9V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg></span></div>
+        <h2 id="adatvedelem-h"><span class="hu">Adatvédelem</span><span class="sr">Zaštita podataka</span></h2>
+        <p class="block-intro"><span class="hu">A diákok adatait az iskola kezeli, nem te, és főleg nem egy külső szolgáltató. A legbiztonságosabb döntés az, ha a személyes adatot ki sem engeded a kezedből.</span><span class="sr">Podatke učenika obrađuje škola, a ne ti, a pogotovo ne spoljni pružalac usluge. Najbezbednija odluka je da lične podatke uopšte ne ispustiš iz ruku.</span></p>
+        <p class="rule"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="rule-t"><strong><span class="hu">Alapszabály:</span><span class="sr">Osnovno pravilo:</span></strong> <span class="hu">Diákok személyes adatait ne töltsd fel nyilvános chatbotba.</span><span class="sr">Lične podatke učenika ne otpremaj u javni četbot.</span></span></p><div class="blk"><h3><span class="hu">A GDPR alapelvei dióhéjban</span><span class="sr">Principi GDPR ukratko</span></h3><p><span class="hu">A GDPR az Európai Unió általános adatvédelmi rendelete, más országokban hasonló elveket követő helyi törvények vannak. Az alapelvek közösek, a részletek országonként eltérnek, ezért itt csak a tanári gyakorlathoz szükséges lényeg szerepel.</span><span class="sr">GDPR je uredba Evropske unije o zaštiti podataka, a u drugim zemljama postoje lokalni zakoni koji slede slične principe. Principi su zajednički, a detalji se razlikuju od zemlje do zemlje, zato je ovde samo ono što je bitno za rad nastavnika.</span></p><ul class="pri"><li><h4><span class="hu">Csak annyi adat, amennyi kell</span><span class="sr">Samo onoliko podataka koliko je potrebno</span></h4><p><span class="hu">Csak az az adat kerüljön elő, amelyre a feladathoz valóban szükség van. Egy óravázlathoz nem kell diáknév.</span><span class="sr">Koristi samo podatke koji su zaista potrebni za zadatak. Za pripremu časa nisu potrebna imena učenika.</span></p></li><li><h4><span class="hu">Célhoz kötöttség</span><span class="sr">Vezanost za svrhu</span></h4><p><span class="hu">Az iskola a diákok adatait meghatározott célra gyűjti, például oktatásra és értékelésre. Más célra, például egy chatbot kipróbálására, nem használhatod őket.</span><span class="sr">Škola prikuplja podatke učenika u određenu svrhu, na primer za nastavu i ocenjivanje. Ne smeš ih koristiti u druge svrhe, na primer za isprobavanje četbota.</span></p></li><li><h4><span class="hu">Átláthatóság és jogalap</span><span class="sr">Transparentnost i pravni osnov</span></h4><p><span class="hu">A diákoknak és a szülőknek joguk van tudni, ki kezeli az adataikat és miért. Ha külső szolgáltató kerül a láncba, az csak az iskola tudtával és engedélyével történhet.</span><span class="sr">Učenici i roditelji imaju pravo da znaju ko obrađuje njihove podatke i zašto. Ako se u lanac uključi spoljni pružalac usluge, to sme da se desi samo uz znanje i odobrenje škole.</span></p></li><li><h4><span class="hu">Biztonság és korlátozott tárolás</span><span class="sr">Bezbednost i ograničeno čuvanje</span></h4><p><span class="hu">Az adatot védeni kell, és nem szabad a szükségesnél tovább tárolni. Egy nyilvános chatbotba beírt szöveg fölött elveszíted az irányítást.</span><span class="sr">Podatke treba štititi i ne čuvati duže nego što je potrebno. Nad tekstom upisanim u javni četbot gubiš kontrolu.</span></p></li><li><h4><span class="hu">Elszámoltathatóság</span><span class="sr">Odgovornost</span></h4><p><span class="hu">Az iskola köteles igazolni, hogy betartja a szabályokat, és te is felelős vagy a saját lépéseidért. Ha bizonytalan vagy, kérdezd meg az adatvédelmi felelőst vagy az igazgatót.</span><span class="sr">Škola mora da dokaže da poštuje pravila, a i ti odgovaraš za svoje korake. Ako sumnjaš, pitaj lice zaduženo za zaštitu podataka ili direktora.</span></p></li></ul></div><div class="blk"><h3><span class="hu">Anonimizálás lépésről lépésre</span><span class="sr">Anonimizacija korak po korak</span></h3><p><span class="hu">Személyes adat nemcsak a név: minden, ami egy személyt azonosíthatóvá tesz, például név, azonosító, fénykép, névhez vagy azonosítóhoz kötött osztályzat, egészségi vagy családi helyzet. Több, külön ártalmatlannak tűnő adat együtt is azonosíthat egy gyereket, például az osztály, a nem és egy különleges eset.</span><span class="sr">Lični podatak nije samo ime: to je sve što omogućava da se osoba identifikuje, na primer ime, identifikator, fotografija, ocena vezana za ime ili identifikator, zdravstvena ili porodična situacija. Više podataka koji pojedinačno deluju bezazleno mogu zajedno da identifikuju dete, na primer odeljenje, pol i neki poseban slučaj.</span></p><ol class="steps"><li><span class="hu">Töröld a neveket és az azonosítókat: név, tanulóazonosító, e-mail-cím, telefonszám.</span><span class="sr">Obriši imena i identifikatore: ime, identifikator učenika, adresu e-pošte, broj telefona.</span></li><li><span class="hu">Ha meg kell különböztetned a diákokat, használj kódot, például A1, A2, A3. A kulcsot tartsd külön, és ne oszd meg.</span><span class="sr">Ako moraš da razlikuješ učenike, koristi šifre, na primer A1, A2, A3. Ključ čuvaj odvojeno i ne deli ga.</span></li><li><span class="hu">Távolítsd el a közvetett adatokat is: lakcím, szülők foglalkozása, ritka betegség vagy élethelyzet, pontos osztály és dátum.</span><span class="sr">Ukloni i posredne podatke: adresu, zanimanje roditelja, redak zdravstveni problem ili životnu situaciju, tačno odeljenje i datum.</span></li><li><span class="hu">Olvasd át még egyszer úgy, mintha idegen lennél: kitalálható-e belőle, ki a diák?</span><span class="sr">Pročitaj još jednom iz ugla nekoga ko ne poznaje učenika: da li može da se pogodi o kom je učeniku reč?</span></li><li><span class="hu">Ha a feladathoz nem szükséges az adat, ne is add meg. Például kérj javítást a dolgozat szövegére osztályzat nélkül.</span><span class="sr">Ako podatak nije potreban za zadatak, nemoj ni da ga daješ. Na primer, traži ispravku teksta rada bez ocene.</span></li></ol></div><div class="blk"><h3><span class="hu">Nyilvános chatbot és iskolai zárt rendszer</span><span class="sr">Javni četbot i školski zatvoreni sistem</span></h3>
+        <div class="cmp2">
+          <div class="side side-pub"><h4><span class="hu">Nyilvános chatbot</span><span class="sr">Javni četbot</span></h4><ul class="list"><li><span class="hu">Bárki használhatja, a feltételeket a szolgáltató szabja meg.</span><span class="sr">Svako može da ga koristi, a uslove određuje pružalac usluge.</span></li><li><span class="hu">A beírt szöveget a szolgáltató tárolhatja, és beállítástól függően a modell fejlesztéséhez is felhasználhatja.</span><span class="sr">Upisani tekst pružalac usluge može da čuva i, zavisno od podešavanja, da ga koristi za razvoj modela.</span></li><li><span class="hu">Előfordulhat, hogy az adatot az EU-n kívüli szerveren dolgozzák fel.</span><span class="sr">Moguće je da se podaci obrađuju na serverima van EU.</span></li><li><span class="hu">Az iskolának nincs szerződése a szolgáltatóval.</span><span class="sr">Škola nema ugovor sa pružaocem usluge.</span></li><li><span class="hu">Csak anonimizált, ártalmatlan tartalomhoz használd.</span><span class="sr">Koristi ga samo za anonimizovan, bezazlen sadržaj.</span></li></ul></div>
+          <div class="side side-closed"><h4><span class="hu">Iskola által jóváhagyott, zárt rendszer</span><span class="sr">Zatvoreni sistem koji je odobrila škola</span></h4><ul class="list"><li><span class="hu">Az iskola vagy a tankerület választotta ki, és szerződött a szolgáltatóval.</span><span class="sr">Izabrala ga je škola ili školska uprava i sklopila ugovor sa pružaocem usluge.</span></li><li><span class="hu">Adatkezelési megállapodás szabályozza, mire használhatja a szolgáltató az adatot.</span><span class="sr">Ugovor o obradi podataka propisuje za šta pružalac usluge sme da koristi podatke.</span></li><li><span class="hu">Gyakran van hozzáférés-kezelés és naplózás is.</span><span class="sr">Često postoje i upravljanje pristupom i evidencija aktivnosti.</span></li><li><span class="hu">Diákadat kezelésére is alkalmas lehet, de csak a szabályzatban megengedett célra.</span><span class="sr">Može da bude pogodan i za podatke učenika, ali samo za svrhu dozvoljenu pravilnikom.</span></li><li><span class="hu">Használat előtt ennek ellenére kérdezd meg az adatvédelmi felelőst.</span><span class="sr">Pre upotrebe ipak pitaj lice zaduženo za zaštitu podataka.</span></li></ul></div>
+        </div>
+        <p class="after"><span class="hu">Hogyan döntsd el, melyikről van szó? Kérdezd meg az igazgatót vagy az informatikai felelőst, hogy az eszköz hivatalosan jóváhagyott-e. A saját, magánfiókkal használt eszköz nyilvánosnak számít.</span><span class="sr">Kako da proceniš o kom je reč? Pitaj direktora ili informatičara da li je alat zvanično odobren. Alat koji koristiš sa privatnim nalogom smatra se javnim.</span></p></div><div class="blk"><h3><span class="hu">Ha mégis megtörtént</span><span class="sr">Ako se ipak desilo</span></h3><p><span class="hu">Ha véletlenül személyes adatot töltöttél fel, ne hallgasd el. Töröld a beszélgetést, ha az eszköz engedi, és késedelem nélkül jelezd az igazgatónak vagy az adatvédelmi felelősnek.</span><span class="sr">Ako su lični podaci slučajno otpremljeni, nemoj to da kriješ. Obriši razgovor ako alat to dozvoljava i bez odlaganja obavesti direktora ili lice zaduženo za zaštitu podataka.</span></p><p><span class="hu">Az iskolának lehetnek jelentési kötelezettségei és határidői, a gyors jelzés pedig csökkenti a kárt. A hiba bejelentése nem szégyen, a hallgatás viszont súlyosbíthatja a helyzetet.</span><span class="sr">Škola može da ima obaveze prijavljivanja i rokove, a brzo obaveštavanje smanjuje štetu. Prijava greške nije sramota, a ćutanje može da pogorša situaciju.</span></p></div>
+      </section>
+
+      <section class="block" id="forraskritika" aria-labelledby="forraskritika-h">
+        <div class="sec-head"><span class="sec-num" aria-hidden="true">02</span><span class="sec-ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/><path d="M8 10.5l1.8 1.8L13 9"/></svg></span></div>
+        <h2 id="forraskritika-h"><span class="hu">Forráskritika és hallucináció</span><span class="sr">Kritika izvora i halucinacija</span></h2>
+        <p class="block-intro"><span class="hu">Az AI gördülékenyen és magabiztosan fogalmaz, ezért könnyű elhinni. A hangnem azonban semmit sem mond arról, hogy igaz-e a tartalom.</span><span class="sr">AI se izražava tečno i samouvereno, zato je lako poverovati mu. Ton, međutim, ne govori ništa o tome da li je sadržaj tačan.</span></p>
+        <p class="rule"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="rule-t"><strong><span class="hu">Alapszabály:</span><span class="sr">Osnovno pravilo:</span></strong> <span class="hu">Az AI-válasz nem forrás, hanem egy valószínű szöveg.</span><span class="sr">Odgovor AI nije izvor, već verovatan tekst.</span></span></p><div class="blk"><h3><span class="hu">Miért nem forrás az AI-válasz?</span><span class="sr">Zašto odgovor AI nije izvor?</span></h3><p><span class="hu">A nyelvi modell nem keres ki tényeket egy adatbázisból, hanem mintázatok alapján írja a legvalószínűbb folytatást. Ezért a válasza lehet gördülékeny, magabiztos és mégis hamis. Ezt hívjuk hallucinációnak.</span><span class="sr">Jezički model ne pronalazi činjenice u bazi podataka, već na osnovu obrazaca piše najverovatniji nastavak. Zato njegov odgovor može da bude tečan, samouveren, a ipak netačan. To se zove halucinacija.</span></p><p><span class="hu">A magabiztos hangnem nem garancia: a modell ugyanolyan meggyőzően téved, mint ahogyan meggyőzően igazat mond.</span><span class="sr">Samouveren ton nije garancija: model greši jednako ubedljivo kao što ubedljivo govori istinu.</span></p></div><div class="blk"><h3><span class="hu">Mit ellenőrizz mindig?</span><span class="sr">Šta uvek proveriti?</span></h3><ul class="list"><li><span class="hu">Évszámok és dátumok.</span><span class="sr">Godine i datumi.</span></li><li><span class="hu">Idézetek és szó szerinti szövegek.</span><span class="sr">Citati i doslovni tekstovi.</span></li><li><span class="hu">Törvény- és rendelethivatkozások: szám, paragrafus, bekezdés.</span><span class="sr">Pozivanja na zakone i propise: broj, član, stav.</span></li><li><span class="hu">Nevek és életrajzi adatok.</span><span class="sr">Imena i biografski podaci.</span></li><li><span class="hu">Számadatok és statisztikák.</span><span class="sr">Brojčani podaci i statistike.</span></li><li><span class="hu">Irodalomjegyzék, könyv- és cikkhivatkozások, linkek.</span><span class="sr">Spiskovi literature, pozivanja na knjige i članke, veze.</span></li><li><span class="hu">Képletek és állandók.</span><span class="sr">Formule i konstante.</span></li></ul><p class="after"><span class="hu">Tananyagba, dolgozatba vagy hivatalos dokumentumba csak ellenőrzött adat kerülhet.</span><span class="sr">U nastavni materijal, kontrolni ili zvaničan dokument sme da uđe samo proveren podatak.</span></p></div><div class="blk"><h3><span class="hu">Példa: így derül ki egy hallucinált hivatkozás</span><span class="sr">Primer: kako se otkriva izmišljena referenca</span></h3>
+        <div class="demo-ref">
+          <p class="demo-label"><span class="hu">Kitalált példa</span><span class="sr">Izmišljen primer</span></p>
+          <p class="demo-q"><strong><span class="hu">Kérés:</span><span class="sr">Zahtev:</span></strong> <span class="hu">„Adj három szakirodalmi hivatkozást a differenciált oktatásról.”</span><span class="sr">„Navedi tri bibliografske reference o diferenciranoj nastavi.”</span></p>
+          <p class="demo-a"><strong><span class="hu">A modell válasza (részlet):</span><span class="sr">Odgovor modela (deo):</span></strong> <span class="mono"><span class="hu">Példa, A. (2021). Az okos tanterem. Kitalált Kiadó, Budapest, 134–151. o.</span><span class="sr">Primer, A. (2021). Pametna učionica. Izmišljeni izdavač, Beograd, str. 134–151.</span></span></p>
+        </div><p class="after"><span class="hu">A hivatkozás hihetően néz ki: van szerző, cím, kiadó és oldalszám. Mégis ez derülhet ki róla, ha ellenőrzöd:</span><span class="sr">Referenca deluje uverljivo: ima autora, naslov, izdavača i broj strana. Ipak, ovo može da se ispostavi kada je proveriš:</span></p><ol class="steps"><li><span class="hu">Keresd meg a pontos címet idézőjelben a keresőben és a könyvtári katalógusban.</span><span class="sr">Potraži tačan naslov pod navodnicima u pretraživaču i u bibliotečkom katalogu.</span></li><li><span class="hu">Nézd meg a szerző saját oldalát vagy publikációs listáját.</span><span class="sr">Pogledaj autorovu stranicu ili spisak njegovih radova.</span></li><li><span class="hu">Ellenőrizd a kiadót és az évszámot: létezik-e ilyen kiadvány abban az évben.</span><span class="sr">Proveri izdavača i godinu: da li takvo izdanje postoji u toj godini.</span></li><li><span class="hu">Ha a modell linket is adott, nyisd meg: a link is lehet kitalált.</span><span class="sr">Ako je model naveo i vezu, otvori je: i veza može biti izmišljena.</span></li><li><span class="hu">Ha sehol nem találod, tekintsd kitaláltnak: ne használd, és ne add tovább a diákoknak.</span><span class="sr">Ako je nigde ne nalaziš, smatraj je izmišljenom: ne koristi je i ne prosleđuj učenicima.</span></li></ol></div><div class="blk"><h3><span class="hu">Így csökkentheted a kockázatot</span><span class="sr">Kako možeš da smanjiš rizik</span></h3><ul class="list"><li><span class="hu">Illeszd be a saját forrásszöveget, és kérd, hogy csak abból dolgozzon.</span><span class="sr">Umetni sopstveni izvorni tekst i traži da radi samo na osnovu njega.</span></li><li><span class="hu">Kérd, hogy jelölje meg a bizonytalan állításokat.</span><span class="sr">Traži da označi nesigurne tvrdnje.</span></li><li><span class="hu">Ha a chatbot keresést is használ, a megadott forrást akkor is nyisd meg.</span><span class="sr">Ako četbot koristi i pretragu, otvori navedeni izvor u svakom slučaju.</span></li><li><span class="hu">Fontos adatot vess össze legalább két független, megbízható forrással.</span><span class="sr">Važan podatak uporedi sa najmanje dva nezavisna, pouzdana izvora.</span></li></ul></div>
+      </section>
+
+      <section class="block" id="integritas" aria-labelledby="integritas-h">
+        <div class="sec-head"><span class="sec-num" aria-hidden="true">03</span><span class="sec-ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.5-3.2 2.7-5 5.5-5s5 1.8 5.5 5"/><path d="M16 11l1.8 1.8L21 9.5"/></svg></span></div>
+        <h2 id="integritas-h"><span class="hu">Plágium és tanulói integritás</span><span class="sr">Plagijat i integritet učenika</span></h2>
+        <p class="block-intro"><span class="hu">A cél nem az, hogy minden AI-használatot elkapj, hanem hogy a diákok tisztességesen és átláthatóan dolgozzanak. Ehhez a világos megállapodás többet ér, mint a tiltás és a gyanakvás.</span><span class="sr">Cilj nije da uhvatiš svaku upotrebu AI, već da učenici rade pošteno i transparentno. Za to jasan dogovor vredi više od zabrane i sumnjičenja.</span></p>
+        <p class="rule"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="rule-t"><strong><span class="hu">Alapszabály:</span><span class="sr">Osnovno pravilo:</span></strong> <span class="hu">Az átlátható használati szabály többet ér, mint a tiltás.</span><span class="sr">Jasno pravilo upotrebe vredi više od zabrane.</span></span></p><div class="blk"><h3><span class="hu">Mi utalhat AI által írt munkára?</span><span class="sr">Šta može da ukazuje na rad koji je napisao AI?</span></h3><ul class="list"><li><span class="hu">Túlzott általánosság: sok szó, kevés konkrétum, nincs saját példa.</span><span class="sr">Preterana uopštenost: mnogo reči, malo konkretnog, nema sopstvenog primera.</span></li><li><span class="hu">Egyenletes, „kisimított” stílus, amely eltér a diák megszokott írásától.</span><span class="sr">Ujednačen, „zaglađen” stil koji odstupa od uobičajenog pisanja učenika.</span></li><li><span class="hu">Szokatlanul hibátlan nyelvtan és szerkezet, de hiányzó mélység.</span><span class="sr">Neobično besprekorna gramatika i struktura, ali bez dubine.</span></li><li><span class="hu">Hivatkozások, amelyek nem léteznek, vagy nem azt mondják, amit állítanak.</span><span class="sr">Reference koje ne postoje ili ne govore ono što se tvrdi.</span></li><li><span class="hu">Sablonos szerkezet és visszatérő fordulatok.</span><span class="sr">Šablonska struktura i ponavljajući izrazi.</span></li><li><span class="hu">Hiányoznak az órán elhangzott vagy a helyi, konkrét részletek.</span><span class="sr">Nedostaju konkretni detalji sa časa ili lokalni detalji.</span></li></ul><p class="after"><span class="hu">Ezek csak jelek, nem bizonyítékok. Az AI-felismerő programok megbízhatatlanok, ártatlan diákot is tévesen megvádolhatnak, ezért fegyelmi döntést ne alapozz rájuk.</span><span class="sr">To su samo znaci, a ne dokazi. Programi za prepoznavanje AI nisu pouzdani i mogu pogrešno da optuže nevinog učenika, zato na njima ne zasnivaj disciplinsku odluku.</span></p></div><div class="blk"><h3><span class="hu">Mit tegyél gyanú esetén?</span><span class="sr">Šta da uradiš u slučaju sumnje?</span></h3><ol class="steps"><li><span class="hu">Beszélgess a diákkal vádaskodás nélkül.</span><span class="sr">Razgovaraj sa učenikom bez optuživanja.</span></li><li><span class="hu">Kérd, hogy szóban magyarázza el a saját munkáját.</span><span class="sr">Zamoli ga da usmeno objasni sopstveni rad.</span></li><li><span class="hu">Kérd el a vázlatot, a piszkozatot és a forrásokat.</span><span class="sr">Zatraži nacrt, koncept i izvore.</span></li><li><span class="hu">Vesd össze a diák korábbi munkáival.</span><span class="sr">Uporedi sa ranijim radovima učenika.</span></li><li><span class="hu">A döntést az intézményi szabályok szerint hozd meg, ne a megérzésedre alapozd.</span><span class="sr">Odluku donesi prema pravilima ustanove, a ne na osnovu osećaja.</span></li></ol></div><div class="blk"><h3><span class="hu">Átlátható használati szabályok tiltás helyett</span><span class="sr">Jasna pravila upotrebe umesto zabrane</span></h3><ol class="tiers"><li><span class="tier-n" aria-hidden="true">I</span><div><h4><span class="hu">AI nélkül</span><span class="sr">Bez AI</span></h4><p><span class="hu">Például dolgozat, órai írásbeli, vagy olyan feladat, amely a diák saját készségét méri.</span><span class="sr">Na primer kontrolni, pismeni zadatak na času ili zadatak koji meri učenikove sopstvene veštine.</span></p></div></li><li><span class="tier-n" aria-hidden="true">II</span><div><h4><span class="hu">AI segítséggel, jelöléssel</span><span class="sr">Uz AI, sa oznakom</span></h4><p><span class="hu">Például házi feladat: a diák jelöli, melyik eszközt és mire használta, és mi a saját munkája.</span><span class="sr">Na primer domaći zadatak: učenik označava koji je alat koristio i za šta, i šta je njegov sopstveni rad.</span></p></div></li><li><span class="tier-n" aria-hidden="true">III</span><div><h4><span class="hu">AI szabadon, indoklással</span><span class="sr">AI slobodno, uz obrazloženje</span></h4><p><span class="hu">Például projekt: az AI ötletelésre és ellenőrzésre használható, a diák pedig beszámol arról, mit javított és miért.</span><span class="sr">Na primer projekat: AI može da se koristi za ideje i proveru, a učenik izveštava šta je ispravio i zašto.</span></p></div></li></ol><p class="after"><span class="hu">A szabályt előre, a feladattal együtt mondd el, és hagyd, hogy a diákok megkérdezzék, mit jelent. Te is jelezd nyíltan, ha AI-t használtál egy anyag elkészítéséhez.</span><span class="sr">Pravilo saopšti unapred, zajedno sa zadatkom, i dozvoli učenicima da pitaju šta znači. I ti otvoreno naznači kada je AI korišćen za pripremu materijala.</span></p></div><div class="blk"><h3><span class="hu">Az intézményi szabályzat mindig elsőbbséget élvez</span><span class="sr">Pravilnik ustanove uvek ima prednost</span></h3><p><span class="hu">Az iskola vagy a tankerület szabályzata mindig elsőbbséget élvez az ezen az oldalon olvasható javaslatokkal szemben. Ha a szabályzat tiltja vagy korlátozza az AI használatát, azt kell követned.</span><span class="sr">Pravilnik škole ili školske uprave uvek ima prednost nad predlozima sa ove stranice. Ako pravilnik zabranjuje ili ograničava upotrebu AI, to moraš da poštuješ.</span></p><p><span class="hu">Ha a szabályzat hallgat a kérdésről, kérj írásos iránymutatást az igazgatótól, és tartsd meg a választ.</span><span class="sr">Ako pravilnik o tome ćuti, zatraži pisano uputstvo od direktora i sačuvaj odgovor.</span></p></div>
+      </section>
+
+      <section class="block" id="torzitas" aria-labelledby="torzitas-h">
+        <div class="sec-head"><span class="sec-num" aria-hidden="true">04</span><span class="sec-ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v16M7 20h10M5 7h14"/><path d="M5 7l-2.5 6a3 3 0 0 0 5 0zM19 7l-2.5 6a3 3 0 0 0 5 0z"/></svg></span></div>
+        <h2 id="torzitas-h"><span class="hu">Torzítás és elfogultság</span><span class="sr">Pristrasnost i predrasude</span></h2>
+        <p class="block-intro"><span class="hu">A modell nem szándékosan elfogult, de nem is semleges: azt tükrözi, amiből tanult. Ez különösen ott számít, ahol a diákok véleményt és világképet formálnak.</span><span class="sr">Model nije namerno pristrasan, ali nije ni neutralan: odražava ono iz čega je učio. To je naročito važno tamo gde učenici oblikuju mišljenje i pogled na svet.</span></p>
+        <p class="rule"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="rule-t"><strong><span class="hu">Alapszabály:</span><span class="sr">Osnovno pravilo:</span></strong> <span class="hu">Az első válasz nem a végső válasz.</span><span class="sr">Prvi odgovor nije konačan odgovor.</span></span></p><div class="blk"><h3><span class="hu">Honnan jön a torzítás?</span><span class="sr">Odakle dolazi pristrasnost?</span></h3><p><span class="hu">A modell a tanítóadatokból tanul, amelyek az emberi társadalom nézőpontjait tükrözik: egyes nyelvek, kultúrák és szerzői csoportok nagyobb súllyal szerepelnek, mások kisebbel. Ezek a torzítások átöröklődnek a válaszokba, gyakran észrevétlenül.</span><span class="sr">Model uči iz podataka za obuku, koji odražavaju gledišta ljudskog društva: neki jezici, kulture i grupe autora imaju veću težinu, drugi manju. Te pristrasnosti prelaze u odgovore, često neprimetno.</span></p></div><div class="blk"><h3><span class="hu">Tipikus példák</span><span class="sr">Tipični primeri</span></h3><ul class="list"><li><span class="hu">Kulturális: a „hétköznapi” példák, ünnepek és ételek gyakran egyetlen domináns kultúrát tükröznek.</span><span class="sr">Kulturni: „svakodnevni” primeri, praznici i hrana često odražavaju jednu dominantnu kulturu.</span></li><li><span class="hu">Nyelvi: kisebb nyelveken, például magyarul vagy szerbül, a válasz gyengébb lehet, és angol fogalmakat tükrözhet.</span><span class="sr">Jezički: na manjim jezicima, na primer mađarskom ili srpskom, odgovor može biti slabiji i može da odražava engleske pojmove.</span></li><li><span class="hu">Nemi és társadalmi sztereotípiák: foglalkozások, szerepek és képességek leírásánál.</span><span class="sr">Rodni i društveni stereotipi: u opisima zanimanja, uloga i sposobnosti.</span></li><li><span class="hu">Helyi tudás: a vajdasági vagy más helyi események kisebb súllyal szerepelhetnek a modell tudásában.</span><span class="sr">Lokalno znanje: vojvođanski i drugi lokalni događaji mogu imati manju težinu u znanju modela.</span></li></ul></div><div class="blk"><h3><span class="hu">Történelmi és társadalmi témák: kérj több nézőpontot</span><span class="sr">Istorijske i društvene teme: traži više gledišta</span></h3><p><span class="hu">Történelmi és társadalmi témáknál az első válasz gyakran az egyik nézőpontot mutatja kimondatlanul alapértelmezettnek. Ne fogadd el véglegesnek: kérj több értelmezést, és kérdezd meg, ki nem szólal meg a bemutatásban.</span><span class="sr">Kod istorijskih i društvenih tema prvi odgovor često prikazuje jedno stanovište kao podrazumevano, a da to ne kaže. Nemoj da ga prihvatiš kao konačan: traži više tumačenja i pitaj ko se ne čuje u prikazu.</span></p><div class="pbox"><p class="pbox-label"><span class="hu">Példa kérés</span><span class="sr">Primer zahteva</span></p><p class="ptext hu">Mutasd be a(z) <span class="ph">[TÉMA]</span> kérdés három fő értelmezését. Mindegyiknél nevezd meg, kik képviselik, és milyen forrásokra támaszkodnak, azonos terjedelemben, értékítélet nélkül. A végén jelöld, mi hiányzik még a bemutatásból.</p><p class="ptext sr">Predstavi tri glavna tumačenja pitanja <span class="ph">[TEMA]</span>. Uz svako navedi ko ga zastupa i na koje se izvore oslanja, u istom obimu, bez vrednosnog suda. Na kraju označi šta još nedostaje u prikazu.</p></div></div><div class="blk"><h3><span class="hu">Közös gyakorlat a diákokkal</span><span class="sr">Zajednička vežba sa učenicima</span></h3><p><span class="hu">Tegyétek fel ugyanazt a kérdést két különböző megfogalmazásban, vagy két különböző modellnek, és hasonlítsátok össze a válaszokat. Beszéljétek meg, mi a különbség, miért van, és kinek a nézőpontját tükrözi.</span><span class="sr">Postavite isto pitanje u dve različite formulacije ili dvama različitim modelima i uporedite odgovore. Razgovarajte o tome u čemu je razlika, zašto postoji i čije gledište odražava.</span></p></div>
+      </section>
+
+      <section class="summary" aria-labelledby="sum-h">
+        <h2 id="sum-h"><span class="hu">Öt alapelv, amit érdemes megjegyezni</span><span class="sr">Pet principa koje vredi zapamtiti</span></h2>
+        <ol class="sum-list"><li><span class="sum-n" aria-hidden="true">1</span><span><span class="hu">Személyes adatot nem töltesz fel nyilvános chatbotba.</span><span class="sr">Lične podatke ne otpremaš u javni četbot.</span></span></li><li><span class="sum-n" aria-hidden="true">2</span><span><span class="hu">Az AI-válasz nem forrás: a konkrét adatot mindig ellenőrzöd.</span><span class="sr">Odgovor AI nije izvor: konkretan podatak uvek proveravaš.</span></span></li><li><span class="sum-n" aria-hidden="true">3</span><span><span class="hu">A gyanú nem bizonyíték: előbb beszélgetsz a diákkal.</span><span class="sr">Sumnja nije dokaz: prvo razgovaraš sa učenikom.</span></span></li><li><span class="sum-n" aria-hidden="true">4</span><span><span class="hu">Több nézőpontot kérsz, és nem fogadod el az első választ véglegesnek.</span><span class="sr">Tražiš više gledišta i ne prihvataš prvi odgovor kao konačan.</span></span></li><li><span class="sum-n" aria-hidden="true">5</span><span><span class="hu">Az iskola vagy a tankerület szabályzata mindig elsőbbséget élvez, és a felelősség a tiéd marad.</span><span class="sr">Pravilnik škole ili školske uprave uvek ima prednost, a odgovornost ostaje tvoja.</span></span></li></ol>
+      </section>
+
+      <nav class="pager" data-aria-hu="Lapozás az oldalak között" data-aria-sr="Prelistavanje među stranicama" aria-label="Lapozás az oldalak között">
+        <a href="tanitasban.html">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.5 6 8.5 12l6 6"/></svg>
+          <span><small><span class="hu">Előző</span><span class="sr">Prethodno</span></small><strong><span class="hu">Tanításban</span><span class="sr">U nastavi</span></strong></span>
+        </a>
+        <a class="next" href="index.html">
+          <span><small><span class="hu">Vissza</span><span class="sr">Nazad</span></small><strong><span class="hu">A kezdőlapra</span><span class="sr">Na početnu stranu</span></strong></span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 11.5 12 4l8 7.5V20H4z"/><path d="M10 20v-6h4v6"/></svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span><span class="hu">Techscience · AI tanároknak</span><span class="sr">Techscience · AI za nastavnike</span></span>
+    <span><span class="hu">Készítette: Marković Igor</span><span class="sr">Izradio: Igor Marković</span></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var K_THEME = 'techscience-theme', K_LANG = 'techscience-lang';
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  var theme = lsGet(K_THEME) === 'light' ? 'light' : 'dark';
+  var lang = lsGet(K_LANG) === 'sr' ? 'sr' : 'hu';
+
+  var T = {
+    hu: {
+      title: 'Biztonság és etika — Techscience · AI tanároknak',
+      desc: 'Felelős AI-használat tanároknak: biztonsági útmutató három szinttel, adatvédelem, forráskritika és hallucináció, plágium és tanulói integritás, torzítás és elfogultság.',
+      toLight: 'Váltás világos témára', toDark: 'Váltás sötét témára'
+    },
+    sr: {
+      title: 'Bezbednost i etika — Techscience · AI za nastavnike',
+      desc: 'Odgovorna upotreba AI za nastavnike: vodič za bezbednost sa tri nivoa, zaštita podataka, kritika izvora i halucinacije, plagijat i integritet učenika, pristrasnost i predrasude.',
+      toLight: 'Prebaci na svetlu temu', toDark: 'Prebaci na tamnu temu'
+    }
+  };
+
+  function $(id) { return document.getElementById(id); }
+  function svg(inner) {
+    return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + '</svg>';
+  }
+  var SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';
+  var MOON = '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>';
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', theme);
+    var b = $('themeBtn');
+    b.innerHTML = svg(theme === 'dark' ? SUN : MOON);
+    b.setAttribute('aria-label', theme === 'dark' ? T[lang].toLight : T[lang].toDark);
+  }
+  function applyLang() {
+    document.documentElement.setAttribute('lang', lang === 'sr' ? 'sr-Latn' : 'hu');
+    document.title = T[lang].title;
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute('content', T[lang].desc);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-aria-hu]'), function (n) {
+      n.setAttribute('aria-label', n.getAttribute(lang === 'sr' ? 'data-aria-sr' : 'data-aria-hu'));
+    });
+    $('langHu').className = lang === 'hu' ? 'on' : 'off';
+    $('langSr').className = lang === 'sr' ? 'on' : 'off';
+    applyTheme();
+  }
+
+  $('themeBtn').addEventListener('click', function () {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    lsSet(K_THEME, theme);
+    applyTheme();
+  });
+  $('langBtn').addEventListener('click', function () {
+    lang = lang === 'hu' ? 'sr' : 'hu';
+    lsSet(K_LANG, lang);
+    applyLang();
+  });
+
+  applyLang();
+})();
+</script>
+</body>
+</html>

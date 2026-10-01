@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modellek — Techscience · AI tanároknak</title>
+<meta name="description" content="Az AI-modellek hat fő kategóriája tanári szemmel: mit tudnak, mikor érdemes őket választani, és egy gyorsan avuló piaci pillanatkép.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28' fill='none' stroke='%23b8834f' stroke-width='1.6'%3E%3Ccircle cx='14' cy='14' r='1.8'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(60 14 14)'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(120 14 14)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<script>
+/* Téma és nyelv beállítása megjelenítés előtt (ugyanazok a kulcsok, mint a többi aloldalon). */
+(function () {
+  try {
+    var t = localStorage.getItem('techscience-theme');
+    var l = localStorage.getItem('techscience-lang');
+    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    document.documentElement.setAttribute('lang', l === 'sr' ? 'sr-Latn' : 'hu');
+  } catch (e) {}
+})();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0f15;
+  --surface: #141a24;
+  --border: rgba(184, 196, 214, .14);
+  --text: #c7d0dc;
+  --text-strong: #f2f5f9;
+  --text-muted: rgba(199, 208, 220, .58);
+  --accent: #b8834f;
+  /* Származtatott árnyalatok a 4.5:1 kontraszt betartásához (a tokenek változatlanok) */
+  --accent-text: #b8834f;
+  --text-soft: #8b96a6;
+  --on-accent: #0b0f15;
+  --danger: #e58f88;
+  --grid: rgba(255, 255, 255, .035);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f1e7;
+  --surface: #ffffff;
+  --border: rgba(30, 41, 59, .12);
+  --text: #374151;
+  --text-strong: #111827;
+  --text-muted: rgba(55, 65, 81, .62);
+  --accent: #9c6530;
+  --accent-text: #8a5626;
+  --text-soft: #5b6472;
+  --on-accent: #ffffff;
+  --danger: #a8352f;
+  --grid: rgba(0, 0, 0, .035);
+}
+
+/* ---------- Nyelvváltás: a két nyelvi változat egymás mellett van a forrásban ---------- */
+html[lang="hu"] .sr { display: none !important; }
+html[lang="sr-Latn"] .hu { display: none !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  color: var(--text);
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400; font-size: 16px; line-height: 1.65;
+}
+h1, h2, h3 {
+  margin: 0; color: var(--text-strong);
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif;
+  font-weight: 600; line-height: 1.2;
+}
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; }
+svg { display: block; flex: none; }
+
+.wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
+.skip {
+  position: absolute; left: 12px; top: -70px; z-index: 100;
+  padding: 10px 16px; background: var(--accent); color: var(--on-accent);
+  border-radius: 4px; font-weight: 600; text-decoration: none;
+}
+.skip:focus { top: 12px; }
+
+/* ---------- Felső sáv ---------- */
+.site-header { position: sticky; top: 0; z-index: 20; background: var(--surface); border-bottom: 1px solid var(--border); }
+.bar {
+  width: min(1120px, 100% - 40px); margin-inline: auto;
+  display: flex; flex-wrap: wrap; align-items: center; column-gap: 28px; row-gap: 4px; padding: 10px 0;
+}
+.logo {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; font-size: 20px; line-height: 1.2;
+  color: var(--text-strong);
+}
+.logo svg { color: var(--accent); }
+.nav { display: flex; gap: 22px; flex: 1 1 auto; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+.nav a {
+  display: inline-block; padding: 10px 2px 8px; border-bottom: 2px solid transparent;
+  color: var(--text); text-decoration: none; font-size: 15px; font-weight: 500;
+  transition: color .2s ease, border-color .2s ease;
+}
+.nav a:hover { color: var(--text-strong); border-bottom-color: var(--border); }
+.nav a[aria-current="page"] { color: var(--accent-text); border-bottom-color: var(--accent); }
+.controls { display: flex; gap: 8px; margin-left: auto; }
+.icon-btn, .lang-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 44px; min-height: 44px; padding: 0 12px; background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px; font: 600 14px/1 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer; transition: border-color .2s ease, color .2s ease;
+}
+.icon-btn:hover, .lang-btn:hover { border-color: var(--accent); color: var(--text-strong); }
+.lang-btn .on { color: var(--accent-text); }
+.lang-btn .off { color: var(--text-soft); font-weight: 500; }
+.lang-btn .sep { color: var(--text-muted); font-weight: 400; }
+@media (max-width: 820px) {
+  .bar { column-gap: 12px; }
+  .nav { order: 3; flex: 0 0 100%; gap: 20px; padding-bottom: 2px; }
+  .nav a { padding: 8px 2px 6px; }
+}
+
+/* ---------- Kicker + gombok ---------- */
+.kicker {
+  display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--text-soft);
+}
+.kicker::before { content: ""; width: 36px; height: 2px; background: var(--accent); flex: none; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 11px 22px;
+  border: 1px solid var(--accent); border-radius: 4px; font: 600 15px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  text-decoration: none; cursor: pointer; transition: background-color .2s ease, filter .2s ease;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: transparent; color: var(--accent-text); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+/* ---------- Hero ---------- */
+.hero { padding: 76px 0 40px; }
+.hero h1 { margin-top: 22px; font-size: clamp(44px, 8vw, 76px); font-weight: 700; letter-spacing: -.01em; }
+.lead { max-width: 60ch; margin-top: 22px; font-size: clamp(17px, 2.2vw, 20px); line-height: 1.7; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+
+/* ---------- Horgony-navigáció ---------- */
+.anchors { margin-top: 44px; }
+.anchors-label { font-size: 13px; font-weight: 600; color: var(--text-soft); margin-bottom: 12px; }
+.anchor-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.anchor {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 9px 16px;
+  background: var(--surface); color: var(--text); text-decoration: none;
+  border: 1px solid var(--border); border-radius: 4px; font-size: 15px; font-weight: 500;
+  transition: border-color .2s ease, transform .2s ease, color .2s ease;
+}
+.anchor:hover { border-color: var(--accent); color: var(--text-strong); transform: translateY(-2px); }
+.a-num { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 18px; color: var(--accent-text); }
+.anchor-snap svg { color: var(--accent); }
+
+/* ---------- Kategóriák ---------- */
+.section { padding: 32px 0 8px; scroll-margin-top: 80px; }
+.section-head { margin-bottom: 26px; }
+.cats { display: grid; gap: 20px; }
+.cat {
+  display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.7fr); gap: 36px;
+  padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+  scroll-margin-top: 84px; transition: border-color .25s ease, transform .25s ease;
+}
+.cat:hover { border-color: var(--accent); transform: translateY(-2px); }
+.cat-head { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.cat-ic { color: var(--accent); }
+.cat-num { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 40px; line-height: 1; color: var(--accent-text); }
+.cat-head h2 { font-size: clamp(24px, 3vw, 30px); }
+.cat-body { display: grid; gap: 20px; align-content: start; }
+.explain { font-size: 17px; line-height: 1.75; max-width: 66ch; }
+.when { padding: 14px 20px; background: var(--bg); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; }
+.when h3 { font-size: 17px; margin-bottom: 4px; color: var(--accent-text); }
+.when p { font-size: 16.5px; line-height: 1.65; }
+.caution { display: flex; gap: 14px; padding: 14px 20px; background: var(--bg); border: 1px solid var(--border); border-left: 2px solid var(--danger); border-radius: 4px; }
+.caution-ic { color: var(--danger); padding-top: 2px; }
+.caution-h { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; font-size: 17px; color: var(--danger); margin-bottom: 2px; }
+.caution p:last-child { font-size: 16px; line-height: 1.65; }
+.examples { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+.ex-label { font-size: 13px; font-weight: 600; color: var(--text-soft); }
+.mchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.mchip { padding: 5px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; font-weight: 500; color: var(--text-strong); }
+.ex-note { font-size: 13px; color: var(--text-soft); }
+@media (max-width: 860px) {
+  .cat { grid-template-columns: 1fr; gap: 18px; padding: 22px 20px; }
+  .cat-head { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 14px; }
+  .cat-head h2 { flex: 1 1 100%; }
+  .cat-num { font-size: 34px; }
+}
+
+/* ---------- Piaci pillanatkép ---------- */
+.snapshot {
+  margin-top: 44px; padding: 30px; border: 1px dashed var(--border); border-radius: 4px; scroll-margin-top: 84px;
+  background:
+    repeating-linear-gradient(135deg, transparent 0 14px, color-mix(in srgb, var(--accent) 6%, transparent) 14px 15px),
+    var(--surface);
+}
+.snap-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 14px 24px; margin-bottom: 18px; }
+.snap-title { display: flex; align-items: center; gap: 14px; }
+.snap-title svg { color: var(--accent); }
+.snap-title h2 { font-size: clamp(22px, 3vw, 28px); }
+.snap-date {
+  display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border: 1px solid var(--accent); border-radius: 4px;
+  font-size: 14px; font-weight: 500; color: var(--text-strong); background: var(--bg);
+}
+.snap-note { max-width: 70ch; font-size: 15.5px; margin-bottom: 20px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+thead th {
+  text-align: left; padding: 10px 14px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-soft); border-bottom: 1px solid var(--border);
+}
+tbody th, tbody td { text-align: left; vertical-align: top; padding: 14px; border-bottom: 1px solid var(--border); }
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+tbody th { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; font-size: 17px; color: var(--text-strong); white-space: nowrap; }
+tbody td:nth-child(2) { white-space: nowrap; color: var(--text-strong); }
+.snap-foot { margin-top: 18px; font-size: 14.5px; color: var(--text-soft); max-width: 72ch; }
+@media (max-width: 760px) {
+  .snapshot { padding: 22px 16px; }
+  thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  table, tbody, tr, th, td { display: block; }
+  tbody tr { padding: 14px 4px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: 0; }
+  tbody th, tbody td { padding: 2px 10px; border: 0; white-space: normal; }
+  tbody td:nth-child(2) { color: var(--text-soft); font-size: 14px; }
+}
+
+/* ---------- Lapozó + lábléc ---------- */
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 44px 0 88px; }
+.pager a {
+  display: flex; align-items: center; gap: 14px; padding: 20px 24px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text-strong);
+  transition: border-color .25s ease, transform .25s ease;
+}
+.pager a:hover { border-color: var(--accent); transform: translateY(-2px); }
+.pager a svg { color: var(--accent); }
+.pager .next { justify-content: flex-end; text-align: right; }
+.pager small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--text-soft); }
+.pager strong { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; }
+@media (max-width: 600px) { .pager { grid-template-columns: 1fr; } }
+
+.site-footer { margin-top: auto; border-top: 1px solid var(--border); background: var(--bg); padding: 24px 0; font-size: 14px; color: var(--text-soft); }
+.site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .001ms !important; }
+  .anchor:hover, .cat:hover, .pager a:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main"><span class="hu">Ugrás a tartalomhoz</span><span class="sr">Pređi na sadržaj</span></a>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="1.8"/><ellipse cx="14" cy="14" rx="11" ry="4.3"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(60 14 14)"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(120 14 14)"/></svg>
+      <span><span class="hu">AI Tanároknak</span><span class="sr">AI za nastavnike</span></span>
+    </a>
+    <nav class="nav" data-aria-hu="AI tanároknak – oldalak" data-aria-sr="AI za nastavnike – stranice" aria-label="AI tanároknak – oldalak">
+      <a href="ai-alapok.html"><span class="hu">AI alapok</span><span class="sr">AI osnove</span></a>
+      <a href="modellek.html" aria-current="page"><span class="hu">Modellek</span><span class="sr">Modeli</span></a>
+      <a href="prompt-kozpont.html">Prompt</a>
+      <a href="tanitasban.html"><span class="hu">Tanításban</span><span class="sr">U nastavi</span></a>
+      <a href="biztonsag-etika.html">Etika</a>
+    </nav>
+    <div class="controls">
+      <button type="button" class="lang-btn" id="langBtn" data-aria-hu="Váltás szerb nyelvre (latin írás)" data-aria-sr="Promeni jezik na mađarski" aria-label="Váltás szerb nyelvre (latin írás)">
+        <span id="langHu" aria-hidden="true">HU</span><span class="sep" aria-hidden="true">/</span><span id="langSr" aria-hidden="true">SR</span>
+      </button>
+      <button type="button" class="icon-btn" id="themeBtn" aria-label="Váltás világos témára"></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="hero">
+    <div class="wrap">
+      <p class="kicker"><span class="hu">Techscience — AI tanároknak</span><span class="sr">Techscience — AI za nastavnike</span></p>
+      <h1><span class="hu">Modellek</span><span class="sr">Modeli</span></h1>
+      <p class="lead">
+        <span class="hu">Hónapról hónapra új modellnevek jelennek meg, a kategóriák viszont évekig ugyanazok maradnak. Ez az oldal a kategóriákat mutatja be, hogy ne a név, hanem a feladat alapján válassz eszközt.</span>
+        <span class="sr">Svakog meseca se pojavljuju novi nazivi modela, a kategorije ostaju iste godinama. Ova stranica predstavlja kategorije: alat se bira prema zadatku, a ne prema imenu.</span>
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#kategoriak"><span class="hu">Kategóriák megnyitása</span><span class="sr">Otvori kategorije</span></a>
+        <a class="btn btn-secondary" href="#pillanatkep"><span class="hu">Piaci pillanatkép</span><span class="sr">Tržišni snimak</span></a>
+      </div>
+      <nav class="anchors" data-aria-hu="Ugrás a kategóriákhoz" data-aria-sr="Prelazak na kategorije" aria-label="Ugrás a kategóriákhoz">
+        <p class="anchors-label"><span class="hu">Ugrás a kategóriához</span><span class="sr">Idi na kategoriju</span></p>
+        <ul class="anchor-list">
+          <li><a class="anchor" href="#chat-asszisztens"><span class="a-num">01</span><span><span class="hu">Chat-asszisztens</span><span class="sr">Četbot asistent</span></span></a></li>
+          <li><a class="anchor" href="#gondolkodo"><span class="a-num">02</span><span><span class="hu">Gondolkodó modell</span><span class="sr">Model koji razmišlja</span></span></a></li>
+          <li><a class="anchor" href="#multimodalis"><span class="a-num">03</span><span><span class="hu">Multimodális modell</span><span class="sr">Multimodalni model</span></span></a></li>
+          <li><a class="anchor" href="#nyilt-suly"><span class="a-num">04</span><span><span class="hu">Nyílt súlyú modell</span><span class="sr">Model otvorenih težina</span></span></a></li>
+          <li><a class="anchor" href="#kodolo"><span class="a-num">05</span><span><span class="hu">Kódoló modell</span><span class="sr">Model za programiranje</span></span></a></li>
+          <li><a class="anchor" href="#agens"><span class="a-num">06</span><span><span class="hu">Ágens</span><span class="sr">Agent</span></span></a></li>
+          <li><a class="anchor anchor-snap" href="#pillanatkep"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span><span class="hu">Piaci pillanatkép</span><span class="sr">Tržišni snimak</span></span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section" id="kategoriak" aria-labelledby="kat-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker" id="kat-h"><span class="hu">Hat modellkategória</span><span class="sr">Šest kategorija modela</span></p>
+      </div>
+      <div class="cats">
+
+    <article class="cat" id="chat-asszisztens" aria-labelledby="chat-asszisztens-t">
+      <header class="cat-head">
+        <span class="cat-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M7.5 9.5h9M7.5 13h5.5"/></svg></span>
+        <span class="cat-num" aria-hidden="true">01</span>
+        <h2 id="chat-asszisztens-t"><span class="hu">Chat-alapú általános asszisztens</span><span class="sr">Opšti četbot asistent</span></h2>
+      </header>
+      <div class="cat-body">
+        <p class="explain"><span class="hu">Az általános chat-asszisztens az a modelltípus, amellyel a legtöbben először találkoznak: beírsz egy kérdést vagy utasítást, és szöveges választ kapsz. Jól boldogul kérdés-válasz feladatokkal, szövegezéssel, összefoglalással és ötletgenerálással, és általában van belőle ingyenes változat is.</span><span class="sr">Opšti četbot asistent je tip modela sa kojim se većina ljudi prvi put sreće: upišeš pitanje ili uputstvo, a dobiješ tekstualni odgovor. Dobro se snalazi u pitanjima i odgovorima, pisanju tekstova, sažimanju i smišljanju ideja, a obično postoji i besplatna varijanta.</span></p>
+        <div class="when"><h3><span class="hu">Mikor válaszd?</span><span class="sr">Kada ga izabrati?</span></h3><p><span class="hu">Akkor válaszd, ha gyors segítség kell egy óravázlathoz, egy e-mailhez vagy egy feladat több változatához — a mindennapi tanári munka nagy részéhez ez elég.</span><span class="sr">Izaberi ga kada ti treba brza pomoć oko pripreme časa, e-poruke ili više varijanti zadatka — za veći deo svakodnevnog rada nastavnika to je dovoljno.</span></p></div>
+        
+        <div class="examples">
+          <span class="ex-label"><span class="hu">Példaként</span><span class="sr">Na primer</span></span>
+          <ul class="mchips"><li class="mchip">ChatGPT (GPT-6)</li><li class="mchip">Gemini (3.8 Flash)</li></ul>
+          <span class="ex-note"><span class="hu">nem kimerítő lista</span><span class="sr">nije iscrpna lista</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="cat" id="gondolkodo" aria-labelledby="gondolkodo-t">
+      <header class="cat-head">
+        <span class="cat-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="5.5" r="2"/><circle cx="12" cy="18.5" r="2"/><circle cx="19" cy="12" r="2"/><path d="M6.8 10.9l3.5-3.6M6.8 13.1l3.5 3.6M13.7 6.9l3.6 3.3M13.7 17.1l3.6-3.3"/></svg></span>
+        <span class="cat-num" aria-hidden="true">02</span>
+        <h2 id="gondolkodo-t"><span class="hu">Gondolkodó (reasoning) modell</span><span class="sr">Model koji „razmišlja” (reasoning)</span></h2>
+      </header>
+      <div class="cat-body">
+        <p class="explain"><span class="hu">A gondolkodó modell válasz előtt több belső lépésben végigdolgozza a feladatot, ezért lassabb, és többe is kerülhet. Cserébe bonyolultabb, többlépéses feladatoknál — például matematikai levezetésnél vagy logikai feladatnál — általában megbízhatóbb, mert menet közben ellenőrzi és javítja a saját lépéseit. Ettől még nem tévedhetetlen, ezért a végeredményt érdemes átnézni.</span><span class="sr">Model koji razmišlja pre odgovora prolazi kroz zadatak u više unutrašnjih koraka, pa je sporiji i ponekad skuplji. Zauzvrat je kod složenijih, višekoračnih zadataka — na primer matematičkog izvođenja ili logičkog zadatka — obično pouzdaniji, jer usput proverava i ispravlja sopstvene korake. To ga ne čini nepogrešivim, zato rezultat vredi proveriti.</span></p>
+        <div class="when"><h3><span class="hu">Mikor válaszd?</span><span class="sr">Kada ga izabrati?</span></h3><p><span class="hu">Akkor válaszd, ha a feladat több egymásra épülő lépésből áll: számolásos feladatsor megoldókulcsához, hibakereséshez vagy logikai példa ellenőrzéséhez.</span><span class="sr">Izaberi ga kada se zadatak sastoji od više koraka koji se nadovezuju: za ključ rešenja računskih zadataka, traženje grešaka ili proveru logičkog primera.</span></p></div>
+        
+        <div class="examples">
+          <span class="ex-label"><span class="hu">Példaként</span><span class="sr">Na primer</span></span>
+          <ul class="mchips"><li class="mchip">GPT-6 Astra</li><li class="mchip">Grok 4.7</li></ul>
+          <span class="ex-note"><span class="hu">nem kimerítő lista</span><span class="sr">nije iscrpna lista</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="cat" id="multimodalis" aria-labelledby="multimodalis-t">
+      <header class="cat-head">
+        <span class="cat-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9.5" r="1.7"/><path d="M3 17l5.2-4.2 4 3.2 3.3-2.4L21 16.5"/></svg></span>
+        <span class="cat-num" aria-hidden="true">03</span>
+        <h2 id="multimodalis-t"><span class="hu">Multimodális modell</span><span class="sr">Multimodalni model</span></h2>
+      </header>
+      <div class="cat-body">
+        <p class="explain"><span class="hu">A multimodális modell nemcsak szöveget ért, hanem képet, hangot vagy akár PDF-dokumentumot is fel tud dolgozni. Megmutathatsz neki egy fényképet, egy grafikont vagy egy beszkennelt lapot, és kérdezhetsz róla. Az értelmezés nem mindig pontos, és diákmunka fotózásakor a nevet előbb takard le.</span><span class="sr">Multimodalni model ne razume samo tekst, već može da obradi i sliku, zvuk ili PDF dokument. Možeš mu pokazati fotografiju, grafikon ili skeniranu stranu i postaviti pitanje o njima. Tumačenje nije uvek tačno, a ime učenika prekrij pre nego što fotografišeš rad.</span></p>
+        <div class="when"><h3><span class="hu">Mikor válaszd?</span><span class="sr">Kada ga izabrati?</span></h3><p><span class="hu">Akkor válaszd, ha a kiinduló anyag nem szöveg: például lefényképezel egy kézzel írt dolgozatot, és értékelési vázlatot vagy hibajegyzéket kérsz hozzá — a végső pontszámot viszont te adod meg.</span><span class="sr">Izaberi ga kada polazni materijal nije tekst: na primer, fotografišeš rukom pisan kontrolni zadatak i tražiš predlog ocene ili spisak grešaka — konačan broj bodova ipak ti određuješ.</span></p></div>
+        
+        <div class="examples">
+          <span class="ex-label"><span class="hu">Példaként</span><span class="sr">Na primer</span></span>
+          <ul class="mchips"><li class="mchip">Gemini (3.8 Flash)</li><li class="mchip">Qwen3.8-Omni-Flash</li></ul>
+          <span class="ex-note"><span class="hu">nem kimerítő lista</span><span class="sr">nije iscrpna lista</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="cat" id="nyilt-suly" aria-labelledby="nyilt-suly-t">
+      <header class="cat-head">
+        <span class="cat-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.6-1.7"/><path d="M12 15v2.5"/></svg></span>
+        <span class="cat-num" aria-hidden="true">04</span>
+        <h2 id="nyilt-suly-t"><span class="hu">Nyílt súlyú (open-weight) modell</span><span class="sr">Model otvorenih težina (open-weight)</span></h2>
+      </header>
+      <div class="cat-body">
+        <p class="explain"><span class="hu">A nyílt súlyú modell megtanult paramétereit bárki letöltheti, így a modell saját gépen vagy iskolai szerveren is futtatható, és a beírt szöveg nem kerül külső szolgáltatóhoz. Ez adatvédelmi szempontból nagy előny, például olyan anyagoknál, amelyek diákok adatait tartalmazzák. A kompromisszum: beállításához informatikai tudás és megfelelő hardver kell, az iskolai gépen elférő kisebb modellek általában gyengébbek a legnagyobb zárt modelleknél, a legnagyobb nyílt modellek (például a Kimi K3) pedig iskolai szerveren nem futtathatók.</span><span class="sr">Kod modela otvorenih težina naučeni parametri mogu se preuzeti, pa se model može pokrenuti na sopstvenom računaru ili školskom serveru, a upisani tekst ne odlazi spoljnom pružaocu usluge. To je velika prednost sa stanovišta zaštite podataka, na primer kada materijal sadrži podatke o učenicima. Kompromis: za podešavanje su potrebni informatičko znanje i odgovarajući hardver, manji modeli koji stanu na školski računar obično su slabiji od najvećih zatvorenih modela, a najveći otvoreni modeli (na primer Kimi K3) ne mogu da rade na školskom serveru.</span></p>
+        <div class="when"><h3><span class="hu">Mikor válaszd?</span><span class="sr">Kada ga izabrati?</span></h3><p><span class="hu">Akkor válaszd, ha az adatvédelem fontosabb a kényelemnél, és van valaki az iskolában, aki telepíteni és karbantartani tudja.</span><span class="sr">Izaberi ga kada je zaštita podataka važnija od udobnosti i kada u školi postoji neko ko ume da ga instalira i održava.</span></p></div>
+        
+        <div class="examples">
+          <span class="ex-label"><span class="hu">Példaként</span><span class="sr">Na primer</span></span>
+          <ul class="mchips"><li class="mchip">DeepSeek V4</li><li class="mchip">Qwen3.6-27B</li></ul>
+          <span class="ex-note"><span class="hu">nem kimerítő lista</span><span class="sr">nije iscrpna lista</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="cat" id="kodolo" aria-labelledby="kodolo-t">
+      <header class="cat-head">
+        <span class="cat-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.5 7.5 4 12l4.5 4.5M15.5 7.5 20 12l-4.5 4.5M13.5 5l-3 14"/></svg></span>
+        <span class="cat-num" aria-hidden="true">05</span>
+        <h2 id="kodolo-t"><span class="hu">Kódolásra optimalizált modell</span><span class="sr">Model optimizovan za programiranje</span></h2>
+      </header>
+      <div class="cat-body">
+        <p class="explain"><span class="hu">A kódolásra optimalizált modell programkódot ír, magyaráz, javít és tesztel, gyakran közvetlenül a fejlesztőeszközben vagy a szerkesztőben dolgozik. Informatikát tanító kollégáknak azért hasznos, mert hibakeresésben és feladatötletekben segít, tanulói feladatoknál pedig lépésenként elmagyarázza a megoldást. A legújabb általános modellek is jól programoznak, ezért külön kódoló modell nem mindig szükséges.</span><span class="sr">Model optimizovan za programiranje piše, objašnjava, ispravlja i testira programski kod, često direktno u razvojnom alatu ili uređivaču. Nastavnicima informatike je koristan jer pomaže pri traženju grešaka i smišljanju zadataka, a kod učeničkih zadataka može korak po korak da objasni rešenje. I najnoviji opšti modeli dobro programiraju, pa poseban model za kod nije uvek neophodan.</span></p>
+        <div class="when"><h3><span class="hu">Mikor válaszd?</span><span class="sr">Kada ga izabrati?</span></h3><p><span class="hu">Akkor válaszd, ha programozási feladatokat készítesz, tanulói kódot javítasz, vagy egy hosszabb projektet szeretnél átnézetni.</span><span class="sr">Izaberi ga kada pripremaš zadatke iz programiranja, ispravljaš učenički kod ili želiš da ti neko pregleda duži projekat.</span></p></div>
+        
+        <div class="examples">
+          <span class="ex-label"><span class="hu">Példaként</span><span class="sr">Na primer</span></span>
+          <ul class="mchips"><li class="mchip">Kimi K2.7 Code</li><li class="mchip">Qwen3-Coder-Next</li></ul>
+          <span class="ex-note"><span class="hu">nem kimerítő lista</span><span class="sr">nije iscrpna lista</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="cat" id="agens" aria-labelledby="agens-t">
+      <header class="cat-head">
+        <span class="cat-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 12a7.5 7.5 0 0 1 13-5.1M19.5 12a7.5 7.5 0 0 1-13 5.1"/><path d="M18.5 3v4h-4M5.5 21v-4h4"/><circle cx="12" cy="12" r="1.8"/></svg></span>
+        <span class="cat-num" aria-hidden="true">06</span>
+        <h2 id="agens-t"><span class="hu">Ágens (agent)</span><span class="sr">Agent (agent)</span></h2>
+      </header>
+      <div class="cat-body">
+        <p class="explain"><span class="hu">Az ágens olyan rendszer, amely önállóan, több lépésben, eszközöket használva dolgozik: fájlt olvas és ír, keres az interneten, táblázatot szerkeszt. Nemcsak válaszol, hanem cselekszik is, ezért kevésbé kiszámítható, mint egy egyszerű chat. Mivel valódi műveleteket hajt végre a fájljaiddal és a fiókjaiddal, a munkáját mindig felügyelned kell.</span><span class="sr">Agent je sistem koji samostalno, u više koraka i uz pomoć alata obavlja posao: čita i piše datoteke, pretražuje internet, uređuje tabele. On ne samo da odgovara, već i deluje, zato je manje predvidiv od običnog četa. Pošto izvršava stvarne radnje nad tvojim datotekama i nalozima, njegov rad uvek moraš da nadgledaš.</span></p>
+        <div class="when"><h3><span class="hu">Mikor válaszd?</span><span class="sr">Kada ga izabrati?</span></h3><p><span class="hu">Akkor válaszd, ha sok apró, ismétlődő lépésből álló munkát szeretnél átadni (például dokumentumok rendezését) — de csak kis kockázatú feladatnál és tanári felügyelettel.</span><span class="sr">Izaberi ga kada želiš da prepustiš posao sastavljen od mnogo sitnih, ponavljajućih koraka (na primer sređivanje dokumenata) — ali samo za zadatke sa malim rizikom i uz nadzor nastavnika.</span></p></div>
+        <div class="caution" role="note"><span class="caution-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg></span><div><p class="caution-h"><span class="hu">Figyelem</span><span class="sr">Oprez</span></p><p><span class="hu">Egy ágens valódi műveleteket végezhet: fájlt módosíthat vagy törölhet, üzenetet küldhet. Kezdetben csak kis kockázatú feladatot bízz rá, diákok személyes adatait ne add meg neki, és a munkáját használat előtt nézd át.</span><span class="sr">Agent može da izvršava stvarne radnje: da izmeni ili obriše datoteku, pošalje poruku. Na početku mu poveravaj samo zadatke sa malim rizikom, ne daj mu lične podatke učenika i pregledaj njegov rad pre upotrebe.</span></p></div></div>
+        <div class="examples">
+          <span class="ex-label"><span class="hu">Példaként</span><span class="sr">Na primer</span></span>
+          <ul class="mchips"><li class="mchip">Claude Cowork</li><li class="mchip">Codex</li></ul>
+          <span class="ex-note"><span class="hu">nem kimerítő lista</span><span class="sr">nije iscrpna lista</span></span>
+        </div>
+      </div>
+    </article>
+      </div>
+
+      <!-- FRISSÍTENDŐ: az alábbi "Piaci pillanatkép" blokkot (a táblázatot és az "utolsó frissítés" dátumot) rendszeresen, legalább havonta át kell nézni és frissíteni.
+           1) A táblázat soraiban írd át a modellneveket és a jellemzéseket (mindkét nyelven: .hu és .sr).
+           2) Az "utolsó frissítés" dátumot a <time id="snapDate" datetime="ÉÉÉÉ-HH-NN"> elem datetime attribútumában módosítsd – a megjelenített szöveg ebből készül mindkét nyelven.
+           A fenti hat kategória szándékosan nem tartalmaz verziószámot, azokat elég ritkán felülvizsgálni. -->
+      <section class="snapshot" id="pillanatkep" aria-labelledby="snap-h">
+        <div class="snap-top">
+          <div class="snap-title">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+            <h2 id="snap-h"><span class="hu">Piaci pillanatkép — ez a rész gyorsan avul</span><span class="sr">Tržišni snimak — ovaj deo brzo zastareva</span></h2>
+          </div>
+          <p class="snap-date">
+            <span class="hu">Utolsó frissítés:</span><span class="sr">Poslednje ažuriranje:</span>
+            <time id="snapDate" datetime="2026-09-30">2026-09-30</time>
+          </p>
+        </div>
+        <p class="snap-note">
+          <span class="hu">Nyolc ismert modell vagy modellcsalád, a fejlesztő cégével és egysoros jellemzésével. A lista nem rangsor és nem ajánlás: a kínálat hétről hétre változik, ezért döntés előtt mindig nézd meg a szolgáltató hivatalos oldalát.</span>
+          <span class="sr">Osam poznatih modela ili porodica modela, sa kompanijom koja ih razvija i jednorednim opisom. Lista nije rang-lista niti preporuka: ponuda se menja iz nedelje u nedelju, pa pre odluke uvek pogledaj zvaničnu stranicu pružaoca usluge.</span>
+        </p>
+        <div class="table-wrap">
+          <table>
+            <caption><span class="hu">Ismert AI-modellek, fejlesztők és rövid jellemzés</span><span class="sr">Poznati AI modeli, razvojne kompanije i kratak opis</span></caption>
+            <thead>
+              <tr>
+                <th scope="col"><span class="hu">Modell</span><span class="sr">Model</span></th>
+                <th scope="col"><span class="hu">Fejlesztő</span><span class="sr">Razvojna kompanija</span></th>
+                <th scope="col"><span class="hu">Jellemzés</span><span class="sr">Opis</span></th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr><th scope="row" data-k="model">GPT-6 (Astra, Sol, Luna)</th><td data-k="dev">OpenAI</td><td data-k="desc"><span class="hu">A ChatGPT mögötti legújabb modellcsalád; az Astra fizetős csomagokban érhető el.</span><span class="sr">Najnovija porodica modela iza ChatGPT-a; Astra je dostupna u plaćenim paketima.</span></td></tr>
+            <tr><th scope="row" data-k="model">Claude Opus 5.5 · Sonnet 5.5</th><td data-k="dev">Anthropic</td><td data-k="desc"><span class="hu">Sokoldalú asszisztens szöveghez és kódhoz; a Sonnet 5.5 2026. szeptember 28-án jelent meg.</span><span class="sr">Svestran asistent za tekst i kod; Sonnet 5.5 je objavljen 28. septembra 2026.</span></td></tr>
+            <tr><th scope="row" data-k="model">Gemini 3.8 Flash</th><td data-k="dev">Google</td><td data-k="desc"><span class="hu">Gyors, költséghatékony „igásló” modell kódoláshoz és ügynökfeladatokhoz; a Flash-család a Gemini-appban széles körben elérhető.</span><span class="sr">Brz, isplativ „radni konj” za programiranje i zadatke agenata; Flash porodica je široko dostupna u aplikaciji Gemini.</span></td></tr>
+            <tr><th scope="row" data-k="model">Grok 4.7</th><td data-k="dev">xAI</td><td data-k="desc"><span class="hu">Kódolásra, ügynökfeladatokra és tudásmunkára; 500 ezer tokenes kontextusablak, szöveg- és képbemenet.</span><span class="sr">Za programiranje, zadatke agenata i rad sa znanjem; kontekstni prozor od 500 hiljada tokena, tekst i slika na ulazu.</span></td></tr>
+            <tr><th scope="row" data-k="model">DeepSeek V4 Pro · V4.1 Flash</th><td data-k="dev">DeepSeek</td><td data-k="desc"><span class="hu">Nyílt súlyú modellek MIT licenccel, 1 millió tokenes kontextussal; a V4.1 Flash már képet is ért. Kínai szolgáltató.</span><span class="sr">Modeli otvorenih težina pod MIT licencom, sa kontekstom od milion tokena; V4.1 Flash razume i slike. Kineski pružalac usluge.</span></td></tr>
+            <tr><th scope="row" data-k="model">Qwen3.8-Max · Qwen3.8-Omni-Flash</th><td data-k="dev">Alibaba (Qwen)</td><td data-k="desc"><span class="hu">Az Omni-Flash szöveget, képet, hangot és videót is kezel; a családban nyílt súlyú modellek is vannak. A Qwen 4 be van jelentve, de még nem jelent meg.</span><span class="sr">Omni-Flash obrađuje tekst, sliku, zvuk i video; u porodici ima i modela otvorenih težina. Qwen 4 je najavljen, ali još nije objavljen.</span></td></tr>
+            <tr><th scope="row" data-k="model">Kimi K3</th><td data-k="dev">Moonshot AI</td><td data-k="desc"><span class="hu">Nyílt súlyú óriásmodell (2,8 billió paraméter, 1 millió tokenes kontextus); a kimi.com-on ingyenesen kipróbálható.</span><span class="sr">Džinovski model otvorenih težina (2,8 biliona parametara, kontekst od milion tokena); može besplatno da se isproba na kimi.com.</span></td></tr>
+            <tr><th scope="row" data-k="model">GLM-5.3 · GLM-5.3-Flash</th><td data-k="dev">Z.ai (Zhipu AI)</td><td data-k="desc"><span class="hu">Nyílt súlyú modellcsalád kódolásra és ügynökfeladatokra; a Flash változat képet és videót is fogad.</span><span class="sr">Porodica modela otvorenih težina za programiranje i zadatke agenata; Flash varijanta prima i sliku i video.</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="snap-foot">
+          <span class="hu">Adatvédelem: diákok személyes adatait egyik szolgáltatónak se add meg, függetlenül attól, melyik országban működik.</span>
+          <span class="sr">Zaštita podataka: lične podatke učenika ne daj nijednom pružaocu usluge, bez obzira na to u kojoj zemlji posluje.</span>
+        </p>
+      </section>
+
+      <nav class="pager" data-aria-hu="Lapozás az oldalak között" data-aria-sr="Prelistavanje među stranicama" aria-label="Lapozás az oldalak között">
+        <a href="ai-alapok.html">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.5 6 8.5 12l6 6"/></svg>
+          <span><small><span class="hu">Előző</span><span class="sr">Prethodno</span></small><strong><span class="hu">AI alapok</span><span class="sr">AI osnove</span></strong></span>
+        </a>
+        <a class="next" href="prompt-kozpont.html">
+          <span><small><span class="hu">Következő</span><span class="sr">Sledeće</span></small><strong>Prompt</strong></span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 6l6 6-6 6"/></svg>
+        </a>
+      </nav>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span><span class="hu">Techscience · AI tanároknak</span><span class="sr">Techscience · AI za nastavnike</span></span>
+    <span><span class="hu">Készítette: Marković Igor</span><span class="sr">Izradio: Igor Marković</span></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var K_THEME = 'techscience-theme', K_LANG = 'techscience-lang';
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  var theme = lsGet(K_THEME) === 'light' ? 'light' : 'dark';
+  var lang = lsGet(K_LANG) === 'sr' ? 'sr' : 'hu';
+
+  var T = {
+    hu: {
+      title: 'Modellek — Techscience · AI tanároknak',
+      desc: 'Az AI-modellek hat fő kategóriája tanári szemmel: mit tudnak, mikor érdemes őket választani, és egy gyorsan avuló piaci pillanatkép.',
+      toLight: 'Váltás világos témára', toDark: 'Váltás sötét témára',
+      months: ['január', 'február', 'március', 'április', 'május', 'június', 'július', 'augusztus', 'szeptember', 'október', 'november', 'december'],
+      fmt: function (y, m, d) { return y + '. ' + this.months[m] + ' ' + d + '.'; }
+    },
+    sr: {
+      title: 'Modeli — Techscience · AI za nastavnike',
+      desc: 'Šest glavnih kategorija AI modela iz ugla nastavnika: šta umeju, kada ih vredi izabrati, i tržišni snimak koji brzo zastareva.',
+      toLight: 'Prebaci na svetlu temu', toDark: 'Prebaci na tamnu temu',
+      months: ['januar', 'februar', 'mart', 'april', 'maj', 'jun', 'jul', 'avgust', 'septembar', 'oktobar', 'novembar', 'decembar'],
+      fmt: function (y, m, d) { return d + '. ' + this.months[m] + ' ' + y + '.'; }
+    }
+  };
+
+  function $(id) { return document.getElementById(id); }
+  function svg(inner) {
+    return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + '</svg>';
+  }
+  var SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';
+  var MOON = '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>';
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', theme);
+    var b = $('themeBtn');
+    b.innerHTML = svg(theme === 'dark' ? SUN : MOON);
+    b.setAttribute('aria-label', theme === 'dark' ? T[lang].toLight : T[lang].toDark);
+  }
+
+  function renderDate() {
+    var el = $('snapDate');
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(el.getAttribute('datetime') || '');
+    if (m) el.textContent = T[lang].fmt(+m[1], +m[2] - 1, +m[3]);
+  }
+
+  function applyLang() {
+    document.documentElement.setAttribute('lang', lang === 'sr' ? 'sr-Latn' : 'hu');
+    document.title = T[lang].title;
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute('content', T[lang].desc);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-aria-hu]'), function (n) {
+      n.setAttribute('aria-label', n.getAttribute(lang === 'sr' ? 'data-aria-sr' : 'data-aria-hu'));
+    });
+    $('langHu').className = lang === 'hu' ? 'on' : 'off';
+    $('langSr').className = lang === 'sr' ? 'on' : 'off';
+    renderDate();
+    applyTheme();
+  }
+
+  $('themeBtn').addEventListener('click', function () {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    lsSet(K_THEME, theme);
+    applyTheme();
+  });
+  $('langBtn').addEventListener('click', function () {
+    lang = lang === 'hu' ? 'sr' : 'hu';
+    lsSet(K_LANG, lang);
+    applyLang();
+  });
+
+  applyLang();
+})();
+</script>
+</body>
+</html>

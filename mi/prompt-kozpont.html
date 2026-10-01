@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt írás — Techscience · AI tanároknak</title>
+<meta name="description" content="Hogyan írj jó promptot tanárként: hat alapelv, rossz és jó példák, másolható sablon, tantárgycsoportonkénti útmutató, valamint interaktív feladatok, animációk és szimulációk kérése a chatbottól.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28' fill='none' stroke='%23b8834f' stroke-width='1.6'%3E%3Ccircle cx='14' cy='14' r='1.8'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(60 14 14)'/%3E%3Cellipse cx='14' cy='14' rx='11' ry='4.3' transform='rotate(120 14 14)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<script>
+/* Téma és nyelv beállítása megjelenítés előtt (ugyanazok a kulcsok, mint a többi aloldalon). */
+(function () {
+  try {
+    var t = localStorage.getItem('techscience-theme');
+    var l = localStorage.getItem('techscience-lang');
+    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    document.documentElement.setAttribute('lang', l === 'sr' ? 'sr-Latn' : 'hu');
+  } catch (e) {}
+})();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0f15;
+  --surface: #141a24;
+  --border: rgba(184, 196, 214, .14);
+  --text: #c7d0dc;
+  --text-strong: #f2f5f9;
+  --text-muted: rgba(199, 208, 220, .58);
+  --accent: #b8834f;
+  /* Származtatott árnyalatok a 4.5:1 kontraszt betartásához (a tokenek változatlanok) */
+  --accent-text: #b8834f;
+  --text-soft: #8b96a6;
+  --on-accent: #0b0f15;
+  --danger: #e58f88;
+  --grid: rgba(255, 255, 255, .035);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f1e7;
+  --surface: #ffffff;
+  --border: rgba(30, 41, 59, .12);
+  --text: #374151;
+  --text-strong: #111827;
+  --text-muted: rgba(55, 65, 81, .62);
+  --accent: #9c6530;
+  --accent-text: #8a5626;
+  --text-soft: #5b6472;
+  --on-accent: #ffffff;
+  --danger: #a8352f;
+  --grid: rgba(0, 0, 0, .035);
+}
+
+/* A két nyelvi változat egymás mellett van a forrásban, a html[lang] dönti el, melyik látszik. */
+html[lang="hu"] .sr { display: none !important; }
+html[lang="sr-Latn"] .hu { display: none !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  color: var(--text);
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400; font-size: 16px; line-height: 1.65;
+}
+h1, h2, h3, h4 { margin: 0; color: var(--text-strong); }
+h1, h2, h3 { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; line-height: 1.2; }
+h4 { font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; font-weight: 600; line-height: 1.3; }
+p, figure, blockquote { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; }
+svg { display: block; flex: none; }
+
+.wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
+.skip {
+  position: absolute; left: 12px; top: -70px; z-index: 100;
+  padding: 10px 16px; background: var(--accent); color: var(--on-accent);
+  border-radius: 4px; font-weight: 600; text-decoration: none;
+}
+.skip:focus { top: 12px; }
+
+/* ---------- Felső sáv ---------- */
+.site-header { position: sticky; top: 0; z-index: 20; background: var(--surface); border-bottom: 1px solid var(--border); }
+.bar {
+  width: min(1120px, 100% - 40px); margin-inline: auto;
+  display: flex; flex-wrap: wrap; align-items: center; column-gap: 28px; row-gap: 4px; padding: 10px 0;
+}
+.logo {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-weight: 600; font-size: 20px; line-height: 1.2;
+  color: var(--text-strong);
+}
+.logo svg { color: var(--accent); }
+.nav { display: flex; gap: 22px; flex: 1 1 auto; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+.nav a {
+  display: inline-block; padding: 10px 2px 8px; border-bottom: 2px solid transparent;
+  color: var(--text); text-decoration: none; font-size: 15px; font-weight: 500;
+  transition: color .2s ease, border-color .2s ease;
+}
+.nav a:hover { color: var(--text-strong); border-bottom-color: var(--border); }
+.nav a[aria-current="page"] { color: var(--accent-text); border-bottom-color: var(--accent); }
+.controls { display: flex; gap: 8px; margin-left: auto; }
+.icon-btn, .lang-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 44px; min-height: 44px; padding: 0 12px; background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px; font: 600 14px/1 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer; transition: border-color .2s ease, color .2s ease;
+}
+.icon-btn:hover, .lang-btn:hover { border-color: var(--accent); color: var(--text-strong); }
+.lang-btn .on { color: var(--accent-text); }
+.lang-btn .off { color: var(--text-soft); font-weight: 500; }
+.lang-btn .sep { color: var(--text-muted); font-weight: 400; }
+@media (max-width: 820px) {
+  .bar { column-gap: 12px; }
+  .nav { order: 3; flex: 0 0 100%; gap: 20px; padding-bottom: 2px; }
+  .nav a { padding: 8px 2px 6px; }
+}
+
+/* ---------- Kicker + gombok ---------- */
+.kicker {
+  display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--text-soft);
+}
+.kicker::before { content: ""; width: 36px; height: 2px; background: var(--accent); flex: none; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 11px 22px;
+  border: 1px solid var(--accent); border-radius: 4px; font: 600 15px/1.2 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  text-decoration: none; cursor: pointer; transition: background-color .2s ease, filter .2s ease;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: transparent; color: var(--accent-text); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+/* ---------- Hero ---------- */
+.hero { padding: 76px 0 36px; }
+.hero h1 { margin-top: 22px; font-size: clamp(44px, 8vw, 76px); font-weight: 700; letter-spacing: -.01em; }
+.lead { max-width: 62ch; margin-top: 22px; font-size: clamp(17px, 2.2vw, 20px); line-height: 1.7; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+
+/* ---------- Elrendezés + tartalomjegyzék ---------- */
+.layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 56px; padding-top: 28px; padding-bottom: 24px; align-items: start; }
+.toc-wrap { position: sticky; top: 88px; align-self: start; max-height: calc(100vh - 110px); overflow-y: auto; scrollbar-width: thin; }
+.toc-h { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 12px; }
+.toc ul { border-left: 1px solid var(--border); }
+.toc a {
+  display: block; margin-left: -1px; padding: 6px 12px; border-left: 2px solid transparent;
+  font-size: 14.5px; line-height: 1.4; color: var(--text); text-decoration: none;
+  transition: color .2s ease, border-color .2s ease;
+}
+.toc a:hover { color: var(--text-strong); border-left-color: var(--border); }
+.toc a[aria-current="true"] { color: var(--accent-text); border-left-color: var(--accent); font-weight: 600; }
+.toc .toc-sub { border-left: 0; margin: 2px 0 6px 12px; }
+.toc .toc-sub a { font-size: 13.5px; padding: 4px 12px; }
+.toc li.has-active > a { color: var(--text-strong); }
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 28px; }
+  .toc-wrap { position: static; max-height: none; overflow: visible; }
+  .toc-h { display: none; }
+  .toc > ul { display: flex; gap: 8px; overflow-x: auto; border-left: 0; padding-bottom: 6px; scrollbar-width: thin; }
+  .toc > ul > li { flex: none; }
+  .toc > ul > li > a {
+    margin: 0; padding: 9px 14px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface);
+    white-space: nowrap; min-height: 44px; display: flex; align-items: center;
+  }
+  .toc a[aria-current="true"] { border-color: var(--accent); }
+  .toc .toc-sub { display: none; }
+}
+
+/* ---------- Szakaszok ---------- */
+.block { padding: 8px 0 56px; scroll-margin-top: 88px; }
+.block > .kicker { margin-bottom: 14px; }
+.block > h2 { font-size: clamp(28px, 4vw, 38px); }
+.block-intro { max-width: 68ch; margin-top: 14px; font-size: 17px; line-height: 1.75; }
+
+/* ---------- Prompt anatómia ---------- */
+.anat-card { margin-top: 28px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.anat-card h3 { font-size: 22px; }
+.anat-note { margin-top: 8px; max-width: 66ch; font-size: 15.5px; }
+.anat { display: flex; flex-wrap: wrap; gap: 14px 18px; margin-top: 20px; }
+.part { display: flex; flex-direction: column; gap: 4px; padding-top: 8px; border-top: 2px solid var(--accent); min-width: 0; }
+.part small { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--text-soft); }
+.part > span { font-size: 16.5px; color: var(--text-strong); }
+.part:nth-child(even) { border-top-style: dashed; }
+
+/* ---------- 6 alapelv ---------- */
+.principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 28px; }
+.pr { display: flex; flex-direction: column; gap: 12px; padding: 26px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; scroll-margin-top: 92px; }
+.pr-head { display: flex; align-items: center; justify-content: space-between; color: var(--accent); }
+.pr-num { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 38px; line-height: 1; color: var(--accent-text); }
+.pr h3 { font-size: 22px; }
+.pr-text { font-size: 16px; line-height: 1.7; }
+.pr-ex { margin-top: auto; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; }
+.pr-ex figcaption { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 4px; }
+.pr-ex blockquote { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-size: 17px; line-height: 1.6; color: var(--text-strong); }
+@media (max-width: 760px) { .principles { grid-template-columns: 1fr; } }
+
+/* ---------- Prompt-blokkok (monospace, másolás gombbal) ---------- */
+.pbox { background: var(--bg); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; }
+.pbox-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 6px 6px 16px; border-bottom: 1px solid var(--border); }
+.pbox-label { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); }
+.ptext {
+  padding: 14px 18px 16px; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size: 14.5px; line-height: 1.75; color: var(--text-strong); white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.pbox-big .ptext { font-size: 15.5px; padding: 18px 20px 20px; }
+.ph { color: var(--accent-text); background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: 3px; padding: 0 3px; font-weight: 500; }
+.copy {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 14px;
+  background: transparent; color: var(--accent-text); border: 1px solid var(--accent); border-radius: 4px;
+  font: 600 14px/1 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; cursor: pointer; transition: background-color .2s ease;
+}
+.copy:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.copy .c-idle, .copy .c-ok { display: inline-flex; align-items: center; gap: 8px; }
+.copy:not(.done) .c-ok { display: none; }
+.copy.done .c-idle { display: none; }
+.copy.done { background: var(--accent); color: var(--on-accent); }
+
+/* ---------- Rossz / jó összehasonlítás ---------- */
+.cmp-list { display: grid; gap: 22px; margin-top: 28px; }
+.cmp { padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.cmp-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-bottom: 18px; }
+.cmp-head h3 { font-size: 22px; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.seg button {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; background: transparent; color: var(--text);
+  border: 0; border-right: 1px solid var(--border); font: 600 14px/1 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.seg button:last-child { border-right: 0; }
+.seg button:hover { color: var(--text-strong); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.cmp-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.cmp-grid[data-view="both"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cmp-grid[data-view="bad"] .pane-good { display: none; }
+.cmp-grid[data-view="good"] .pane-bad { display: none; }
+.pane { display: flex; flex-direction: column; gap: 12px; padding-top: 14px; border-top: 2px solid var(--accent); animation: fade .25s ease; }
+.pane-bad { border-top-color: var(--danger); }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.pane-h { display: flex; align-items: center; gap: 8px; font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 19px; font-weight: 600; }
+.pane-bad .pane-h { color: var(--danger); }
+.pane-good .pane-h { color: var(--accent-text); }
+.pane-bad .pbox { border-left-color: var(--danger); }
+.got { font-size: 15.5px; line-height: 1.65; }
+.got strong, .why strong { display: block; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 2px; }
+.why ul { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.why li { padding: 4px 12px; border: 1px solid var(--accent); border-radius: 4px; font-size: 14px; color: var(--text-strong); }
+@media (max-width: 760px) { .cmp-grid[data-view="both"] { grid-template-columns: 1fr; } .cmp { padding: 18px 16px; } }
+
+/* ---------- Sablon ---------- */
+.tpl { margin-top: 28px; }
+.tpl-note { margin-top: 14px; max-width: 68ch; font-size: 16px; }
+.callout { display: flex; gap: 14px; margin-top: 22px; padding: 14px 20px; background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--danger); border-radius: 4px; }
+.callout svg { color: var(--danger); margin-top: 2px; }
+.callout h4 { font-size: 16px; color: var(--danger); margin-bottom: 2px; }
+.callout p { font-size: 15.5px; }
+
+/* ---------- Tantárgycsoportok ---------- */
+.grp-list { display: grid; gap: 24px; margin-top: 30px; }
+.grp { padding: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; scroll-margin-top: 88px; }
+.grp-head { display: flex; gap: 18px; align-items: flex-start; }
+.grp-ic { color: var(--accent); padding-top: 4px; }
+.grp-head h3 { font-size: clamp(24px, 3vw, 30px); }
+.subj { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.subj li { padding: 3px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 13.5px; color: var(--text-soft); }
+.grp-intro { margin-top: 18px; max-width: 70ch; font-size: 16.5px; line-height: 1.75; }
+.grp-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 22px; }
+.col-give, .col-risk { padding: 18px 20px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+.col-give { border-top: 2px solid var(--accent); }
+.col-risk { border-top: 2px solid var(--danger); }
+.col-give h4, .col-risk h4 { display: flex; align-items: center; gap: 8px; font-size: 16px; margin-bottom: 10px; }
+.col-give h4 { color: var(--accent-text); }
+.col-risk h4 { color: var(--danger); }
+.list { display: grid; gap: 10px; }
+.list li { position: relative; padding-left: 18px; font-size: 15.5px; line-height: 1.65; }
+.list li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 1px; background: var(--accent); }
+.col-risk .list li::before { background: var(--danger); }
+.ex-h { margin-top: 26px; margin-bottom: 12px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); }
+.ex-list { display: grid; gap: 14px; }
+@media (max-width: 760px) {
+  .grp { padding: 22px 16px; }
+  .grp-cols { grid-template-columns: 1fr; }
+}
+
+
+/* ---------- Interaktív anyagok, animációk, szimulációk ---------- */
+.sub { margin-top: 52px; scroll-margin-top: 92px; }
+.sub > h3 { font-size: clamp(23px, 3vw, 29px); }
+.sub-intro { max-width: 68ch; margin-top: 10px; font-size: 16.5px; line-height: 1.75; }
+.sub-h { margin: 28px 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); }
+.type-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.type { display: flex; flex-direction: column; gap: 8px; padding: 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.type-ic { color: var(--accent); }
+.type h4 { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; }
+.type p { font-size: 15.5px; line-height: 1.7; }
+.type-ex { margin-top: auto; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: 4px; font-size: 14.5px !important; }
+.type-ex strong { color: var(--accent-text); }
+.idea-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.idea { padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.idea h4 { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: 600; }
+.idea h4 svg { color: var(--accent); }
+.idea .list li { font-size: 15px; }
+.el-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.el { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.el-num { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 30px; line-height: 1; color: var(--accent-text); }
+.el h4, .chk h4, .stp h4 { font-size: 16px; margin-bottom: 3px; }
+.el p, .chk p, .stp p { font-size: 15px; line-height: 1.65; }
+.el:last-child { grid-column: 1 / -1; }
+.sim-note { margin: 14px 0 0; max-width: 68ch; font-size: 15.5px; }
+.stp-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.stp { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.stp-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid var(--accent); border-radius: 50%; font-weight: 600; color: var(--accent-text); }
+.chk-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.chk { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.chk-ic { color: var(--accent); padding-top: 2px; }
+@media (max-width: 900px) { .idea-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .type-grid, .idea-grid, .el-list, .stp-list, .chk-list { grid-template-columns: 1fr; }
+  .el:last-child { grid-column: auto; }
+}
+
+.demo { margin-top: 20px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.demo-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+.demo-head h4 { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; }
+.demo-tag { padding: 3px 12px; border: 1px solid var(--accent); border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--accent-text); }
+.demo-body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(250px, 1fr); gap: 22px; }
+.stage canvas { display: block; width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+.demo-note { margin-top: 8px; font-size: 13.5px; color: var(--text-soft); }
+.ctl { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; margin-bottom: 14px; }
+.ctl label { font-weight: 600; font-size: 14.5px; color: var(--text-strong); }
+.ctl output { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent-text); }
+.ctl input[type="range"] { grid-column: 1 / -1; width: 100%; height: 32px; accent-color: var(--accent); cursor: pointer; }
+.ctl select {
+  grid-column: 1 / -1; min-height: 44px; padding: 0 10px; background: var(--bg); color: var(--text-strong);
+  border: 1px solid var(--border); border-radius: 4px; font: 400 15px/1.4 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+}
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.results { display: grid; gap: 6px; margin: 16px 0 0; padding: 14px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+.results div { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; }
+.results dt { color: var(--text-soft); }
+.results dd { margin: 0; font-weight: 600; color: var(--text-strong); font-variant-numeric: tabular-nums; }
+.formula { margin-top: 14px; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; display: grid; gap: 8px; }
+.formula p { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 18px; color: var(--text-strong); }
+.formula i { font-style: italic; }
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 4px; text-align: center; line-height: 1.25; }
+.frac > span:first-child { padding: 0 6px 2px; border-bottom: 1px solid currentColor; }
+.frac > span:last-child { padding: 2px 6px 0; }
+.formula small { font-size: 12.5px; line-height: 1.5; color: var(--text-soft); }
+.demo-prompt { margin-top: 26px; }
+
+.bars { display: flex; align-items: flex-end; gap: 6px; height: 230px; padding: 12px 12px 0; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; }
+.bar {
+  flex: 1 1 0; min-width: 0; display: flex; align-items: flex-start; justify-content: center;
+  background: color-mix(in srgb, var(--accent) 20%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  border-bottom: 0; border-radius: 3px 3px 0 0; transition: height .18s ease, background-color .18s ease;
+}
+.bar span { padding-top: 3px; font-size: 12px; font-weight: 600; color: var(--text-strong); }
+.bar.cmp { background: var(--accent); border-color: var(--accent); }
+.bar.cmp span { color: var(--on-accent); }
+.bar.swp { background: var(--danger); border-color: var(--danger); }
+.bar.swp span { color: var(--on-accent); }
+.bar.done { background: color-mix(in srgb, var(--accent) 42%, transparent); border: 2px solid var(--text-strong); border-bottom: 0; }
+.sort-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 24px; margin-top: 16px; }
+.sort-bar .ctl { margin: 0; min-width: 200px; flex: 1 1 200px; }
+.btn-play .is-pause { display: none; }
+.btn-play.playing .is-pause { display: inline; }
+.btn-play.playing .is-play { display: none; }
+.counts { margin-top: 12px; font-size: 15px; }
+.counts b { font-variant-numeric: tabular-nums; color: var(--text-strong); }
+.sort-msg { margin-top: 4px; min-height: 1.7em; font-size: 14.5px; color: var(--text-soft); }
+@media (max-width: 860px) { .demo-body { grid-template-columns: 1fr; } .bars { gap: 4px; height: 190px; padding: 10px 8px 0; } .bar span { font-size: 11px; } }
+
+/* ---------- Finomító mondatok ---------- */
+.fine-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 28px; }
+.fine { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.fine-q { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-style: italic; font-size: 19px; line-height: 1.45; color: var(--text-strong); }
+.fine-w { font-size: 15px; color: var(--text); }
+.fine-w strong { color: var(--accent-text); }
+@media (max-width: 760px) { .fine-list { grid-template-columns: 1fr; } }
+
+/* ---------- Gyakori hibák ---------- */
+.table-wrap { margin-top: 28px; overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 16px; }
+thead th { text-align: left; padding: 12px 18px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-soft); border-bottom: 1px solid var(--border); }
+tbody th, tbody td { text-align: left; vertical-align: top; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+tbody th { width: 38%; font-weight: 600; color: var(--danger); }
+tbody td { color: var(--text-strong); }
+@media (max-width: 640px) {
+  thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  table, tbody, tr, th, td { display: block; }
+  tbody tr { padding: 12px 0; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: 0; }
+  tbody th, tbody td { width: auto; padding: 2px 18px; border: 0; }
+}
+
+/* ---------- Lapozó + lábléc ---------- */
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 8px 0 72px; }
+.pager a {
+  display: flex; align-items: center; gap: 14px; padding: 20px 24px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text-strong);
+  transition: border-color .25s ease, transform .25s ease;
+}
+.pager a:hover { border-color: var(--accent); transform: translateY(-2px); }
+.pager a svg { color: var(--accent); }
+.pager .next { justify-content: flex-end; text-align: right; }
+.pager small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--text-soft); }
+.pager strong { font-family: 'Spectral', Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; }
+@media (max-width: 600px) { .pager { grid-template-columns: 1fr; } }
+
+.site-footer { margin-top: auto; border-top: 1px solid var(--border); background: var(--bg); padding: 24px 0; font-size: 14px; color: var(--text-soft); }
+.site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; }
+  .pager a:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main"><span class="hu">Ugrás a tartalomhoz</span><span class="sr">Pređi na sadržaj</span></a>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="1.8"/><ellipse cx="14" cy="14" rx="11" ry="4.3"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(60 14 14)"/><ellipse cx="14" cy="14" rx="11" ry="4.3" transform="rotate(120 14 14)"/></svg>
+      <span><span class="hu">AI Tanároknak</span><span class="sr">AI za nastavnike</span></span>
+    </a>
+    <nav class="nav" data-aria-hu="AI tanároknak – oldalak" data-aria-sr="AI za nastavnike – stranice" aria-label="AI tanároknak – oldalak">
+      <a href="ai-alapok.html"><span class="hu">AI alapok</span><span class="sr">AI osnove</span></a>
+      <a href="modellek.html"><span class="hu">Modellek</span><span class="sr">Modeli</span></a>
+      <a href="prompt-kozpont.html" aria-current="page">Prompt</a>
+      <a href="tanitasban.html"><span class="hu">Tanításban</span><span class="sr">U nastavi</span></a>
+      <a href="biztonsag-etika.html">Etika</a>
+    </nav>
+    <div class="controls">
+      <button type="button" class="lang-btn" id="langBtn" data-aria-hu="Váltás szerb nyelvre (latin írás)" data-aria-sr="Promeni jezik na mađarski" aria-label="Váltás szerb nyelvre (latin írás)">
+        <span id="langHu" aria-hidden="true">HU</span><span class="sep" aria-hidden="true">/</span><span id="langSr" aria-hidden="true">SR</span>
+      </button>
+      <button type="button" class="icon-btn" id="themeBtn" aria-label="Váltás világos témára"></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker"><span class="hu">Techscience — AI tanároknak</span><span class="sr">Techscience — AI za nastavnike</span></p>
+      <h1><span class="hu">Prompt írás</span><span class="sr">Pisanje promptova</span></h1>
+      <p class="lead">
+        <span class="hu">A chatbot annyit tud segíteni, amennyit a kérésedből megért. Ha a kérés általános, a válasz is az lesz: bármelyik osztályra és bármelyik tantárgyra illik, ezért egyikre sem igazán. A megfogalmazás közvetlenül befolyásolja, mennyire használható a válasz. Ez az oldal megmutatja, hogyan fogalmazz úgy, hogy már az első válasz is hasznos legyen, hogyan igazítsd a kérést a saját tantárgyadhoz, és hogyan kérj a chatbottól interaktív feladatot, animációt vagy szimulációt.</span>
+        <span class="sr">Četbot može da pomogne onoliko koliko razume tvoj zahtev. Ako je zahtev opšti, biće i odgovor: odgovara svakom razredu i svakom predmetu, a zato nijednom zaista. Formulacija direktno utiče na to koliko je odgovor upotrebljiv. Ova stranica pokazuje kako da formulišeš zahtev tako da već prvi odgovor bude koristan, kako da ga prilagodiš svom predmetu i kako da od četbota zatražiš interaktivni zadatak, animaciju ili simulaciju.</span>
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#alapelvek"><span class="hu">Az alapelvekhez</span><span class="sr">Do osnovnih principa</span></a>
+        <a class="btn btn-secondary" href="#tantargyak"><span class="hu">Tantárgycsoportok</span><span class="sr">Grupe predmeta</span></a>
+        <a class="btn btn-secondary" href="#interaktiv"><span class="hu">Szimulációk készítése</span><span class="sr">Izrada simulacija</span></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap layout">
+    <aside class="toc-wrap">
+      <nav class="toc" data-aria-hu="Tartalomjegyzék" data-aria-sr="Sadržaj" aria-label="Tartalomjegyzék">
+        <p class="toc-h"><span class="hu">Tartalom</span><span class="sr">Sadržaj</span></p>
+        <ul>
+          <li><a href="#alapelvek"><span class="hu">Hat alapelv</span><span class="sr">Šest principa</span></a></li>
+          <li><a href="#rossz-jo"><span class="hu">Rossz és jó prompt</span><span class="sr">Loš i dobar prompt</span></a></li>
+          <li><a href="#sablon"><span class="hu">Prompt-sablon</span><span class="sr">Šablon prompta</span></a></li>
+          <li><a href="#tantargyak"><span class="hu">Tantárgycsoportok</span><span class="sr">Grupe predmeta</span></a><ul class="toc-sub"><li><a href="#nyelvek"><span class="hu">Nyelvek és irodalom</span><span class="sr">Jezici i književnost</span></a></li><li><a href="#termeszettudomany"><span class="hu">Természettudományok</span><span class="sr">Prirodne nauke</span></a></li><li><a href="#mat-inf"><span class="hu">Matematika és informatika</span><span class="sr">Matematika i informatika</span></a></li><li><a href="#tarsadalom"><span class="hu">Társadalomtudományok</span><span class="sr">Društvene nauke</span></a></li><li><a href="#muveszet"><span class="hu">Művészeti tantárgyak</span><span class="sr">Umetnički predmeti</span></a></li><li><a href="#gyakorlati"><span class="hu">Testnevelés és gyakorlati órák</span><span class="sr">Fizičko vaspitanje i praktični časovi</span></a></li></ul></li>
+          <li><a href="#interaktiv"><span class="hu">Interaktív anyagok</span><span class="sr">Interaktivni materijali</span></a><ul class="toc-sub"><li><a href="#int-mit"><span class="hu">Mit kérhetsz?</span><span class="sr">Šta možeš da tražiš?</span></a></li><li><a href="#int-tantargy"><span class="hu">Ötletek tantárgyanként</span><span class="sr">Ideje po predmetima</span></a></li><li><a href="#int-sablon"><span class="hu">Szimuláció-prompt</span><span class="sr">Prompt za simulaciju</span></a></li><li><a href="#int-elo"><span class="hu">Élő példák</span><span class="sr">Primeri uživo</span></a></li><li><a href="#int-futtatas"><span class="hu">Futtatás és ellenőrzés</span><span class="sr">Pokretanje i provera</span></a></li></ul></li>
+          <li><a href="#finomitas"><span class="hu">Finomító mondatok</span><span class="sr">Rečenice za doterivanje</span></a></li>
+          <li><a href="#hibak"><span class="hu">Gyakori hibák</span><span class="sr">Česte greške</span></a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="content">
+
+      <section class="block" id="alapelvek" aria-labelledby="alap-h">
+        <p class="kicker"><span class="hu">Módszertan</span><span class="sr">Metodologija</span></p>
+        <h2 id="alap-h"><span class="hu">Hat alapelv a jó kéréshez</span><span class="sr">Šest principa dobrog zahteva</span></h2>
+        <p class="block-intro">
+          <span class="hu">Mindegyik alapelv külön is működik, együtt pedig a leggyorsabban hoznak javulást. Minden alapelvhez tartozik egy rövid magyarázat és egy tanári példa.</span>
+          <span class="sr">Svaki princip deluje i samostalno, a zajedno najbrže donose poboljšanje. Uz svaki princip dolaze kratko objašnjenje i primer za nastavnika.</span>
+        </p>
+
+        <div class="anat-card">
+          <h3><span class="hu">Egy jó prompt felépítése</span><span class="sr">Kako je građen dobar prompt</span></h3>
+          <p class="anat-note">
+            <span class="hu">A legtöbb jó kérés ugyanebből az öt elemből áll. Nem kell minden alkalommal mind az öt, de minél több szerepel, annál kevesebbet kell javítani.</span>
+            <span class="sr">Većina dobrih zahteva sastoji se od istih pet elemenata. Nije potrebno svaki put svih pet, ali što ih je više, to manje ispravljaš.</span>
+          </p>
+          <div class="anat" role="group" data-aria-hu="Egy példa prompt öt elemre bontva" data-aria-sr="Primer prompta podeljen na pet elemenata" aria-label="Egy példa prompt öt elemre bontva"><span class="part"><small><span class="hu">Szerep</span><span class="sr">Uloga</span></small><span><span class="hu">Viselkedj tapasztalt kémiatanárként,</span><span class="sr">Ponašaj se kao iskusan nastavnik hemije,</span></span></span><span class="part"><small><span class="hu">Kontextus</span><span class="sr">Kontekst</span></small><span><span class="hu">aki 9. évfolyamos osztálynak tart 45 perces órát az oldatokról.</span><span class="sr">koji za učenike 9. razreda drži čas od 45 minuta o rastvorima.</span></span></span><span class="part"><small><span class="hu">Feladat</span><span class="sr">Zadatak</span></small><span><span class="hu">Készíts óravázlatot,</span><span class="sr">Napravi pripremu za čas,</span></span></span><span class="part"><small><span class="hu">Forma</span><span class="sr">Oblik</span></small><span><span class="hu">három szakaszra bontva, táblázatban,</span><span class="sr">podeljenu u tri dela, u tabeli,</span></span></span><span class="part"><small><span class="hu">Korlát</span><span class="sr">Ograničenje</span></small><span><span class="hu">képletek nélkül, legfeljebb egy oldal terjedelemben.</span><span class="sr">bez formula, najviše jedna strana.</span></span></span></div>
+        </div>
+
+        <div class="principles">
+
+        <article class="pr" id="p1">
+          <header class="pr-head"><span class="pr-num" aria-hidden="true">01</span><span class="pr-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 3 8.5l9 5 9-5z"/><path d="M3 12.5l9 5 9-5"/><path d="M3 16.5l9 5 9-5"/></svg></span></header>
+          <h3><span class="hu">Kontextus megadása</span><span class="sr">Navođenje konteksta</span></h3>
+          <p class="pr-text"><span class="hu">A modell nem tudja, ki vagy, melyik osztályban tanítasz, és mi volt az előző órán. Ha ezt a kérdés elé írod, a válasz szintje, szókincse és példái már az osztályodhoz igazodnak. Adj meg legalább évfolyamot, tantárgyat és óratípust.</span><span class="sr">Model ne zna ko si, u kom razredu predaješ i šta je bilo na prethodnom času. Ako to napišeš pre pitanja, nivo, rečnik i primeri u odgovoru prilagodiće se tvom odeljenju. Navedi bar razred, predmet i tip časa.</span></p>
+          <figure class="pr-ex"><figcaption><span class="hu">Tanári példa</span><span class="sr">Primer za nastavnika</span></figcaption><blockquote><span class="hu">„9. évfolyamos, vegyes képességű osztályban tanítok fizikát. Ma vezetjük be az erő fogalmát, a tanulók még nem tanultak vektorokat. Magyarázd el az erőt három hétköznapi példával.”</span><span class="sr">„Predajem fiziku u devetom razredu, u odeljenju sa različitim nivoom znanja. Danas uvodimo pojam sile, a učenici još nisu učili vektore. Objasni silu na tri svakodnevna primera.”</span></blockquote></figure>
+        </article>
+
+        <article class="pr" id="p2">
+          <header class="pr-head"><span class="pr-num" aria-hidden="true">02</span><span class="pr-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-4 3.4-6 7-6s6.4 2 7 6"/></svg></span></header>
+          <h3><span class="hu">Szerep adása</span><span class="sr">Dodeljivanje uloge</span></h3>
+          <p class="pr-text"><span class="hu">A szerep megmondja a modellnek, milyen hangon és milyen mélységben beszéljen. Egy „tapasztalt tanár” másként fogalmaz, mint egy „egyetemi kutató”, és ez a válasz stílusán is meglátszik. A szerep nem varázsszó, de jó irányt ad.</span><span class="sr">Uloga govori modelu kojim tonom i koliko dubinski da govori. „Iskusan nastavnik” se izražava drugačije nego „univerzitetski istraživač”, i to se vidi u stilu odgovora. Uloga nije čarobna reč, ali daje dobar pravac.</span></p>
+          <figure class="pr-ex"><figcaption><span class="hu">Tanári példa</span><span class="sr">Primer za nastavnika</span></figcaption><blockquote><span class="hu">„Viselkedj tapasztalt fizikatanárként, aki 14 éveseknek magyaráz.”</span><span class="sr">„Ponašaj se kao iskusan nastavnik fizike koji objašnjava učenicima od 14 godina.”</span></blockquote></figure>
+        </article>
+
+        <article class="pr" id="p3">
+          <header class="pr-head"><span class="pr-num" aria-hidden="true">03</span><span class="pr-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M9.5 9.5v10"/></svg></span></header>
+          <h3><span class="hu">Konkrét kimeneti forma kérése</span><span class="sr">Traženje konkretnog oblika odgovora</span></h3>
+          <p class="pr-text"><span class="hu">Ha nem mondod meg, milyen formában kéred a választ, a modell tetszőleges hosszúságú, folyó szöveget ír. Nevezd meg a formát és a terjedelmet, például „táblázatos formában”, „5 pontos listában” vagy „legfeljebb 200 szóban”, így a válasz rögtön felhasználható.</span><span class="sr">Ako ne kažeš u kakvom obliku želiš odgovor, model piše tekst proizvoljne dužine. Navedi oblik i obim, na primer „u tabeli”, „u listi od 5 tačaka” ili „najviše 200 reči”, pa će odgovor odmah moći da se upotrebi.</span></p>
+          <figure class="pr-ex"><figcaption><span class="hu">Tanári példa</span><span class="sr">Primer za nastavnika</span></figcaption><blockquote><span class="hu">„Foglald össze a fotoszintézist 5 pontos listában, pontonként legfeljebb egy mondatban, hogy elférjen egy dián.”</span><span class="sr">„Sažmi fotosintezu u listi od 5 tačaka, najviše jedna rečenica po tački, da stane na jedan slajd.”</span></blockquote></figure>
+        </article>
+
+        <article class="pr" id="p4">
+          <header class="pr-head"><span class="pr-num" aria-hidden="true">04</span><span class="pr-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 5v14M12 5v14M19 5v14"/><path d="M3 9h4M10 15h4M17 10h4"/></svg></span></header>
+          <h3><span class="hu">Korlátok és megkötések megadása</span><span class="sr">Određivanje ograničenja</span></h3>
+          <p class="pr-text"><span class="hu">A korlátok megmondják, mit ne tegyen a modell. Kizárhatsz bonyolult levezetést, idegen szavakat vagy olyan eszközöket, amelyek nincsenek az osztályteremben. A jól megszabott határ kevesebb utólagos javítást jelent.</span><span class="sr">Ograničenja govore modelu šta da ne radi. Možeš da isključiš složena izvođenja, strane reči ili pribor kojeg nema u učionici. Dobro postavljena granica znači manje naknadnih ispravki.</span></p>
+          <figure class="pr-ex"><figcaption><span class="hu">Tanári példa</span><span class="sr">Primer za nastavnika</span></figcaption><blockquote><span class="hu">„Ne használj matematikai képletlevezetést, csak szöveges magyarázatot, és ne javasolj olyan kísérletet, amelyhez laboratórium kell.”</span><span class="sr">„Ne koristi matematička izvođenja formula, samo tekstualno objašnjenje, i ne predlaži eksperiment za koji je potrebna laboratorija.”</span></blockquote></figure>
+        </article>
+
+        <article class="pr" id="p5">
+          <header class="pr-head"><span class="pr-num" aria-hidden="true">05</span><span class="pr-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg></span></header>
+          <h3><span class="hu">Few-shot példa adása</span><span class="sr">Davanje few-shot primera</span></h3>
+          <p class="pr-text"><span class="hu">Ha van elképzelésed a stílusról vagy a formáról, mutass egy mintát, mielőtt a tényleges feladatot kéred. A modell a minta alapján folytatja, ezért sokkal pontosabban eltalálja, amit szeretnél. Ezt hívják few-shot (néhány példás) megadásnak.</span><span class="sr">Ako imaš predstavu o stilu ili obliku, pokaži uzorak pre nego što zatražiš stvarni zadatak. Model nastavlja prema uzorku, pa mnogo preciznije pogađa šta želiš. To se zove few-shot (sa nekoliko primera) zadavanje.</span></p>
+          <figure class="pr-ex"><figcaption><span class="hu">Tanári példa</span><span class="sr">Primer za nastavnika</span></figcaption><blockquote><span class="hu">„Egy kérdés így néz ki: »Melyik állítás igaz a mozgó testre ható erőkre? a) … b) … c) …« Ugyanebben a stílusban készíts még négy kérdést a hőtanból.”</span><span class="sr">„Jedno pitanje izgleda ovako: ‚Koja tvrdnja o silama koje deluju na telo u kretanju je tačna? a) … b) … c) …‘ Napravi u istom stilu još četiri pitanja iz termodinamike.”</span></blockquote></figure>
+        </article>
+
+        <article class="pr" id="p6">
+          <header class="pr-head"><span class="pr-num" aria-hidden="true">06</span><span class="pr-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 12a7.5 7.5 0 0 1 13-5.1M19.5 12a7.5 7.5 0 0 1-13 5.1"/><path d="M18.5 3v4h-4M5.5 21v-4h4"/></svg></span></header>
+          <h3><span class="hu">Iteráció és finomítás</span><span class="sr">Iteracija i doterivanje</span></h3>
+          <p class="pr-text"><span class="hu">Az első válasz szinte soha nem a végleges. Kérdezz rá a hiányosságokra, pontosíts a következő üzenetben, vagy mondd meg, mi nem tetszik: a beszélgetés folytatása gyorsabb, mint újrakezdeni. Ez nem a te hibád, a munkamenet természetes része.</span><span class="sr">Prvi odgovor gotovo nikada nije konačan. Pitaj za propuste, preciziraj u sledećoj poruci ili reci šta ti se ne sviđa: nastavak razgovora je brži nego početak iz početka. To nije tvoja greška, već prirodan deo rada.</span></p>
+          <figure class="pr-ex"><figcaption><span class="hu">Tanári példa</span><span class="sr">Primer za nastavnika</span></figcaption><blockquote><span class="hu">„Jó a váz, de a 3. feladat túl nehéz a 9. évfolyamnak. Cseréld le egy egyszerűbbre, és adj mellé egy nehezítő kérdést a gyorsabban haladó tanulóknak.”</span><span class="sr">„Okvir je dobar, ali je 3. zadatak pretežak za 9. razred. Zameni ga jednostavnijim i dodaj otežavajuće pitanje za učenike koji brže napreduju.”</span></blockquote></figure>
+        </article>
+        </div>
+      </section>
+
+      <section class="block" id="rossz-jo" aria-labelledby="rj-h">
+        <p class="kicker"><span class="hu">Összehasonlítás</span><span class="sr">Poređenje</span></p>
+        <h2 id="rj-h"><span class="hu">Rossz prompt, jó prompt</span><span class="sr">Loš prompt, dobar prompt</span></h2>
+        <p class="block-intro">
+          <span class="hu">Válts a nézetek között, és figyeld meg, mit ad hozzá a pontosabb kérés. Az alapértelmezett nézet a rossz prompt: kattints a „Jó” gombra, vagy válaszd az „Egymás mellett” nézetet.</span>
+          <span class="sr">Prelazi između prikaza i posmatraj šta dodaje precizniji zahtev. Podrazumevani prikaz je loš prompt: klikni na „Dobar” ili izaberi „Jedan pored drugog”.</span>
+        </p>
+        <div class="cmp-list">
+
+          <article class="cmp" data-cmp>
+            <header class="cmp-head">
+              <h3><span class="hu">1. példa — óravázlat kérése</span><span class="sr">1. primer — traženje pripreme za čas</span></h3>
+              <div class="seg" role="group" data-aria-hu="Nézet kiválasztása" data-aria-sr="Izbor prikaza" aria-label="Nézet kiválasztása">
+                <button type="button" data-v="bad" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="hu">Rossz</span><span class="sr">Loš</span></button>
+                <button type="button" data-v="good" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Jó</span><span class="sr">Dobar</span></button>
+                <button type="button" data-v="both" aria-pressed="false"><span class="hu">Egymás mellett</span><span class="sr">Jedan pored drugog</span></button>
+              </div>
+            </header>
+            <div class="cmp-grid" data-view="bad">
+              <section class="pane pane-bad">
+                <h4 class="pane-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="hu">Rossz prompt</span><span class="sr">Loš prompt</span></h4>
+                <div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Rossz prompt</span><span class="sr">Loš prompt</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Rossz prompt" data-aria-sr="Kopiraj prompt: Loš prompt" aria-label="Prompt másolása: Rossz prompt"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Írj egy óravázlatot a fényszórásról.</p><p class="ptext sr">Napiši pripremu za čas o rasejanju svetlosti.</p></div>
+                <p class="got"><strong><span class="hu">Mit kapsz válaszul?</span><span class="sr">Šta dobijaš kao odgovor?</span></strong> <span class="hu">Általános vázlat, amely bármelyik osztályra illik: nincs időbeosztás, és nem derül ki, mennyire mély vagy egyszerű a magyarázat.</span><span class="sr">Opšta priprema koja odgovara bilo kom odeljenju: nema rasporeda vremena i nije jasno koliko je objašnjenje duboko ili jednostavno.</span></p>
+              </section>
+              <section class="pane pane-good">
+                <h4 class="pane-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Jó prompt</span><span class="sr">Dobar prompt</span></h4>
+                <div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Jó prompt</span><span class="sr">Dobar prompt</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Jó prompt" data-aria-sr="Kopiraj prompt: Dobar prompt" aria-label="Prompt másolása: Jó prompt"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Készíts egy 45 perces óravázlatot szakközépiskolai, 10. évfolyamos osztálynak fizikából, a fényszórásról, a következő felépítéssel: ráhangolás (5 perc), új anyag demonstrációval (20 perc), gyakorló feladat (15 perc), összefoglalás (5 perc). A magyarázat legyen közérthető, kerülje a bonyolult matematikai levezetést.</p><p class="ptext sr">Napravi pripremu za čas od 45 minuta za učenike 10. razreda srednje stručne škole, iz fizike, na temu rasejanja svetlosti, sa sledećom strukturom: uvod (5 minuta), novo gradivo uz demonstraciju (20 minuta), zadatak za vežbanje (15 minuta), rezime (5 minuta). Objašnjenje neka bude razumljivo, bez složenih matematičkih izvođenja.</p></div>
+                <p class="got"><strong><span class="hu">Mit kapsz válaszul?</span><span class="sr">Šta dobijaš kao odgovor?</span></strong> <span class="hu">Percekre bontott terv demonstrációval és gyakorló feladattal, a megadott szinthez igazítva, levezetések nélkül.</span><span class="sr">Plan po minutima sa demonstracijom i zadatkom za vežbanje, prilagođen zadatom nivou, bez izvođenja.</span></p>
+                <div class="why"><strong><span class="hu">Mitől jobb?</span><span class="sr">Po čemu je bolji?</span></strong><ul><li><span class="hu">Kontextus</span><span class="sr">Kontekst</span></li><li><span class="hu">Forma</span><span class="sr">Oblik</span></li><li><span class="hu">Korlát</span><span class="sr">Ograničenje</span></li></ul></div>
+              </section>
+            </div>
+          </article>
+
+          <article class="cmp" data-cmp>
+            <header class="cmp-head">
+              <h3><span class="hu">2. példa — dolgozatkérdések generálása</span><span class="sr">2. primer — pravljenje pitanja za kontrolni</span></h3>
+              <div class="seg" role="group" data-aria-hu="Nézet kiválasztása" data-aria-sr="Izbor prikaza" aria-label="Nézet kiválasztása">
+                <button type="button" data-v="bad" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="hu">Rossz</span><span class="sr">Loš</span></button>
+                <button type="button" data-v="good" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Jó</span><span class="sr">Dobar</span></button>
+                <button type="button" data-v="both" aria-pressed="false"><span class="hu">Egymás mellett</span><span class="sr">Jedan pored drugog</span></button>
+              </div>
+            </header>
+            <div class="cmp-grid" data-view="bad">
+              <section class="pane pane-bad">
+                <h4 class="pane-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="hu">Rossz prompt</span><span class="sr">Loš prompt</span></h4>
+                <div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Rossz prompt</span><span class="sr">Loš prompt</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Rossz prompt" data-aria-sr="Kopiraj prompt: Loš prompt" aria-label="Prompt másolása: Rossz prompt"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Adj feladatokat mechanikából.</p><p class="ptext sr">Daj mi zadatke iz mehanike.</p></div>
+                <p class="got"><strong><span class="hu">Mit kapsz válaszul?</span><span class="sr">Šta dobijaš kao odgovor?</span></strong> <span class="hu">Nincs évfolyam, nincs mennyiség, nincs megoldás: a feladatok nehézsége és száma véletlenszerű.</span><span class="sr">Nema razreda, nema količine, nema rešenja: težina i broj zadataka su nasumični.</span></p>
+              </section>
+              <section class="pane pane-good">
+                <h4 class="pane-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Jó prompt</span><span class="sr">Dobar prompt</span></h4>
+                <div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Jó prompt</span><span class="sr">Dobar prompt</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Jó prompt" data-aria-sr="Kopiraj prompt: Dobar prompt" aria-label="Prompt másolása: Jó prompt"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Készíts 5 feladatot Newton törvényeiből 9. évfolyamos szintre, növekvő nehézségi sorrendben, mindegyikhez add meg a helyes megoldást is külön szekcióban.</p><p class="ptext sr">Napravi 5 zadataka o Njutnovim zakonima za nivo 9. razreda, po rastućoj težini, a za svaki navedi i tačno rešenje u posebnom odeljku.</p></div>
+                <p class="got"><strong><span class="hu">Mit kapsz válaszul?</span><span class="sr">Šta dobijaš kao odgovor?</span></strong> <span class="hu">Öt, nehézség szerint rendezett feladat a megfelelő szinten, külön megoldókulccsal, amelyet rögtön ellenőrizhetsz.</span><span class="sr">Pet zadataka poređanih po težini na odgovarajućem nivou, sa zasebnim ključem rešenja koji možeš odmah da proveriš.</span></p>
+                <div class="why"><strong><span class="hu">Mitől jobb?</span><span class="sr">Po čemu je bolji?</span></strong><ul><li><span class="hu">Kontextus (évfolyam)</span><span class="sr">Kontekst (razred)</span></li><li><span class="hu">Forma (növekvő nehézség, külön megoldás)</span><span class="sr">Oblik (rastuća težina, posebno rešenje)</span></li></ul></div>
+              </section>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="block" id="sablon" aria-labelledby="sab-h">
+        <p class="kicker"><span class="hu">Sablon</span><span class="sr">Šablon</span></p>
+        <h2 id="sab-h"><span class="hu">Másolható prompt-sablon</span><span class="sr">Šablon prompta za kopiranje</span></h2>
+        <div class="tpl">
+          <div class="pbox pbox-big" id="sablon-box"><div class="pbox-head"><span class="pbox-label"><span class="hu">Prompt-sablon</span><span class="sr">Šablon prompta</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Prompt-sablon" data-aria-sr="Kopiraj prompt: Šablon prompta" aria-label="Prompt másolása: Prompt-sablon"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj <span class="ph">[SZEREP]</span>-ként. Készíts <span class="ph">[KIMENETI FORMA]</span>-t <span class="ph">[ÉVFOLYAM]</span> évfolyamos <span class="ph">[TANTÁRGY]</span> órához, a <span class="ph">[TÉMA]</span> témakörben. Az óratípus: <span class="ph">[ÓRATÍPUS]</span>, időtartam: <span class="ph">[IDŐTARTAM]</span>. A cél, hogy a diákok <span class="ph">[OKTATÁSI CÉL]</span>. Korlátok: <span class="ph">[MEGKÖTÉSEK]</span>.</p><p class="ptext sr">Ponašaj se kao <span class="ph">[ULOGA]</span>. Napravi <span class="ph">[OBLIK ODGOVORA]</span> za čas <span class="ph">[PREDMET]</span> u <span class="ph">[RAZRED]</span> razredu, na temu <span class="ph">[TEMA]</span>. Tip časa: <span class="ph">[TIP ČASA]</span>, trajanje: <span class="ph">[TRAJANJE]</span>. Cilj je da učenici <span class="ph">[OBRAZOVNI CILJ]</span>. Ograničenja: <span class="ph">[OGRANIČENJA]</span>.</p></div>
+          <p class="tpl-note">
+            <span class="hu">Cseréld ki a szögletes zárójeles részeket a saját tartalmaddal, a zárójelekkel együtt. Ha van mintád, illeszd a sablon végére: „Példa a kívánt stílusra: …”.</span>
+            <span class="sr">Zameni delove u uglastim zagradama sopstvenim sadržajem, zajedno sa zagradama. Ako imaš uzorak, dodaj ga na kraj šablona: „Primer željenog stila: …”.</span>
+          </p>
+          <div class="callout" role="note">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg>
+            <div>
+              <h4><span class="hu">Mit ne írj a promptba?</span><span class="sr">Šta ne upisivati u prompt?</span></h4>
+              <p>
+                <span class="hu">Valós diáknevet, osztályzatot, egészségügyi vagy családi adatot. Ha konkrét munkára kérsz visszajelzést, előbb töröld vagy takard le a neveket.</span>
+                <span class="sr">Stvarna imena učenika, ocene, zdravstvene ili porodične podatke. Ako tražiš povratnu informaciju o konkretnom radu, prvo izbriši ili prekrij imena.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" id="tantargyak" aria-labelledby="tt-h">
+        <p class="kicker"><span class="hu">Tantárgycsoportok</span><span class="sr">Grupe predmeta</span></p>
+        <h2 id="tt-h"><span class="hu">Hogyan írj promptot a saját tantárgyadhoz?</span><span class="sr">Kako da napišeš prompt za svoj predmet?</span></h2>
+        <p class="block-intro">
+          <span class="hu">Az alapelvek minden tantárgynál ugyanazok, de a tipikus hibák és a leghasznosabb trükkök csoportonként mások. Mind a hat csoportnál látható, mit érdemes megadni, mire kell vigyázni, és van egy-egy kipróbálható példa is. Ha a tantárgyad több csoportba is illik, olvasd el mindegyiket.</span>
+          <span class="sr">Principi važe za sve predmete, ali se tipične greške i najkorisniji trikovi razlikuju po grupama. Za svaku od šest grupa vidi se šta vredi navesti i na šta treba paziti, a tu je i po jedan primer koji možeš odmah da isprobaš. Ako tvoj predmet spada u više grupa, pročitaj sve.</span>
+        </p>
+        <div class="grp-list">
+
+      <section class="grp" id="nyelvek" aria-labelledby="nyelvek-t">
+        <header class="grp-head">
+          <span class="grp-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 6.5C10.3 5.3 8 4.8 4 5v13c4-.2 6.3.3 8 1.5 1.7-1.2 4-1.7 8-1.5V5c-4-.2-6.3.3-8 1.5z"/><path d="M12 6.5v13"/></svg></span>
+          <div>
+            <h3 id="nyelvek-t"><span class="hu">Nyelvek és irodalom</span><span class="sr">Jezici i književnost</span></h3>
+            <ul class="subj"><li><span class="hu">Magyar nyelv és irodalom</span><span class="sr">Mađarski jezik i književnost</span></li><li><span class="hu">Szerb nyelv és irodalom</span><span class="sr">Srpski jezik i književnost</span></li><li><span class="hu">Idegen nyelvek</span><span class="sr">Strani jezici</span></li></ul>
+          </div>
+        </header>
+        <p class="grp-intro"><span class="hu">A nyelvi feladatok a chatbotok egyik erősségei: szöveget írnak, átfogalmaznak, gyakorló feladatot készítenek. Éppen ezért kell pontosan megadni a szintet és a nyelvi változatot, különben a modell maga dönt. Az irodalomnál és a nyelvtannál a legnagyobb kockázat a magabiztosan előadott tévedés.</span><span class="sr">Jezički zadaci su jedna od jačih strana četbotova: pišu tekstove, preformulišu ih i prave vežbanja. Upravo zato treba precizno navesti nivo i jezičku varijantu, inače model bira po sopstvenom nahođenju. Kod književnosti i gramatike najveći rizik je samouverena greška.</span></p>
+        <div class="grp-cols">
+          <div class="col-give">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Mit adj meg mindig?</span><span class="sr">Šta uvek navesti?</span></h4>
+            <ul class="list"><li><span class="hu">A nyelvet és a változatot, például magyar, szerb (ekavica, latin írással) vagy angol (brit vagy amerikai).</span><span class="sr">Jezik i varijantu, na primer mađarski, srpski (ekavski, latinica) ili engleski (britanski ili američki).</span></li><li><span class="hu">A szintet: idegen nyelvnél a CEFR-szintet (A2, B1…), anyanyelvnél az évfolyamot.</span><span class="sr">Nivo: kod stranog jezika CEFR nivo (A2, B1…), kod maternjeg jezika razred.</span></li><li><span class="hu">A feladat típusát: kitöltős, párbeszéd, fogalmazás, szövegértés vagy nyelvtani gyakorlat.</span><span class="sr">Vrstu zadatka: dopunjavanje, dijalog, sastav, razumevanje teksta ili gramatička vežba.</span></li><li><span class="hu">A szókincset és a nyelvtani szerkezeteket, amelyeket a tanulók már ismernek.</span><span class="sr">Rečnik i gramatičke strukture koje učenici već poznaju.</span></li></ul>
+          </div>
+          <div class="col-risk">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="hu">Mire figyelj?</span><span class="sr">Na šta obratiti pažnju?</span></h4>
+            <ul class="list"><li><span class="hu">Kitalált idézetek és életrajzi adatok: irodalmi műből csak olyan szöveget használj, amelyet te magad illesztettél be.</span><span class="sr">Izmišljeni citati i biografski podaci: iz književnog dela koristi samo tekst koji je umetnut u upit.</span></li><li><span class="hu">A művek összefoglalója pontatlan lehet, különösen a kevésbé ismert szerzőknél.</span><span class="sr">Sažeci dela mogu biti netačni, naročito kod manje poznatih autora.</span></li><li><span class="hu">A nyelvtani magyarázat és a példamondatok hibásak lehetnek, főleg kisebb nyelveken: ellenőrizd a ragozást és a helyesírást.</span><span class="sr">Gramatička objašnjenja i primeri rečenica mogu biti pogrešni, pogotovo na manjim jezicima: proveri padeže, nastavke i pravopis.</span></li><li><span class="hu">Szövegértési feladatnál előfordul, hogy a kérdésre a szövegből nem lehet válaszolni: kérd, hogy minden állítás mellé írja oda a szöveg igazoló mondatát.</span><span class="sr">Kod zadataka razumevanja teksta ponekad se na pitanje ne može odgovoriti iz teksta: traži da uz svaku tvrdnju navede rečenicu iz teksta koja je potvrđuje.</span></li></ul>
+          </div>
+        </div>
+        <h4 class="ex-h"><span class="hu">Kipróbálható példák</span><span class="sr">Primeri za isprobavanje</span></h4>
+        <div class="ex-list"><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Idegen nyelv — szövegértés</span><span class="sr">Strani jezik — razumevanje teksta</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Idegen nyelv — szövegértés" data-aria-sr="Kopiraj prompt: Strani jezik — razumevanje teksta" aria-label="Prompt másolása: Idegen nyelv — szövegértés"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt angoltanárként. Készíts szövegértési feladatot B1 szintű, 15–16 éves tanulóknak az iskolai okostelefon-használatról: egy 150 szavas szöveg, utána 5 igaz-hamis állítás és 3 szókincsfeladat. Csak B1 szinten ismert szavakat használj. Minden állítás mellé írd oda azt a mondatot a szövegből, amely a megoldást igazolja. A megoldókulcs külön szekcióban legyen.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik engleskog jezika. Napravi zadatak za razumevanje pročitanog teksta za učenike od 15 do 16 godina, nivo B1, na temu upotrebe pametnih telefona u školi: tekst od 150 reči, zatim 5 tvrdnji tipa tačno/netačno i 3 zadatka sa rečnikom. Koristi samo reči poznate na nivou B1. Uz svaku tvrdnju navedi rečenicu iz teksta koja potvrđuje rešenje. Ključ rešenja neka bude u posebnom odeljku.</p></div><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Irodalom — értelmező kérdések</span><span class="sr">Književnost — pitanja za tumačenje</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Irodalom — értelmező kérdések" data-aria-sr="Kopiraj prompt: Književnost — pitanja za tumačenje" aria-label="Prompt másolása: Irodalom — értelmező kérdések"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt magyartanárként. Készíts 6 értelmező kérdést az alábbi vershez: <span class="ph">[VERS CÍME ÉS SZERZŐJE]</span>, 10. évfolyamos tanulóknak. Kizárólag a következő szövegre támaszkodj: <span class="ph">[IDE ILLESZD BE A VERSET]</span>. Két kérdés a költői képekre, kettő a hangulatra, kettő a vers szerkezetére vonatkozzon. Ne írj életrajzi tényt, amelyben nem vagy biztos.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik književnosti. Napravi 6 pitanja za tumačenje sledeće pesme: <span class="ph">[NASLOV PESME I AUTOR]</span>, za učenike 10. razreda. Oslanjaj se isključivo na sledeći tekst: <span class="ph">[OVDE UMETNI PESMU]</span>. Dva pitanja neka se odnose na pesničke slike, dva na raspoloženje, a dva na kompoziciju pesme. Ne navodi biografske činjenice u koje nisi siguran.</p></div></div>
+      </section>
+
+      <section class="grp" id="termeszettudomany" aria-labelledby="termeszettudomany-t">
+        <header class="grp-head">
+          <span class="grp-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5M10.5 3.5v6L5 19a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 19l-5.5-9.5v-6"/><path d="M7.8 15h8.4"/></svg></span>
+          <div>
+            <h3 id="termeszettudomany-t"><span class="hu">Természettudományok</span><span class="sr">Prirodne nauke</span></h3>
+            <ul class="subj"><li><span class="hu">Fizika</span><span class="sr">Fizika</span></li><li><span class="hu">Kémia</span><span class="sr">Hemija</span></li><li><span class="hu">Biológia</span><span class="sr">Biologija</span></li><li><span class="hu">Természetföldrajz</span><span class="sr">Fizička geografija</span></li></ul>
+          </div>
+        </header>
+        <p class="grp-intro"><span class="hu">A természettudományos promptokban a pontosság a fő szempont: a modell szépen fogalmaz, de számolhat rosszul, összekeverheti a mennyiségeket, és egyszerűsítéskor pontatlan lehet. Ezért a mértékegységeket, a számolás lépéseit és az ellenőrzést is kérni kell.</span><span class="sr">U promptovima za prirodne nauke glavni kriterijum je tačnost: model lepo formuliše, ali može pogrešno da računa, da pomeša veličine i da pri pojednostavljivanju postane netačan. Zato treba tražiti i merne jedinice, korake računanja i proveru.</span></p>
+        <div class="grp-cols">
+          <div class="col-give">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Mit adj meg mindig?</span><span class="sr">Šta uvek navesti?</span></h4>
+            <ul class="list"><li><span class="hu">Az évfolyamot és a matematikai szintet: mit tudnak a diákok (például még nem tanultak vektorokat).</span><span class="sr">Razred i matematički nivo: šta učenici znaju (na primer, još nisu učili vektore).</span></li><li><span class="hu">A mértékegységeket és a kerekítés szabályát (hány tizedesjegyre vagy értékes jegyre kerekítsen).</span><span class="sr">Merne jedinice i pravilo zaokruživanja (na koliko decimala ili značajnih cifara da zaokružuje).</span></li><li><span class="hu">A megoldás felépítését: adatok, képlet, behelyettesítés, eredmény mértékegységgel.</span><span class="sr">Strukturu rešenja: podaci, formula, zamena vrednosti, rezultat sa mernom jedinicom.</span></li><li><span class="hu">A számszerű adatokat: ha konkrét mérési eredményekkel dolgozol, illeszd be őket te.</span><span class="sr">Brojčane podatke: ako radiš sa konkretnim rezultatima merenja, umetni ih ti.</span></li></ul>
+          </div>
+          <div class="col-risk">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="hu">Mire figyelj?</span><span class="sr">Na šta obratiti pažnju?</span></h4>
+            <ul class="list"><li><span class="hu">Számolási hibák: kérd, hogy a modell ellenőrizze az eredményt visszahelyettesítéssel vagy nagyságrendi becsléssel, és a végeredményt te is számold ki.</span><span class="sr">Greške u računu: traži da model proveri rezultat zamenom ili procenom reda veličine, a konačan rezultat izračunaj i ti.</span></li><li><span class="hu">Veszélyes kísérletek: kérd, hogy a leírásban külön jelölje a balesetveszélyt, és a kísérlet menetét az óra előtt te magad ellenőrizd.</span><span class="sr">Opasni eksperimenti: traži da u opisu posebno označi opasnost od povreda, a postupak pre časa proveri lično.</span></li><li><span class="hu">Az egyszerűsítés tévképzetet okozhat: kérd, hogy a modell jelölje, hol egyszerűsít.</span><span class="sr">Pojednostavljivanje može izazvati pogrešne predstave: traži da model označi gde pojednostavljuje.</span></li><li><span class="hu">Elavult vagy kerekített állandók és adatok: a fontos értékeket vesd össze a tankönyvvel.</span><span class="sr">Zastarele ili zaokružene konstante i podaci: važne vrednosti uporedi sa udžbenikom.</span></li></ul>
+          </div>
+        </div>
+        <h4 class="ex-h"><span class="hu">Kipróbálható példák</span><span class="sr">Primeri za isprobavanje</span></h4>
+        <div class="ex-list"><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Fizika — feladatsor</span><span class="sr">Fizika — niz zadataka</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Fizika — feladatsor" data-aria-sr="Kopiraj prompt: Fizika — niz zadataka" aria-label="Prompt másolása: Fizika — feladatsor"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt fizikatanárként. Készíts 4 feladatot Newton II. törvényéről (F = m · a) 9. évfolyamos szintre, növekvő nehézségi sorrendben. Használj SI-mértékegységeket, az adatok legyenek kerek számok. A megoldásban szerepeljen az adatok felírása, a képlet, a behelyettesítés és az eredmény mértékegységgel. Számolj kétszer, és jelöld, ha valamelyik eredményt kerekítetted.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik fizike. Napravi 4 zadatka o drugom Njutnovom zakonu (F = m · a) za nivo 9. razreda, po rastućoj težini. Koristi SI jedinice, a podaci neka budu zaokruženi brojevi. U rešenju navedi zapis podataka, formulu, zamenu vrednosti i rezultat sa mernom jedinicom. Računaj dvaput i označi ako si neki rezultat zaokružio.</p></div><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Biológia — tévképzetek</span><span class="sr">Biologija — pogrešne predstave</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Biológia — tévképzetek" data-aria-sr="Kopiraj prompt: Biologija — pogrešne predstave" aria-label="Prompt másolása: Biológia — tévképzetek"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt biológiatanárként. Sorold fel az 5 leggyakoribb tévképzetet a fotoszintézisről 7. évfolyamos tanulóknál. Mindegyikhez írj egy rövid, közérthető helyesbítést és egy ellenőrző kérdést. Ne használj bonyolult kémiai képletet, és jelöld, ha valahol egyszerűsítesz.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik biologije. Navedi 5 najčešćih pogrešnih predstava o fotosintezi kod učenika 7. razreda. Uz svaku napiši kratak, razumljiv ispravak i jedno pitanje za proveru. Ne koristi složene hemijske formule i označi gde god pojednostavljuješ.</p></div></div>
+      </section>
+
+      <section class="grp" id="mat-inf" aria-labelledby="mat-inf-t">
+        <header class="grp-head">
+          <span class="grp-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.5 7.5 4 12l4.5 4.5M15.5 7.5 20 12l-4.5 4.5M13.5 5l-3 14"/></svg></span>
+          <div>
+            <h3 id="mat-inf-t"><span class="hu">Matematika és informatika</span><span class="sr">Matematika i informatika</span></h3>
+            <ul class="subj"><li><span class="hu">Matematika</span><span class="sr">Matematika</span></li><li><span class="hu">Informatika</span><span class="sr">Informatika</span></li><li><span class="hu">Programozás</span><span class="sr">Programiranje</span></li></ul>
+          </div>
+        </header>
+        <p class="grp-intro"><span class="hu">Itt a leggyakoribb hiba a megbízhatatlan számolás és a nem futó kód. A gondolkodó (reasoning) modellek matematikában általában megbízhatóbbak, a végeredményt viszont mindig ellenőrizni kell. Programozásnál a pontos környezet megadása dönti el, hogy a kód működik-e.</span><span class="sr">Ovde su najčešće greške nepouzdano računanje i kod koji ne radi. Modeli koji „razmišljaju” (reasoning) u matematici su obično pouzdaniji, ali konačan rezultat uvek treba proveriti. Kod programiranja tačan opis okruženja odlučuje da li kod radi.</span></p>
+        <div class="grp-cols">
+          <div class="col-give">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Mit adj meg mindig?</span><span class="sr">Šta uvek navesti?</span></h4>
+            <ul class="list"><li><span class="hu">Matematikában a témát, a nehézségi szinteket és a számok jellegét (például egész gyökök).</span><span class="sr">U matematici temu, nivoe težine i prirodu brojeva (na primer, celobrojni koreni).</span></li><li><span class="hu">A megoldás lépésekre bontását és az ellenőrzést visszahelyettesítéssel.</span><span class="sr">Rešenje podeljeno na korake i proveru zamenom.</span></li><li><span class="hu">Programozásban a nyelvet és a verziót (például Python 3), a megengedett könyvtárakat és a tanulók előismereteit.</span><span class="sr">U programiranju jezik i verziju (na primer Python 3), dozvoljene biblioteke i predznanje učenika.</span></li><li><span class="hu">A feladat leírását, a példa bemenetet és kimenetet, valamint azt, hogy a mintamegoldás kommentekkel készüljön.</span><span class="sr">Opis zadatka, primer ulaza i izlaza, kao i da se primer rešenja napiše sa komentarima.</span></li></ul>
+          </div>
+          <div class="col-risk">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="hu">Mire figyelj?</span><span class="sr">Na šta obratiti pažnju?</span></h4>
+            <ul class="list"><li><span class="hu">A modell hibás feladatot is kitalálhat, például olyat, amelynek nincs egész számú megoldása: a megoldókulcsot mindig ellenőrizd.</span><span class="sr">Model može da smisli i neispravan zadatak, na primer onaj koji nema celobrojno rešenje: ključ rešenja uvek proveri.</span></li><li><span class="hu">A kód nem biztos, hogy fut: próbáld ki, mielőtt a diákok elé viszed.</span><span class="sr">Kod ne mora da radi: isprobaj ga pre nego što ga daš učenicima.</span></li><li><span class="hu">A diákok a feladatot egy az egyben bemásolhatják a chatbotba: olyan feladatot adj, amelyhez az órai anyagukra kell hivatkozniuk, vagy kérj szóbeli magyarázatot is.</span><span class="sr">Učenici mogu zadatak da prekopiraju u četbot: daj zadatak u kome moraju da se pozovu na gradivo sa časa ili traži i usmeno objašnjenje.</span></li><li><span class="hu">Matematikai bizonyításnál a modell hibás lépést is meggyőzően adhat elő: a lépéseket olvasd végig.</span><span class="sr">Kod matematičkih dokaza model može ubedljivo da izloži i pogrešan korak: pročitaj sve korake.</span></li></ul>
+          </div>
+        </div>
+        <h4 class="ex-h"><span class="hu">Kipróbálható példák</span><span class="sr">Primeri za isprobavanje</span></h4>
+        <div class="ex-list"><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Matematika — feladatsor</span><span class="sr">Matematika — niz zadataka</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Matematika — feladatsor" data-aria-sr="Kopiraj prompt: Matematika — niz zadataka" aria-label="Prompt másolása: Matematika — feladatsor"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt matematikatanárként. Készíts 6 másodfokú egyenletet 10. évfolyamos szintre, három nehézségi szinten (szintenként kettő), egész számú gyökökkel. Minden feladathoz add meg a megoldást lépésekre bontva, és ellenőrizd a gyököket visszahelyettesítéssel. A megoldókulcs külön szekcióban legyen.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik matematike. Napravi 6 kvadratnih jednačina za nivo 10. razreda, na tri nivoa težine (po dve na svakom nivou), sa celobrojnim korenima. Za svaki zadatak navedi rešenje podeljeno na korake i proveri korene zamenom. Ključ rešenja neka bude u posebnom odeljku.</p></div><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Informatika — programozási feladatok</span><span class="sr">Informatika — zadaci iz programiranja</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Informatika — programozási feladatok" data-aria-sr="Kopiraj prompt: Informatika — zadaci iz programiranja" aria-label="Prompt másolása: Informatika — programozási feladatok"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt informatikatanárként. Adj 3 Python-feladatot (ciklus, feltételek, lista) 9. évfolyamos kezdőknek, növekvő nehézségi sorrendben. Minden feladathoz írd meg a szöveges leírást, egy példa bemenetet és kimenetet, valamint külön a mintamegoldást kommentekkel. A kódot Python 3-ban írd, külső könyvtár nélkül.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik informatike. Daj 3 zadatka u Pythonu (petlja, uslovi, lista) za početnike u 9. razredu, po rastućoj težini. Za svaki zadatak napiši tekstualni opis, primer ulaza i izlaza, kao i posebno primer rešenja sa komentarima. Kod napiši u Pythonu 3, bez spoljnih biblioteka.</p></div></div>
+      </section>
+
+      <section class="grp" id="tarsadalom" aria-labelledby="tarsadalom-t">
+        <header class="grp-head">
+          <span class="grp-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.7 5.4 3.7 8.5S14.5 17.9 12 20.5M12 3.5C9.5 6.1 8.3 8.9 8.3 12S9.5 17.9 12 20.5"/></svg></span>
+          <div>
+            <h3 id="tarsadalom-t"><span class="hu">Társadalomtudományok</span><span class="sr">Društvene nauke</span></h3>
+            <ul class="subj"><li><span class="hu">Történelem</span><span class="sr">Istorija</span></li><li><span class="hu">Társadalomföldrajz</span><span class="sr">Društvena geografija</span></li><li><span class="hu">Állampolgári ismeretek</span><span class="sr">Građansko vaspitanje</span></li><li><span class="hu">Filozófia és etika</span><span class="sr">Filozofija i etika</span></li></ul>
+          </div>
+        </header>
+        <p class="grp-intro"><span class="hu">A társadalomtudományi témáknál a legfontosabb a forráskezelés és a kiegyensúlyozottság. A modell a tanítóadatai nézőpontját tükrözi, a helyi (vajdasági, szerbiai, magyarországi) történések pedig ezekben gyakran kisebb súllyal szerepelnek, ezért itt különösen fontos a forrás megadása és az ellenőrzés.</span><span class="sr">Kod društvenih tema najvažniji su rad sa izvorima i uravnoteženost. Model odražava gledište podataka na kojima je učen, a lokalni događaji (vojvođanski, srpski, mađarski) u njima su često slabije zastupljeni, zato su navođenje izvora i provera ovde posebno važni.</span></p>
+        <div class="grp-cols">
+          <div class="col-give">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Mit adj meg mindig?</span><span class="sr">Šta uvek navesti?</span></h4>
+            <ul class="list"><li><span class="hu">A forrásszöveget, amelyre a modell támaszkodjon: illeszd be, és kérd, hogy csak abból dolgozzon.</span><span class="sr">Izvorni tekst na koji model treba da se osloni: umetni ga i traži da radi samo na osnovu njega.</span></li><li><span class="hu">Az időszakot és a földrajzi keretet pontosan, például „1848–1849, a mai Vajdaság területén”.</span><span class="sr">Period i geografski okvir tačno, na primer „1848–1849, na teritoriji današnje Vojvodine”.</span></li><li><span class="hu">A nézőpontokat: kérd, hogy több álláspontot mutasson be azonos terjedelemben, értékítélet nélkül.</span><span class="sr">Perspektive: traži da predstavi više stanovišta u istom obimu, bez vrednosnog suda.</span></li><li><span class="hu">A tény és az értelmezés szétválasztását: kérd, hogy külön jelölje a tényeket és a véleményeket.</span><span class="sr">Razdvajanje činjenice i tumačenja: traži da posebno označi činjenice i mišljenja.</span></li></ul>
+          </div>
+          <div class="col-risk">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="hu">Mire figyelj?</span><span class="sr">Na šta obratiti pažnju?</span></h4>
+            <ul class="list"><li><span class="hu">Évszámok, nevek és számadatok lehetnek tévesek: kérd, hogy jelölje az ellenőrizendő állításokat.</span><span class="sr">Godine, imena i brojčani podaci mogu biti netačni: traži da označi tvrdnje koje treba proveriti.</span></li><li><span class="hu">Kitalált hivatkozások és idézetek: történelmi személytől ne kérj szó szerinti idézetet, forrásmegjelölést pedig csak akkor fogadj el, ha te magad is megtaláltad.</span><span class="sr">Izmišljene reference i citati: istorijskoj ličnosti ne traži doslovan citat, a navedeni izvor prihvati tek kada ga i ti pronađeš.</span></li><li><span class="hu">Vitatott témáknál a válasz akaratlanul is egyik oldalra billenhet: kérd az ellenkező álláspont legerősebb érvét is.</span><span class="sr">Kod spornih tema odgovor se nehotice može nagnuti na jednu stranu: traži i najjači argument suprotnog stanovišta.</span></li><li><span class="hu">Helyi történelem és helyi jogszabályok: ezeknél a modell gyakran általános vagy téves választ ad, ezért a helyi források beillesztése nélkülözhetetlen.</span><span class="sr">Lokalna istorija i lokalni propisi: kod njih model često daje opšti ili pogrešan odgovor, zato je umetanje lokalnih izvora neophodno.</span></li></ul>
+          </div>
+        </div>
+        <h4 class="ex-h"><span class="hu">Kipróbálható példák</span><span class="sr">Primeri za isprobavanje</span></h4>
+        <div class="ex-list"><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Történelem — forráselemzés</span><span class="sr">Istorija — analiza izvora</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Történelem — forráselemzés" data-aria-sr="Kopiraj prompt: Istorija — analiza izvora" aria-label="Prompt másolása: Történelem — forráselemzés"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt történelemtanárként. Készíts 8 kérdésből álló forráselemző feladatot 11. évfolyamos tanulóknak az alábbi forrásszöveg alapján: <span class="ph">[IDE ILLESZD BE A FORRÁST]</span>. A kérdések térjenek ki a szerzőre, a keletkezés körülményeire és az elfogultságra is. Csak a szövegben szereplő tényekre támaszkodj, minden más állítás mellé írd: „ellenőrizendő”.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik istorije. Napravi zadatak analize izvora od 8 pitanja za učenike 11. razreda na osnovu sledećeg izvornog teksta: <span class="ph">[OVDE UMETNI IZVOR]</span>. Pitanja neka obuhvate autora, okolnosti nastanka i pristrasnost. Oslanjaj se samo na činjenice iz teksta, a uz svaku drugu tvrdnju napiši: „treba proveriti”.</p></div><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Vita — előkészítő anyag</span><span class="sr">Debata — pripremni materijal</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Vita — előkészítő anyag" data-aria-sr="Kopiraj prompt: Debata — pripremni materijal" aria-label="Prompt másolása: Vita — előkészítő anyag"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj semleges vitavezetőként. Készíts előkészítő anyagot egy 20 perces osztálytermi vitához a következő témáról: <span class="ph">[VITATOTT TÉMA]</span>, 12. évfolyamos diákoknak. Az álláspontok legerősebb érveit mindkét oldalról azonos terjedelemben mutasd be, értékítélet nélkül, a végén pedig adj 4 vitaindító kérdést.</p><p class="ptext sr">Ponašaj se kao neutralan moderator debate. Napravi pripremni materijal za debatu od 20 minuta u učionici na sledeću temu: <span class="ph">[SPORNA TEMA]</span>, za učenike 12. razreda. Najjače argumente obe strane predstavi u istom obimu, bez vrednosnog suda, a na kraju daj 4 pitanja za početak debate.</p></div></div>
+      </section>
+
+      <section class="grp" id="muveszet" aria-labelledby="muveszet-t">
+        <header class="grp-head">
+          <span class="grp-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span>
+          <div>
+            <h3 id="muveszet-t"><span class="hu">Művészeti tantárgyak</span><span class="sr">Umetnički predmeti</span></h3>
+            <ul class="subj"><li><span class="hu">Ének-zene</span><span class="sr">Muzička kultura</span></li><li><span class="hu">Vizuális kultúra</span><span class="sr">Likovna kultura</span></li><li><span class="hu">Dráma és színház</span><span class="sr">Drama i pozorište</span></li><li><span class="hu">Művészettörténet</span><span class="sr">Istorija umetnosti</span></li></ul>
+          </div>
+        </header>
+        <p class="grp-intro"><span class="hu">A művészeti tárgyaknál a modell főleg ötletelésben és óraszervezésben segít, az esztétikai ítéletet viszont nem helyettesíti. A csak szöveget értő modell nem hallja a zenét és nem látja a képet, ezért róluk kizárólag a címük és a leírásuk alapján beszél, így itt különösen sok az ellenőrizendő állítás. A multimodális modellek a lefényképezett tanulói munkákat is meg tudják nézni.</span><span class="sr">Kod umetničkih predmeta model uglavnom pomaže u smišljanju ideja i organizaciji časa, ali ne zamenjuje estetsku procenu. Model koji razume samo tekst ne čuje muziku i ne vidi sliku, pa o njima govori isključivo na osnovu naslova i opisa, zbog čega je ovde posebno mnogo tvrdnji koje treba proveriti. Multimodalni modeli mogu da pogledaju i fotografisane radove učenika.</span></p>
+        <div class="grp-cols">
+          <div class="col-give">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Mit adj meg mindig?</span><span class="sr">Šta uvek navesti?</span></h4>
+            <ul class="list"><li><span class="hu">Kreatív feladatnál ne csak azt kérd, hogy „írj verset”, hanem add meg a hangulatot, a formát és a korosztályt.</span><span class="sr">Kod kreativnog zadatka ne traži samo „napiši pesmu”, već navedi raspoloženje, oblik i uzrast.</span></li><li><span class="hu">Az eszközöket és az időkeretet, például csak ceruza és papír, 45 perc.</span><span class="sr">Sredstva i vremenski okvir, na primer samo olovka i papir, 45 minuta.</span></li><li><span class="hu">Az értékelési szempontokat, ha visszajelzést kérsz: a modell ezek alapján ad észrevételt, nem a saját ízlése szerint.</span><span class="sr">Kriterijume ocenjivanja, ako tražiš povratnu informaciju: model će davati primedbe prema njima, a ne prema sopstvenom ukusu.</span></li><li><span class="hu">Kép vagy zene esetén a művet pontosan nevezd meg, képnél pedig szükség esetén csatold a fényképet.</span><span class="sr">Kod slike ili muzike tačno navedi delo, a kod slike po potrebi priloži fotografiju.</span></li></ul>
+          </div>
+          <div class="col-risk">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="hu">Mire figyelj?</span><span class="sr">Na šta obratiti pažnju?</span></h4>
+            <ul class="list"><li><span class="hu">Szerzői jog: ne kérj dalszöveget, kottarészletet vagy védett szöveg hosszú idézetét, mert a modell nem megbízható, a szöveg pedig védett lehet.</span><span class="sr">Autorska prava: ne traži tekst pesme, deo notnog zapisa ili dugačak citat zaštićenog teksta, jer model nije pouzdan, a tekst može biti zaštićen.</span></li><li><span class="hu">Művek és alkotók adatai: a festő, a cím és az évszám gyakran téves, ezért kérd az „ellenőrizendő” jelölést, és keresd meg hivatalos forrásban.</span><span class="sr">Podaci o delima i autorima: slikar, naslov i godina su često netačni, zato traži oznaku „treba proveriti” i potraži ih u zvaničnom izvoru.</span></li><li><span class="hu">A tanulói művek értékelése: az ízlésbeli ítéletet hagyd magadnál, a modell csak a megadott szempontok szerinti észrevételekre való.</span><span class="sr">Ocenjivanje učeničkih radova: sud o ukusu zadrži za sebe, model je za primedbe prema zadatim kriterijumima.</span></li><li><span class="hu">Képgenerálás órán: beszéljétek meg, hogy a generált kép kinek a munkája, és milyen forrásokból tanult az eszköz.</span><span class="sr">Generisanje slika na času: razgovarajte o tome čiji je rad generisana slika i iz kojih izvora je alat učio.</span></li></ul>
+          </div>
+        </div>
+        <h4 class="ex-h"><span class="hu">Kipróbálható példák</span><span class="sr">Primeri za isprobavanje</span></h4>
+        <div class="ex-list"><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Vizuális kultúra — feladatötletek</span><span class="sr">Likovna kultura — ideje za zadatke</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Vizuális kultúra — feladatötletek" data-aria-sr="Kopiraj prompt: Likovna kultura — ideje za zadatke" aria-label="Prompt másolása: Vizuális kultúra — feladatötletek"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt rajztanárként. Fogalmazz meg 5 rajzfeladat-ötletet 7. évfolyamosoknak a fény és árnyék témájában, amelyekhez csak ceruza és papír kell. Mindegyiknél add meg az időigényt (legfeljebb 45 perc), a fő tanulási célt és két szempontot az értékeléshez. Ha konkrét műalkotást említesz, jelöld: „ellenőrizendő”.</p><p class="ptext sr">Ponašaj se kao nastavnik likovne kulture. Predloži 5 ideja za crtačke zadatke za učenike 7. razreda na temu svetlosti i senke, za koje su potrebni samo olovka i papir. Uz svaku navedi potrebno vreme (najviše 45 minuta), glavni cilj učenja i dva kriterijuma za ocenjivanje. Ako pomeneš konkretno umetničko delo, označi: „treba proveriti”.</p></div><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Ének-zene — hallgatáselemzés</span><span class="sr">Muzička kultura — analiza slušanja</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Ének-zene — hallgatáselemzés" data-aria-sr="Kopiraj prompt: Muzička kultura — analiza slušanja" aria-label="Prompt másolása: Ének-zene — hallgatáselemzés"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj énektanárként. Készíts 15 perces hallgatáselemző óravázlatot 8. évfolyamnak a következő zenemű meghallgatásához: <span class="ph">[ZENEMŰ CÍME ÉS SZERZŐJE]</span>. Legyen benne 3 irányított figyelmi szempont, 5 kérdés és egy kreatív záró feladat. Ne idézz dalszöveget és kottarészletet, a szerzőről és a keletkezésről csak biztos adatot írj, a többit jelöld „ellenőrizendő”-nek.</p><p class="ptext sr">Ponašaj se kao nastavnik muzičke kulture. Napravi pripremu za čas slušanja od 15 minuta za 8. razred uz sledeće muzičko delo: <span class="ph">[NASLOV DELA I KOMPOZITOR]</span>. Neka sadrži 3 usmerena zadatka za slušanje, 5 pitanja i kreativan završni zadatak. Ne citiraj tekst pesme ni delove notnog zapisa, o autoru i nastanku navedi samo pouzdane podatke, a ostalo označi sa „treba proveriti”.</p></div></div>
+      </section>
+
+      <section class="grp" id="gyakorlati" aria-labelledby="gyakorlati-t">
+        <header class="grp-head">
+          <span class="grp-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h2M19 12h2M6.5 8v8M17.5 8v8M9 10v4M15 10v4M9 12h6"/></svg></span>
+          <div>
+            <h3 id="gyakorlati-t"><span class="hu">Testnevelés, gyakorlati és nevelési órák</span><span class="sr">Fizičko vaspitanje, praktični i vaspitni časovi</span></h3>
+            <ul class="subj"><li><span class="hu">Testnevelés</span><span class="sr">Fizičko vaspitanje</span></li><li><span class="hu">Technika</span><span class="sr">Tehnika i tehnologija</span></li><li><span class="hu">Osztályfőnöki óra</span><span class="sr">Čas odeljenjskog starešine</span></li><li><span class="hu">Pályaorientáció</span><span class="sr">Profesionalna orijentacija</span></li><li><span class="hu">Egészségnevelés</span><span class="sr">Zdravstveno vaspitanje</span></li></ul>
+          </div>
+        </header>
+        <p class="grp-intro"><span class="hu">Ezeknél az óráknál a tér, az eszközök és a csoport összetétele határozza meg, mi valósítható meg. A modell nem látja a tornatermet és nem ismeri az osztályt, ezért minden fontos feltételt meg kell adni. Az érzékeny témáknál a modell csak vázlatot ad, a pedagógiai felelősség a tanáré.</span><span class="sr">Kod ovih časova prostor, sredstva i sastav grupe određuju šta je izvodljivo. Model ne vidi salu i ne poznaje odeljenje, zato treba navesti sve važne uslove. Kod osetljivih tema model daje samo nacrt, a pedagoška odgovornost je na nastavniku.</span></p>
+        <div class="grp-cols">
+          <div class="col-give">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Mit adj meg mindig?</span><span class="sr">Šta uvek navesti?</span></h4>
+            <ul class="list"><li><span class="hu">A létszámot, az életkort és a rendelkezésre álló teret (terem, udvar, műhely).</span><span class="sr">Broj učenika, uzrast i raspoloživ prostor (sala, dvorište, radionica).</span></li><li><span class="hu">A pontos eszközlistát, mert a modell különben olyat is javasolhat, ami nincs az iskolában.</span><span class="sr">Tačan spisak sredstava, jer model inače može da predloži nešto čega nema u školi.</span></li><li><span class="hu">Az időbeosztást szakaszonként: bemelegítés, fő rész, levezetés.</span><span class="sr">Raspored vremena po delovima: zagrevanje, glavni deo, završni deo.</span></li><li><span class="hu">A differenciálást: kérj könnyítést és nehezítést a különböző képességű tanulóknak.</span><span class="sr">Diferencijaciju: traži olakšanje i otežavanje za učenike različitih sposobnosti.</span></li></ul>
+          </div>
+          <div class="col-risk">
+            <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg><span class="hu">Mire figyelj?</span><span class="sr">Na šta obratiti pažnju?</span></h4>
+            <ul class="list"><li><span class="hu">Balesetveszély és egészség: a modell tanácsait ne fogadd el ellenőrzés nélkül, a biztonsági szabályokat mozgásos feladatnál te határozd meg.</span><span class="sr">Opasnost od povreda i zdravlje: savete modela ne prihvataj bez provere, a pravila bezbednosti kod fizičkih aktivnosti odredi ti.</span></li><li><span class="hu">Érzékeny témák (zaklatás, szerhasználat, családi helyzet): a modell vázlata csak kiindulópont, vond be az iskolapszichológust vagy az iskolai segítő szakembert.</span><span class="sr">Osetljive teme (maltretiranje, upotreba supstanci, porodične prilike): nacrt modela je samo polazna tačka, uključi školskog psihologa ili stručnu službu škole.</span></li><li><span class="hu">Valós diákok adatai: soha ne írd be a nevüket vagy a személyes helyzetüket, még példaként sem.</span><span class="sr">Podaci stvarnih učenika: nikada ne upisuj njihova imena ni lične prilike, čak ni kao primer.</span></li><li><span class="hu">A kitalált helyzetek ne hasonlítsanak felismerhetően a saját osztályodra.</span><span class="sr">Izmišljene situacije ne smeju prepoznatljivo ličiti na tvoje odeljenje.</span></li></ul>
+          </div>
+        </div>
+        <h4 class="ex-h"><span class="hu">Kipróbálható példák</span><span class="sr">Primeri za isprobavanje</span></h4>
+        <div class="ex-list"><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Testnevelés — tornatermi óra</span><span class="sr">Fizičko vaspitanje — čas u sali</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Testnevelés — tornatermi óra" data-aria-sr="Kopiraj prompt: Fizičko vaspitanje — čas u sali" aria-label="Prompt másolása: Testnevelés — tornatermi óra"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt testnevelő tanárként. Tervezz 45 perces tornatermi órát egy 28 fős, 6. évfolyamos osztálynak a labdajátékok témájában. Eszközök: 10 labda, 12 bója, 4 pad. Legyen benne bemelegítés (8 perc), fő rész és levezetés (5 perc). Minden feladatnál jelöld a balesetveszélyt, és adj egy könnyítést és egy nehezítést a különböző képességű tanulóknak.</p><p class="ptext sr">Ponašaj se kao iskusan nastavnik fizičkog vaspitanja. Osmisli čas u sali od 45 minuta za odeljenje od 28 učenika 6. razreda na temu igara loptom. Sredstva: 10 lopti, 12 čunjeva, 4 klupe. Neka sadrži zagrevanje (8 minuta), glavni deo i završni deo (5 minuta). Uz svaki zadatak označi opasnost od povreda i daj jedno olakšanje i jedno otežavanje za učenike različitih sposobnosti.</p></div><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Osztályfőnöki óra — digitális zaklatás</span><span class="sr">Čas odeljenjskog starešine — digitalno nasilje</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Osztályfőnöki óra — digitális zaklatás" data-aria-sr="Kopiraj prompt: Čas odeljenjskog starešine — digitalno nasilje" aria-label="Prompt másolása: Osztályfőnöki óra — digitális zaklatás"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Viselkedj tapasztalt osztályfőnökként. Készíts 45 perces osztályfőnöki óravázlatot 8. évfolyamnak a digitális zaklatás megelőzéséről. Legyen benne csoportos feladat, őszinte, de nem ijesztgető hangnem, és kitalált, életszerű helyzetek. Ne említs valós személyt vagy iskolát. A végén adj 3 tanári megjegyzést arra az esetre, ha egy diák személyesen érintettnek érzi magát.</p><p class="ptext sr">Ponašaj se kao iskusan odeljenjski starešina. Napravi pripremu za čas odeljenjskog starešine od 45 minuta za 8. razred o prevenciji digitalnog nasilja. Neka sadrži grupni zadatak, iskren, ali ne zastrašujući ton i izmišljene, životne situacije. Ne pominji stvarne osobe ni škole. Na kraju daj 3 napomene za nastavnika za slučaj da se neki učenik oseti lično pogođenim.</p></div></div>
+      </section>
+        </div>
+      </section>
+
+
+      <section class="block" id="interaktiv" aria-labelledby="int-h">
+        <p class="kicker"><span class="hu">Interaktív anyagok</span><span class="sr">Interaktivni materijali</span></p>
+        <h2 id="int-h"><span class="hu">Interaktív feladatok, animációk és szimulációk készítése</span><span class="sr">Izrada interaktivnih zadataka, animacija i simulacija</span></h2>
+        <p class="block-intro">
+          <span class="hu">Egy jó prompttal a chatbot működő, böngészőben futó kis programot is tud írni: csúszkákkal állítható szimulációt, lépésenként lejátszható animációt vagy önellenőrző kvízt. Nem kell programoznod. A te feladatod az, hogy pontosan leírd, mit kell tudnia a programnak, és hogy ellenőrizd az eredményt.</span>
+          <span class="sr">Uz dobar prompt četbot može da napiše i mali program koji radi u pregledaču: simulaciju koja se podešava klizačima, animaciju koja se pušta korak po korak ili kviz sa samoproverom. Ne moraš da programiraš. Tvoj posao je da precizno opišeš šta program treba da radi i da proveriš rezultat.</span>
+        </p>
+
+        <div class="sub" id="int-mit">
+          <h3><span class="hu">Mit kérhetsz?</span><span class="sr">Šta možeš da tražiš?</span></h3>
+          <p class="sub-intro">
+            <span class="hu">Négy gyakori fajta van. Az első kettő a gyakorlásra, a második kettő a megértésre való, de a határ nem éles.</span>
+            <span class="sr">Postoje četiri česte vrste. Prve dve služe za vežbanje, druge dve za razumevanje, ali granica nije oštra.</span>
+          </p>
+          <div class="type-grid"><article class="type"><div class="type-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 0 1 4.8.9c0 1.6-2.4 2-2.4 3.5M12 17v.2"/></svg></div><h4><span class="hu">Interaktív feladat és kvíz</span><span class="sr">Interaktivni zadatak i kviz</span></h4><p><span class="hu">Önellenőrző kvíz, villámkártya, párosító vagy szókirakó feladat: a diák kattint, a program pedig azonnal visszajelez. A helyes válaszokat és a magyarázatokat te adod meg, így a tartalom felett megmarad az irányításod.</span><span class="sr">Kviz sa samoproverom, kartice za učenje, zadaci spajanja ili slaganja reči: učenik klikne, a program odmah daje povratnu informaciju. Tačne odgovore i objašnjenja zadaješ ti, pa sadržaj ostaje pod tvojom kontrolom.</span></p><p class="type-ex"><strong><span class="hu">Példa:</span><span class="sr">Primer:</span></strong> <span class="hu">Idegen nyelv: 20 szókártya, szöveges visszajelzéssel helyes és hibás válasznál is.</span><span class="sr">Strani jezik: 20 kartica sa rečima, uz tekstualnu povratnu informaciju i za tačan i za netačan odgovor.</span></p></article><article class="type"><div class="type-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M10.2 8.8v6.4l5.2-3.2z"/></svg></div><h4><span class="hu">Animáció</span><span class="sr">Animacija</span></h4><p><span class="hu">Egy folyamat lépésről lépésre mozog, lejátszás, szünet és léptetés gombbal. Olyan tartalomhoz jó, ahol az időbeli sorrend a lényeg.</span><span class="sr">Proces se odvija korak po korak, uz kontrole za pokretanje, pauzu i pojedinačne korake. Pogodna je za sadržaj kod koga je bitan vremenski redosled.</span></p><p class="type-ex"><strong><span class="hu">Példa:</span><span class="sr">Primer:</span></strong> <span class="hu">Biológia: a sejtosztódás fázisai. Informatika: egy rendezési algoritmus lépései.</span><span class="sr">Biologija: faze deobe ćelije. Informatika: koraci algoritma sortiranja.</span></p></article><article class="type"><div class="type-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 5v14M12 5v14M19 5v14"/><path d="M3 9h4M10 15h4M17 10h4"/></svg></div><h4><span class="hu">Szimuláció</span><span class="sr">Simulacija</span></h4><p><span class="hu">Paraméterekkel, például csúszkákkal állítható modell: a diák megváltoztat egy értéket, és azonnal látja a következményt. A szimuláció mindig egyszerűsítés, ezért a szabályait ellenőrizned kell.</span><span class="sr">Model koji se podešava parametrima, na primer klizačima: učenik promeni vrednost i odmah vidi posledicu. Simulacija je uvek pojednostavljenje, zato njena pravila moraš da proveriš.</span></p><p class="type-ex"><strong><span class="hu">Példa:</span><span class="sr">Primer:</span></strong> <span class="hu">Fizika: ferde hajítás, inga. Biológia: ragadozó–zsákmány populáció.</span><span class="sr">Fizika: kosi hitac, klatno. Biologija: populacija grabljivac–plen.</span></p></article><article class="type"><div class="type-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg></div><h4><span class="hu">Vizualizáció</span><span class="sr">Vizualizacija</span></h4><p><span class="hu">Adatokból vagy eseményekből készült kattintható idővonal, diagram vagy ábra. A diák felfedezheti az összefüggéseket, ahelyett hogy kész képet kapna.</span><span class="sr">Interaktivna vremenska linija, dijagram ili šema napravljeni od podataka ili događaja. Učenik može da otkriva veze umesto da dobije gotovu sliku.</span></p><p class="type-ex"><strong><span class="hu">Példa:</span><span class="sr">Primer:</span></strong> <span class="hu">Történelem: kattintható idővonal. Földrajz: éghajlati diagram.</span><span class="sr">Istorija: interaktivna vremenska linija. Geografija: klimatski dijagram.</span></p></article></div>
+        </div>
+
+        <div class="sub" id="int-tantargy">
+          <h3><span class="hu">Ötletek tantárgycsoportonként</span><span class="sr">Ideje po grupama predmeta</span></h3>
+          <p class="sub-intro">
+            <span class="hu">Ezek olyan feladatok, amelyek egyetlen fájlban megvalósíthatók. Válassz egyet, és a következő részben megtudod, hogyan kérheted el.</span>
+            <span class="sr">Ovo su zadaci koji mogu da se realizuju u jednoj datoteci. Izaberi jedan, a u sledećem delu saznaćeš kako da ga zatražiš.</span>
+          </p>
+          <div class="idea-grid"><article class="idea"><h4><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 6.5C10.3 5.3 8 4.8 4 5v13c4-.2 6.3.3 8 1.5 1.7-1.2 4-1.7 8-1.5V5c-4-.2-6.3.3-8 1.5z"/><path d="M12 6.5v13"/></svg><span class="hu">Nyelvek és irodalom</span><span class="sr">Jezici i književnost</span></h4><ul class="list"><li><span class="hu">Villámkártyák szókinccsel és azonnali visszajelzéssel</span><span class="sr">Kartice sa rečima i trenutnom povratnom informacijom</span></li><li><span class="hu">Szókirakó vagy ragozásgyakorló önellenőrzéssel</span><span class="sr">Slaganje reči ili vežba padeža i nastavaka uz samoproveru</span></li><li><span class="hu">Elágazó párbeszéd: a diák válaszlehetőségek közül választ</span><span class="sr">Dijalog koji se grana: učenik bira među ponuđenim odgovorima</span></li></ul></article><article class="idea"><h4><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5M10.5 3.5v6L5 19a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 19l-5.5-9.5v-6"/><path d="M7.8 15h8.4"/></svg><span class="hu">Természettudományok</span><span class="sr">Prirodne nauke</span></h4><ul class="list"><li><span class="hu">Ferde hajítás, inga vagy egyszerű áramkör csúszkákkal</span><span class="sr">Kosi hitac, klatno ili jednostavno strujno kolo sa klizačima</span></li><li><span class="hu">Ragadozó–zsákmány populáció grafikonnal</span><span class="sr">Populacija grabljivac–plen sa grafikonom</span></li><li><span class="hu">Oldat hígítása: a koncentráció változása csúszkával</span><span class="sr">Razblaživanje rastvora: promena koncentracije uz klizač</span></li></ul></article><article class="idea"><h4><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.5 7.5 4 12l4.5 4.5M15.5 7.5 20 12l-4.5 4.5M13.5 5l-3 14"/></svg><span class="hu">Matematika és informatika</span><span class="sr">Matematika i informatika</span></h4><ul class="list"><li><span class="hu">Függvényábrázoló paraméter-csúszkákkal</span><span class="sr">Crtač funkcija sa klizačima za parametre</span></li><li><span class="hu">Valószínűségi kísérlet: százszor dobott kocka gyakorisági diagramja</span><span class="sr">Verovatnoća: dijagram učestalosti za sto bacanja kocke</span></li><li><span class="hu">Algoritmus-animáció: rendezés, keresés</span><span class="sr">Animacija algoritma: sortiranje, pretraga</span></li></ul></article><article class="idea"><h4><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.7 5.4 3.7 8.5S14.5 17.9 12 20.5M12 3.5C9.5 6.1 8.3 8.9 8.3 12S9.5 17.9 12 20.5"/></svg><span class="hu">Társadalomtudományok</span><span class="sr">Društvene nauke</span></h4><ul class="list"><li><span class="hu">Kattintható idővonal eseményekkel és forrásokkal</span><span class="sr">Interaktivna vremenska linija sa događajima i izvorima</span></li><li><span class="hu">Elágazó döntési történet: mi lett volna, ha…</span><span class="sr">Priča sa razgranatim odlukama: šta bi bilo da…</span></li><li><span class="hu">Népességpiramis, amely évszám szerint váltható</span><span class="sr">Piramida stanovništva koja se menja po godinama</span></li></ul></article><article class="idea"><h4><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span class="hu">Művészeti tantárgyak</span><span class="sr">Umetnički predmeti</span></h4><ul class="list"><li><span class="hu">Színkeverő RGB-csúszkákkal</span><span class="sr">Mešač boja sa RGB klizačima</span></li><li><span class="hu">Ritmusgyakorló beállítható tempóval</span><span class="sr">Vežba ritma sa podesivim tempom</span></li><li><span class="hu">Perspektívarajzolás segédráccsal</span><span class="sr">Crtanje perspektive uz pomoćnu mrežu</span></li></ul></article><article class="idea"><h4><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12h2M19 12h2M6.5 8v8M17.5 8v8M9 10v4M15 10v4M9 12h6"/></svg><span class="hu">Testnevelés és gyakorlati órák</span><span class="sr">Fizičko vaspitanje i praktični časovi</span></h4><ul class="list"><li><span class="hu">Körforgásos gyakorlat-időzítő állomásokkal</span><span class="sr">Tajmer za kružni trening sa stanicama</span></li><li><span class="hu">Pályaorientációs kvíz, amely nem gyűjt személyes adatot</span><span class="sr">Kviz za profesionalnu orijentaciju koji ne prikuplja lične podatke</span></li><li><span class="hu">Háztartási költségvetés-tervező csúszkákkal</span><span class="sr">Planer kućnog budžeta sa klizačima</span></li></ul></article></div>
+        </div>
+
+        <div class="sub" id="int-sablon">
+          <h3><span class="hu">Hogyan épül fel egy szimuláció-prompt?</span><span class="sr">Kako je građen prompt za simulaciju?</span></h3>
+          <p class="sub-intro">
+            <span class="hu">A programkérés ugyanazokra az alapelvekre épül, mint a többi prompt, de néhány elemet kötelezően meg kell adni. Hét elem kell hozzá.</span>
+            <span class="sr">Zahtev za program zasniva se na istim principima kao i ostali promptovi, ali neke elemente obavezno treba navesti. Potrebno je sedam elemenata.</span>
+          </p>
+          <ol class="el-list"><li class="el"><span class="el-num" aria-hidden="true">01</span><div><h4><span class="hu">Cél</span><span class="sr">Cilj</span></h4><p><span class="hu">Írd le, mit kell megértenie a diáknak, például: „lássa, hogyan függ a hatótávolság a szögtől”.</span><span class="sr">Napiši šta učenik treba da razume, na primer: „da vidi kako domet zavisi od ugla”.</span></p></div></li><li class="el"><span class="el-num" aria-hidden="true">02</span><div><h4><span class="hu">Technikai keret</span><span class="sr">Tehnički okvir</span></h4><p><span class="hu">Kérj egyetlen HTML-fájlt, külső könyvtár és internetkapcsolat nélkül: így bármelyik gépen és telefonon is fut.</span><span class="sr">Traži jednu HTML datoteku, bez spoljnih biblioteka i internet veze: tako radi na bilo kom računaru i telefonu.</span></p></div></li><li class="el"><span class="el-num" aria-hidden="true">03</span><div><h4><span class="hu">Vezérlők</span><span class="sr">Kontrole</span></h4><p><span class="hu">Sorold fel a csúszkákat és a gombokat: tartomány, alapérték, mértékegység.</span><span class="sr">Nabroj klizače i dugmad: opseg, početna vrednost, merna jedinica.</span></p></div></li><li class="el"><span class="el-num" aria-hidden="true">04</span><div><h4><span class="hu">Megjelenítés</span><span class="sr">Prikaz</span></h4><p><span class="hu">Mondd meg, mit lásson a diák: rajz, grafikon, kiírt értékek, jelölések.</span><span class="sr">Reci šta učenik treba da vidi: crtež, grafikon, ispisane vrednosti, oznake.</span></p></div></li><li class="el"><span class="el-num" aria-hidden="true">05</span><div><h4><span class="hu">Szabályok és képletek</span><span class="sr">Pravila i formule</span></h4><p><span class="hu">Add meg a képleteket és az állandókat, vagy kérd, hogy sorolja fel őket. Kérd, hogy az egyszerűsítést (például „légellenállás nélkül”) a felületen is tüntesse fel.</span><span class="sr">Navedi formule i konstante ili traži da ih nabroji. Traži da se pojednostavljenje (na primer „bez otpora vazduha”) navede i na stranici.</span></p></div></li><li class="el"><span class="el-num" aria-hidden="true">06</span><div><h4><span class="hu">Nyelv és hozzáférhetőség</span><span class="sr">Jezik i pristupačnost</span></h4><p><span class="hu">Írd elő a feliratok nyelvét, a nagy és jól olvasható betűt, az erős kontrasztot és a billentyűzetes vezérlést.</span><span class="sr">Odredi jezik natpisa, velika i čitka slova, jak kontrast i upravljanje tastaturom.</span></p></div></li><li class="el"><span class="el-num" aria-hidden="true">07</span><div><h4><span class="hu">Ellenőrzés</span><span class="sr">Provera</span></h4><p><span class="hu">Kérj megjegyzéseket a kódba a saját nyelveden, és 3 tesztesetet, amellyel magad is ellenőrizheted az eredményt.</span><span class="sr">Traži komentare u kodu na svom jeziku i 3 test-primera kojima i ti možeš da proveriš rezultat.</span></p></div></li></ol>
+          <h4 class="sub-h"><span class="hu">Másolható sablon</span><span class="sr">Šablon za kopiranje</span></h4>
+          <div class="pbox pbox-big" id="sim-box"><div class="pbox-head"><span class="pbox-label"><span class="hu">Szimuláció-sablon</span><span class="sr">Šablon za simulaciju</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Szimuláció-sablon" data-aria-sr="Kopiraj prompt: Šablon za simulaciju" aria-label="Prompt másolása: Szimuláció-sablon"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Készíts egyetlen HTML-fájlt, külső könyvtár nélkül, amely a következő jelenséget szimulálja: <span class="ph">[JELENSÉG]</span>, <span class="ph">[ÉVFOLYAM]</span> évfolyamos <span class="ph">[TANTÁRGY]</span> órához. A cél, hogy a diákok <span class="ph">[MIT ÉRTSENEK MEG]</span>. Vezérlők: <span class="ph">[CSÚSZKÁK ÉS GOMBOK ÉRTÉKTARTOMÁNNYAL ÉS ALAPÉRTÉKKEL]</span>. Megjelenítés: <span class="ph">[RAJZ, GRAFIKON, KIÍRT ÉRTÉKEK]</span>. Szabályok és képletek: <span class="ph">[KÉPLETEK, ÁLLANDÓK]</span>; jelenítsd meg őket a felületen, és jelöld az egyszerűsítéseket. Nyelv: <span class="ph">[MAGYAR VAGY SZERB]</span>, nagy, jól olvasható betűk, billentyűzettel is vezérelhető, jó kontraszt. Írj megjegyzéseket a kódba <span class="ph">[NYELV]</span> nyelven, és a válasz végén sorolj fel 3 tesztesetet, amellyel ellenőrizhetem az eredményt.</p><p class="ptext sr">Napravi jednu HTML datoteku, bez spoljnih biblioteka, koja simulira <span class="ph">[ŠTA SE SIMULIRA]</span> za čas <span class="ph">[PREDMET]</span> u <span class="ph">[RAZRED]</span> razredu. Cilj je da učenici <span class="ph">[ŠTA TREBA DA RAZUMEJU]</span>. Kontrole: <span class="ph">[KLIZAČI I DUGMAD SA OPSEGOM I POČETNOM VREDNOŠĆU]</span>. Prikaz: <span class="ph">[CRTEŽ, GRAFIKON, ISPISANE VREDNOSTI]</span>. Pravila i formule: <span class="ph">[FORMULE, KONSTANTE]</span>; prikaži ih na stranici i označi pojednostavljenja. Jezik: <span class="ph">[SRPSKI ILI MAĐARSKI]</span>, velika i čitka slova, upravljanje i tastaturom, dobar kontrast. U kod upiši komentare na <span class="ph">[JEZIK]</span> jeziku, a na kraju odgovora navedi 3 test-primera kojima mogu da proverim rezultat.</p></div>
+          <p class="sim-note">
+            <span class="hu">Cseréld ki a szögletes zárójeles részeket a saját tartalmaddal. A sablon szándékosan hosszú: minél pontosabb a leírás, annál kevesebbet kell utólag javítani.</span>
+            <span class="sr">Zameni delove u uglastim zagradama sopstvenim sadržajem. Šablon je namerno dugačak: što je opis precizniji, to manje ispravki kasnije.</span>
+          </p>
+          <h4 class="sub-h"><span class="hu">Rossz és jó kérés</span><span class="sr">Loš i dobar zahtev</span></h4>
+          <div class="cmp-list">
+          <article class="cmp" data-cmp>
+            <header class="cmp-head">
+              <h3><span class="hu">Szimuláció kérése</span><span class="sr">Traženje simulacije</span></h3>
+              <div class="seg" role="group" data-aria-hu="Nézet kiválasztása" data-aria-sr="Izbor prikaza" aria-label="Nézet kiválasztása">
+                <button type="button" data-v="bad" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="hu">Rossz</span><span class="sr">Loš</span></button>
+                <button type="button" data-v="good" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Jó</span><span class="sr">Dobar</span></button>
+                <button type="button" data-v="both" aria-pressed="false"><span class="hu">Egymás mellett</span><span class="sr">Jedan pored drugog</span></button>
+              </div>
+            </header>
+            <div class="cmp-grid" data-view="bad">
+              <section class="pane pane-bad">
+                <h4 class="pane-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="hu">Rossz prompt</span><span class="sr">Loš prompt</span></h4>
+                <div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Rossz prompt</span><span class="sr">Loš prompt</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Rossz prompt" data-aria-sr="Kopiraj prompt: Loš prompt" aria-label="Prompt másolása: Rossz prompt"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Csinálj egy szimulációt a hajításról.</p><p class="ptext sr">Napravi simulaciju kosog hica.</p></div>
+                <p class="got"><strong><span class="hu">Mit kapsz válaszul?</span><span class="sr">Šta dobijaš kao odgovor?</span></strong> <span class="hu">Kiszámíthatatlan eredmény: lehet, hogy külső könyvtárra hivatkozik, nincs mértékegység és magyarázat, és nem tudod, milyen szabályokkal számol.</span><span class="sr">Nepredvidiv rezultat: možda se poziva na spoljnu biblioteku, nema mernih jedinica ni objašnjenja, a ne znaš po kojim pravilima računa.</span></p>
+              </section>
+              <section class="pane pane-good">
+                <h4 class="pane-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Jó prompt</span><span class="sr">Dobar prompt</span></h4>
+                <div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Jó prompt</span><span class="sr">Dobar prompt</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Jó prompt" data-aria-sr="Kopiraj prompt: Dobar prompt" aria-label="Prompt másolása: Jó prompt"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Készíts egyetlen HTML-fájlt (külső könyvtár nélkül, böngészőben futó, mobilon is használható), amely a ferde hajítást szimulálja 9–10. évfolyamos fizikaórához. Vezérlők: csúszka a kezdősebességhez (5–30 m/s, alapérték 15 m/s), csúszka a hajítási szöghöz (5–85°, alapérték 45°), választó a nehézségi gyorsuláshoz (Föld 9,81 m/s², Hold 1,62 m/s², Mars 3,71 m/s²) és egy „Kilövés” gomb. Megjelenítés: rajz a pályáról, mozgó labda, a legmagasabb pont és a földet érés jelölése, az előző lövés pályája halványan látszik az összehasonlításhoz, alul pedig a hatótávolság, a legnagyobb magasság és a repülési idő kiírva. Légellenállás nélkül számolj, és ezt írd ki a felületen, a képleteket is jelenítsd meg. A feliratok legyenek magyarul, a kódban magyar nyelvű megjegyzések legyenek.</p><p class="ptext sr">Napravi jednu HTML datoteku koja simulira kosi hitac za čas fizike u 9–10. razredu; datoteka treba da radi u pregledaču bez spoljnih biblioteka i da može da se koristi na telefonu. Kontrole: klizač za početnu brzinu (5–30 m/s, početna vrednost 15 m/s), klizač za ugao hica (5–85°, početna vrednost 45°), izbor gravitacionog ubrzanja (Zemlja 9,81 m/s², Mesec 1,62 m/s², Mars 3,71 m/s²) i dugme „Ispali”. Prikaz: crtež putanje, loptica koja se kreće, oznaka najviše tačke i mesta pada, putanja prethodnog hica ostaje blago vidljiva radi poređenja, a ispod su ispisani domet, najveća visina i vreme leta. Računaj bez otpora vazduha i to ispiši na stranici, prikaži i formule. Natpisi neka budu na srpskom, a komentari u kodu na srpskom.</p></div>
+                <p class="got"><strong><span class="hu">Mit kapsz válaszul?</span><span class="sr">Šta dobijaš kao odgovor?</span></strong> <span class="hu">Egy fájlban futó szimuláció a megadott vezérlőkkel, kiírt eredményekkel, képletekkel és jelölt egyszerűsítéssel, amelyet azonnal ki tudsz próbálni.</span><span class="sr">Simulacija u jednoj datoteci sa zadatim kontrolama, ispisanim rezultatima, formulama i označenim pojednostavljenjem, koju možeš odmah da isprobaš.</span></p>
+                <div class="why"><strong><span class="hu">Mitől jobb?</span><span class="sr">Po čemu je bolji?</span></strong><ul><li><span class="hu">Technikai keret</span><span class="sr">Tehnički okvir</span></li><li><span class="hu">Vezérlők</span><span class="sr">Kontrole</span></li><li><span class="hu">Megjelenítés</span><span class="sr">Prikaz</span></li><li><span class="hu">Képletek és egyszerűsítés</span><span class="sr">Formule i pojednostavljenje</span></li><li><span class="hu">Nyelv</span><span class="sr">Jezik</span></li></ul></div>
+              </section>
+            </div>
+          </article></div>
+        </div>
+
+        <div class="sub" id="int-elo">
+          <h3><span class="hu">Élő példák: így nézhet ki az eredmény</span><span class="sr">Primeri uživo: ovako može da izgleda rezultat</span></h3>
+          <p class="sub-intro">
+            <span class="hu">Az alábbi két példa közvetlenül kipróbálható az oldalon. Az első a fenti „Jó prompthoz” hasonló kérésből készülhet, a másodikhoz tartozó promptot a példa fölött találod. A tényleges kimenet chatbotonként eltér, az elv viszont ugyanez.</span>
+            <span class="sr">Sledeća dva primera mogu da se isprobaju direktno na stranici. Prvi može da nastane iz zahteva sličnog gornjem „Dobrom promptu”, a prompt za drugi nalazi se iznad primera. Stvarni rezultat se razlikuje od četbota do četbota, ali je princip isti.</span>
+          </p>
+
+          <div class="demo" id="demoA">
+            <div class="demo-head">
+              <h4><span class="hu">Ferde hajítás — szimuláció</span><span class="sr">Kosi hitac — simulacija</span></h4>
+              <span class="demo-tag"><span class="hu">Fizika</span><span class="sr">Fizika</span></span>
+            </div>
+            <div class="demo-body">
+              <div class="stage">
+                <canvas id="projCanvas" role="img" aria-label="Ferde hajítás"></canvas>
+                <p class="demo-note"><span class="hu">Légellenállás nélkül számol. </span><span class="sr">Računa bez otpora vazduha. </span><span id="projK"></span></p>
+              </div>
+              <div class="side">
+                <div class="ctl">
+                  <label for="pv"><span class="hu">Kezdősebesség</span><span class="sr">Početna brzina</span></label>
+                  <output id="pvOut" for="pv"></output>
+                  <input type="range" id="pv" min="5" max="30" step="1" value="15">
+                </div>
+                <div class="ctl">
+                  <label for="pa"><span class="hu">Hajítási szög</span><span class="sr">Ugao hica</span></label>
+                  <output id="paOut" for="pa"></output>
+                  <input type="range" id="pa" min="5" max="85" step="1" value="45">
+                </div>
+                <div class="ctl">
+                  <label for="pg"><span class="hu">Hely (nehézségi gyorsulás)</span><span class="sr">Mesto (gravitaciono ubrzanje)</span></label>
+                  <select id="pg">
+                    <option value="9.81" data-hu="Föld — 9,81 m/s²" data-sr="Zemlja — 9,81 m/s²">Föld — 9,81 m/s²</option>
+                    <option value="1.62" data-hu="Hold — 1,62 m/s²" data-sr="Mesec — 1,62 m/s²">Hold — 1,62 m/s²</option>
+                    <option value="3.71" data-hu="Mars — 3,71 m/s²" data-sr="Mars — 3,71 m/s²">Mars — 3,71 m/s²</option>
+                  </select>
+                </div>
+                <div class="btn-row">
+                  <button type="button" class="btn btn-primary" id="pFire"><span class="hu">Kilövés</span><span class="sr">Ispali</span></button>
+                  <button type="button" class="btn btn-secondary" id="pClear"><span class="hu">Pályák törlése</span><span class="sr">Obriši putanje</span></button>
+                </div>
+                <dl class="results">
+                  <div><dt><span class="hu">Hatótávolság (R)</span><span class="sr">Domet (R)</span></dt><dd id="rR"></dd></div>
+                  <div><dt><span class="hu">Legnagyobb magasság (H)</span><span class="sr">Najveća visina (H)</span></dt><dd id="rH"></dd></div>
+                  <div><dt><span class="hu">Repülési idő (T)</span><span class="sr">Vreme leta (T)</span></dt><dd id="rT"></dd></div>
+                </dl>
+                <div class="formula">
+                  <p role="img" data-aria-hu="Hatótávolság: R egyenlő v nulla négyzet szorozva szinusz két alfa, osztva g-vel" data-aria-sr="Domet: R jednako v nula na kvadrat puta sinus dva alfa, podeljeno sa g" aria-label="Hatótávolság: R egyenlő v nulla négyzet szorozva szinusz két alfa, osztva g-vel"><i>R</i> = <span class="frac"><span>v₀² · sin(2α)</span><span><i>g</i></span></span></p>
+                  <p role="img" data-aria-hu="Legnagyobb magasság: H egyenlő v nulla négyzet szorozva szinusz négyzet alfa, osztva kétszer g-vel" data-aria-sr="Najveća visina: H jednako v nula na kvadrat puta sinus na kvadrat alfa, podeljeno sa dva puta g" aria-label="Legnagyobb magasság: H egyenlő v nulla négyzet szorozva szinusz négyzet alfa, osztva kétszer g-vel"><i>H</i> = <span class="frac"><span>v₀² · sin²(α)</span><span>2 · <i>g</i></span></span></p>
+                  <p role="img" data-aria-hu="Repülési idő: T egyenlő kétszer v nulla szorozva szinusz alfa, osztva g-vel" data-aria-sr="Vreme leta: T jednako dva puta v nula puta sinus alfa, podeljeno sa g" aria-label="Repülési idő: T egyenlő kétszer v nulla szorozva szinusz alfa, osztva g-vel"><i>T</i> = <span class="frac"><span>2 · v₀ · sin(α)</span><span><i>g</i></span></span></p>
+                  <small>
+                    <span class="hu">R: hatótávolság · H: legnagyobb magasság · T: repülési idő · v₀: kezdősebesség · α: hajítási szög · g: nehézségi gyorsulás</span>
+                    <span class="sr">R: domet · H: najveća visina · T: vreme leta · v₀: početna brzina · α: ugao hica · g: gravitaciono ubrzanje</span>
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-prompt"><div class="pbox"><div class="pbox-head"><span class="pbox-label"><span class="hu">Prompt az animációhoz</span><span class="sr">Prompt za animaciju</span></span><button type="button" class="copy" data-aria-hu="Prompt másolása: Prompt az animációhoz" data-aria-sr="Kopiraj prompt: Prompt za animaciju" aria-label="Prompt másolása: Prompt az animációhoz"><span class="c-idle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="11" height="12" rx="1.5"/><path d="M5.5 16V5.5A1.5 1.5 0 0 1 7 4h9"/></svg><span class="hu">Másolás</span><span class="sr">Kopiraj</span></span><span class="c-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="hu">Másolva</span><span class="sr">Kopirano</span></span></button></div><p class="ptext hu">Készíts egyetlen HTML-fájlt külső könyvtár nélkül, amely a buborékrendezést (bubble sort) animálja 9. évfolyamos informatikaórához. 12 véletlen szám legyen oszlopokként látható. Gombok: Új sorozat, Lépés, Lejátszás/Szünet, és egy csúszka a sebességhez. Az éppen összehasonlított oszlopok legyenek kiemelve, a már végleges helyükön lévők pedig külön jelölve. Alul számold az összehasonlításokat és a cseréket. A feliratok legyenek magyarul, a kód pedig legyen kommentezve.</p><p class="ptext sr">Napravi jednu HTML datoteku bez spoljnih biblioteka koja animira sortiranje mehurićima (bubble sort) za čas informatike u 9. razredu. 12 slučajnih brojeva neka bude prikazano kao stubovi. Dugmad: Novi niz, Korak, Pokreni/Pauza, i klizač za brzinu. Stubovi koji se upravo porede neka budu istaknuti, a oni koji su već na konačnom mestu posebno označeni. Ispod neka se broje poređenja i zamene. Natpisi neka budu na srpskom, a kod neka bude komentarisan.</p></div></div>
+
+          <div class="demo" id="demoB">
+            <div class="demo-head">
+              <h4><span class="hu">Buborékrendezés — animáció</span><span class="sr">Sortiranje mehurićima — animacija</span></h4>
+              <span class="demo-tag"><span class="hu">Informatika</span><span class="sr">Informatika</span></span>
+            </div>
+            <div class="bars" id="bars" aria-hidden="true"></div>
+            <div class="sort-bar">
+              <div class="btn-row">
+                <button type="button" class="btn btn-secondary" id="sNew"><span class="hu">Új sorozat</span><span class="sr">Novi niz</span></button>
+                <button type="button" class="btn btn-secondary" id="sStep"><span class="hu">Lépés</span><span class="sr">Korak</span></button>
+                <button type="button" class="btn btn-primary btn-play" id="sPlay"><span class="is-play"><span class="hu">Lejátszás</span><span class="sr">Pokreni</span></span><span class="is-pause"><span class="hu">Szünet</span><span class="sr">Pauza</span></span></button>
+              </div>
+              <div class="ctl">
+                <label for="sSpeed"><span class="hu">Sebesség</span><span class="sr">Brzina</span></label>
+                <output></output>
+                <input type="range" id="sSpeed" min="1" max="10" step="1" value="6">
+              </div>
+            </div>
+            <p class="counts">
+              <span class="hu">Összehasonlítások:</span><span class="sr">Poređenja:</span> <b id="cC">0</b> · <span class="hu">Cserék:</span><span class="sr">Zamene:</span> <b id="cS">0</b>
+            </p>
+            <p class="sort-msg" id="sortMsg"></p>
+            <p class="sr-only" id="sortLive" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="sub" id="int-futtatas">
+          <h3><span class="hu">Futtatás és ellenőrzés</span><span class="sr">Pokretanje i provera</span></h3>
+          <ol class="stp-list"><li class="stp"><span class="stp-num" aria-hidden="true">1</span><div><h4><span class="hu">Kérd el a kódot</span><span class="sr">Zatraži kod</span></h4><p><span class="hu">Írd a promptba, hogy „egyetlen HTML-fájl”. A válaszban kódblokkot kapsz. Ha a chatbotod előnézetben is megjeleníti a kódot, rögtön kipróbálhatod.</span><span class="sr">Napiši u promptu „jedna HTML datoteka”. U odgovoru dobijaš blok koda. Ako tvoj četbot kod prikazuje i u pregledu, možeš odmah da ga isprobaš.</span></p></div></li><li class="stp"><span class="stp-num" aria-hidden="true">2</span><div><h4><span class="hu">Mentsd el</span><span class="sr">Sačuvaj</span></h4><p><span class="hu">Másold a kódot egy szövegszerkesztőbe, és mentsd el szimulacio.html néven, UTF-8 kódolással.</span><span class="sr">Kopiraj kod u uređivač teksta i sačuvaj ga kao simulacija.html, sa UTF-8 kodiranjem.</span></p></div></li><li class="stp"><span class="stp-num" aria-hidden="true">3</span><div><h4><span class="hu">Nyisd meg böngészőben</span><span class="sr">Otvori u pregledaču</span></h4><p><span class="hu">Kattints duplán a fájlra. Ha hibás, írd le a chatbotnak, mi nem működik, vagy másold be a hibaüzenetet.</span><span class="sr">Dvaput klikni na datoteku. Ako ne radi, opiši četbotu šta ne funkcioniše ili nalepi poruku o grešci.</span></p></div></li><li class="stp"><span class="stp-num" aria-hidden="true">4</span><div><h4><span class="hu">Oszd meg</span><span class="sr">Podeli</span></h4><p><span class="hu">A fájlt elküldheted e-mailben, feltöltheted az iskolai rendszerbe vagy egy weboldalra, például GitHub Pages-re.</span><span class="sr">Datoteku možeš da pošalješ e-poštom, da otpremiš u školski sistem ili na veb-sajt, na primer na GitHub Pages.</span></p></div></li></ol>
+          <h4 class="sub-h"><span class="hu">Mit ellenőrizz, mielőtt a diákok elé viszed?</span><span class="sr">Šta da proveriš pre nego što ga pokažeš učenicima?</span></h4>
+          <ul class="chk-list"><li class="chk"><span class="chk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><div><h4><span class="hu">Ismert eset</span><span class="sr">Poznat slučaj</span></h4><p><span class="hu">Hajításnál légellenállás nélkül a 45° adja a legnagyobb hatótávolságot, és a kétszeres sebesség négyszeres távolságot eredményez. Ha a szimuláció ezt mutatja, jó jel.</span><span class="sr">Kod hica bez otpora vazduha ugao od 45° daje najveći domet, a dvostruka brzina daje četiri puta veći domet. Ako simulacija to pokazuje, to je dobar znak.</span></p></div></li><li class="chk"><span class="chk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><div><h4><span class="hu">Szélsőértékek</span><span class="sr">Krajnje vrednosti</span></h4><p><span class="hu">Próbáld ki a legkisebb és a legnagyobb értéket: ne fagyjon le, és ne adjon negatív időt vagy távolságot.</span><span class="sr">Isprobaj najmanju i najveću vrednost: ne sme da se zamrzne niti da daje negativno vreme ili rastojanje.</span></p></div></li><li class="chk"><span class="chk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><div><h4><span class="hu">Mértékegységek és kerekítés</span><span class="sr">Merne jedinice i zaokruživanje</span></h4><p><span class="hu">Nézd meg, hogy minden kiírt szám mellett helyes mértékegység áll-e, és értelmes-e a kerekítés.</span><span class="sr">Proveri da li uz svaki ispisani broj stoji ispravna merna jedinica i da li je zaokruživanje razumno.</span></p></div></li><li class="chk"><span class="chk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><div><h4><span class="hu">Független számolás</span><span class="sr">Nezavisno računanje</span></h4><p><span class="hu">Egy-két értéket számolj ki kézzel vagy táblázatkezelővel, és hasonlítsd össze a szimuláció eredményével.</span><span class="sr">Jednu do dve vrednosti izračunaj ručno ili u tabeli i uporedi ih sa rezultatom simulacije.</span></p></div></li><li class="chk"><span class="chk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><div><h4><span class="hu">Az egyszerűsítés jelölése</span><span class="sr">Oznaka pojednostavljenja</span></h4><p><span class="hu">Ellenőrizd, hogy a felületen szerepel-e, mit hanyagol el a modell (például a légellenállást).</span><span class="sr">Proveri da li na stranici piše šta model zanemaruje (na primer otpor vazduha).</span></p></div></li><li class="chk"><span class="chk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><div><h4><span class="hu">Más eszközök</span><span class="sr">Drugi uređaji</span></h4><p><span class="hu">Próbáld ki telefonon és a tanterem gépén is, mielőtt a diákok elé viszed.</span><span class="sr">Isprobaj i na telefonu i na računaru u učionici pre nego što ga pokažeš učenicima.</span></p></div></li></ul>
+          <div class="callout" role="note">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17v.2"/></svg>
+            <div>
+              <h4><span class="hu">A szimuláció modell, nem a valóság</span><span class="sr">Simulacija je model, a ne stvarnost</span></h4>
+              <p>
+                <span class="hu">Minden szimuláció egyszerűsít. A hajításos példában nincs légellenállás, ezért a valódi labda másként repülne. Mondd el ezt a diákoknak is, és kérdezd meg tőlük, mi hiányzik még a modellből. Ne kérj olyan programot, amely diákok adatait tárolja vagy külső szerverre küldi.</span>
+                <span class="sr">Svaka simulacija pojednostavljuje. U primeru kosog hica nema otpora vazduha, pa bi se prava loptica kretala drugačije. Reci to i učenicima i pitaj ih šta još nedostaje u modelu. Ne traži program koji čuva podatke učenika ili ih šalje na spoljni server.</span>
+              </p>
+            </div>
+          </div>
+          <h4 class="sub-h"><span class="hu">Finomító mondatok kódhoz</span><span class="sr">Rečenice za doterivanje koda</span></h4>
+          <ul class="fine-list"><li class="fine"><p class="fine-q"><span class="hu">„A csúszka alapértéke legyen 45°, a tartománya 5° és 85° között.”</span><span class="sr">„Početna vrednost klizača neka bude 45°, a opseg od 5° do 85°.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha a vezérlők nem úgy működnek, ahogy szeretnéd.</span><span class="sr">Kada kontrole ne rade onako kako želiš.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Ne írd újra az egészet, csak a labda rajzolását módosítsd.”</span><span class="sr">„Nemoj da prepisuješ sve, izmeni samo crtanje loptice.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha a program többi része már jó.</span><span class="sr">Kada je ostatak programa već dobar.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Magyarázd el soronként, mit csinál a kód.”</span><span class="sr">„Objasni red po red šta kod radi.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha meg szeretnéd érteni, vagy a diákokkal átbeszélnéd.</span><span class="sr">Kada želiš da razumeš kod ili da ga prodiskutuješ sa učenicima.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Cseréld a feliratokat szerb nyelvűre, latin betűkkel.”</span><span class="sr">„Zameni natpise srpskim, latinicom.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha másik nyelvű osztálynak is szeretnéd használni.</span><span class="sr">Kada želiš da ga koristiš i u odeljenju na drugom jeziku.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Adj hozzá egy »Alaphelyzet« gombot.”</span><span class="sr">„Dodaj dugme ‚Početno stanje‘.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha a diákok elrontják a beállításokat.</span><span class="sr">Kada učenici pokvare podešavanja.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Jelenítsd meg a számításhoz használt képleteket a felületen.”</span><span class="sr">„Prikaži na stranici formule korišćene u računu.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha ellenőrizni szeretnéd a szabályokat.</span><span class="sr">Kada želiš da proveriš pravila.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Nagyobb betűk és erősebb kontraszt, hogy a hátsó padból is olvasható legyen.”</span><span class="sr">„Veća slova i jači kontrast, da može da se pročita i iz zadnje klupe.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Kivetítéshez és gyengénlátó tanulóknak.</span><span class="sr">Za projekciju i za slabovidne učenike.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Találd meg és javítsd a hibát: a labda nem jelenik meg. A hibaüzenet: […]”</span><span class="sr">„Pronađi i ispravi grešku: loptica se ne pojavljuje. Poruka o grešci: […]”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha a program nem fut.</span><span class="sr">Kada program ne radi.</span></p></li></ul>
+        </div>
+      </section>
+
+      <section class="block" id="finomitas" aria-labelledby="fin-h">
+        <p class="kicker"><span class="hu">Finomítás</span><span class="sr">Doterivanje</span></p>
+        <h2 id="fin-h"><span class="hu">Finomító mondatok</span><span class="sr">Rečenice za doterivanje</span></h2>
+        <p class="block-intro">
+          <span class="hu">Az első válasz után ezekkel a rövid mondatokkal lehet javítani. Bármelyik bemásolható a beszélgetés folytatásaként.</span>
+          <span class="sr">Posle prvog odgovora možeš da ga popraviš ovim kratkim rečenicama. Svaku možeš da nalepiš kao nastavak razgovora.</span>
+        </p>
+        <ul class="fine-list"><li class="fine"><p class="fine-q"><span class="hu">„Rövidítsd a felére, és tartsd meg a legfontosabb három pontot.”</span><span class="sr">„Skrati na pola i zadrži tri najvažnije tačke.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha a válasz túl hosszú az órai használathoz.</span><span class="sr">Kada je odgovor predugačak za upotrebu na času.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Írd át úgy, hogy egy 12 éves is megértse.”</span><span class="sr">„Preformuliši tako da ga razume i dvanaestogodišnjak.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha a magyarázat túl szakmai.</span><span class="sr">Kada je objašnjenje previše stručno.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Adj három eltérő változatot, és mondd meg, miben különböznek.”</span><span class="sr">„Daj tri različite varijante i reci u čemu se razlikuju.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha választani szeretnél.</span><span class="sr">Kada želiš da biraš.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Mi hiányzik még ebből a tervből?”</span><span class="sr">„Šta još nedostaje u ovom planu?”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha érzed, hogy valami kimaradt, de nem tudod megnevezni.</span><span class="sr">Kada osećaš da nešto fali, ali ne možeš da kažeš šta.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Kérdezz vissza, mielőtt megoldod a feladatot.”</span><span class="sr">„Postavi mi pitanja pre nego što rešiš zadatak.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha kétséged van, hogy mindent megadtál-e.</span><span class="sr">Kada sumnjaš da nešto važno nedostaje u zahtevu.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Jelöld meg azokat az állításokat, amelyeket ellenőriznem kell.”</span><span class="sr">„Označi tvrdnje koje moram da proverim.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Tényeket tartalmazó anyagnál.</span><span class="sr">Kod materijala koji sadrži činjenice.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Nézd át a saját válaszodat, és keresd meg a hibákat.”</span><span class="sr">„Pregledaj sopstveni odgovor i potraži greške.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Számolásnál, kódnál és évszámoknál.</span><span class="sr">Kod računanja, koda i godina.</span></p></li><li class="fine"><p class="fine-q"><span class="hu">„Formázd táblázatba: az egyik oszlop a feladat, a másik a megoldás.”</span><span class="sr">„Formatiraj u tabelu: jedna kolona je zadatak, a druga rešenje.”</span></p><p class="fine-w"><strong><span class="hu">Mikor?</span><span class="sr">Kada?</span></strong> <span class="hu">Ha kész, felhasználható anyagot szeretnél.</span><span class="sr">Kada želiš gotov materijal koji može odmah da se koristi.</span></p></li></ul>
+      </section>
+
+      <section class="block" id="hibak" aria-labelledby="hib-h">
+        <p class="kicker"><span class="hu">Gyakori hibák</span><span class="sr">Česte greške</span></p>
+        <h2 id="hib-h"><span class="hu">Gyakori hibák és javításuk</span><span class="sr">Česte greške i kako da ih ispraviš</span></h2>
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only"><span class="hu">Gyakori promptírási hibák és javításuk</span><span class="sr">Česte greške pri pisanju promptova i njihovo ispravljanje</span></caption>
+            <thead>
+              <tr>
+                <th scope="col"><span class="hu">Hiba</span><span class="sr">Greška</span></th>
+                <th scope="col"><span class="hu">Javítás</span><span class="sr">Ispravka</span></th>
+              </tr>
+            </thead>
+            <tbody><tr><th scope="row"><span class="hu">Túl rövid, általános kérés</span><span class="sr">Prekratak, opšti zahtev</span></th><td><span class="hu">Add meg az évfolyamot, a tantárgyat és a célt.</span><span class="sr">Navedi razred, predmet i cilj.</span></td></tr><tr><th scope="row"><span class="hu">Egy üzenetben túl sok különböző feladat</span><span class="sr">Previše različitih zadataka u jednoj poruci</span></th><td><span class="hu">Oszd fel: előbb a váz, aztán a feladatok, végül a megoldások.</span><span class="sr">Podeli: prvo okvir, pa zadaci, na kraju rešenja.</span></td></tr><tr><th scope="row"><span class="hu">Az első válasz elfogadása</span><span class="sr">Prihvatanje prvog odgovora</span></th><td><span class="hu">Kérdezz rá a hiányokra, és kérj javítást.</span><span class="sr">Pitaj za propuste i traži ispravku.</span></td></tr><tr><th scope="row"><span class="hu">Hiányzik a kimeneti forma</span><span class="sr">Nedostaje oblik odgovora</span></th><td><span class="hu">Nevezd meg: táblázat, lista, szószám.</span><span class="sr">Navedi: tabela, lista, broj reči.</span></td></tr><tr><th scope="row"><span class="hu">A tények vak elfogadása</span><span class="sr">Slepo prihvatanje činjenica</span></th><td><span class="hu">Kérj jelölést az ellenőrizendő állításokra, és nézd meg a forrást.</span><span class="sr">Traži oznaku za tvrdnje koje treba proveriti i pogledaj izvor.</span></td></tr><tr><th scope="row"><span class="hu">Személyes adatok a promptban</span><span class="sr">Lični podaci u promptu</span></th><td><span class="hu">Anonimizálj: ne legyen benne név, osztályzat vagy egészségügyi adat.</span><span class="sr">Anonimizuj: bez imena, ocena ili zdravstvenih podataka.</span></td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <nav class="pager" data-aria-hu="Lapozás az oldalak között" data-aria-sr="Prelistavanje među stranicama" aria-label="Lapozás az oldalak között">
+        <a href="modellek.html">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.5 6 8.5 12l6 6"/></svg>
+          <span><small><span class="hu">Előző</span><span class="sr">Prethodno</span></small><strong><span class="hu">Modellek</span><span class="sr">Modeli</span></strong></span>
+        </a>
+        <a class="next" href="tanitasban.html">
+          <span><small><span class="hu">Következő</span><span class="sr">Sledeće</span></small><strong><span class="hu">Tanításban</span><span class="sr">U nastavi</span></strong></span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 6l6 6-6 6"/></svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span><span class="hu">Techscience · AI tanároknak</span><span class="sr">Techscience · AI za nastavnike</span></span>
+    <span><span class="hu">Készítette: Marković Igor</span><span class="sr">Izradio: Igor Marković</span></span>
+  </div>
+</footer>
+
+<p class="sr-only" id="copyStatus" role="status" aria-live="polite"></p>
+
+<script>
+(function () {
+  'use strict';
+
+  var K_THEME = 'techscience-theme', K_LANG = 'techscience-lang';
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  var theme = lsGet(K_THEME) === 'light' ? 'light' : 'dark';
+  var lang = lsGet(K_LANG) === 'sr' ? 'sr' : 'hu';
+
+  var T = {
+    hu: {
+      title: 'Prompt írás — Techscience · AI tanároknak',
+      desc: 'Hogyan írj jó promptot tanárként: hat alapelv, rossz és jó példák, másolható sablon, tantárgycsoportonkénti útmutató, valamint interaktív feladatok, animációk és szimulációk kérése a chatbottól.',
+      toLight: 'Váltás világos témára', toDark: 'Váltás sötét témára',
+      copied: 'A prompt a vágólapra másolva.', failed: 'A másolás nem sikerült, jelöld ki a szöveget kézzel.'
+    },
+    sr: {
+      title: 'Pisanje promptova — Techscience · AI za nastavnike',
+      desc: 'Kako da napišeš dobar prompt kao nastavnik: šest principa, loši i dobri primeri, šablon za kopiranje, vodič po grupama predmeta i traženje interaktivnih zadataka, animacija i simulacija od četbota.',
+      toLight: 'Prebaci na svetlu temu', toDark: 'Prebaci na tamnu temu',
+      copied: 'Prompt je kopiran u klipbord.', failed: 'Kopiranje nije uspelo, označi tekst ručno.'
+    }
+  };
+
+  function $(id) { return document.getElementById(id); }
+  function svg(inner) {
+    return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + '</svg>';
+  }
+  var SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';
+  var MOON = '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>';
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', theme);
+    var b = $('themeBtn');
+    b.innerHTML = svg(theme === 'dark' ? SUN : MOON);
+    b.setAttribute('aria-label', theme === 'dark' ? T[lang].toLight : T[lang].toDark);
+    redrawDemos();
+  }
+
+  function applyLang() {
+    document.documentElement.setAttribute('lang', lang === 'sr' ? 'sr-Latn' : 'hu');
+    document.title = T[lang].title;
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute('content', T[lang].desc);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-aria-hu]'), function (n) {
+      n.setAttribute('aria-label', n.getAttribute(lang === 'sr' ? 'data-aria-sr' : 'data-aria-hu'));
+    });
+    $('langHu').className = lang === 'hu' ? 'on' : 'off';
+    $('langSr').className = lang === 'sr' ? 'on' : 'off';
+    refreshDemos();
+    applyTheme();
+  }
+
+  $('themeBtn').addEventListener('click', function () {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    lsSet(K_THEME, theme);
+    applyTheme();
+  });
+  $('langBtn').addEventListener('click', function () {
+    lang = lang === 'hu' ? 'sr' : 'hu';
+    lsSet(K_LANG, lang);
+    applyLang();
+  });
+
+  /* ---------- Rossz / jó nézetváltó ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-cmp]'), function (cmp) {
+    var grid = cmp.querySelector('.cmp-grid');
+    var buttons = cmp.querySelectorAll('.seg button');
+    Array.prototype.forEach.call(buttons, function (btn) {
+      btn.addEventListener('click', function () {
+        grid.setAttribute('data-view', btn.getAttribute('data-v'));
+        Array.prototype.forEach.call(buttons, function (b) {
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
+      });
+    });
+  });
+
+  /* ---------- Másolás (vágólap, régi böngészőkre tartalékkal) ---------- */
+  function fallbackCopy(text) {
+    return new Promise(function (resolve, reject) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) resolve(); else reject(new Error('copy failed'));
+      } catch (e) { reject(e); }
+    });
+  }
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).catch(function () { return fallbackCopy(text); });
+    }
+    return fallbackCopy(text);
+  }
+  var copyTimer = null;
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.copy') : null;
+    if (!btn) return;
+    var box = btn.closest('.pbox');
+    var el = box && box.querySelector('.ptext.' + (lang === 'sr' ? 'sr' : 'hu'));
+    if (!el) return;
+    copyText(el.textContent.trim()).then(function () {
+      btn.classList.add('done');
+      $('copyStatus').textContent = T[lang].copied;
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(function () {
+        btn.classList.remove('done');
+        $('copyStatus').textContent = '';
+      }, 2200);
+    }, function () {
+      $('copyStatus').textContent = T[lang].failed;
+    });
+  });
+
+
+  /* ---------- Élő példák: szimuláció és animáció ---------- */
+  var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function nf(x, d) {
+    return x.toLocaleString(lang === 'sr' ? 'sr-Latn' : 'hu-HU', { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+
+  var proj = (function () {
+    var cv = $('projCanvas');
+    if (!cv || !cv.getContext) return null;
+    var ctx = cv.getContext('2d');
+    if (!ctx) return null;
+    var elV = $('pv'), elA = $('pa'), elG = $('pg');
+    var st = { fired: null, ghost: null, animT: 0, animating: false, k: 1 };
+    var raf = 0, t0 = 0, W = 320, Hh = 240, dpr = 1;
+    var DEG = Math.PI / 180;
+
+    function params() { return { v: +elV.value, a: +elA.value * DEG, g: +elG.value }; }
+    function calc(p) {
+      var vs = p.v * Math.sin(p.a), vc = p.v * Math.cos(p.a), T = 2 * vs / p.g;
+      return { T: T, R: vc * T, H: vs * vs / (2 * p.g) };
+    }
+    function pt(p, t) { return [p.v * Math.cos(p.a) * t, p.v * Math.sin(p.a) * t - 0.5 * p.g * t * t]; }
+    function niceStep(range) {
+      var raw = range / 6, pw = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), f = raw / pw;
+      return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * pw;
+    }
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(cv.parentNode.clientWidth, 260);
+      Hh = Math.round(Math.max(240, Math.min(W * 0.58, 380)));
+      cv.style.height = Hh + 'px';
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(Hh * dpr);
+    }
+    function draw() {
+      var cs = getComputedStyle(document.documentElement);
+      var cAcc = cs.getPropertyValue('--accent-text').trim() || '#b8834f';
+      var cSoft = cs.getPropertyValue('--text-soft').trim() || '#8b96a6';
+      var cBrd = cs.getPropertyValue('--border').trim() || 'rgba(128,128,128,.2)';
+      var cStr = cs.getPropertyValue('--text-strong').trim() || '#fff';
+      var cSur = cs.getPropertyValue('--surface').trim() || '#000';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, Hh);
+
+      var cur = params(), cc = calc(cur);
+      var items = [cc];
+      if (st.fired) items.push(calc(st.fired));
+      if (st.ghost) items.push(calc(st.ghost));
+      var Xm = 0, Ym = 0;
+      items.forEach(function (c) { Xm = Math.max(Xm, c.R); Ym = Math.max(Ym, c.H); });
+      Xm *= 1.06;
+      Ym = Math.max(Ym * 1.3, Xm * 0.1);
+      var ml = 42, mr = 16, mt = 16, mb = 30;
+      var sc = Math.min((W - ml - mr) / Xm, (Hh - mt - mb) / Ym);
+      var x0 = ml, y0 = Hh - mb;
+      function X(x) { return x0 + x * sc; }
+      function Y(y) { return y0 - y * sc; }
+
+      ctx.font = '12px "IBM Plex Sans", system-ui, sans-serif';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = cSoft;
+      ctx.strokeStyle = cBrd;
+      ctx.textAlign = 'center';
+      var sx = niceStep(Xm), i, v, dec = sx < 1 ? 1 : 0;
+      for (i = 0; i * sx <= Xm + 1e-9; i++) {
+        v = i * sx;
+        ctx.beginPath(); ctx.moveTo(X(v), mt); ctx.lineTo(X(v), y0); ctx.stroke();
+        ctx.fillText(nf(v, dec), X(v), y0 + 16);
+      }
+      ctx.textAlign = 'right';
+      var visY = (Hh - mt - mb) / sc, sy = niceStep(visY);
+      dec = sy < 1 ? 1 : 0;
+      for (i = 0; i * sy <= visY + 1e-9; i++) {
+        v = i * sy;
+        ctx.beginPath(); ctx.moveTo(x0, Y(v)); ctx.lineTo(W - mr, Y(v)); ctx.stroke();
+        ctx.fillText(nf(v, dec), x0 - 6, Y(v) + 4);
+      }
+      ctx.textAlign = 'left';
+      ctx.fillText('m', W - mr - 12, y0 + 16);
+      ctx.strokeStyle = cSoft; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x0, mt); ctx.lineTo(x0, y0); ctx.lineTo(W - mr, y0); ctx.stroke();
+
+      function trace(p, tEnd) {
+        var n = 90, k, q, t;
+        ctx.beginPath();
+        for (k = 0; k <= n; k++) {
+          t = tEnd * k / n; q = pt(p, t);
+          if (k === 0) ctx.moveTo(X(q[0]), Y(Math.max(0, q[1]))); else ctx.lineTo(X(q[0]), Y(Math.max(0, q[1])));
+        }
+        ctx.stroke();
+      }
+      if (st.ghost) { ctx.setLineDash([6, 5]); ctx.strokeStyle = cSoft; ctx.lineWidth = 1.6; trace(st.ghost, calc(st.ghost).T); }
+      ctx.setLineDash([2, 5]); ctx.strokeStyle = cAcc; ctx.lineWidth = 2; ctx.globalAlpha = 0.85; trace(cur, cc.T);
+      ctx.globalAlpha = 1; ctx.setLineDash([]);
+
+      ctx.fillStyle = cStr; ctx.strokeStyle = cStr; ctx.lineWidth = 1.5; ctx.textAlign = 'center';
+      var ap = pt(cur, cc.T / 2);
+      ctx.beginPath(); ctx.arc(X(ap[0]), Y(ap[1]), 4, 0, 6.2832); ctx.stroke();
+      ctx.fillText(nf(cc.H, 1) + ' m', Math.min(Math.max(X(ap[0]), ml + 24), W - mr - 24), Y(ap[1]) - 10);
+      ctx.beginPath(); ctx.moveTo(X(cc.R) - 4, y0 - 4); ctx.lineTo(X(cc.R) + 4, y0 + 4); ctx.moveTo(X(cc.R) + 4, y0 - 4); ctx.lineTo(X(cc.R) - 4, y0 + 4); ctx.stroke();
+      ctx.fillText(nf(cc.R, 1) + ' m', Math.min(Math.max(X(cc.R), ml + 24), W - mr - 24), y0 - 10);
+
+      if (st.fired) {
+        ctx.strokeStyle = cAcc; ctx.lineWidth = 3;
+        trace(st.fired, st.animT);
+        var q = pt(st.fired, st.animT);
+        ctx.fillStyle = cAcc; ctx.strokeStyle = cSur; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(X(q[0]), Y(Math.max(0, q[1])), 7, 0, 6.2832); ctx.fill(); ctx.stroke();
+      }
+    }
+    function updateText() {
+      var p = params(), c = calc(p);
+      $('pvOut').textContent = nf(p.v, 0) + ' m/s';
+      $('paOut').textContent = nf(+elA.value, 0) + '°';
+      $('rR').textContent = nf(c.R, 1) + ' m';
+      $('rH').textContent = nf(c.H, 1) + ' m';
+      $('rT').textContent = nf(c.T, 2) + ' s';
+      cv.setAttribute('aria-label', lang === 'sr'
+        ? 'Kosi hitac: domet ' + nf(c.R, 1) + ' m, najveća visina ' + nf(c.H, 1) + ' m, vreme leta ' + nf(c.T, 2) + ' s.'
+        : 'Ferde hajítás: hatótávolság ' + nf(c.R, 1) + ' m, legnagyobb magasság ' + nf(c.H, 1) + ' m, repülési idő ' + nf(c.T, 2) + ' s.');
+      var k = st.fired && st.k > 1.05 ? st.k : 0;
+      $('projK').textContent = k ? (lang === 'sr' ? 'Animacija je ubrzana ' + nf(k, 1) + ' puta.' : 'Az animáció ' + nf(k, 1) + '-szoros gyorsítással fut.') : '';
+    }
+    function setOptions() {
+      Array.prototype.forEach.call(elG.options, function (o) {
+        o.textContent = o.getAttribute(lang === 'sr' ? 'data-sr' : 'data-hu');
+      });
+    }
+    function tick(ts) {
+      if (!t0) t0 = ts;
+      var el = (ts - t0) / 1000 * st.k, T = calc(st.fired).T;
+      if (el >= T) { st.animT = T; st.animating = false; draw(); return; }
+      st.animT = el; draw();
+      raf = window.requestAnimationFrame(tick);
+    }
+    function fire() {
+      var p = params(), T = calc(p).T;
+      st.ghost = st.fired; st.fired = p; st.k = Math.max(1, T / 7);
+      if (raf) { window.cancelAnimationFrame(raf); raf = 0; }
+      if (REDUCED) { st.animT = T; st.animating = false; }
+      else { t0 = 0; st.animT = 0; st.animating = true; raf = window.requestAnimationFrame(tick); }
+      updateText(); draw();
+    }
+    function clearAll() {
+      if (raf) { window.cancelAnimationFrame(raf); raf = 0; }
+      st.fired = null; st.ghost = null; st.animating = false; st.animT = 0; st.k = 1;
+      updateText(); draw();
+    }
+    function onInput() { updateText(); draw(); }
+    elV.addEventListener('input', onInput);
+    elA.addEventListener('input', onInput);
+    elG.addEventListener('change', onInput);
+    $('pFire').addEventListener('click', fire);
+    $('pClear').addEventListener('click', clearAll);
+    if (window.ResizeObserver) new ResizeObserver(function () { size(); draw(); }).observe(cv.parentNode);
+    window.addEventListener('resize', function () { size(); draw(); });
+    size();
+    return {
+      draw: draw,
+      refresh: function () { setOptions(); updateText(); draw(); }
+    };
+  })();
+
+  var sorter = (function () {
+    var barsEl = $('bars');
+    if (!barsEl) return null;
+    var N = 12, ops = [], work = [], isDone = [], k = 0, cmpN = 0, swpN = 0, active = null, timer = null, finished = false;
+    var btnPlay = $('sPlay'), speedEl = $('sSpeed');
+
+    function rnd() {
+      var a = [], v;
+      while (a.length < N) { v = 8 + Math.floor(Math.random() * 92); if (a.indexOf(v) < 0) a.push(v); }
+      return a;
+    }
+    function build(a) {
+      var w = a.slice(), o = [], n = w.length, i, j, m, x, swapped;
+      for (i = 0; i < n - 1; i++) {
+        swapped = false;
+        for (j = 0; j < n - 1 - i; j++) {
+          o.push({ t: 'c', j: j });
+          if (w[j] > w[j + 1]) { x = w[j]; w[j] = w[j + 1]; w[j + 1] = x; o.push({ t: 's', j: j }); swapped = true; }
+        }
+        o.push({ t: 'd', i: n - 1 - i });
+        if (!swapped) { for (m = 0; m < n - 1 - i; m++) o.push({ t: 'd', i: m }); return o; }
+      }
+      o.push({ t: 'd', i: 0 });
+      return o;
+    }
+    function opText(op) {
+      var a = op.j + 1, b = op.j + 2;
+      if (op.t === 'c') return lang === 'sr' ? 'Poređenje: ' + a + '. i ' + b + '. stub.' : 'Összehasonlítás: ' + a + '. és ' + b + '. oszlop.';
+      if (op.t === 's') return lang === 'sr' ? 'Zamena: ' + a + '. i ' + b + '. stub.' : 'Csere: ' + a + '. és ' + b + '. oszlop.';
+      return '';
+    }
+    function doneText() {
+      return lang === 'sr'
+        ? 'Gotovo: niz je sortiran. Poređenja: ' + cmpN + ', zamene: ' + swpN + '.'
+        : 'Kész: a sorozat rendezett. Összehasonlítások: ' + cmpN + ', cserék: ' + swpN + '.';
+    }
+    function render() {
+      barsEl.textContent = '';
+      work.forEach(function (v, i) {
+        var b = document.createElement('div'), cls = 'bar';
+        if (isDone[i]) cls += ' done';
+        if (active && (i === active.j || i === active.j + 1)) cls += active.t === 's' ? ' swp' : ' cmp';
+        b.className = cls;
+        b.style.height = v + '%';
+        var s = document.createElement('span');
+        s.textContent = v;
+        b.appendChild(s);
+        barsEl.appendChild(b);
+      });
+      $('cC').textContent = cmpN;
+      $('cS').textContent = swpN;
+    }
+    function setMsg(text, live) {
+      $('sortMsg').textContent = text;
+      if (live) $('sortLive').textContent = text;
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+      btnPlay.classList.remove('playing');
+    }
+    function reset() {
+      stop();
+      work = rnd(); ops = build(work); isDone = work.map(function () { return false; });
+      k = 0; cmpN = 0; swpN = 0; active = null; finished = false;
+      render();
+      setMsg((lang === 'sr' ? 'Novi niz: ' : 'Új sorozat: ') + work.join(', ') + '.', true);
+    }
+    function step(manual) {
+      if (finished) { setMsg(doneText(), true); stop(); return; }
+      var op = ops[k], x;
+      if (op.t === 'c') { cmpN++; active = { t: 'c', j: op.j }; }
+      else if (op.t === 's') { x = work[op.j]; work[op.j] = work[op.j + 1]; work[op.j + 1] = x; swpN++; active = { t: 's', j: op.j }; }
+      else { isDone[op.i] = true; active = null; }
+      k++;
+      if (k >= ops.length) {
+        finished = true; active = null; stop(); render(); setMsg(doneText(), true);
+        return;
+      }
+      render();
+      var txt = opText(op);
+      if (txt) setMsg(txt, manual);
+    }
+    function delay() { return 1100 - (+speedEl.value) * 100; }
+    function play() {
+      if (finished) reset();
+      stop();
+      btnPlay.classList.add('playing');
+      timer = setInterval(function () { step(false); }, delay());
+    }
+    $('sNew').addEventListener('click', reset);
+    $('sStep').addEventListener('click', function () { stop(); step(true); });
+    btnPlay.addEventListener('click', function () { if (timer) stop(); else play(); });
+    speedEl.addEventListener('input', function () { if (timer) play(); });
+    reset();
+    return {
+      refresh: function () {
+        render();
+        setMsg(finished ? doneText() : (lang === 'sr' ? 'Novi niz: ' : 'Új sorozat: ') + work.join(', ') + '.', false);
+      }
+    };
+  })();
+
+  function refreshDemos() { if (proj) proj.refresh(); if (sorter) sorter.refresh(); }
+  function redrawDemos() { if (proj) proj.draw(); }
+
+  /* ---------- Tartalomjegyzék: az aktuális szakasz kiemelése ---------- */
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var targets = tocLinks.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  var ticking = false;
+  function updateToc() {
+    ticking = false;
+    var idx = -1;
+    for (var i = 0; i < targets.length; i++) {
+      if (targets[i] && targets[i].getBoundingClientRect().top <= 140) idx = i;
+    }
+    tocLinks.forEach(function (a, i) {
+      if (i === idx) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+      var li = a.parentNode;
+      if (li && li.tagName === 'LI') {
+        var active = li.querySelector('.toc-sub a[aria-current="true"]');
+        li.classList.toggle('has-active', !!active);
+      }
+    });
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateToc); }
+  }, { passive: true });
+  window.addEventListener('resize', updateToc);
+
+  applyLang();
+  updateToc();
+})();
+</script>
+</body>
+</html>
