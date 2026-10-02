@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iskolai büfé – Gyakorlás 2 megoldás</title>
+<style>
+:root{--g9:#0e2748;--g7:#1a4f94;--bg:#e4eaf4;--line:#d0d9e8;--ink:#1b2433;--mut:#566377}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body[data-lang="hu"] .sr, body[data-lang="sr"] .hu{display:none !important}
+header{background:var(--g9);color:#fff;padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:1.25rem}
+.langs button{border:1px solid #fff5;background:transparent;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit}
+.langs button[aria-pressed="true"]{background:#fff;color:var(--g9)}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+a.back{display:inline-block;margin-bottom:16px;color:var(--g7);font-weight:600;text-decoration:none}
+figure{margin:0 0 24px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}
+figure img{display:block;width:100%;height:auto;border-radius:6px}
+figcaption{margin-top:8px;color:var(--mut);font-size:.95rem}
+</style>
+</head>
+<body data-lang="hu">
+<header>
+  <h1><span class="hu">Iskolai büfé – Gyakorlás 2 megoldás</span><span class="sr">Školski bife – rešenje vežbe 2</span></h1>
+  <div class="langs" role="group" aria-label="Nyelv / Jezik">
+    <button type="button" id="btn-hu" aria-pressed="true">Magyar</button>
+    <button type="button" id="btn-sr" aria-pressed="false">Srpski</button>
+  </div>
+</header>
+<main>
+  <a class="back" href="excel_hibrid_gyakorlas2.html">← <span class="hu">Vissza a Gyakorlás 2 feladathoz</span><span class="sr">Nazad na vežbu 2</span></a>
+  <figure>
+    <img src="Gyakorlas_2_megoldas1.png" alt="Megoldás 1">
+    <figcaption><span class="hu">Megoldás – 1. rész</span><span class="sr">Rešenje – 1. deo</span></figcaption>
+  </figure>
+  <figure>
+    <img src="Gyakorlas_2_megoldas2.png" alt="Megoldás 2">
+    <figcaption><span class="hu">Megoldás – 2. rész</span><span class="sr">Rešenje – 2. deo</span></figcaption>
+  </figure>
+</main>
+<script>
+(function(){
+  var LANGKEY='iskolai-bufe-lang', body=document.body;
+  function get(){try{return localStorage.getItem(LANGKEY);}catch(e){return null;}}
+  function set(v){try{localStorage.setItem(LANGKEY,v);}catch(e){}}
+  function setLang(l){
+    body.setAttribute('data-lang',l);
+    document.documentElement.lang=(l==='hu')?'hu':'sr';
+    document.title=l==='hu'?'Iskolai büfé – Gyakorlás 2 megoldás':'Školski bife – rešenje vežbe 2';
+    document.getElementById('btn-hu').setAttribute('aria-pressed',l==='hu');
+    document.getElementById('btn-sr').setAttribute('aria-pressed',l==='sr');
+    set(l);
+  }
+  document.getElementById('btn-hu').onclick=function(){setLang('hu');};
+  document.getElementById('btn-sr').onclick=function(){setLang('sr');};
+  setLang(get()==='sr'?'sr':'hu');
+})();
+</script>
+</body>
+</html>
