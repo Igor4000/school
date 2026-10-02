@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+<title>DB Browser for SQLite — Táblák és kapcsolatok / Tabele i veze</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#0b1120;
+  --bg-soft:#0f172a;
+  --panel:#121a2e;
+  --panel-2:#0d1526;
+  --border:#22314d;
+  --border-soft:#1a2540;
+  --text:#e2e8f0;
+  --text-dim:#8b9bb8;
+  --text-faint:#5b6a87;
+  --blue:#38bdf8;
+  --blue-dim:#0c4a6e;
+  --green:#4ade80;
+  --amber:#fbbf24;
+  --purple:#a78bfa;
+  --red:#f87171;
+  --teal:#2dd4bf;
+  --gray:#94a3b8;
+  --code-bg:#0c1526;
+  --pink:#f472b6;
+  --orange:#fb923c;
+}
+
+body[data-theme="light"]{
+  --bg:#f1f5f9;
+  --bg-soft:#ffffff;
+  --panel:#ffffff;
+  --panel-2:#f8fafc;
+  --border:#e2e8f0;
+  --border-soft:#eef2f7;
+  --text:#0f172a;
+  --text-dim:#475569;
+  --text-faint:#94a3b8;
+  --blue:#0284c7;
+  --blue-dim:#e0f2fe;
+  --green:#16a34a;
+  --amber:#b45309;
+  --purple:#7c3aed;
+  --red:#dc2626;
+  --teal:#0d9488;
+  --gray:#64748b;
+  --code-bg:#eaf4fc;
+  --pink:#db2777;
+  --orange:#c2410c;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background:
+    radial-gradient(circle at 15% 0%, rgba(56,189,248,0.06), transparent 40%),
+    radial-gradient(circle at 85% 15%, rgba(167,139,250,0.05), transparent 40%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter', system-ui, sans-serif;
+  line-height:1.65;
+  min-height:100vh;
+}
+
+code, .mono{ font-family:'JetBrains Mono', monospace; }
+
+.lang-hu-section,.lang-sr-section{display:none;}
+body[data-lang="hu"] .lang-hu-section{display:block;}
+body[data-lang="sr"] .lang-sr-section{display:block;}
+
+/* ---- Window chrome / title bar ---- */
+.app-window{
+  max-width:1180px;
+  margin:1.5rem auto;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:0 30px 80px -20px rgba(0,0,0,0.6);
+}
+
+.title-bar{
+  background:linear-gradient(180deg, var(--panel), var(--panel-2));
+  padding:0.7rem 1.1rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+
+.traffic-lights{display:flex; gap:7px;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.red{background:#ff5f56;}
+.dot.yellow{background:#ffbd2e;}
+.dot.green{background:#27c93f;}
+
+.title-text{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.82rem;
+  color:var(--text-dim);
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+
+.lang-toggle{display:flex; gap:4px; background:var(--panel-2); padding:3px; border-radius:8px; border:1px solid var(--border);}
+
+.theme-btn{
+  width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--panel-2);
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.theme-btn:hover{ border-color:var(--blue); color:var(--text); }
+
+.title-right{ display:flex; align-items:center; gap:10px; }
+.lang-btn{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  padding:5px 12px;
+  border-radius:6px;
+  border:none;
+  background:transparent;
+  color:var(--text-dim);
+  cursor:pointer;
+  font-weight:600;
+}
+.lang-btn.on{background:var(--blue); color:#08131f;}
+
+/* ---- fake app tab strip ---- */
+.app-tabs{
+  display:flex;
+  background:var(--panel-2);
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.app-tab{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.8rem;
+  padding:0.65rem 1.1rem;
+  color:var(--text-faint);
+  border-right:1px solid var(--border-soft);
+  white-space:nowrap;
+}
+.app-tab.live{color:var(--blue); background:var(--panel); border-bottom:2px solid var(--blue); font-weight:600;}
+.app-tab.disabled{ text-decoration:line-through; opacity:0.45; }
+
+.app-body{ background:var(--bg-soft); padding:1.75rem 1.75rem 3rem; }
+
+/* ---- header block ---- */
+.page-head h1{
+  font-size:1.55rem;
+  font-weight:700;
+  letter-spacing:-0.01em;
+}
+.page-head p{ color:var(--text-dim); margin-top:0.3rem; font-size:0.95rem;}
+
+/* ---- note / comment block ---- */
+.note-block{
+  margin:1.6rem 0;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--blue);
+  border-radius:10px;
+  padding:1rem 1.25rem;
+  font-size:0.92rem;
+  color:var(--text-dim);
+}
+.note-block .comment-mark{ color:var(--green); font-family:'JetBrains Mono',monospace; font-weight:700; margin-right:0.4rem;}
+.note-block strong{ color:var(--text); }
+.note-block code{ background:var(--code-bg); color:var(--blue); padding:1px 6px; border-radius:4px; font-size:0.85em;}
+
+/* ---- file tabs (project switcher) ---- */
+.file-tabs{
+  display:flex;
+  gap:0.5rem;
+  margin:1.8rem 0 1.5rem;
+  flex-wrap:wrap;
+}
+.file-tab{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.85rem;
+  padding:0.55rem 1rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.file-tab:hover{ border-color:var(--blue); color:var(--text); }
+.file-tab.active{ background:var(--blue-dim); border-color:var(--blue); color:var(--blue); }
+
+.db-project{ display:none; }
+.db-project.active{ display:block; animation:fadeIn .25s ease; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.project-title{
+  display:flex; align-items:center; gap:0.6rem;
+  font-family:'JetBrains Mono', monospace;
+  font-size:1.05rem;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:0.3rem;
+}
+.project-title .ext{ color:var(--text-faint); font-weight:400; }
+.project-desc{ color:var(--text-dim); font-size:0.92rem; margin-bottom:1.6rem; }
+
+/* ---- schema preview cards (ER-style) ---- */
+.schema-wrap{
+  display:flex; flex-wrap:wrap; gap:1rem;
+  margin-bottom:2.2rem;
+}
+.schema-table{
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  min-width:250px;
+  flex:1 1 250px;
+}
+.schema-header{
+  background:linear-gradient(135deg, var(--panel-2), var(--panel));
+  border-bottom:1px solid var(--border);
+  padding:0.55rem 0.9rem;
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size:0.88rem;
+  color:var(--blue);
+  display:flex; align-items:center; gap:0.4rem;
+}
+.schema-row{
+  display:grid;
+  grid-template-columns: 1.1fr 0.8fr auto;
+  gap:0.5rem;
+  align-items:center;
+  padding:0.4rem 0.9rem;
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  border-bottom:1px solid var(--border-soft);
+}
+.schema-row:last-child{ border-bottom:none; }
+.col-name{ color:var(--text); }
+.col-type{ color:var(--text-faint); }
+.flags{ display:flex; gap:3px; justify-content:flex-end; }
+.flag{
+  font-size:0.62rem;
+  font-weight:700;
+  padding:1px 5px;
+  border-radius:4px;
+  letter-spacing:0.02em;
+}
+.flag.pk{ background:rgba(251,191,36,0.15); color:var(--amber); border:1px solid rgba(251,191,36,0.4); }
+.flag.ai{ background:rgba(148,163,184,0.15); color:var(--gray); border:1px solid rgba(148,163,184,0.35); }
+.flag.nn{ background:rgba(56,189,248,0.15); color:var(--blue); border:1px solid rgba(56,189,248,0.35); }
+.flag.uq{ background:rgba(167,139,250,0.15); color:var(--purple); border:1px solid rgba(167,139,250,0.4); }
+.flag.def{ background:rgba(74,222,128,0.15); color:var(--green); border:1px solid rgba(74,222,128,0.35); }
+
+/* ---- steps ---- */
+.steps{ counter-reset: step; }
+.step-card{
+  display:flex;
+  gap:1rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:4px solid var(--gray);
+  border-radius:10px;
+  padding:0.95rem 1.1rem;
+  margin-bottom:0.7rem;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.step-card:hover{ transform:translateX(3px); box-shadow:0 8px 20px -10px rgba(0,0,0,0.5); }
+
+.step-card.cat-create{ border-left-color:var(--green); }
+.step-card.cat-alter{ border-left-color:var(--amber); }
+.step-card.cat-insert{ border-left-color:var(--blue); }
+.step-card.cat-update{ border-left-color:var(--purple); }
+.step-card.cat-delete{ border-left-color:var(--red); }
+.step-card.cat-save{ border-left-color:var(--teal); }
+.step-card.cat-view{ border-left-color:var(--gray); }
+
+.step-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  font-weight:700;
+  color:var(--text-faint);
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+
+.step-body{ flex:1; }
+.step-head{ display:flex; align-items:center; gap:0.6rem; margin-bottom:0.35rem; flex-wrap:wrap; }
+.badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.66rem;
+  font-weight:700;
+  letter-spacing:0.03em;
+  padding:2px 8px;
+  border-radius:5px;
+}
+.badge.cat-create{ background:rgba(74,222,128,0.12); color:var(--green); border:1px solid rgba(74,222,128,0.35); }
+.badge.cat-alter{ background:rgba(251,191,36,0.12); color:var(--amber); border:1px solid rgba(251,191,36,0.35); }
+.badge.cat-insert{ background:rgba(56,189,248,0.12); color:var(--blue); border:1px solid rgba(56,189,248,0.35); }
+.badge.cat-update{ background:rgba(167,139,250,0.12); color:var(--purple); border:1px solid rgba(167,139,250,0.35); }
+.badge.cat-delete{ background:rgba(248,113,113,0.12); color:var(--red); border:1px solid rgba(248,113,113,0.35); }
+.badge.cat-save{ background:rgba(45,212,191,0.12); color:var(--teal); border:1px solid rgba(45,212,191,0.35); }
+.badge.cat-view{ background:rgba(148,163,184,0.12); color:var(--gray); border:1px solid rgba(148,163,184,0.35); }
+
+.step-target{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; color:var(--text-faint); }
+.step-text{ font-size:0.93rem; color:var(--text); }
+.step-text code{ background:var(--code-bg); color:var(--blue); padding:1px 6px; border-radius:4px; font-size:0.86em; }
+
+footer{
+  text-align:center;
+  padding:1.6rem;
+  color:var(--text-faint);
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+}
+
+@media (max-width:640px){
+  .app-body{ padding:1.2rem; }
+  .schema-row{ grid-template-columns: 1fr auto; }
+  .schema-row .col-type{ display:none; }
+}
+
+/* ===== additions for gyakorlas_2 ===== */
+.step-card.cat-link{ border-left-color:var(--pink); }
+.step-card.cat-test{ border-left-color:var(--orange); }
+.badge.cat-link{ background:rgba(244,114,182,0.12); color:var(--pink); border:1px solid rgba(244,114,182,0.35); }
+.badge.cat-test{ background:rgba(251,146,60,0.12); color:var(--orange); border:1px solid rgba(251,146,60,0.35); }
+.flag.fk{ background:rgba(244,114,182,0.15); color:var(--pink); border:1px solid rgba(244,114,182,0.4); }
+
+.legend{ font-size:0.82rem; color:var(--text-faint); margin:-0.6rem 0 1.4rem; }
+.legend code{ font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--text-dim); }
+
+.concept-block{
+  margin:0 0 1.6rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--pink);
+  border-radius:10px;
+  padding:1rem 1.25rem;
+  font-size:0.92rem;
+  color:var(--text-dim);
+}
+.concept-block strong{ color:var(--text); }
+.concept-block code{ background:var(--code-bg); color:var(--pink); padding:1px 6px; border-radius:4px; font-size:0.85em; font-family:'JetBrains Mono',monospace; }
+
+.relations{ display:flex; flex-direction:column; gap:0.45rem; margin:-1rem 0 2rem; }
+.relation{
+  display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace; font-size:0.8rem;
+  background:var(--panel-2); border:1px solid var(--border); border-radius:8px;
+  padding:0.5rem 0.9rem; color:var(--text);
+}
+.relation .rel-line{ color:var(--pink); font-weight:700; letter-spacing:0.02em; }
+.relation.pending{ border-style:dashed; color:var(--text-faint); }
+.relation.pending .rel-line{ color:var(--text-faint); }
+
+.data-wrap{ display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; align-items:flex-start; }
+.data-block{ flex:1 1 300px; min-width:0; }
+.data-title{ font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--text-dim); margin-bottom:0.4rem; }
+.data-scroll{ overflow-x:auto; border:1px solid var(--border); border-radius:10px; background:var(--panel-2); }
+table.data-table{ border-collapse:collapse; width:100%; font-family:'JetBrains Mono',monospace; font-size:0.78rem; }
+table.data-table th{ text-align:left; color:var(--blue); background:var(--panel); padding:0.4rem 0.8rem; border-bottom:1px solid var(--border); white-space:nowrap; }
+table.data-table td{ padding:0.35rem 0.8rem; border-bottom:1px solid var(--border-soft); white-space:nowrap; color:var(--text); }
+table.data-table tr:last-child td{ border-bottom:none; }
+table.data-table td.auto{ color:var(--text-faint); }
+
+.option-block{ margin-bottom:1.6rem; }
+.option-title{ font-weight:700; font-size:0.98rem; margin-bottom:0.6rem; }
+.option-title .tag{ font-family:'JetBrains Mono',monospace; color:var(--pink); margin-right:0.4rem; }
+.option-block .schema-wrap{ margin-bottom:1rem; }
+.option-block .relations{ margin:-0.2rem 0 0; }
+
+.check-block{
+  margin-top:1.8rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--green);
+  border-radius:10px;
+  padding:1rem 1.25rem;
+}
+.check-block h3{ font-size:0.95rem; margin-bottom:0.5rem; }
+.check-block label{ display:flex; gap:0.65rem; align-items:flex-start; padding:0.22rem 0; font-size:0.92rem; cursor:pointer; }
+.check-block input{ margin-top:0.32rem; accent-color:var(--green); }
+.check-block code{ background:var(--code-bg); color:var(--blue); padding:1px 6px; border-radius:4px; font-size:0.85em; font-family:'JetBrains Mono',monospace; }
+.check-block .think{ margin-top:0.7rem; padding-top:0.7rem; border-top:1px dashed var(--border); font-size:0.92rem; color:var(--text-dim); }
+.check-block .think strong{ color:var(--text); }
+
+.project-title{ flex-wrap:wrap; }
+button:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+@media (prefers-reduced-motion:reduce){
+  .db-project.active{ animation:none; }
+  .step-card{ transition:none; }
+}
+</style>
+</head>
+<body data-lang="hu">
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="traffic-lights"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+    <div class="title-text">🗄️ DB Browser for SQLite <span class="lang-hu-section">— gyakorlófeladatok 2</span><span class="lang-sr-section">— praktični zadaci 2</span></div>
+    <div class="title-right">
+      <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()" title="Dark / Light mode">🌙</button>
+      <div class="lang-toggle">
+        <button class="lang-btn" id="btn-hu" onclick="setLang('hu')">HU</button>
+        <button class="lang-btn" id="btn-sr" onclick="setLang('sr')">SR</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-tabs">
+    <div class="app-tab live">Database Structure</div>
+    <div class="app-tab live">Browse Data</div>
+    <div class="app-tab disabled" title="Ebben a gyakorlatban nem használjuk / Ne koristimo u ovoj vežbi">Execute SQL</div>
+    <div class="app-tab live" title="Csak a 2. óra elején / Samo na početku 2. časa">Edit Pragmas</div>
+  </div>
+
+  <div class="app-body">
+    <div class="lang-hu-section" id="hu-content"><div class="page-head"><h1>Táblák létrehozása és összekapcsolása</h1><p>Két óra a DB Browserben: két vezetett projekt és egy önálló feladat — kizárólag a program kezelőfelületén dolgozva.</p></div><div class="note-block"><span class="comment-mark">#</span><strong>Megjegyzés:</strong> az <code>Execute SQL</code> fület ezúttal sem kell megnyitnod. Minden lépés a <code>Database Structure</code> és a <code>Browse Data</code> fülön történik, egyetlen kivétellel: a 2. óra elején az <code>Edit Pragmas</code> fülön ellenőrzünk egy beállítást. Minden projekt végén mentsd el a változtatásokat a <code>Write Changes</code> gombbal — enélkül a módosítások elvesznek.</div><p class="legend">Jelölések a táblákon: <code>PK</code> elsődleges kulcs · <code>AI</code> automatikus számozás · <code>NN</code> kötelező kitölteni · <code>UQ</code> nem ismétlődhet · <code>DEF</code> alapértelmezett érték · <code>FK</code> külső kulcs (kapcsolat egy másik táblához)</p><div class="file-tabs"><button class="file-tab active" onclick="showProject(this,'hu','set1')">📁 iskola.db · 1. óra</button><button class="file-tab" onclick="showProject(this,'hu','set2')">📁 iskola.db · 2. óra</button><button class="file-tab" onclick="showProject(this,'hu','set3')">📁 sajat.db · önálló</button></div><div class="db-project active" id="hu-set1"><div class="project-title">📁 iskola.db <span class="ext">— 1. óra: táblák létrehozása</span></div><p class="project-desc">Két tábla tervezése és létrehozása, majd feltöltése adatokkal. A kapcsolatot a következő órán készítjük el.</p><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Osztalyok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">osztalyfonok</span><span class="col-type">TEXT</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Diakok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">szuletesi_ev</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">osztaly_id</span><span class="col-type">INTEGER</span><span class="flags"></span></div></div></div><div class="relations"><div class="relation pending"><code>Diakok.osztaly_id</code><span class="rel-line">╌ ╌ ╌</span><code>Osztalyok.id</code><span>egyelőre sima szám, a kapcsolatot a 2. órán hozzuk létre</span></div></div><div class="data-wrap"><div class="data-block"><div class="data-title">Minta adatok — Osztalyok (10. lépés)</div><div class="data-scroll"><table class="data-table"><thead><tr><th>id</th><th>nev</th><th>osztalyfonok</th></tr></thead><tbody><tr><td class="auto">1</td><td class="">4.A</td><td class="">Szabó Katalin</td></tr><tr><td class="auto">2</td><td class="">4.B</td><td class="">Horváth Tamás</td></tr><tr><td class="auto">3</td><td class="">3.A</td><td class="">Đurić Milica</td></tr><tr><td class="auto">4</td><td class="">3.B</td><td class="">Kovač Sándor</td></tr></tbody></table></div></div><div class="data-block"><div class="data-title">Minta adatok — Diakok (11. lépés)</div><div class="data-scroll"><table class="data-table"><thead><tr><th>id</th><th>nev</th><th>szuletesi_ev</th><th>osztaly_id</th></tr></thead><tbody><tr><td class="auto">1</td><td class="">Kovács Anna</td><td class="">2008</td><td class="">1</td></tr><tr><td class="auto">2</td><td class="">Nagy Péter</td><td class="">2008</td><td class="">1</td></tr><tr><td class="auto">3</td><td class="">Tóth Zsófia</td><td class="">2007</td><td class="">1</td></tr><tr><td class="auto">4</td><td class="">Horváth Lilla</td><td class="">2008</td><td class="">2</td></tr><tr><td class="auto">5</td><td class="">Petrović Marko</td><td class="">2008</td><td class="">2</td></tr><tr><td class="auto">6</td><td class="">Kiss Bence</td><td class="">2008</td><td class="">2</td></tr><tr><td class="auto">7</td><td class="">Jovanović Ana</td><td class="">2009</td><td class="">3</td></tr><tr><td class="auto">8</td><td class="">Szabó Márk</td><td class="">2009</td><td class="">3</td></tr><tr><td class="auto">9</td><td class="">Nikolić Luka</td><td class="">2009</td><td class="">3</td></tr><tr><td class="auto">10</td><td class="">Varga Réka</td><td class="">2009</td><td class="">3</td></tr></tbody></table></div></div></div><div class="steps"><div class="step-card cat-view"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-view">KÉRDÉS</span><span class="step-target">Füzet</span></div><p class="step-text">Rajzold le egy táblázatban: minden diák neve mellé írd be az osztályfőnöke nevét. Mi történik, ha az osztályfőnök megváltozik? Hány sort kell átírni? Beszéljétek meg, hogyan lehetne ezt egyszerűbben tárolni.</p></div></div><div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">New Database</span></div><p class="step-text">Hozz létre új adatbázist a <code>New Database</code> gombbal, és mentsd el <code>iskola.db</code> néven a saját mappádba. A mappa és a fájl neve ékezet és szóköz nélküli legyen.</p></div></div><div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Készíts egy <code>Osztalyok</code> táblát. Ha a Create Table ablak magától megnyílt, használd azt.</p></div></div><div class="step-card cat-create"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Fields</span></div><p class="step-text">Add hozzá a mezőket: <code>id</code> (INTEGER, PK, AI), <code>nev</code> (TEXT), <code>osztalyfonok</code> (TEXT).</p></div></div><div class="step-card cat-alter"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Not Null</span></div><p class="step-text">Állítsd be, hogy a <code>nev</code> mező <code>Not Null</code> legyen.</p></div></div><div class="step-card cat-save"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el a tábla szerkezetét a <code>Write Changes</code> gombbal.</p></div></div><div class="step-card cat-create"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Készíts egy második táblát <code>Diakok</code> néven: <code>id</code> (INTEGER, PK, AI), <code>nev</code> (TEXT), <code>szuletesi_ev</code> (INTEGER), <code>osztaly_id</code> (INTEGER).</p></div></div><div class="step-card cat-alter"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Not Null</span></div><p class="step-text">A <code>nev</code> mező legyen <code>Not Null</code>. Az <code>osztaly_id</code> egyelőre sima INTEGER mező: a két tábla között még nincs kapcsolat.</p></div></div><div class="step-card cat-save"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el a szerkezetet a <code>Write Changes</code> gombbal.</p></div></div><div class="step-card cat-insert"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Browse Data</span></div><p class="step-text">Az <code>Osztalyok</code> táblába vidd fel a négy osztályt a <strong>Minta adatok</strong> táblázat szerint (<code>Insert new record</code>). Az <code>id</code>-t a program adja.</p></div></div><div class="step-card cat-insert"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Browse Data</span></div><p class="step-text">A <code>Diakok</code> táblába vidd fel a tíz diákot. Az <code>osztaly_id</code> mezőbe az osztály azonosítóját (1–3) írd be.</p></div></div><div class="step-card cat-update"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Írd át egy diák <code>osztaly_id</code> értékét egy másik osztály azonosítójára (dupla kattintás a cellán).</p></div></div><div class="step-card cat-view"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-view">MEGTEKINTÉS</span><span class="step-target">Browse Data</span></div><p class="step-text">Kattints a <code>nev</code> oszlop fejlécére, és rendezd a diákokat névsorba. (Ez nem lekérdezés, csak a nézet rendezése.)</p></div></div><div class="step-card cat-view"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-view">KÉRDÉS</span><span class="step-target">Browse Data</span></div><p class="step-text">Válassz ki egy diákot. Az <code>osztaly_id</code> számából keresd meg az <code>Osztalyok</code> táblában az osztályát és az osztályfőnökét. Így követed kézzel a kapcsolatot.</p></div></div><div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Kattints a <code>Write Changes</code> gombra, hogy véglegesen elmentsd az adatbázist, majd zárd be a programot.</p></div></div></div><div class="check-block"><h3>Kész vagy, ha:</h3><label><input type="checkbox"><span>az <code>iskola.db</code> két táblát tartalmaz (<code>Osztalyok</code>, <code>Diakok</code>),</span></label><label><input type="checkbox"><span>az <code>Osztalyok</code> táblában 4, a <code>Diakok</code> táblában 10 sor van,</span></label><label><input type="checkbox"><span>mindkét tábla <code>nev</code> mezője <code>Not Null</code>,</span></label><label><input type="checkbox"><span>elmentetted a változtatásokat (<code>Write Changes</code>),</span></label><label><input type="checkbox"><span>el tudod mondani, miért nem írjuk minden diák mellé az osztályfőnök nevét.</span></label></div></div><div class="db-project" id="hu-set2"><div class="project-title">📁 iskola.db <span class="ext">— 2. óra: kapcsolat létrehozása és módosítása</span></div><p class="project-desc">A két meglévő tábla összekapcsolása külső kulccsal, a kapcsolat kipróbálása, majd egy harmadik tábla bekötése.</p><div class="concept-block"><strong>Mi a külső kulcs (Foreign Key)?</strong> Olyan mező, amelynek értéke egy másik tábla elsődleges kulcsára mutat. A diák nem az osztály nevét tárolja, hanem az osztály azonosítóját (<code>osztaly_id</code>). Egy osztályba több diák jár, egy diák pedig egy osztályba: ezt hívjuk <strong>1:N kapcsolatnak</strong>. Ha a kapcsolat létre van hozva, az adatbázis nem engedi, hogy olyan osztályra hivatkozz, amely nem létezik.</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Osztalyok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">osztalyfonok_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div><div class="schema-table"><div class="schema-header">📄 Diakok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">szuletesi_ev</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">osztaly_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div><div class="schema-table"><div class="schema-header">📄 Tanarok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">tantargy</span><span class="col-type">TEXT</span><span class="flags"></span></div></div></div><div class="relations"><div class="relation"><code>Osztalyok.id</code><span class="rel-line">1 ─── N</span><code>Diakok.osztaly_id</code></div><div class="relation"><code>Tanarok.id</code><span class="rel-line">1 ─── N</span><code>Osztalyok.osztalyfonok_id</code></div></div><div class="data-wrap"><div class="data-block"><div class="data-title">Minta adatok — Tanarok (10. lépés)</div><div class="data-scroll"><table class="data-table"><thead><tr><th>id</th><th>nev</th><th>tantargy</th></tr></thead><tbody><tr><td class="auto">1</td><td class="">Szabó Katalin</td><td class="">informatika</td></tr><tr><td class="auto">2</td><td class="">Horváth Tamás</td><td class="">matematika</td></tr><tr><td class="auto">3</td><td class="">Đurić Milica</td><td class="">fizika</td></tr><tr><td class="auto">4</td><td class="">Kovač Sándor</td><td class="">történelem</td></tr></tbody></table></div></div></div><div class="steps"><div class="step-card cat-view"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-view">MEGNYITÁS</span><span class="step-target">Open Database</span></div><p class="step-text">Nyisd meg az előző órán elmentett <code>iskola.db</code> fájlt az <code>Open Database</code> gombbal.</p></div></div><div class="step-card cat-alter"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Edit Pragmas</span></div><p class="step-text">Ha a <code>Write Changes</code> aktív, előbb kattints rá. Ezután nyisd meg az <code>Edit Pragmas</code> fület, és nézd meg, hogy a <code>Foreign Keys</code> jelölőnégyzet be van-e kapcsolva. Ha nincs, kapcsold be, és kattints a <code>Save</code> gombra. Enélkül a program nem ellenőrzi a kapcsolatokat.</p></div></div><div class="step-card cat-test"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-test">KÍSÉRLET</span><span class="step-target">Browse Data</span></div><p class="step-text">A <code>Diakok</code> táblában vegyél fel egy új diákot (<code>nev</code>: Teszt Elek), az <code>osztaly_id</code> mezőbe pedig írd be: <code>99</code>. Az adatbázis elfogadja, pedig nincs 99-es osztály.</p></div></div><div class="step-card cat-delete"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">TÖRLÉS</span><span class="step-target">Delete record</span></div><p class="step-text">Töröld ezt a hibás rekordot, majd kattints a <code>Write Changes</code> gombra. A kapcsolat létrehozása előtt nem maradhat érvénytelen adat a táblában.</p></div></div><div class="step-card cat-link"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-link">KAPCSOLAT</span><span class="step-target">Modify Table</span></div><p class="step-text">Jelöld ki a <code>Diakok</code> táblát, és kattints a <code>Modify Table</code> gombra. Az <code>osztaly_id</code> mezőnél a <code>Foreign Key</code> oszlopban válaszd ki az <code>Osztalyok</code> táblát és az <code>id</code> mezőt, majd <code>OK</code>. (A Foreign Key cella programverziótól függően legördülő lista vagy szövegmező, a lényeg a hivatkozott tábla és mező.)</p></div></div><div class="step-card cat-save"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el a módosítást a <code>Write Changes</code> gombbal.</p></div></div><div class="step-card cat-test"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-test">KÍSÉRLET</span><span class="step-target">Browse Data</span></div><p class="step-text">Ismételd meg a 3. lépést: új diák, <code>osztaly_id</code> = <code>99</code>. Most a program hibaüzenetet ad (<code>FOREIGN KEY constraint failed</code>). Ha a sor mégis megmaradt, töröld.</p></div></div><div class="step-card cat-test"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-test">KÍSÉRLET</span><span class="step-target">Browse Data</span></div><p class="step-text">Az <code>Osztalyok</code> táblában próbáld meg törölni azt az osztályt, amelybe már járnak diákok. Az adatbázis nem engedi. Miért?</p></div></div><div class="step-card cat-create"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Készíts egy <code>Tanarok</code> táblát: <code>id</code> (INTEGER, PK, AI), <code>nev</code> (TEXT, Not Null), <code>tantargy</code> (TEXT).</p></div></div><div class="step-card cat-insert"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Browse Data</span></div><p class="step-text">Vidd fel a négy tanárt a <strong>Minta adatok</strong> táblázat szerint.</p></div></div><div class="step-card cat-link"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-link">KAPCSOLAT</span><span class="step-target">Modify Table</span></div><p class="step-text">Az <code>Osztalyok</code> táblában (<code>Modify Table</code>) vegyél fel új mezőt: <code>osztalyfonok_id</code> (INTEGER), és állítsd be külső kulcsnak: <code>Tanarok</code> tábla, <code>id</code> mező.</p></div></div><div class="step-card cat-update"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-update">MÓDOSÍTÁS</span><span class="step-target">Browse Data</span></div><p class="step-text">Töltsd ki az <code>osztalyfonok_id</code> oszlopot: minden osztálynál annak a tanárnak az azonosítóját írd be, akinek a neve a régi <code>osztalyfonok</code> oszlopban áll.</p></div></div><div class="step-card cat-alter"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Modify Table</span></div><p class="step-text">Töröld az <code>Osztalyok</code> táblából a régi <code>osztalyfonok</code> szöveges mezőt (<code>Modify Table</code>, mező kijelölése, <code>Remove field</code>). Az osztályfőnök neve így már csak a <code>Tanarok</code> táblában szerepel.</p></div></div><div class="step-card cat-view"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-view">KÉRDÉS</span><span class="step-target">Browse Data</span></div><p class="step-text">Válassz egy diákot, és kövesd végig kézzel a láncot: <code>Diakok</code> → <code>osztaly_id</code> → <code>Osztalyok</code> → <code>osztalyfonok_id</code> → <code>Tanarok</code>. Ki az osztályfőnöke, és mit tanít?</p></div></div><div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Kattints a <code>Write Changes</code> gombra, hogy véglegesen elmentsd az adatbázist, majd zárd be a programot.</p></div></div></div><div class="check-block"><h3>Kész vagy, ha:</h3><label><input type="checkbox"><span>a <code>Diakok.osztaly_id</code> és az <code>Osztalyok.osztalyfonok_id</code> mező is külső kulcs,</span></label><label><input type="checkbox"><span>a program nem engedi felvenni a 99-es azonosítójú osztályt,</span></label><label><input type="checkbox"><span>a program nem engedi törölni azt az osztályt, amelyhez diákok tartoznak,</span></label><label><input type="checkbox"><span>az <code>Osztalyok</code> táblában már nincs szöveges <code>osztalyfonok</code> mező,</span></label><label><input type="checkbox"><span>elmentetted a változtatásokat (<code>Write Changes</code>).</span></label><div class="think"><strong>Gondolkodtató:</strong> ha Szabó Katalin neve megváltozik, hányszor kell átírni az adatbázisban? Hányszor kellett volna az első órai tábla szerint?</div></div></div><div class="db-project" id="hu-set3"><div class="project-title">📁 sajat.db <span class="ext">— Önálló feladat</span></div><p class="project-desc">Válassz egy témát, és építsd fel a két összekapcsolt táblát a nulláról, a tanult lépések alapján.</p><div class="option-block"><div class="option-title"><span class="tag">A)</span>Könyvek és szerzők</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Szerzok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">orszag</span><span class="col-type">TEXT</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Konyvek <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">cim</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">kiadas_eve</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">szerzo_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div></div><div class="relations"><div class="relation"><code>Szerzok.id</code><span class="rel-line">1 ─── N</span><code>Konyvek.szerzo_id</code></div></div></div><div class="option-block"><div class="option-title"><span class="tag">B)</span>Receptek és hozzávalók</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Receptek <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">ido_perc</span><span class="col-type">INTEGER</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Hozzavalok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">recept_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">mennyiseg</span><span class="col-type">TEXT</span><span class="flags"></span></div></div></div><div class="relations"><div class="relation"><code>Receptek.id</code><span class="rel-line">1 ─── N</span><code>Hozzavalok.recept_id</code></div></div></div><div class="option-block"><div class="option-title"><span class="tag">C)</span>Csapatok és versenyzők</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Csapatok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">varos</span><span class="col-type">TEXT</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Versenyzok <span style="color:var(--text-faint); font-weight:400;">(cél állapot)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">eletkor</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">csapat_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div></div><div class="relations"><div class="relation"><code>Csapatok.id</code><span class="rel-line">1 ─── N</span><code>Versenyzok.csapat_id</code></div></div></div><div class="steps"><div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">New Database</span></div><p class="step-text">Hozz létre új adatbázist <code>sajat.db</code> néven a saját mappádban.</p></div></div><div class="step-card cat-view"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-view">KÉRDÉS</span><span class="step-target">Füzet</span></div><p class="step-text">Válassz egyet a három témából (A, B vagy C), és rajzold le a füzetedbe a két táblát, az <code>id</code> mezőket és egy nyilat a kapcsolatról. Jelöld, melyik oldalon van az „egy”, és melyik oldalon a „sok”.</p></div></div><div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">LÉTREHOZÁS</span><span class="step-target">Create Table</span></div><p class="step-text">Először az „egy” oldali táblát hozd létre (<code>Szerzok</code> / <code>Receptek</code> / <code>Csapatok</code>) a séma szerint.</p></div></div><div class="step-card cat-link"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-link">KAPCSOLAT</span><span class="step-target">Create Table</span></div><p class="step-text">Ezután a „sok” oldali táblát hozd létre (<code>Konyvek</code> / <code>Hozzavalok</code> / <code>Versenyzok</code>). Az utolsó, azonosítót tároló mezőnél (<code>szerzo_id</code> / <code>recept_id</code> / <code>csapat_id</code>) már a tábla létrehozásakor állítsd be a <code>Foreign Key</code> oszlopot.</p></div></div><div class="step-card cat-alter"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">SZERKEZET</span><span class="step-target">Not Null</span></div><p class="step-text">Állítsd be a <code>nev</code> vagy <code>cim</code> mezőket <code>Not Null</code>-ra mindkét táblában.</p></div></div><div class="step-card cat-save"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Mentsd el a szerkezetet a <code>Write Changes</code> gombbal.</p></div></div><div class="step-card cat-insert"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Browse Data</span></div><p class="step-text">Az „egy” oldali táblába vidd fel 3–4 sort.</p></div></div><div class="step-card cat-insert"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">REKORD</span><span class="step-target">Browse Data</span></div><p class="step-text">A „sok” oldali táblába vidd fel legalább 8 sort úgy, hogy legalább az egyik szerző / recept / csapat több sorhoz is tartozzon.</p></div></div><div class="step-card cat-test"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-test">KÍSÉRLET</span><span class="step-target">Browse Data</span></div><p class="step-text">Próbáld ki mindkettőt: (a) írj érvénytelen azonosítót a külső kulcs mezőbe, (b) próbálj törölni az „egy” oldali táblából egy olyan sort, amelyre már hivatkoznak. Mindkettőnél hibaüzenetet kell kapnod.</p></div></div><div class="step-card cat-view"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-view">KÉRDÉS</span><span class="step-target">Füzet</span></div><p class="step-text">Ha az „egy” oldali tábla valamelyik adata megváltozik (például egy csapat új városba költözik), hányszor kell átírnod? Miért elég ennyi?</p></div></div><div class="step-card cat-save"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">Write Changes</span></div><p class="step-text">Kattints a <code>Write Changes</code> gombra, hogy véglegesen elmentsd az adatbázist, majd zárd be a programot.</p></div></div><div class="step-card cat-link"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-link">BÓNUSZ</span><span class="step-target">Create Table</span></div><p class="step-text"><strong>Bónusz:</strong> hozz létre egy harmadik táblát (például <code>Kiadok</code>, <code>Kategoriak</code> vagy <code>Edzok</code>), és kösd össze a „sok” oldali táblával.</p></div></div></div><div class="check-block"><h3>Kész vagy, ha:</h3><label><input type="checkbox"><span>az adatbázisban két összekapcsolt tábla van,</span></label><label><input type="checkbox"><span>a „sok” oldali tábla azonosító mezője külső kulcs,</span></label><label><input type="checkbox"><span>a program hibát jelez érvénytelen azonosítónál,</span></label><label><input type="checkbox"><span>a füzetedben ott a két tábla rajza a kapcsolat nyilával.</span></label></div></div></div>
+    <div class="lang-sr-section" id="sr-content"><div class="page-head"><h1>Kreiranje i povezivanje tabela</h1><p>Dva časa u programu DB Browser: dva vođena projekta i jedan samostalan zadatak — isključivo preko korisničkog interfejsa programa.</p></div><div class="note-block"><span class="comment-mark">#</span><strong>Napomena:</strong> karticu <code>Execute SQL</code> ni ovog puta nije potrebno otvarati. Svaki korak se izvodi na kartici <code>Database Structure</code> i <code>Browse Data</code>, uz jedan izuzetak: na početku 2. časa na kartici <code>Edit Pragmas</code> proveravamo jedno podešavanje. Na kraju svakog projekta sačuvaj izmene dugmetom <code>Write Changes</code> — bez toga se izmene gube.</div><p class="legend">Oznake na tabelama: <code>PK</code> primarni ključ · <code>AI</code> automatsko numerisanje · <code>NN</code> obavezno popunjavanje · <code>UQ</code> ne sme da se ponovi · <code>DEF</code> podrazumevana vrednost · <code>FK</code> strani ključ (veza sa drugom tabelom)</p><div class="file-tabs"><button class="file-tab active" onclick="showProject(this,'sr','set1')">📁 skola.db · 1. čas</button><button class="file-tab" onclick="showProject(this,'sr','set2')">📁 skola.db · 2. čas</button><button class="file-tab" onclick="showProject(this,'sr','set3')">📁 moja_baza.db · samostalno</button></div><div class="db-project active" id="sr-set1"><div class="project-title">📁 skola.db <span class="ext">— 1. čas: kreiranje tabela</span></div><p class="project-desc">Planiranje i kreiranje dve tabele, pa unos podataka. Vezu pravimo na sledećem času.</p><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Odeljenja <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">naziv</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">razredni</span><span class="col-type">TEXT</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Ucenici <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">ime</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">godina_rodjenja</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">odeljenje_id</span><span class="col-type">INTEGER</span><span class="flags"></span></div></div></div><div class="relations"><div class="relation pending"><code>Ucenici.odeljenje_id</code><span class="rel-line">╌ ╌ ╌</span><code>Odeljenja.id</code><span>za sada običan broj, vezu pravimo na 2. času</span></div></div><div class="data-wrap"><div class="data-block"><div class="data-title">Primer podataka — Odeljenja (korak 10)</div><div class="data-scroll"><table class="data-table"><thead><tr><th>id</th><th>naziv</th><th>razredni</th></tr></thead><tbody><tr><td class="auto">1</td><td class="">4.A</td><td class="">Szabó Katalin</td></tr><tr><td class="auto">2</td><td class="">4.B</td><td class="">Horváth Tamás</td></tr><tr><td class="auto">3</td><td class="">3.A</td><td class="">Đurić Milica</td></tr><tr><td class="auto">4</td><td class="">3.B</td><td class="">Kovač Sándor</td></tr></tbody></table></div></div><div class="data-block"><div class="data-title">Primer podataka — Ucenici (korak 11)</div><div class="data-scroll"><table class="data-table"><thead><tr><th>id</th><th>ime</th><th>godina_rodjenja</th><th>odeljenje_id</th></tr></thead><tbody><tr><td class="auto">1</td><td class="">Kovács Anna</td><td class="">2008</td><td class="">1</td></tr><tr><td class="auto">2</td><td class="">Nagy Péter</td><td class="">2008</td><td class="">1</td></tr><tr><td class="auto">3</td><td class="">Tóth Zsófia</td><td class="">2007</td><td class="">1</td></tr><tr><td class="auto">4</td><td class="">Horváth Lilla</td><td class="">2008</td><td class="">2</td></tr><tr><td class="auto">5</td><td class="">Petrović Marko</td><td class="">2008</td><td class="">2</td></tr><tr><td class="auto">6</td><td class="">Kiss Bence</td><td class="">2008</td><td class="">2</td></tr><tr><td class="auto">7</td><td class="">Jovanović Ana</td><td class="">2009</td><td class="">3</td></tr><tr><td class="auto">8</td><td class="">Szabó Márk</td><td class="">2009</td><td class="">3</td></tr><tr><td class="auto">9</td><td class="">Nikolić Luka</td><td class="">2009</td><td class="">3</td></tr><tr><td class="auto">10</td><td class="">Varga Réka</td><td class="">2009</td><td class="">3</td></tr></tbody></table></div></div></div><div class="steps"><div class="step-card cat-view"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PITANJE</span><span class="step-target">Sveska</span></div><p class="step-text">Nacrtaj tabelu u kojoj je pored imena svakog učenika upisano ime njegovog razrednog starešine. Šta se dešava kada se razredni promeni? Koliko redova treba ispraviti? Razmislite kako bi se to moglo jednostavnije čuvati.</p></div></div><div class="step-card cat-create"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">New Database</span></div><p class="step-text">Kreiraj novu bazu podataka dugmetom <code>New Database</code> i sačuvaj je kao <code>skola.db</code> u svom folderu. Nazivi foldera i fajla neka budu bez razmaka i bez slova sa kvačicama (č, ć, š, ž, đ).</p></div></div><div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Napravi tabelu <code>Odeljenja</code>. Ako se prozor Create Table sam otvorio, iskoristi ga.</p></div></div><div class="step-card cat-create"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Fields</span></div><p class="step-text">Dodaj polja: <code>id</code> (INTEGER, PK, AI), <code>naziv</code> (TEXT), <code>razredni</code> (TEXT).</p></div></div><div class="step-card cat-alter"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Not Null</span></div><p class="step-text">Podesi da polje <code>naziv</code> bude <code>Not Null</code>.</p></div></div><div class="step-card cat-save"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Sačuvaj strukturu tabele dugmetom <code>Write Changes</code>.</p></div></div><div class="step-card cat-create"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Napravi drugu tabelu pod nazivom <code>Ucenici</code>: <code>id</code> (INTEGER, PK, AI), <code>ime</code> (TEXT), <code>godina_rodjenja</code> (INTEGER), <code>odeljenje_id</code> (INTEGER).</p></div></div><div class="step-card cat-alter"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Not Null</span></div><p class="step-text">Polje <code>ime</code> neka bude <code>Not Null</code>. Polje <code>odeljenje_id</code> je za sada običan INTEGER: između dve tabele još nema veze.</p></div></div><div class="step-card cat-save"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Sačuvaj strukturu dugmetom <code>Write Changes</code>.</p></div></div><div class="step-card cat-insert"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Browse Data</span></div><p class="step-text">U tabelu <code>Odeljenja</code> unesi četiri odeljenja prema tabeli <strong>Primer podataka</strong> (<code>Insert new record</code>). Vrednost <code>id</code> dodeljuje program.</p></div></div><div class="step-card cat-insert"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Browse Data</span></div><p class="step-text">U tabelu <code>Ucenici</code> unesi deset učenika. U polje <code>odeljenje_id</code> upiši broj odeljenja (1–3).</p></div></div><div class="step-card cat-update"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Promeni <code>odeljenje_id</code> jednog učenika na broj drugog odeljenja (dvoklik na ćeliju).</p></div></div><div class="step-card cat-view"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PRIKAZ</span><span class="step-target">Browse Data</span></div><p class="step-text">Klikni na zaglavlje kolone <code>ime</code> i poređaj učenike po abecedi. (Ovo nije upit, samo sortiranje prikaza.)</p></div></div><div class="step-card cat-view"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PITANJE</span><span class="step-target">Browse Data</span></div><p class="step-text">Izaberi jednog učenika. Na osnovu broja u polju <code>odeljenje_id</code> pronađi u tabeli <code>Odeljenja</code> njegovo odeljenje i razrednog. Tako ručno pratiš vezu.</p></div></div><div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Klikni na <code>Write Changes</code> da trajno sačuvaš bazu, a zatim zatvori program.</p></div></div></div><div class="check-block"><h3>Gotov si kada:</h3><label><input type="checkbox"><span>baza <code>skola.db</code> sadrži dve tabele (<code>Odeljenja</code>, <code>Ucenici</code>),</span></label><label><input type="checkbox"><span>u tabeli <code>Odeljenja</code> ima 4, a u tabeli <code>Ucenici</code> 10 redova,</span></label><label><input type="checkbox"><span>polja <code>naziv</code> i <code>ime</code> su <code>Not Null</code>,</span></label><label><input type="checkbox"><span>sačuvao si izmene (<code>Write Changes</code>),</span></label><label><input type="checkbox"><span>možeš da objasniš zašto pored svakog učenika ne upisujemo ime razrednog.</span></label></div></div><div class="db-project" id="sr-set2"><div class="project-title">📁 skola.db <span class="ext">— 2. čas: pravljenje i izmena veze</span></div><p class="project-desc">Povezivanje dve postojeće tabele stranim ključem, isprobavanje veze, pa uključivanje treće tabele.</p><div class="concept-block"><strong>Šta je strani ključ (Foreign Key)?</strong> To je polje čija vrednost pokazuje na primarni ključ druge tabele. Učenik ne čuva naziv odeljenja, već njegov identifikator (<code>odeljenje_id</code>). U jedno odeljenje ide više učenika, a učenik ide u jedno odeljenje: to je <strong>veza 1:N</strong>. Kada je veza napravljena, baza ne dozvoljava pozivanje na odeljenje koje ne postoji.</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Odeljenja <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">naziv</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">razredni_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div><div class="schema-table"><div class="schema-header">📄 Ucenici <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">ime</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">godina_rodjenja</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">odeljenje_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div><div class="schema-table"><div class="schema-header">📄 Nastavnici <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">ime</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">predmet</span><span class="col-type">TEXT</span><span class="flags"></span></div></div></div><div class="relations"><div class="relation"><code>Odeljenja.id</code><span class="rel-line">1 ─── N</span><code>Ucenici.odeljenje_id</code></div><div class="relation"><code>Nastavnici.id</code><span class="rel-line">1 ─── N</span><code>Odeljenja.razredni_id</code></div></div><div class="data-wrap"><div class="data-block"><div class="data-title">Primer podataka — Nastavnici (korak 10)</div><div class="data-scroll"><table class="data-table"><thead><tr><th>id</th><th>ime</th><th>predmet</th></tr></thead><tbody><tr><td class="auto">1</td><td class="">Szabó Katalin</td><td class="">informatika</td></tr><tr><td class="auto">2</td><td class="">Horváth Tamás</td><td class="">matematika</td></tr><tr><td class="auto">3</td><td class="">Đurić Milica</td><td class="">fizika</td></tr><tr><td class="auto">4</td><td class="">Kovač Sándor</td><td class="">istorija</td></tr></tbody></table></div></div></div><div class="steps"><div class="step-card cat-view"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-view">OTVARANJE</span><span class="step-target">Open Database</span></div><p class="step-text">Otvori bazu <code>skola.db</code> sačuvanu na prethodnom času dugmetom <code>Open Database</code>.</p></div></div><div class="step-card cat-alter"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Edit Pragmas</span></div><p class="step-text">Ako je dugme <code>Write Changes</code> aktivno, prvo klikni na njega. Zatim otvori karticu <code>Edit Pragmas</code> i proveri da li je uključeno polje <code>Foreign Keys</code>. Ako nije, uključi ga i klikni na <code>Save</code>. Bez toga program ne proverava veze.</p></div></div><div class="step-card cat-test"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-test">OGLED</span><span class="step-target">Browse Data</span></div><p class="step-text">U tabeli <code>Ucenici</code> dodaj novog učenika (<code>ime</code>: Proba Pera), a u polje <code>odeljenje_id</code> upiši: <code>99</code>. Baza to prihvata, iako odeljenje 99 ne postoji.</p></div></div><div class="step-card cat-delete"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-delete">BRISANJE</span><span class="step-target">Delete record</span></div><p class="step-text">Obriši ovaj pogrešan zapis, pa klikni na <code>Write Changes</code>. Pre pravljenja veze u tabeli ne sme ostati nevažeći podatak.</p></div></div><div class="step-card cat-link"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-link">VEZA</span><span class="step-target">Modify Table</span></div><p class="step-text">Izaberi tabelu <code>Ucenici</code> i klikni na <code>Modify Table</code>. Kod polja <code>odeljenje_id</code> u koloni <code>Foreign Key</code> izaberi tabelu <code>Odeljenja</code> i polje <code>id</code>, pa <code>OK</code>. (Zavisno od verzije programa, ćelija Foreign Key je padajuća lista ili tekstualno polje; bitno je koja se tabela i koje polje navode.)</p></div></div><div class="step-card cat-save"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Sačuvaj izmenu dugmetom <code>Write Changes</code>.</p></div></div><div class="step-card cat-test"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-test">OGLED</span><span class="step-target">Browse Data</span></div><p class="step-text">Ponovi 3. korak: novi učenik, <code>odeljenje_id</code> = <code>99</code>. Sada program prikazuje grešku (<code>FOREIGN KEY constraint failed</code>). Ako je red ipak ostao, obriši ga.</p></div></div><div class="step-card cat-test"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-test">OGLED</span><span class="step-target">Browse Data</span></div><p class="step-text">U tabeli <code>Odeljenja</code> pokušaj da obrišeš odeljenje u koje već idu učenici. Baza to ne dozvoljava. Zašto?</p></div></div><div class="step-card cat-create"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Napravi tabelu <code>Nastavnici</code>: <code>id</code> (INTEGER, PK, AI), <code>ime</code> (TEXT, Not Null), <code>predmet</code> (TEXT).</p></div></div><div class="step-card cat-insert"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Browse Data</span></div><p class="step-text">Unesi četiri nastavnika prema tabeli <strong>Primer podataka</strong>.</p></div></div><div class="step-card cat-link"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-link">VEZA</span><span class="step-target">Modify Table</span></div><p class="step-text">U tabeli <code>Odeljenja</code> (<code>Modify Table</code>) dodaj novo polje <code>razredni_id</code> (INTEGER) i podesi ga kao strani ključ: tabela <code>Nastavnici</code>, polje <code>id</code>.</p></div></div><div class="step-card cat-update"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-update">IZMENA</span><span class="step-target">Browse Data</span></div><p class="step-text">Popuni kolonu <code>razredni_id</code>: za svako odeljenje upiši identifikator nastavnika čije ime stoji u staroj koloni <code>razredni</code>.</p></div></div><div class="step-card cat-alter"><div class="step-num">13</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Modify Table</span></div><p class="step-text">Iz tabele <code>Odeljenja</code> ukloni staro tekstualno polje <code>razredni</code> (<code>Modify Table</code>, izbor polja, <code>Remove field</code>). Ime razrednog sada postoji samo u tabeli <code>Nastavnici</code>.</p></div></div><div class="step-card cat-view"><div class="step-num">14</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PITANJE</span><span class="step-target">Browse Data</span></div><p class="step-text">Izaberi jednog učenika i prati lanac ručno: <code>Ucenici</code> → <code>odeljenje_id</code> → <code>Odeljenja</code> → <code>razredni_id</code> → <code>Nastavnici</code>. Ko je njegov razredni i šta predaje?</p></div></div><div class="step-card cat-save"><div class="step-num">15</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Klikni na <code>Write Changes</code> da trajno sačuvaš bazu, a zatim zatvori program.</p></div></div></div><div class="check-block"><h3>Gotov si kada:</h3><label><input type="checkbox"><span>polja <code>Ucenici.odeljenje_id</code> i <code>Odeljenja.razredni_id</code> su strani ključevi,</span></label><label><input type="checkbox"><span>program ne dozvoljava unos odeljenja sa identifikatorom 99,</span></label><label><input type="checkbox"><span>program ne dozvoljava brisanje odeljenja u koje idu učenici,</span></label><label><input type="checkbox"><span>u tabeli <code>Odeljenja</code> više nema tekstualnog polja <code>razredni</code>,</span></label><label><input type="checkbox"><span>sačuvao si izmene (<code>Write Changes</code>).</span></label><div class="think"><strong>Za razmišljanje:</strong> ako se ime nastavnika Szabó Katalin promeni, koliko puta ga treba ispraviti u bazi? A koliko bi puta trebalo prema tabeli sa prvog časa?</div></div></div><div class="db-project" id="sr-set3"><div class="project-title">📁 moja_baza.db <span class="ext">— Samostalan zadatak</span></div><p class="project-desc">Izaberi temu i od nule napravi dve povezane tabele, prema koracima koje si naučio.</p><div class="option-block"><div class="option-title"><span class="tag">A)</span>Knjige i autori</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Autori <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">ime</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">drzava</span><span class="col-type">TEXT</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Knjige <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">naslov</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">godina_izdanja</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">autor_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div></div><div class="relations"><div class="relation"><code>Autori.id</code><span class="rel-line">1 ─── N</span><code>Knjige.autor_id</code></div></div></div><div class="option-block"><div class="option-title"><span class="tag">B)</span>Recepti i sastojci</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Recepti <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">naziv</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">vreme_min</span><span class="col-type">INTEGER</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Sastojci <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">recept_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div><div class="schema-row"><span class="col-name">naziv</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">kolicina</span><span class="col-type">TEXT</span><span class="flags"></span></div></div></div><div class="relations"><div class="relation"><code>Recepti.id</code><span class="rel-line">1 ─── N</span><code>Sastojci.recept_id</code></div></div></div><div class="option-block"><div class="option-title"><span class="tag">C)</span>Timovi i takmičari</div><div class="schema-wrap"><div class="schema-table"><div class="schema-header">📄 Timovi <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">naziv</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">grad</span><span class="col-type">TEXT</span><span class="flags"></span></div></div><div class="schema-table"><div class="schema-header">📄 Takmicari <span style="color:var(--text-faint); font-weight:400;">(ciljno stanje)</span></div><div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div><div class="schema-row"><span class="col-name">ime</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div><div class="schema-row"><span class="col-name">godine</span><span class="col-type">INTEGER</span><span class="flags"></span></div><div class="schema-row"><span class="col-name">tim_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div></div></div><div class="relations"><div class="relation"><code>Timovi.id</code><span class="rel-line">1 ─── N</span><code>Takmicari.tim_id</code></div></div></div><div class="steps"><div class="step-card cat-create"><div class="step-num">01</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">New Database</span></div><p class="step-text">Kreiraj novu bazu podataka pod nazivom <code>moja_baza.db</code> u svom folderu.</p></div></div><div class="step-card cat-view"><div class="step-num">02</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PITANJE</span><span class="step-target">Sveska</span></div><p class="step-text">Izaberi jednu od tri teme (A, B ili C) i nacrtaj u svesci dve tabele, polja <code>id</code> i strelicu koja predstavlja vezu. Označi na kojoj strani je „jedan”, a na kojoj „mnogo”.</p></div></div><div class="step-card cat-create"><div class="step-num">03</div><div class="step-body"><div class="step-head"><span class="badge cat-create">KREIRANJE</span><span class="step-target">Create Table</span></div><p class="step-text">Prvo napravi tabelu sa strane „jedan” (<code>Autori</code> / <code>Recepti</code> / <code>Timovi</code>) prema šemi.</p></div></div><div class="step-card cat-link"><div class="step-num">04</div><div class="step-body"><div class="step-head"><span class="badge cat-link">VEZA</span><span class="step-target">Create Table</span></div><p class="step-text">Zatim napravi tabelu sa strane „mnogo” (<code>Knjige</code> / <code>Sastojci</code> / <code>Takmicari</code>). Kod poslednjeg polja koje čuva identifikator (<code>autor_id</code> / <code>recept_id</code> / <code>tim_id</code>) već pri kreiranju tabele podesi kolonu <code>Foreign Key</code>.</p></div></div><div class="step-card cat-alter"><div class="step-num">05</div><div class="step-body"><div class="step-head"><span class="badge cat-alter">STRUKTURA</span><span class="step-target">Not Null</span></div><p class="step-text">Podesi polja <code>ime</code>, <code>naziv</code> ili <code>naslov</code> na <code>Not Null</code> u obe tabele.</p></div></div><div class="step-card cat-save"><div class="step-num">06</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Sačuvaj strukturu dugmetom <code>Write Changes</code>.</p></div></div><div class="step-card cat-insert"><div class="step-num">07</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Browse Data</span></div><p class="step-text">U tabelu sa strane „jedan” unesi 3–4 reda.</p></div></div><div class="step-card cat-insert"><div class="step-num">08</div><div class="step-body"><div class="step-head"><span class="badge cat-insert">ZAPIS</span><span class="step-target">Browse Data</span></div><p class="step-text">U tabelu sa strane „mnogo” unesi najmanje 8 redova, tako da bar jedan autor / recept / tim ima više redova.</p></div></div><div class="step-card cat-test"><div class="step-num">09</div><div class="step-body"><div class="step-head"><span class="badge cat-test">OGLED</span><span class="step-target">Browse Data</span></div><p class="step-text">Isprobaj oba slučaja: (a) upiši nevažeći identifikator u polje stranog ključa, (b) pokušaj da obrišeš red iz tabele sa strane „jedan” na koji se već pozivaju. U oba slučaja treba da dobiješ grešku.</p></div></div><div class="step-card cat-view"><div class="step-num">10</div><div class="step-body"><div class="step-head"><span class="badge cat-view">PITANJE</span><span class="step-target">Sveska</span></div><p class="step-text">Ako se neki podatak iz tabele sa strane „jedan” promeni (na primer tim se preseli u drugi grad), koliko puta ga treba ispraviti? Zašto je dovoljno toliko?</p></div></div><div class="step-card cat-save"><div class="step-num">11</div><div class="step-body"><div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">Write Changes</span></div><p class="step-text">Klikni na <code>Write Changes</code> da trajno sačuvaš bazu, a zatim zatvori program.</p></div></div><div class="step-card cat-link"><div class="step-num">12</div><div class="step-body"><div class="step-head"><span class="badge cat-link">BONUS</span><span class="step-target">Create Table</span></div><p class="step-text"><strong>Bonus:</strong> napravi treću tabelu (na primer <code>Izdavaci</code>, <code>Kategorije</code> ili <code>Treneri</code>) i poveži je sa tabelom sa strane „mnogo”.</p></div></div></div><div class="check-block"><h3>Gotov si kada:</h3><label><input type="checkbox"><span>u bazi postoje dve povezane tabele,</span></label><label><input type="checkbox"><span>polje identifikatora u tabeli sa strane „mnogo” je strani ključ,</span></label><label><input type="checkbox"><span>program prijavljuje grešku pri unosu nevažećeg identifikatora,</span></label><label><input type="checkbox"><span>u svesci imaš crtež dve tabele sa strelicom veze.</span></label></div></div></div>
+  </div>
+</div>
+
+<footer>
+  <span class="lang-hu-section">DB Browser for SQLite gyakorlófeladatok 2 · Készült tanulási céllal</span>
+  <span class="lang-sr-section">Praktični zadaci 2 za DB Browser for SQLite · Napravljeno u edukativne svrhe</span>
+</footer>
+
+<script>
+  function setLang(lang){
+    document.body.setAttribute('data-lang', lang);
+    document.documentElement.lang = (lang === 'hu') ? 'hu' : 'sr';
+    document.getElementById('btn-hu').classList.toggle('on', lang === 'hu');
+    document.getElementById('btn-sr').classList.toggle('on', lang === 'sr');
+  }
+  function showProject(btn, lang, key){
+    const root = document.getElementById(lang + '-content');
+    root.querySelectorAll('.db-project').forEach(el => el.classList.remove('active'));
+    root.querySelectorAll('.file-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById(lang + '-' + key).classList.add('active');
+    btn.classList.add('active');
+  }
+  function toggleTheme(){
+    const isLight = document.body.getAttribute('data-theme') === 'light';
+    const next = isLight ? 'dark' : 'light';
+    document.body.setAttribute('data-theme', next);
+    document.getElementById('theme-toggle').textContent = next === 'light' ? '☀️' : '🌙';
+  }
+  setLang('hu');
+</script>
+
+</body>
+</html>
