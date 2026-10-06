@@ -137,6 +137,20 @@
             border-radius: 20px; margin-left: auto;
         }
 
+        /* ALMENÜ (a legördülő menün belül) */
+        .submenu-btn {
+            width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            padding: 12px 14px; border: none; border-radius: 12px; background: transparent;
+            color: var(--text-medium); font-size: 0.9rem; font-weight: 500; font-family: inherit;
+            cursor: pointer; text-align: left; transition: var(--transition);
+        }
+        .submenu-btn:hover { background: rgba(148, 163, 184, 0.12); color: var(--primary-deep); }
+        .submenu-btn i { font-style: normal; font-size: 0.65rem; transition: transform 0.3s ease; }
+        .submenu.open .submenu-btn i { transform: rotate(180deg); }
+        .submenu-content { display: none; padding: 4px 0 4px 14px; }
+        .submenu.open .submenu-content { display: block; }
+        .submenu-empty { padding: 8px 14px; font-size: 0.8rem; color: var(--text-light); font-style: italic; }
+
         /* TARTALMI SZEKCIÓK */
         .content-section {
             display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
@@ -268,6 +282,31 @@
                         </a>
                     </div>
                 </div>
+
+                <div class="dropdown" id="dropdown-vezbe">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown-vezbe')" aria-expanded="false">
+                        <span data-translate-key="nav-vezbe">Gyakorlatok</span>
+                        <i>▼</i>
+                    </button>
+                    <div class="dropdown-content">
+                        <div class="submenu" id="submenu-toplotno">
+                            <button class="submenu-btn" onclick="toggleSubmenu('submenu-toplotno')" aria-expanded="false">
+                                <span data-translate-key="sub-toplotno">1. Hősugárzás</span>
+                                <i>▼</i>
+                            </button>
+                            <div class="submenu-content">
+                                <!--
+                                    FÁJLOK HOZZÁADÁSA: másold ide az alábbi <a>...</a> blokkot (és töröld a submenu-empty sort).
+                                    <a href="fajl_hu.html" data-href-hu="fajl_hu.html" data-href-sr="fajl_sr.html">
+                                        <span data-translate-key="link-toplotno1">Fájl neve</span>
+                                        <span class="lesson-badge"></span>
+                                    </a>
+                                -->
+                                <div class="submenu-empty" data-translate-key="sub-empty">Hamarosan...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -341,6 +380,18 @@
                 'nav-interaktiv': {
                     hu: 'Interaktív anyagok',
                     sr: 'Interaktivni materijali'
+                },
+                'nav-vezbe': {
+                    hu: 'Gyakorlatok',
+                    sr: 'Vežbe'
+                },
+                'sub-toplotno': {
+                    hu: '1. Hősugárzás',
+                    sr: '1. Toplotno zračenje'
+                },
+                'sub-empty': {
+                    hu: 'Hamarosan...',
+                    sr: 'Uskoro...'
                 },
                 'main-title': {
                     hu: 'IV. osztály – A modern fizika küszöbén',
@@ -465,6 +516,12 @@
                 const btn = dd.querySelector('.dropbtn');
                 const isOpen = dd.classList.toggle('open');
                 btn.setAttribute('aria-expanded', isOpen);
+            };
+
+            window.toggleSubmenu = function(id) {
+                const sm = document.getElementById(id);
+                const isOpen = sm.classList.toggle('open');
+                sm.querySelector('.submenu-btn').setAttribute('aria-expanded', isOpen);
             };
 
             // Kattintás a menün kívülre -> bezárás
