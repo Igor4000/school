@@ -42,9 +42,31 @@
     .pins td.wl { color: #ff0064; font-weight: bold; }
     .pins button.del { padding: 2px 8px; font-size: 12px; }
     .pins .empty { color: #777; font-size: 13px; margin: 0; }
+
+    #themeToggle { position: fixed; top: 10px; right: 10px; z-index: 1000; padding: 8px 12px; font-size: 18px; line-height: 1; border-radius: 20px; }
+    body.light { background-color: #f4f4f4; color: #222; }
+    body.light h1 { color: #0a6ebd; }
+    body.light .instructions { color: #555; }
+    body.light .canvas-container { border-color: #bbb; }
+    body.light .reading { color: #a06a00; }
+    body.light button, body.light select { background-color: #e6e6e6; color: #222; border-color: #bbb; }
+    body.light button:hover { background-color: #d6d6d6; }
+    body.light button.active { background-color: #28a745; border-color: #28a745; color: #fff; }
+    body.light .tasks, body.light .pins, body.light details.explain { background: #fff; border-color: #ccc; }
+    body.light .tasks h3, body.light .pins h3, body.light .explain h3, body.light details.explain > summary { color: #a06a00; }
+    body.light .tasks h4, body.light .explain h4 { color: #0a6ebd; border-bottom-color: #ccc; }
+    body.light .constants { background: #eee; color: #444; }
+    body.light .explain .formula { background: #eef4fb; color: #000; }
+    body.light .explain .warn { background: #fff6d6; }
+    body.light .explain .result { background: #e3f5e8; color: #000; }
+    body.light .pins th, body.light .explain th { background: #eee; color: #0a6ebd; }
+    body.light .pins th, body.light .pins td, body.light .explain th, body.light .explain td { border-color: #ccc; }
+    body.light .pins td.wl { color: #d6004f; }
+    body.light .pins .empty { color: #888; }
 </style>
 </head>
 <body>
+    <button id="themeToggle" onclick="toggleTheme()" title="Promena teme / Téma váltás">☀️</button>
     <h1>Istraživanje magline NGC-7293 (Grupa 1)</h1>
     <p class="instructions">Prevlačite prstom ili mišem preko crne površine. Pritisnite dugme „Zakači liniju“ da fiksirate pronađeni pik.</p>
     <div class="canvas-container"><canvas id="spectrumCanvas"></canvas></div>
@@ -220,6 +242,11 @@
     canvas.addEventListener('touchend', () => { crosshairX = -1; drawSpectrum(); });
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
+</script>
+<script>
+    function applyTheme(light) { document.body.classList.toggle('light', light); document.getElementById('themeToggle').textContent = light ? '🌙' : '☀️'; }
+    function toggleTheme() { const light = !document.body.classList.contains('light'); applyTheme(light); try { localStorage.setItem('vezbeTheme', light ? 'light' : 'dark'); } catch (e) {} }
+    (function () { let t = null; try { t = localStorage.getItem('vezbeTheme'); } catch (e) {} applyTheme(t === 'light'); })();
 </script>
 </body>
 </html>
