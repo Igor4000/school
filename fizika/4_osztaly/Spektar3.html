@@ -20,6 +20,28 @@
     .tasks h4 { color: #4db8ff; margin-top: 20px; border-bottom: 1px solid #333; padding-bottom: 5px;}
     .tasks ol { padding-left: 20px; line-height: 1.6; } .tasks li { margin-bottom: 10px; }
     .constants { font-family: monospace; color: #aaa; background: #111; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+
+    details.explain { max-width: 700px; margin: 20px auto; text-align: left; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; font-size: 14px; }
+    details.explain > summary { cursor: pointer; padding: 14px 20px; font-size: 16px; font-weight: bold; color: #ffcc00; }
+    .explain .body { padding: 0 20px 20px 20px; line-height: 1.6; }
+    .explain h3 { color: #ffcc00; text-align: center; margin: 22px 0 8px; }
+    .explain h4 { color: #4db8ff; margin: 20px 0 6px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    .explain .formula { background: #111; border-left: 3px solid #4db8ff; padding: 8px 12px; margin: 8px 0; font-family: 'Courier New', monospace; color: #fff; }
+    .explain .result { background: #12301a; border-left: 3px solid #28a745; padding: 8px 12px; margin: 8px 0; color: #fff; }
+    .explain .warn { background: #33280a; border-left: 3px solid #ffcc00; padding: 8px 12px; margin: 8px 0; }
+    .explain table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+    .explain th, .explain td { border: 1px solid #333; padding: 5px 8px; text-align: center; }
+    .explain th { background: #222; color: #4db8ff; }
+    .explain ul, .explain ol { padding-left: 20px; }
+
+    .pins { max-width: 700px; margin: 0 auto 15px auto; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 10px 15px; }
+    .pins h3 { color: #ffcc00; font-size: 15px; margin: 0 0 8px 0; }
+    .pins table { border-collapse: collapse; width: 100%; font-family: 'Courier New', monospace; font-size: 14px; }
+    .pins th, .pins td { border: 1px solid #333; padding: 4px 8px; text-align: center; }
+    .pins th { background: #222; color: #4db8ff; }
+    .pins td.wl { color: #ff0064; font-weight: bold; }
+    .pins button.del { padding: 2px 8px; font-size: 12px; }
+    .pins .empty { color: #777; font-size: 13px; margin: 0; }
 </style>
 </head>
 <body>
@@ -48,6 +70,14 @@
             <option value="Zr">40. Cirkonijum (Zr)</option>
         </select>
     </div>
+    <div class="pins">
+        <h3>📋 Zakačene linije (<span id="pinCount">0</span>)</h3>
+        <p class="empty" id="pinEmpty">Još nema zakačenih linija.</p>
+        <table id="pinTable" style="display:none">
+            <thead><tr><th>#</th><th>λ izmereno (nm)</th><th></th></tr></thead>
+            <tbody id="pinBody"></tbody>
+        </table>
+    </div>
     <div class="tasks">
         <div class="constants">KONSTANTE: c = 3×10⁸ m/s | b = 2.9×10⁻³ m·K | σ = 5.67×10⁻⁸ W/m²K⁴</div>
         <h3>Čas 1: Mapiranje i otkrivanje Doplerovog efekta</h3>
@@ -64,6 +94,78 @@
             <li><strong>Zaključak:</strong> Zašto vidimo emisione linije magline umesto apsorpcionih linija same zvezde? Objasnite proces jonizacije i rekombinacije.</li>
         </ol>
     </div>
+    <details class="explain">
+        <summary>📖 Uputstvo: šta treba da se radi i kako da se računa (kliknite da otvorite)</summary>
+        <div class="body">
+
+        <h3>ČAS 1: Mapiranje i Doplerov efekat</h3>
+
+        <h4>Zadatak 1 – Kartiranje linija</h4>
+        <ol>
+            <li>Pređite mišem (ili prstom) polako preko crne površine sa leva na desno. Iznad slike se menja <em>trenutna talasna dužina</em> (400 → 700 nm).</li>
+            <li>Svetle uske vertikalne trake su emisione linije. Neke su široke i sjajne (jake), neke jedva vidljive (slabe). Cilj je pronaći <strong>sve</strong>, i slabe.</li>
+            <li>Kada je žuta linija tačno u <strong>sredini</strong> svetle trake (gde je najsjajnije), pritisnite <em>📍 Zakači liniju</em>. Linija se pojavi na spektru, a njena vrednost u tabeli <em>Zakačene linije</em> ispod dugmadi.</li>
+            <li>Pogrešnu liniju uklonite dugmetom ✖ u tabeli, a sve odjednom sa <em>❌ Obriši zakačene</em>.</li>
+            <li>Tačnost očitavanja je oko ±0.5 nm – to je normalno. Vrednosti iz tabele prepišite u svesku.</li>
+        </ol>
+
+        <h4>Zadatak 2 – Poređenje sa vodonikom</h4>
+        <ol>
+            <li>Izaberite <strong>Vodonik (H)</strong> u meniju. Plave isprekidane linije su <em>laboratorijske</em> talasne dužine (izvor miruje).</li>
+            <li>Uporedite ih sa svetlim trakama u spektru: svaka laboratorijska linija ima „partnera“ – traku koja je pomerena u istom smeru. Tražite jake, široke trake.</li>
+            <li>Zapišite parove: λ<sub>lab</sub> → λ<sub>izmereno</sub>.</li>
+        </ol>
+
+        <h4>Zadatak 3 – Brzina udaljavanja (Doplerov efekat)</h4>
+        <div class="formula">v = c · (λ<sub>izmereno</sub> − λ<sub>lab</sub>) / λ<sub>lab</sub> &nbsp;&nbsp; (λ<sub>lab</sub> = 486.1 nm)</div>
+        <ol>
+            <li>Izračunajte razliku Δλ = λ<sub>izmereno</sub> − 486.1 (u nm).</li>
+            <li>Podelite je sa 486.1 – dobijate bezdimenzioni broj z = Δλ / λ<sub>lab</sub> (nm se skrati).</li>
+            <li>Pomnožite sa c: v = z · c. Koristite c = 3×10⁵ km/s da odmah dobijete km/s (c = 3×10⁸ m/s → rezultat u m/s, podelite sa 1000).</li>
+            <li>Faktor pomeraja je <strong>1 + v/c = λ<sub>izmereno</sub> / λ<sub>lab</sub></strong>. Zapišite ga – treba vam u zadatku 4.</li>
+        </ol>
+        <p><em>Provera:</em> isti odnos Δλ/λ<sub>lab</sub> mora da izađe i sa druge dve vodonikove linije. Ako ne izlazi, pogrešno ste povezali linije.</p>
+
+        <h3>ČAS 2: Hemija, temperatura i snaga</h3>
+
+        <h4>Zadatak 4 – Sastav magline</h4>
+        <p>Ako je element prisutan, <em>sve</em> njegove linije su pomerene za isti faktor kao vodonik. Za svaki element iz baze:</p>
+        <ol>
+            <li>Izaberite element i prepišite njegove laboratorijske vrednosti (plave linije).</li>
+            <li>Pomnožite svaku: λ<sub>očekivano</sub> = λ<sub>lab</sub> × (faktor pomeraja).</li>
+            <li>Proverite u tabeli zakačenih linija da li postoji vrednost koja se poklapa (±1 nm).</li>
+            <li>Element je <strong>siguran</strong> tek kada se poklapaju bar <strong>dve</strong> njegove linije. Jedno poklapanje može biti slučajno.</li>
+        </ol>
+        <div class="warn">Pazite: neke linije različitih elemenata su vrlo blizu, a neke posle pomeraja mogu otići van prikazanog opsega 400–700 nm (tada ih ne možete potvrditi).</div>
+
+        <h4>Zadatak 5 – Vinov zakon</h4>
+        <div class="formula">λ<sub>max</sub> · T = b &nbsp;⟹&nbsp; T = b / λ<sub>max</sub></div>
+        <ol>
+            <li>Pretvorite talasnu dužinu iz nm u m (1 nm = 10<sup>−9</sup> m).</li>
+            <li>Podelite b = 2.9×10<sup>−3</sup> m·K sa λ<sub>max</sub> u metrima. Rezultat je u kelvinima.</li>
+            <li>Razmislite: da li je to u vidljivom delu spektra (400–700 nm)? Šta to znači za izgled zvezde?</li>
+        </ol>
+
+        <h4>Zadatak 6 – Stefan-Bolcmanov zakon</h4>
+        <div class="formula">P = σ · T⁴ · S &nbsp;&nbsp; S = 4πR²</div>
+        <ol>
+            <li>Poluprečnik: R = (dati broj) · R☉, u metrima.</li>
+            <li>Površina sfere: S = 4πR² (pazite na kvadrat i na 4π).</li>
+            <li>T uzmite iz zadatka 5 (u kelvinima), pa izračunajte T⁴.</li>
+            <li>P = σ · T⁴ · S, rezultat u vatima. Zapišite ga u obliku a × 10<sup>n</sup> W.</li>
+        </ol>
+        <div class="warn">Česte greške: zaboravljeno 4π, korišćen R umesto R², poluprečnik nije u metrima, T nije u kelvinima.</div>
+
+        <h4>Zadatak 7 – Zaključak</h4>
+        <p>U odgovoru treba da se pojave ovi pojmovi, povezani u logičan niz:</p>
+        <ul>
+            <li>vrela zvezda zrači mnogo <em>ultraljubičastih fotona</em> (kratka λ, velika energija E = h·f);</li>
+            <li><strong>jonizacija</strong> – foton izbacuje elektron iz atoma gasa;</li>
+            <li><strong>rekombinacija</strong> – elektron uhvaćen na visok nivo „silazi“ na niže nivoe i pritom emituje fotone određenih energija;</li>
+            <li>razlika između emisionih i apsorpcionih linija – kada vidimo jedne, a kada druge (gde je izvor, gde gas, gde posmatrač).</li>
+        </ul>
+        </div>
+    </details>
 <script>
     const canvas = document.getElementById('spectrumCanvas'); const ctx = canvas.getContext('2d'); const display = document.getElementById('wavelengthDisplay'); const pinBtn = document.getElementById('pinBtn');
     const MIN_WL = 400; const MAX_WL = 700; 
@@ -98,8 +200,16 @@
         
         if (activeElement !== "none" && referenceDB[activeElement]) { ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(0, 200, 255, 0.9)"; referenceDB[activeElement].forEach(wl => { if (wl >= MIN_WL && wl <= MAX_WL) { let x = (wl - MIN_WL) / (MAX_WL - MIN_WL) * w; ctx.beginPath(); ctx.moveTo(x, TOP_MARGIN); ctx.lineTo(x, h - BOTTOM_MARGIN); ctx.stroke(); ctx.fillStyle = "rgba(0, 0, 0, 0.9)"; ctx.fillRect(x - 20, 5, 40, 18); ctx.fillStyle = "#00e0ff"; ctx.font = "bold 12px Arial"; ctx.textAlign = "center"; ctx.fillText(wl.toFixed(1), x, 18); } }); ctx.setLineDash([]); }
     }
-    function pinLine() { if (currentWl > 0) { let exists = pinnedLines.some(wl => Math.abs(wl - currentWl) < 2); if (!exists) { pinnedLines.push(currentWl); drawSpectrum(); pinBtn.classList.add('active'); setTimeout(() => pinBtn.classList.remove('active'), 200); } } }
-    function clearPins() { pinnedLines = []; drawSpectrum(); }
+    function pinLine() { if (currentWl > 0) { let exists = pinnedLines.some(wl => Math.abs(wl - currentWl) < 2); if (!exists) { pinnedLines.push(currentWl); pinnedLines.sort((a, b) => a - b); drawSpectrum(); renderPins(); pinBtn.classList.add('active'); setTimeout(() => pinBtn.classList.remove('active'), 200); } } }
+    function clearPins() { pinnedLines = []; drawSpectrum(); renderPins(); }
+    function removePin(i) { pinnedLines.splice(i, 1); drawSpectrum(); renderPins(); }
+    function renderPins() {
+        const body = document.getElementById('pinBody');
+        document.getElementById('pinCount').textContent = pinnedLines.length;
+        document.getElementById('pinEmpty').style.display = pinnedLines.length ? 'none' : 'block';
+        document.getElementById('pinTable').style.display = pinnedLines.length ? 'table' : 'none';
+        body.innerHTML = pinnedLines.map((wl, i) => `<tr><td>${i + 1}</td><td class="wl">${wl.toFixed(1)}</td><td><button class="del" onclick="removePin(${i})" title="Ukloni">✖</button></td></tr>`).join('');
+    }
     function updateReference() { activeElement = document.getElementById('elementSelect').value; drawSpectrum(); }
     function handleMove(clientX) { const rect = canvas.getBoundingClientRect(); let x = clientX - rect.left; x = Math.max(0, Math.min(x, rect.width)); currentWl = MIN_WL + (x / rect.width) * (MAX_WL - MIN_WL); display.textContent = currentWl.toFixed(1); crosshairX = x; drawSpectrum(); }
     canvas.addEventListener('mousemove', (e) => handleMove(e.clientX));
