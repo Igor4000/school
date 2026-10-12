@@ -63,6 +63,45 @@
     body.light .pins th, body.light .pins td, body.light .explain th, body.light .explain td { border-color: #ccc; }
     body.light .pins td.wl { color: #d6004f; }
     body.light .pins .empty { color: #888; }
+
+    #report { max-width: 700px; margin: 20px auto; text-align: left; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; font-size: 14px; line-height: 1.6; }
+    #report h2 { color: #ffcc00; text-align: center; margin: 0 0 6px 0; font-size: 20px; }
+    #report .sub { text-align: center; color: #888; font-size: 13px; margin-bottom: 14px; }
+    #report h4 { color: #4db8ff; margin: 20px 0 6px; border-bottom: 1px solid #333; padding-bottom: 4px; }
+    #report .ed { display: inline-block; min-width: 110px; border-bottom: 1px solid #777; padding: 1px 6px; background: #111; color: #fff; outline: none; vertical-align: baseline; }
+    #report .ed:focus { border-bottom-color: #4db8ff; background: #181f26; }
+    #report .ed.block { display: block; min-height: 64px; border: 1px solid #555; border-radius: 4px; padding: 6px 8px; margin: 6px 0; white-space: pre-wrap; }
+    #report table { border-collapse: collapse; width: 100%; margin: 6px 0; }
+    #report th, #report td { border: 1px solid #333; padding: 4px 6px; text-align: center; }
+    #report th { background: #222; color: #4db8ff; font-weight: normal; }
+    #report td .ed { display: block; min-width: 0; border-bottom: none; min-height: 1.4em; }
+    #report .row { margin: 6px 0; }
+    #report .fixed { font-family: 'Courier New', monospace; color: #ffcc00; }
+    #report .pinlist { font-family: 'Courier New', monospace; color: #ff6a9a; }
+    #report img { display: block; width: 100%; border: 1px solid #333; margin: 6px 0; }
+    #report .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 18px; }
+    #report .hint { font-size: 12px; color: #888; text-align: center; margin-top: 8px; }
+    body.light #report { background: #fff; border-color: #ccc; }
+    body.light #report h2 { color: #a06a00; }
+    body.light #report h4 { color: #0a6ebd; border-bottom-color: #ccc; }
+    body.light #report .ed { background: #f1f4f8; color: #000; border-bottom-color: #888; }
+    body.light #report .ed.block { border-color: #bbb; }
+    body.light #report th { background: #eee; color: #0a6ebd; }
+    body.light #report th, body.light #report td { border-color: #ccc; }
+    body.light #report .fixed { color: #a06a00; }
+    body.light #report .pinlist { color: #d6004f; }
+    @media print {
+        @page { margin: 14mm; }
+        body > *:not(#report) { display: none !important; }
+        body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+        #report { display: block !important; max-width: none; margin: 0; padding: 0; border: none; background: #fff !important; font-size: 12px; }
+        #report, #report * { color: #000 !important; border-color: #000 !important; }
+        #report .ed, #report th, #report td { background: transparent !important; }
+        #report h2 { font-size: 18px; }
+        #report h4 { break-after: avoid; }
+        #report table, #report .row { break-inside: avoid; }
+        #report .noprint { display: none !important; }
+    }
 </style>
 </head>
 <body>
@@ -188,6 +227,66 @@
         </ul>
         </div>
     </details>
+    <div id="report">
+        <h2>Izveštaj sa vežbe</h2>
+        <div class="sub" id="repTitle"></div>
+        <p class="noprint hint" style="margin-top:0">Popunite sva polja (klik na liniju i kucanje). Sve se automatski pamti u ovom pregledaču. Na kraju pritisnite „Štampaj / Sačuvaj kao PDF“.</p>
+
+        <div class="row">Ime i prezime: <span class="ed" data-k="ime"></span> &nbsp; Odeljenje: <span class="ed" data-k="odeljenje" style="min-width:60px"></span> &nbsp; Datum: <span class="ed" data-k="datum" style="min-width:90px"></span></div>
+
+        <h4>Zadatak 1 – Zakačene linije u spektru</h4>
+        <img id="repImg" alt="Spektar sa zakačenim linijama" style="display:none">
+        <div class="row">Broj linija: <strong id="repPinCount">0</strong> &nbsp;|&nbsp; λ (nm): <span class="pinlist" id="repPinList">—</span></div>
+        <p class="noprint hint" style="text-align:left">Ova lista se popunjava sama iz zakačenih linija iznad.</p>
+
+        <h4>Zadatak 2 – Vodonik: laboratorija i maglina</h4>
+        <table>
+            <tr><th>λ<sub>lab</sub> (nm)</th><th>λ<sub>izmereno</sub> (nm)</th></tr>
+            <tr><td class="fixed">434.0</td><td><div class="ed" data-k="h1"></div></td></tr>
+            <tr><td class="fixed">486.1</td><td><div class="ed" data-k="h2"></div></td></tr>
+            <tr><td class="fixed">656.2</td><td><div class="ed" data-k="h3"></div></td></tr>
+        </table>
+
+        <h4>Zadatak 3 – Brzina udaljavanja</h4>
+        <div class="row">λ<sub>izmereno</sub> (za 486.1 nm) = <span class="ed" data-k="d_l"></span> nm</div>
+        <div class="row">Δλ = λ<sub>izmereno</sub> − 486.1 = <span class="ed" data-k="d_dl"></span> nm</div>
+        <div class="row">Δλ / λ<sub>lab</sub> = <span class="ed" data-k="d_z"></span></div>
+        <div class="row">v = c · Δλ / λ<sub>lab</sub> = <span class="ed" data-k="d_v"></span> km/s</div>
+        <div class="row">Faktor pomeraja 1 + v/c = <span class="ed" data-k="d_f"></span></div>
+        <div>Postupak / napomene:</div>
+        <div class="ed block" data-k="d_note"></div>
+
+        <h4>Zadatak 4 – Sastav magline</h4>
+        <table>
+            <thead><tr><th>Element</th><th>λ<sub>lab</sub> (nm)</th><th>λ<sub>lab</sub> × faktor (nm)</th><th>Zakačena λ (nm)</th><th>Poklapanje (da/ne)</th></tr></thead>
+            <tbody id="elBody"></tbody>
+        </table>
+        <div class="actions noprint" style="margin-top:6px"><button onclick="repAddRow()">➕ Dodaj red</button></div>
+        <div>Elementi koji su sigurno prisutni (navesti):</div>
+        <div class="ed block" data-k="el_sum" style="min-height:40px"></div>
+
+        <h4>Zadatak 5 – Vinov zakon</h4>
+        <div class="row">λ<sub>max</sub> = <span class="ed" data-k="w_l"></span> m</div>
+        <div>Postupak:</div>
+        <div class="ed block" data-k="w_note" style="min-height:48px"></div>
+        <div class="row">T = <span class="ed" data-k="w_T"></span> K</div>
+
+        <h4>Zadatak 6 – Stefan-Bolcmanov zakon</h4>
+        <div class="row">R = <span class="ed" data-k="s_R"></span> m &nbsp; S = 4πR² = <span class="ed" data-k="s_S"></span> m²</div>
+        <div class="row">T⁴ = <span class="ed" data-k="s_T4"></span> K⁴ &nbsp; σT⁴ = <span class="ed" data-k="s_F"></span> W/m²</div>
+        <div>Postupak:</div>
+        <div class="ed block" data-k="s_note" style="min-height:48px"></div>
+        <div class="row">P = σ·T⁴·S = <span class="ed" data-k="s_P"></span> W</div>
+
+        <h4>Zadatak 7 – Zaključak</h4>
+        <div class="ed block" data-k="z_note" style="min-height:110px"></div>
+
+        <div class="actions noprint">
+            <button onclick="repPrint()">🖨️ Štampaj / Sačuvaj kao PDF</button>
+            <button onclick="repClear()">🗑️ Obriši sve odgovore</button>
+        </div>
+        <p class="noprint hint">U prozoru za štampanje izaberite „Sačuvaj kao PDF“ kao štampač ako želite PDF dokument.</p>
+    </div>
 <script>
     const canvas = document.getElementById('spectrumCanvas'); const ctx = canvas.getContext('2d'); const display = document.getElementById('wavelengthDisplay'); const pinBtn = document.getElementById('pinBtn');
     const MIN_WL = 400; const MAX_WL = 700; 
@@ -244,6 +343,65 @@
     function applyTheme(light) { document.body.classList.toggle('light', light); document.getElementById('themeToggle').textContent = light ? '🌙' : '☀️'; }
     function toggleTheme() { const light = !document.body.classList.contains('light'); applyTheme(light); try { localStorage.setItem('vezbeTheme', light ? 'light' : 'dark'); } catch (e) {} }
     (function () { let t = null; try { t = localStorage.getItem('vezbeTheme'); } catch (e) {} applyTheme(t === 'light'); })();
+</script>
+<script>
+(function () {
+    const KEY = 'report:' + document.title;
+    let store = {};
+    try { store = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { store = {}; }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+    function makeEditable(el) {
+        el.setAttribute('contenteditable', 'true');
+        try { el.contentEditable = 'plaintext-only'; } catch (e) {}
+        if (el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
+        el.addEventListener('input', () => { store[el.dataset.k] = el.innerText; save(); });
+        el.addEventListener('paste', (e) => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text')); });
+        if (store[el.dataset.k] !== undefined) el.innerText = store[el.dataset.k];
+    }
+    document.getElementById('repTitle').textContent = document.querySelector('h1').textContent;
+
+    const body = document.getElementById('elBody');
+    let rowCount = 0;
+    function addRow() {
+        const r = rowCount++;
+        const tr = document.createElement('tr');
+        for (let c = 0; c < 5; c++) {
+            const td = document.createElement('td'); const d = document.createElement('div');
+            d.className = 'ed'; d.dataset.k = 'el_' + r + '_' + c;
+            td.appendChild(d); tr.appendChild(td); makeEditable(d);
+        }
+        body.appendChild(tr);
+        store.elRows = rowCount; save();
+    }
+    window.repAddRow = addRow;
+    const startRows = Math.max(6, store.elRows || 0);
+    for (let i = 0; i < startRows; i++) addRow();
+    document.querySelectorAll('#report .ed[data-k]').forEach((el) => { if (!el.closest('#elBody')) makeEditable(el); });
+
+    function updatePins() {
+        const list = (typeof pinnedLines !== 'undefined') ? pinnedLines : [];
+        document.getElementById('repPinCount').textContent = list.length;
+        document.getElementById('repPinList').textContent = list.length ? list.map((x) => x.toFixed(1)).join(';  ') : '—';
+    }
+    const baseRender = window.renderPins;
+    window.renderPins = function () { baseRender(); updatePins(); };
+    updatePins();
+
+    function updateImg() {
+        const img = document.getElementById('repImg');
+        try { img.src = document.getElementById('spectrumCanvas').toDataURL('image/png'); img.style.display = 'block'; } catch (e) {}
+        updatePins();
+    }
+    window.addEventListener('beforeprint', updateImg);
+    window.repPrint = function () { updateImg(); window.print(); };
+    window.repClear = function () {
+        if (!confirm('Obrisati sve upisane odgovore u izveštaju?')) return;
+        store = {}; save();
+        document.querySelectorAll('#report .ed').forEach((el) => { el.textContent = ''; });
+        while (body.children.length > 6) body.removeChild(body.lastChild);
+        rowCount = body.children.length; store.elRows = rowCount; save();
+    };
+})();
 </script>
 </body>
 </html>
