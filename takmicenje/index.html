@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Techscience – Verseny</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctext y=%2726%27 font-size=%2728%27%3E%F0%9F%8F%86%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #EEF2F7; --panel: rgba(255,255,255,.7); --line: rgba(15,27,45,.12);
+  --ink: #0F1B2D; --steel: #52627A; --amber: #B7791F; --amber-deep: #8A560F;
+  --cobalt: #1F4FD8; --teal: #0E8F9A; --indigo: #4B44C9; --rose: #C2410C;
+  --gut: clamp(16px, 4.5vw, 32px);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Hanken Grotesk", system-ui, sans-serif; font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px; opacity: .5;
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 15%, #000 10%, transparent 75%); mask-image: radial-gradient(ellipse 70% 55% at 50% 15%, #000 10%, transparent 75%); }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: 12px; }
+.wrap { position: relative; width: min(1100px, 100% - 2 * var(--gut)); margin-inline: auto; }
+
+.nav { position: sticky; top: 10px; z-index: 10; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 8px 10px 8px 18px; border-radius: 999px; background: rgba(255,255,255,.7); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 12px 34px rgba(15,27,45,.09), inset 0 0 0 1px var(--line); }
+.back { font-weight: 600; font-size: 15px; display: inline-flex; gap: 8px; align-items: center; }
+.back svg { width: 16px; height: 16px; }
+.lang { display: flex; padding: 3px; border-radius: 999px; background: rgba(15,27,45,.07); }
+.lang button { border: 0; background: transparent; cursor: pointer; padding: 6px 14px; border-radius: 999px; font: 600 13px/1 "Hanken Grotesk", sans-serif; color: var(--steel); }
+.lang button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+.hero { text-align: center; padding: clamp(48px, 9vw, 110px) 0 clamp(40px, 6vw, 72px); }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(183,121,31,.14); color: var(--amber-deep); font: 500 13px/1 "JetBrains Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.trophy { width: clamp(90px, 14vw, 140px); margin: 22px auto 6px; display: block; filter: drop-shadow(0 18px 18px rgba(138,86,15,.3)); animation: float 4s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-8px); } }
+.hero h1 { font-family: "Sora", sans-serif; font-weight: 700; font-size: clamp(36px, 6.4vw, 78px); line-height: 1.04; letter-spacing: -0.045em; margin: 10px 0 18px; text-wrap: balance; }
+.hero h1 em { font-style: normal; background: linear-gradient(120deg, #E0A030, #8A560F); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p { max-width: 36em; margin: 0 auto 28px; font-size: clamp(17px, 1.2vw + 8px, 21px); color: var(--steel); text-wrap: pretty; }
+.cta { display: inline-flex; gap: 10px; align-items: center; padding: 15px 28px; border-radius: 14px; font-weight: 600; background: var(--ink); color: #fff; box-shadow: 0 14px 28px rgba(15,27,45,.28); transition: transform .2s; }
+.cta:hover { transform: translateY(-2px); }
+
+.stats { display: flex; justify-content: center; flex-wrap: wrap; gap: clamp(20px, 5vw, 56px); padding: 0 0 clamp(40px, 6vw, 70px); }
+.stats div { text-align: center; }
+.stats b { display: block; font: 700 clamp(28px, 4vw, 42px)/1 "Sora", sans-serif; letter-spacing: -0.03em; }
+.stats span { color: var(--steel); font-size: 14px; }
+
+.section-head h2 { font-family: "Sora", sans-serif; font-weight: 600; font-size: clamp(24px, 2.4vw + 10px, 40px); letter-spacing: -0.03em; margin: 0 0 6px; }
+.section-head p { margin: 0 0 clamp(20px, 3vw, 34px); color: var(--steel); }
+
+.cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(12px, 1.8vw, 20px); padding-bottom: clamp(48px, 7vw, 80px); }
+.cat { --c: var(--cobalt); position: relative; display: flex; flex-direction: column; gap: 6px; min-height: 250px; padding: 22px; border-radius: 24px; background: var(--panel);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px var(--line), 0 18px 40px rgba(15,27,45,.08); overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease; }
+.cat::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: var(--c); }
+.cat:hover { transform: translateY(-6px); box-shadow: inset 0 0 0 1px var(--line), 0 28px 50px rgba(15,27,45,.16); }
+.cat .num { font: 700 clamp(64px, 7vw, 92px)/1 "Sora", sans-serif; letter-spacing: -0.06em; color: var(--c); }
+.cat h3 { font-family: "Sora", sans-serif; font-size: 21px; margin: 0; letter-spacing: -0.02em; }
+.cat p { margin: 0; color: var(--steel); font-size: 15px; }
+.cat .go { margin-top: auto; padding-top: 14px; font-weight: 600; font-size: 15px; color: var(--c); display: inline-flex; gap: 8px; align-items: center; }
+.cat .go svg { width: 16px; height: 16px; transition: transform .2s; }
+.cat:hover .go svg { transform: translateX(4px); }
+.cat:nth-child(1) { --c: var(--cobalt); } .cat:nth-child(2) { --c: var(--teal); }
+.cat:nth-child(3) { --c: var(--indigo); } .cat:nth-child(4) { --c: var(--rose); }
+
+.how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-bottom: clamp(48px, 7vw, 80px); }
+.step { padding: 22px; border-radius: 20px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); }
+.step b { font: 500 14px "JetBrains Mono", monospace; color: var(--amber-deep); }
+.step h3 { font-family: "Sora", sans-serif; font-size: 19px; margin: 6px 0; }
+.step p { margin: 0; color: var(--steel); font-size: 15px; }
+
+footer { padding: 24px 0 40px; color: var(--steel); font-size: 14px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); }
+
+@media (max-width: 900px) { .cats { grid-template-columns: repeat(2, 1fr); } .how { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .cats { grid-template-columns: 1fr; } .cat { min-height: 0; } }
+@media (prefers-reduced-motion: reduce) { .trophy { animation: none; } .cat, .cta { transition: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav" aria-label="Main">
+    <a class="back" href="../index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      <span>Techscience</span>
+    </a>
+    <div class="lang" role="group" aria-label="Nyelv / Jezik">
+      <button type="button" data-lang="hu" aria-pressed="true">HU</button>
+      <button type="button" data-lang="sr" aria-pressed="false">SR</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <span class="badge" data-i18n="badge">Techscience Verseny</span>
+    <svg class="trophy" viewBox="0 0 220 180" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M70 14 H150 V64 C150 94 132 110 110 110 C88 110 70 94 70 64 Z" fill="#E0A030" stroke="#8A560F" stroke-width="5"/>
+      <path d="M70 28 H44 C44 58 56 70 72 72 M150 28 H176 C176 58 164 70 148 72" stroke="#8A560F" stroke-width="5"/>
+      <path d="M110 110 V140 M76 150 H144" stroke="#8A560F" stroke-width="5"/>
+      <rect x="62" y="142" width="96" height="22" rx="6" fill="#B7791F" stroke="#8A560F" stroke-width="5"/>
+      <path d="M110 32 l8 16 18 3 -13 12 3 18 -16 -9 -16 9 3 -18 -13 -12 18 -3 z" fill="#fff" stroke="none"/>
+    </svg>
+    <h1 data-i18n-html="hero.title">Merd a <em>tudásod</em>, légy te a legjobb!</h1>
+    <p data-i18n="hero.sub">Fizika és informatika feladatok minden évfolyamnak. Nem a győzelem a legfontosabb, hanem az, hogy minden feladattal egy kicsit okosabb leszel.</p>
+    <a class="cta" href="#kategoriak"><span data-i18n="hero.cta">Válaszd ki a kategóriád</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+  </header>
+
+  <div class="stats">
+    <div><b>4</b><span data-i18n="stat.cat">kategória</span></div>
+    <div><b>2</b><span data-i18n="stat.sub">tantárgy</span></div>
+    <div><b>1</b><span data-i18n="stat.goal">cél: a fejlődés</span></div>
+  </div>
+
+  <section id="kategoriak" class="section-head" aria-labelledby="cat-h">
+    <h2 id="cat-h" data-i18n="cats.title">Kategóriák</h2>
+    <p data-i18n="cats.sub">Minden évfolyam a saját szintjén versenyez.</p>
+  </section>
+
+  <div class="cats">
+    <a class="cat" href="#" data-grade="1">
+      <span class="num">1.</span>
+      <h3 data-i18n="c1.title">1. évfolyam</h3>
+      <p data-i18n="c1.text">Az első lépések: ismerkedés a fizika és az informatika világával.</p>
+      <span class="go"><span data-i18n="go">Hamarosan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="cat" href="#" data-grade="2">
+      <span class="num">2.</span>
+      <h3 data-i18n="c2.title">2. évfolyam</h3>
+      <p data-i18n="c2.text">Összefüggések és logika: feladatok, amelyek gondolkodtatnak.</p>
+      <span class="go"><span data-i18n="go">Hamarosan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="cat" href="#" data-grade="3">
+      <span class="num">3.</span>
+      <h3 data-i18n="c3.title">3. évfolyam</h3>
+      <p data-i18n="c3.text">Mélyebb tudás: számolás, modellezés és programozás.</p>
+      <span class="go"><span data-i18n="go">Hamarosan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="cat" href="#" data-grade="4">
+      <span class="num">4.</span>
+      <h3 data-i18n="c4.title">4. évfolyam</h3>
+      <p data-i18n="c4.text">A végső kihívás: összetett feladatok a legrátermettebbeknek.</p>
+      <span class="go"><span data-i18n="go">Hamarosan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+
+  <section class="how" aria-label="Menete">
+    <div class="step"><b>01</b><h3 data-i18n="s1.title">Készülj fel</h3><p data-i18n="s1.text">Nézd át a tananyagot és gyakorolj a szimulációkkal.</p></div>
+    <div class="step"><b>02</b><h3 data-i18n="s2.title">Versenyezz</h3><p data-i18n="s2.text">Oldd meg a feladatokat a saját évfolyamod kategóriájában.</p></div>
+    <div class="step"><b>03</b><h3 data-i18n="s3.title">Fejlődj</h3><p data-i18n="s3.text">Minden próbálkozás előrébb visz. Hibázni szabad, feladni nem.</p></div>
+  </section>
+
+  <footer>
+    <span>© 2026 Techscience</span>
+    <span data-i18n="footer">Fizika és informatika verseny</span>
+  </footer>
+</div>
+
+<script>
+var I18N = {
+  hu: {
+    title: 'Techscience – Verseny', badge: 'Techscience Verseny',
+    'hero.title': 'Merd a <em>tudásod</em>, légy te a legjobb!',
+    'hero.sub': 'Fizika és informatika feladatok minden évfolyamnak. Nem a győzelem a legfontosabb, hanem az, hogy minden feladattal egy kicsit okosabb leszel.',
+    'hero.cta': 'Válaszd ki a kategóriád',
+    'stat.cat': 'kategória', 'stat.sub': 'tantárgy', 'stat.goal': 'cél: a fejlődés',
+    'cats.title': 'Kategóriák', 'cats.sub': 'Minden évfolyam a saját szintjén versenyez.',
+    'c1.title': '1. évfolyam', 'c1.text': 'Az első lépések: ismerkedés a fizika és az informatika világával.',
+    'c2.title': '2. évfolyam', 'c2.text': 'Összefüggések és logika: feladatok, amelyek gondolkodtatnak.',
+    'c3.title': '3. évfolyam', 'c3.text': 'Mélyebb tudás: számolás, modellezés és programozás.',
+    'c4.title': '4. évfolyam', 'c4.text': 'A végső kihívás: összetett feladatok a legrátermettebbeknek.',
+    go: 'Hamarosan',
+    's1.title': 'Készülj fel', 's1.text': 'Nézd át a tananyagot és gyakorolj a szimulációkkal.',
+    's2.title': 'Versenyezz', 's2.text': 'Oldd meg a feladatokat a saját évfolyamod kategóriájában.',
+    's3.title': 'Fejlődj', 's3.text': 'Minden próbálkozás előrébb visz. Hibázni szabad, feladni nem.',
+    footer: 'Fizika és informatika verseny'
+  },
+  sr: {
+    title: 'Techscience – Takmičenje', badge: 'Techscience Takmičenje',
+    'hero.title': 'Odmeri svoje <em>znanje</em>, budi najbolji!',
+    'hero.sub': 'Zadaci iz fizike i informatike za sve razrede. Pobeda nije najvažnija, važno je da sa svakim zadatkom postaneš malo pametniji.',
+    'hero.cta': 'Izaberi svoju kategoriju',
+    'stat.cat': 'kategorije', 'stat.sub': 'predmeta', 'stat.goal': 'cilj: napredak',
+    'cats.title': 'Kategorije', 'cats.sub': 'Svaki razred se takmiči na svom nivou.',
+    'c1.title': '1. razred', 'c1.text': 'Prvi koraci: upoznavanje sa svetom fizike i informatike.',
+    'c2.title': '2. razred', 'c2.text': 'Veze i logika: zadaci koji teraju na razmišljanje.',
+    'c3.title': '3. razred', 'c3.text': 'Dublje znanje: računanje, modelovanje i programiranje.',
+    'c4.title': '4. razred', 'c4.text': 'Završni izazov: složeni zadaci za najsposobnije.',
+    go: 'Uskoro',
+    's1.title': 'Pripremi se', 's1.text': 'Prođi gradivo i vežbaj uz simulacije.',
+    's2.title': 'Takmiči se', 's2.text': 'Reši zadatke u kategoriji svog razreda.',
+    's3.title': 'Napreduj', 's3.text': 'Svaki pokušaj vodi napred. Greška je dozvoljena, odustajanje nije.',
+    footer: 'Takmičenje iz fizike i informatike'
+  }
+};
+(function () {
+  var KEY = 'techscience-lang';
+  function set(lang) {
+    if (!I18N[lang]) lang = 'hu';
+    var d = I18N[lang];
+    document.documentElement.lang = lang === 'sr' ? 'sr-Latn' : 'hu';
+    document.title = d.title;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) { var v = d[el.dataset.i18n]; if (v !== undefined) el.textContent = v; });
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) { var v = d[el.dataset.i18nHtml]; if (v !== undefined) el.innerHTML = v; });
+    document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+  }
+  document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.lang); }); });
+  document.querySelectorAll('.cat').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
+  var saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
+  set(saved || 'hu');
+})();
+</script>
+</body>
+</html>

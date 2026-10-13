@@ -158,6 +158,10 @@ a { color: inherit; text-decoration: none; }
 .t-fizika .go, .t-info .go { background: #fff; color: var(--ink); box-shadow: 0 12px 24px rgba(0, 0, 0, .2); }
 .t-ai .go { background: var(--indigo); color: #fff; box-shadow: 0 12px 24px rgba(75, 68, 201, .38); }
 .t-news .go { background: var(--ink); color: #fff; box-shadow: 0 12px 24px rgba(15, 27, 45, .32); }
+.t-news.t-comp { color: #fff; box-shadow: 0 22px 40px rgba(183, 121, 31, .30); }
+.t-news.t-comp .tile-bg { background: linear-gradient(150deg, #E0A030 0%, #8A560F 100%); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+.t-news.t-comp p { color: rgba(255, 255, 255, .88); }
+.t-news.t-comp .go { background: #fff; color: #8A560F; box-shadow: 0 12px 24px rgba(0, 0, 0, .22); }
 .t-ai:hover, .t-news:hover { box-shadow: 0 34px 62px rgba(15, 27, 45, .18); }
 
 /* ---------- NEWS ---------- */
@@ -619,15 +623,16 @@ body.is-reel .reel { opacity: 1; visibility: visible; transition: opacity .4s ea
       <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
 
-    <a class="tile t-news" id="hirek" href="#news" data-tilt="11">
+    <a class="tile t-news t-comp" id="verseny" href="takmicenje/index.html" data-tilt="11">
       <span class="tile-bg"></span>
       <svg class="art" viewBox="0 0 220 140" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M14 122 H206 M14 10 V122" stroke="rgba(15,27,45,.25)" stroke-width="1.5"/>
-        <path d="M14 98 L60 78 L100 90 L148 40 L206 22" stroke="#0F1B2D" stroke-width="3.5"/>
-        <g fill="#fff" stroke="#0F1B2D" stroke-width="2.5"><circle cx="60" cy="78" r="5"/><circle cx="100" cy="90" r="5"/><circle cx="148" cy="40" r="5"/><circle cx="206" cy="22" r="6" fill="#B7791F" stroke="#B7791F"/></g>
+        <path d="M70 18 H150 V58 C150 84 132 98 110 98 C88 98 70 84 70 58 Z" fill="rgba(255,255,255,.22)" stroke="#fff" stroke-width="3.5"/>
+        <path d="M70 30 H48 C48 54 58 64 72 66 M150 30 H172 C172 54 162 64 148 66" stroke="#fff" stroke-width="3.5"/>
+        <path d="M110 98 V118 M82 124 H138" stroke="#fff" stroke-width="3.5"/>
+        <path d="M110 34 l6 12 13 2 -9.5 9 2.5 13 -12 -6.5 -12 6.5 2.5 -13 -9.5 -9 13 -2 z" fill="#fff" stroke="none"/>
       </svg>
-      <h3 data-i18n="news.title">Hírek</h3>
-      <p data-i18n="news.text">Újdonságok az oldalról, a fizika és az informatika világából.</p>
+      <h3 data-i18n="comp.title">Verseny</h3>
+      <p data-i18n="comp.text">Fizika és informatika verseny, évfolyamonként. Mérd össze a tudásod!</p>
       <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
 
@@ -691,8 +696,8 @@ window.TS_I18N = {
     'cs.text': 'Adatbázisok, programozás és gyakorlás, közvetlenül a böngészőben.',
     'ai.title': 'MI tanároknak',
     'ai.text': 'Útmutatók, promptok és gyakorlati példák a mesterséges intelligencia tanórai használatához.',
-    'news.title': 'Hírek',
-    'news.text': 'Újdonságok az oldalról, a fizika és az informatika világából.',
+    'comp.title': 'Verseny',
+    'comp.text': 'Fizika és informatika verseny, évfolyamonként. Mérd össze a tudásod!',
 
     'latest.title': 'Legfrissebb hírek',
     'latest.all': 'Minden hír',
@@ -746,8 +751,8 @@ window.TS_I18N = {
     'cs.text': 'Baze podataka, programiranje i vežbanje, direktno u pregledaču.',
     'ai.title': 'VI za nastavnike',
     'ai.text': 'Vodiči, promptovi i praktični primeri za korišćenje veštačke inteligencije na času.',
-    'news.title': 'Vesti',
-    'news.text': 'Novosti sa sajta i iz sveta fizike i informatike.',
+    'comp.title': 'Takmičenje',
+    'comp.text': 'Takmičenje iz fizike i informatike, po razredima. Odmeri svoje znanje!',
 
     'latest.title': 'Najnovije vesti',
     'latest.all': 'Sve vesti',
