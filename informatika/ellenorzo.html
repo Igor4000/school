@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ellenőrző | TECHSCIENCE</title>
+<style>
+:root{
+  --bg:#fdf5f5; --card:#ffffff; --accent:#dc2626; --accent2:#991b1b;
+  --text:#1e293b; --muted:#64748b; --border:#fecaca; --soft:#fee2e2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;min-height:100vh}
+.container{max-width:980px;margin:0 auto;padding:24px 18px 90px}
+header{position:relative;text-align:center;padding:70px 20px 50px;
+  background:linear-gradient(120deg,#fee2e2 0%,#fecaca 60%,#fca5a5 100%);
+  border-radius:0 0 40px 40px}
+header h1{font-size:2.6rem;color:var(--accent2);margin-bottom:12px}
+header p.sub{color:#7f1d1d;font-size:1.15rem;max-width:700px;margin:0 auto;opacity:.85}
+.lang-switch{position:absolute;top:20px;right:20px;display:flex;background:#fff;border:1px solid var(--border);border-radius:30px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.lang-switch button{background:transparent;border:none;color:var(--muted);padding:9px 20px;cursor:pointer;font-weight:600;font-size:.95rem;transition:.2s}
+.lang-switch button.active{background:var(--accent);color:#fff}
+.back-link{position:absolute;top:20px;left:20px}
+.back-link a{display:inline-block;background:#fff;border:1px solid var(--border);border-radius:30px;padding:9px 20px;color:var(--accent2);font-weight:600;font-size:.95rem;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.08);transition:.2s}
+.back-link a:hover{background:var(--soft)}
+section{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px 34px;margin:28px 0;box-shadow:0 4px 20px rgba(220,38,38,.07)}
+section h2{color:var(--accent2);margin-bottom:16px;font-size:1.55rem;border-bottom:3px solid var(--soft);padding-bottom:10px}
+p{margin-bottom:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:16px 0}
+.card{background:#fff5f5;border:1px solid var(--border);border-radius:14px;padding:18px;transition:.2s}
+.card h4{color:var(--accent2);margin-bottom:6px;font-size:1.05rem}
+.card p{font-size:.92rem;color:var(--muted);margin-bottom:0}
+.soon{display:inline-block;background:var(--soft);color:var(--accent2);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px;border-radius:20px;margin-top:8px}
+footer{text-align:center;color:var(--muted);margin-top:40px;font-size:.9rem}
+.lang-hu, .lang-sr{transition:opacity .3s ease}
+body[data-lang="hu"] .lang-sr{display:none}
+body[data-lang="sr"] .lang-hu{display:none}
+@media(max-width:640px){
+  header h1{font-size:1.8rem}
+  header{padding-top:110px}
+  .lang-switch{position:static;margin:0 auto 14px;display:inline-flex}
+  .back-link{position:static;display:block;text-align:center;margin-bottom:10px}
+  section{padding:22px}
+}
+</style>
+</head>
+<body data-lang="hu">
+<header>
+  <div class="back-link">
+    <a href="index.html">
+      <span class="lang-hu">⬅️ Vissza</span>
+      <span class="lang-sr">⬅️ Nazad</span>
+    </a>
+  </div>
+  <div class="lang-switch">
+    <button id="btn-hu" class="active" onclick="switchLang('hu')">🇭🇺 Magyar</button>
+    <button id="btn-sr" onclick="switchLang('sr')">🇷🇸 Srpski</button>
+  </div>
+  <h1>
+    <span class="lang-hu">🔴 Ellenőrző</span>
+    <span class="lang-sr">🔴 Provera znanja</span>
+  </h1>
+  <p class="sub">
+    <span class="lang-hu">Itt találod majd a témánkénti ellenőrző kérdéseket és kvízeket, amelyekkel leteheted a tudásod próbáját.</span>
+    <span class="lang-sr">Ovde ćeš uskoro pronaći kontrolna pitanja i kvizove po temama, kojima možeš provera svoje znanje.</span>
+  </p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2>
+    <span class="lang-hu">📋 Mi ez a rész?</span>
+    <span class="lang-sr">📋 Šta je ovaj deo?</span>
+  </h2>
+  <p class="lang-hu">
+    Az <b>Ellenőrző</b> szakasz célja, hogy az egyes témakörök (programozás, Excel, adatbázisok, internetbiztonság)
+    elvégzése után gyorsan ellenőrizhesd, mennyit sikerült elsajátítanod. Ide kerülnek majd a rövid kérdéssorok,
+    tesztek és önellenőrző feladatok.
+  </p>
+  <p class="lang-sr">
+    Cilj odeljka <b>Provera znanja</b> je da nakon obrade pojedinih tema (programiranje, Excel, baze podataka,
+    bezbednost na internetu) brzo provereš koliko si uspeo/uspela da savladaš. Ovde će se nalaziti kratki testovi,
+    kvizovi i zadaci za samoproveru.
+  </p>
+</section>
+
+<section>
+  <h2>
+    <span class="lang-hu">🚧 Hamarosan</span>
+    <span class="lang-sr">🚧 Uskoro</span>
+  </h2>
+  <div class="cards">
+    <div class="card">
+      <h4><span class="lang-hu">💻 Programozás kvíz</span><span class="lang-sr">💻 Kviz iz programiranja</span></h4>
+      <p class="lang-hu">Vonalas szerkezet, elágazás és ciklusok.</p>
+      <p class="lang-sr">Linijska struktura, grananje i ciklusi.</p>
+      <span class="soon"><span class="lang-hu">hamarosan</span><span class="lang-sr">uskoro</span></span>
+    </div>
+    <div class="card">
+      <h4><span class="lang-hu">📊 Excel kvíz</span><span class="lang-sr">📊 Excel kviz</span></h4>
+      <p class="lang-hu">Home, Insert, Formulas, Data.</p>
+      <p class="lang-sr">Home, Insert, Formulas, Data.</p>
+      <span class="soon"><span class="lang-hu">hamarosan</span><span class="lang-sr">uskoro</span></span>
+    </div>
+    <div class="card">
+      <h4><span class="lang-hu">🗄️ Adatbázis kvíz</span><span class="lang-sr">🗄️ Kviz iz baza podataka</span></h4>
+      <p class="lang-hu">Alapfogalmak és SQL lekérdezések.</p>
+      <p class="lang-sr">Osnovni pojmovi i SQL upiti.</p>
+      <span class="soon"><span class="lang-hu">hamarosan</span><span class="lang-sr">uskoro</span></span>
+    </div>
+    <div class="card">
+      <h4><span class="lang-hu">🛡️ Internetbiztonság kvíz</span><span class="lang-sr">🛡️ Kviz iz bezbednosti</span></h4>
+      <p class="lang-hu">Adatvédelem és biztonságos internetezés.</p>
+      <p class="lang-sr">Zaštita podataka i bezbedno korišćenje interneta.</p>
+      <span class="soon"><span class="lang-hu">hamarosan</span><span class="lang-sr">uskoro</span></span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="lang-hu">TECHSCIENCE Informatika • Ellenőrző</span>
+  <span class="lang-sr">TECHSCIENCE Informatika • Provera znanja</span>
+</footer>
+</div>
+
+<script>
+function switchLang(lang) {
+    document.body.setAttribute('data-lang', lang);
+    document.getElementById('btn-hu').classList.toggle('active', lang === 'hu');
+    document.getElementById('btn-sr').classList.toggle('active', lang === 'sr');
+    localStorage.setItem('preferredLang', lang);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('preferredLang');
+    if (savedLang && (savedLang === 'hu' || savedLang === 'sr')) {
+        switchLang(savedLang);
+    }
+});
+</script>
+</body>
+</html>
