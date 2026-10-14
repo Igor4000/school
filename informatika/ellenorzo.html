@@ -31,6 +31,9 @@ p{margin-bottom:12px}
 .card h4{color:var(--accent2);margin-bottom:6px;font-size:1.05rem}
 .card p{font-size:.92rem;color:var(--muted);margin-bottom:0}
 .soon{display:inline-block;background:var(--soft);color:var(--accent2);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px;border-radius:20px;margin-top:8px}
+.soon.ready{background:#dcfce7;color:#15803d}
+.card.ready{border-color:#86efac;cursor:pointer;transition:.2s}
+.card.ready:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(21,128,61,.15);border-color:#22c55e}
 footer{text-align:center;color:var(--muted);margin-top:40px;font-size:.9rem}
 .lang-hu, .lang-sr{transition:opacity .3s ease}
 body[data-lang="hu"] .lang-sr{display:none}
@@ -97,12 +100,12 @@ body[data-lang="sr"] .lang-hu{display:none}
       <p class="lang-sr">Linijska struktura, grananje i ciklusi.</p>
       <span class="soon"><span class="lang-hu">hamarosan</span><span class="lang-sr">uskoro</span></span>
     </div>
-    <div class="card">
+    <a class="card ready" href="ellenorzo_excel1.html" style="text-decoration:none;display:block">
       <h4><span class="lang-hu">📊 Excel kvíz</span><span class="lang-sr">📊 Excel kviz</span></h4>
       <p class="lang-hu">Home, Insert, Formulas, Data.</p>
       <p class="lang-sr">Home, Insert, Formulas, Data.</p>
-      <span class="soon"><span class="lang-hu">hamarosan</span><span class="lang-sr">uskoro</span></span>
-    </div>
+      <span class="soon ready"><span class="lang-hu">megnyitás ➜</span><span class="lang-sr">otvori ➜</span></span>
+    </a>
     <div class="card">
       <h4><span class="lang-hu">🗄️ Adatbázis kvíz</span><span class="lang-sr">🗄️ Kviz iz baza podataka</span></h4>
       <p class="lang-hu">Alapfogalmak és SQL lekérdezések.</p>
