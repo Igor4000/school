@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+<title>Adatimport gyakorlat — Könyvtár adatbázis</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#f7f5ff;
+  --panel:#ffffff;
+  --panel-2:#faf9ff;
+  --border:#e5e0f7;
+  --border-soft:#efecfb;
+  --text:#201a3d;
+  --text-dim:#5c5578;
+  --text-faint:#9b93b8;
+  --code-bg:#f1edff;
+
+  --purple:#7c3aed;
+  --pink:#db2777;
+  --orange:#ea580c;
+  --blue:#2563eb;
+  --indigo:#4f46e5;
+  --green:#16a34a;
+  --amber:#d97706;
+  --teal:#0d9488;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background:
+    radial-gradient(circle at 8% 0%, rgba(124,58,237,0.10), transparent 38%),
+    radial-gradient(circle at 92% 10%, rgba(219,39,119,0.09), transparent 38%),
+    radial-gradient(circle at 50% 95%, rgba(13,148,136,0.08), transparent 42%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter', system-ui, sans-serif;
+  line-height:1.65;
+  min-height:100vh;
+}
+
+code, .mono{ font-family:'JetBrains Mono', monospace; }
+h1,h2,h3{ font-family:'Poppins', 'Inter', sans-serif; }
+
+.lang-hu-section,.lang-sr-section,.lang-en-section{display:none;}
+body[data-lang="hu"] .lang-hu-section{display:block;}
+body[data-lang="sr"] .lang-sr-section{display:block;}
+body[data-lang="en"] .lang-en-section{display:block;}
+
+.wrap{ max-width:1180px; margin:0 auto; padding:0 1.25rem 3rem; }
+
+/* ---- hero ---- */
+.hero{
+  background:linear-gradient(120deg, var(--purple), var(--pink) 55%, var(--orange));
+  color:#fff;
+  padding:2.2rem 1.25rem 2.6rem;
+  margin-bottom:2rem;
+}
+.hero-inner{ max-width:1180px; margin:0 auto; }
+.hero-top{ display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.1rem; }
+.hero-badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.82rem;
+  font-weight:600;
+  background:rgba(255,255,255,0.18);
+  border:1px solid rgba(255,255,255,0.35);
+  padding:0.35rem 0.8rem;
+  border-radius:999px;
+  backdrop-filter:blur(4px);
+}
+.lang-switch{ display:flex; gap:4px; background:rgba(255,255,255,0.18); padding:4px; border-radius:999px; border:1px solid rgba(255,255,255,0.35); }
+.lang-pill{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.78rem;
+  font-weight:700;
+  padding:6px 14px;
+  border-radius:999px;
+  border:none;
+  background:transparent;
+  color:#fff;
+  opacity:0.75;
+  cursor:pointer;
+}
+.lang-pill.on{ background:#fff; color:var(--purple); opacity:1; }
+
+.hero h1{ font-size:1.9rem; font-weight:800; letter-spacing:-0.01em; margin-bottom:0.5rem; }
+.hero p{ font-size:1rem; opacity:0.95; max-width:62ch; }
+
+.progress-wrap{ margin-top:1.5rem; display:flex; align-items:center; gap:0.9rem; flex-wrap:wrap; }
+.progress-track{ flex:1 1 220px; height:10px; border-radius:999px; background:rgba(255,255,255,0.3); overflow:hidden; }
+.progress-fill{ height:100%; width:0%; background:#fff; border-radius:999px; transition:width .25s ease; }
+.progress-label{ font-family:'JetBrains Mono', monospace; font-size:0.82rem; font-weight:700; white-space:nowrap; }
+
+/* ---- note / legend ---- */
+.note-block{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:4px solid var(--purple);
+  border-radius:14px;
+  padding:1.1rem 1.3rem;
+  font-size:0.94rem;
+  color:var(--text-dim);
+  margin-bottom:1rem;
+  box-shadow:0 10px 30px -18px rgba(124,58,237,0.25);
+}
+.note-block strong{ color:var(--text); }
+.note-block code{ background:var(--code-bg); color:var(--purple); padding:1px 6px; border-radius:5px; font-size:0.85em;}
+
+.legend{ font-size:0.85rem; color:var(--text-faint); margin:0 0 1.8rem; }
+.legend code{ font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--text-dim); }
+
+/* ---- schema preview cards ---- */
+.schema-wrap{ display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; }
+.schema-table{ background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden; min-width:250px; flex:1 1 250px; box-shadow:0 10px 24px -18px rgba(32,26,61,0.18); }
+.schema-header{ background:var(--panel-2); border-bottom:1px solid var(--border); padding:0.6rem 0.9rem; font-family:'JetBrains Mono', monospace; font-weight:700; font-size:0.88rem; color:var(--purple); display:flex; align-items:center; gap:0.4rem; justify-content:space-between; }
+.schema-count{ color:var(--text-faint); font-weight:400; font-size:0.78rem; }
+.schema-row{ display:grid; grid-template-columns: 1.1fr 0.8fr auto; gap:0.5rem; align-items:center; padding:0.42rem 0.9rem; font-family:'JetBrains Mono', monospace; font-size:0.78rem; border-bottom:1px solid var(--border-soft); }
+.schema-row:last-child{ border-bottom:none; }
+.col-name{ color:var(--text); }
+.col-type{ color:var(--text-faint); }
+.flags{ display:flex; gap:3px; justify-content:flex-end; }
+.flag{ font-size:0.62rem; font-weight:700; padding:1px 6px; border-radius:5px; letter-spacing:0.02em; }
+.flag.pk{ background:rgba(217,119,6,0.14); color:var(--amber); border:1px solid rgba(217,119,6,0.35); }
+.flag.ai{ background:rgba(148,163,184,0.18); color:#64748b; border:1px solid rgba(148,163,184,0.4); }
+.flag.nn{ background:rgba(37,99,235,0.12); color:var(--blue); border:1px solid rgba(37,99,235,0.35); }
+.flag.fk{ background:rgba(219,39,119,0.12); color:var(--pink); border:1px solid rgba(219,39,119,0.35); }
+
+.relations{ display:flex; flex-direction:column; gap:0.45rem; margin:0 0 1.8rem; }
+.relation{ display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; font-family:'JetBrains Mono',monospace; font-size:0.8rem; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0.55rem 0.9rem; color:var(--text); }
+.relation .rel-line{ color:var(--pink); font-weight:700; letter-spacing:0.02em; }
+
+/* ---- data blocks with copy button ---- */
+.data-wrap{ display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:2.2rem; align-items:flex-start; }
+.data-block{ flex:1 1 300px; min-width:0; }
+.data-block.full{ flex-basis:100%; }
+.data-head{ display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; flex-wrap:wrap; }
+.data-title{ font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--text-dim); font-weight:600; }
+.data-title .count{ color:var(--text-faint); font-weight:400; }
+.copy-btn{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.76rem;
+  font-weight:700;
+  padding:7px 13px;
+  border-radius:999px;
+  border:none;
+  background:linear-gradient(120deg, var(--purple), var(--pink));
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 6px 16px -6px rgba(124,58,237,0.55);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.copy-btn:hover{ transform:translateY(-1px); box-shadow:0 10px 20px -6px rgba(124,58,237,0.6); }
+.copy-btn.copied{ background:linear-gradient(120deg, var(--green), var(--teal)); }
+
+.data-scroll{ overflow:auto; max-height:260px; border:1px solid var(--border); border-radius:14px; background:var(--panel); box-shadow:0 10px 24px -18px rgba(32,26,61,0.18); }
+table.data-table{ border-collapse:collapse; width:100%; font-family:'JetBrains Mono',monospace; font-size:0.76rem; }
+table.data-table th{ text-align:left; color:#fff; background:linear-gradient(120deg, var(--purple), var(--pink)); padding:0.45rem 0.75rem; white-space:nowrap; position:sticky; top:0; }
+table.data-table td{ padding:0.32rem 0.75rem; border-bottom:1px solid var(--border-soft); white-space:nowrap; color:var(--text); }
+table.data-table tr:nth-child(even) td{ background:var(--panel-2); }
+table.data-table tr:last-child td{ border-bottom:none; }
+table.data-table td.empty{ color:var(--text-faint); font-style:italic; }
+
+/* ---- steps ---- */
+.steps{ margin-top:0.4rem; display:flex; flex-direction:column; gap:0.85rem; }
+.step-card{
+  display:flex; gap:1rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:5px solid var(--text-faint);
+  border-radius:14px;
+  padding:1rem 1.1rem;
+  box-shadow:0 10px 24px -18px rgba(32,26,61,0.2);
+  transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+.step-card:hover{ transform:translateX(3px); }
+.step-card.done{ opacity:0.55; }
+.step-card.done .step-num{ background:var(--green); border-color:var(--green); color:#fff; }
+
+.step-card.cat-check{ border-left-color:var(--indigo); }
+.step-card.cat-create{ border-left-color:var(--green); }
+.step-card.cat-import{ border-left-color:var(--blue); }
+.step-card.cat-explore{ border-left-color:var(--purple); }
+.step-card.cat-fix{ border-left-color:var(--amber); }
+.step-card.cat-export{ border-left-color:var(--pink); }
+.step-card.cat-save{ border-left-color:var(--teal); }
+
+.step-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.85rem; font-weight:700;
+  color:var(--text-dim);
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  width:34px; height:34px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+
+.step-body{ flex:1; min-width:0; }
+.step-head{ display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem; flex-wrap:wrap; }
+.badge{ font-family:'JetBrains Mono', monospace; font-size:0.66rem; font-weight:700; letter-spacing:0.03em; padding:3px 9px; border-radius:999px; }
+.badge.cat-check{ background:rgba(79,70,229,0.12); color:var(--indigo); }
+.badge.cat-create{ background:rgba(22,163,74,0.12); color:var(--green); }
+.badge.cat-import{ background:rgba(37,99,235,0.12); color:var(--blue); }
+.badge.cat-explore{ background:rgba(124,58,237,0.12); color:var(--purple); }
+.badge.cat-fix{ background:rgba(217,119,6,0.12); color:var(--amber); }
+.badge.cat-export{ background:rgba(219,39,119,0.12); color:var(--pink); }
+.badge.cat-save{ background:rgba(13,148,136,0.12); color:var(--teal); }
+
+.step-target{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; color:var(--text-faint); }
+.step-text{ font-size:0.94rem; color:var(--text); margin-bottom:0.55rem; }
+.step-text code{ background:var(--code-bg); color:var(--purple); padding:1px 6px; border-radius:5px; font-size:0.86em; }
+
+.why-box{
+  background:var(--panel-2);
+  border:1px dashed var(--border);
+  border-radius:10px;
+  padding:0.6rem 0.8rem;
+  font-size:0.86rem;
+  color:var(--text-dim);
+  margin-bottom:0.6rem;
+}
+.why-box strong{ color:var(--text); }
+.why-box code{ background:var(--code-bg); color:var(--purple); padding:1px 5px; border-radius:4px; font-size:0.86em; font-family:'JetBrains Mono',monospace; }
+
+.done-check{ display:inline-flex; align-items:center; gap:0.45rem; font-size:0.86rem; font-weight:600; color:var(--text-dim); cursor:pointer; user-select:none; }
+.done-check input{ width:17px; height:17px; accent-color:var(--green); cursor:pointer; }
+
+.check-block{
+  margin-top:1rem;
+  background:linear-gradient(135deg, rgba(22,163,74,0.08), rgba(13,148,136,0.08));
+  border:1px solid rgba(22,163,74,0.3);
+  border-radius:14px;
+  padding:1.1rem 1.3rem;
+}
+.check-block h3{ font-size:1rem; margin-bottom:0.6rem; color:var(--green); }
+.check-block label{ display:flex; gap:0.65rem; align-items:flex-start; padding:0.22rem 0; font-size:0.92rem; cursor:pointer; }
+.check-block input{ margin-top:0.32rem; accent-color:var(--green); }
+.check-block code{ background:var(--code-bg); color:var(--purple); padding:1px 6px; border-radius:4px; font-size:0.85em; font-family:'JetBrains Mono',monospace; }
+
+footer{ text-align:center; padding:2rem 1rem; color:var(--text-faint); font-family:'JetBrains Mono', monospace; font-size:0.78rem; }
+
+@media (max-width:640px){
+  .hero{ padding:1.6rem 1rem 2rem; }
+  .hero h1{ font-size:1.5rem; }
+  .data-scroll{ max-height:220px; }
+  .schema-row{ grid-template-columns: 1fr auto; }
+  .schema-row .col-type{ display:none; }
+}
+button:focus-visible{ outline:2px solid var(--purple); outline-offset:2px; }
+@media (prefers-reduced-motion:reduce){ .step-card{ transition:none; } .progress-fill{ transition:none; } }
+</style>
+</head>
+<body data-lang="hu">
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="hero-badge">🗄️ DB Browser for SQLite</div>
+      <div class="lang-switch">
+        <button class="lang-pill" id="btn-hu" onclick="setLang('hu')">HU</button>
+        <button class="lang-pill" id="btn-sr" onclick="setLang('sr')">SR</button>
+        <button class="lang-pill" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+
+    <div class="lang-hu-section">
+      <h1>Nagy adathalmaz importálása</h1>
+      <p>13 lépés — egy iskolai könyvtár három összekapcsolt táblája, összesen 80 sor, mindegyik importálással kerül be, kézi beírás nélkül.</p>
+    </div>
+    <div class="lang-sr-section">
+      <h1>Uvoz velikog skupa podataka</h1>
+      <p>13 koraka — tri povezane tabele školske biblioteke, ukupno 80 redova, sve uvozimo bez ručnog upisivanja.</p>
+    </div>
+    <div class="lang-en-section">
+      <h1>Importing a Large Dataset</h1>
+      <p>13 steps — a school library's three linked tables, 80 rows in total, all loaded by importing, not typed by hand.</p>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-label" id="progress-label">0 / 13</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="lang-hu-section">
+    <div class="note-block">
+      <strong>Miért importálunk, és nem gépelünk be mindent kézzel?</strong> A valóságban egy adatbázis majdnem sosem úgy épül fel, hogy valaki egyenként beírja az adatokat. Az adatok rendszerint már léteznek valahol — egy Excel-táblázatban, egy másik iskolai rendszer exportjában, egy nyilvános statisztikai adathalmazban — és ezeket <code>CSV</code> formátumban <strong>importáljuk</strong> az adatbázisba. A DB Browser felülete angol nyelvű, ezért minden feladatnál megadjuk az angol menüpontot is, és minden feladat végén egy rövid <strong>Miért?</strong> doboz elmagyarázza, mire jó az adott lépés.
+    </div>
+    <p class="legend">Oszlopjelölések az import után elvárt szerkezetben: <code>PK</code> primer kulcs · <code>AI</code> automatikus számozás · <code>NN</code> kötelező mező · <code>FK</code> idegen kulcs (másik táblára mutat)</p>
+  </div>
+  <div class="lang-sr-section">
+    <div class="note-block">
+      <strong>Zašto uvozimo, a ne upisujemo sve ručno?</strong> U stvarnom svetu baza podataka se skoro nikad ne pravi tako da neko ručno, jedan po jedan, upisuje podatke. Podaci obično već postoje negde — u Excel tabeli, u izvozu iz nekog drugog školskog sistema, u javnom statističkom skupu podataka — i njih <strong>uvozimo</strong> u bazu u <code>CSV</code> formatu. Interfejs DB Browser-a je na engleskom, zato svaki zadatak navodi i englesku stavku menija, a na kraju svakog zadatka kratak okvir <strong>Zašto?</strong> objašnjava čemu služi taj korak.
+    </div>
+    <p class="legend">Oznake kolona u strukturi koju očekujemo nakon uvoza: <code>PK</code> primarni ključ · <code>AI</code> automatsko numerisanje · <code>NN</code> obavezno polje · <code>FK</code> strani ključ (veza sa drugom tabelom)</p>
+  </div>
+  <div class="lang-en-section">
+    <div class="note-block">
+      <strong>Why import instead of typing everything by hand?</strong> In the real world a database is almost never built by someone typing in data one row at a time. Data usually already exists somewhere — in a spreadsheet, in an export from another school system, in a public statistical dataset — and you <strong>import</strong> it into the database as <code>CSV</code>. DB Browser's interface is in English, so every task also gives the English menu path, and a short <strong>Why?</strong> box at the end of each task explains the point of that step.
+    </div>
+    <p class="legend">Column markers in the structure expected after import: <code>PK</code> primary key · <code>AI</code> auto-increment · <code>NN</code> not null · <code>FK</code> foreign key (points to another table)</p>
+  </div>
+
+  <!-- shared: expected schema after import -->
+  <div class="schema-wrap">
+    <div class="schema-table">
+      <div class="schema-header">📄 Tanulok <span class="schema-count">25</span></div>
+      <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+      <div class="schema-row"><span class="col-name">nev</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div>
+      <div class="schema-row"><span class="col-name">osztaly</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+      <div class="schema-row"><span class="col-name">evfolyam</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+    </div>
+    <div class="schema-table">
+      <div class="schema-header">📄 Konyvek <span class="schema-count">25</span></div>
+      <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+      <div class="schema-row"><span class="col-name">cim</span><span class="col-type">TEXT</span><span class="flags"><span class="flag nn">NN</span></span></div>
+      <div class="schema-row"><span class="col-name">szerzo</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+      <div class="schema-row"><span class="col-name">mufaj</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+      <div class="schema-row"><span class="col-name">kiadas_eve</span><span class="col-type">INTEGER</span><span class="flags"></span></div>
+    </div>
+    <div class="schema-table">
+      <div class="schema-header">📄 Kolcsonzesek <span class="schema-count">30</span></div>
+      <div class="schema-row"><span class="col-name">id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag pk">PK</span><span class="flag ai">AI</span></span></div>
+      <div class="schema-row"><span class="col-name">tanulo_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div>
+      <div class="schema-row"><span class="col-name">konyv_id</span><span class="col-type">INTEGER</span><span class="flags"><span class="flag fk">FK</span></span></div>
+      <div class="schema-row"><span class="col-name">kolcsonzes_datuma</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+      <div class="schema-row"><span class="col-name">visszahozva</span><span class="col-type">TEXT</span><span class="flags"></span></div>
+    </div>
+  </div>
+
+  <div class="relations">
+    <div class="relation"><span>Kolcsonzesek.tanulo_id</span><span class="rel-line">──▶</span><span>Tanulok.id</span></div>
+    <div class="relation"><span>Kolcsonzesek.konyv_id</span><span class="rel-line">──▶</span><span>Konyvek.id</span></div>
+  </div>
+
+  <!-- shared: copyable CSV data -->
+  <div class="data-wrap">
+    <div class="data-block">
+      <div class="data-head">
+        <div class="data-title">tanulok.csv <span class="count">· 25</span></div>
+        <button class="copy-btn" data-source="csv-tanulok" onclick="copyCsv(this)">📋 CSV másolása</button>
+      </div>
+      <div class="data-scroll">
+        <table class="data-table">
+          <thead><tr><th>id</th><th>nev</th><th>osztaly</th><th>evfolyam</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Kovács Péter</td><td>5.a</td><td>5</td></tr>
+            <tr><td>2</td><td>Nagy Zoltán</td><td>5.a</td><td>5</td></tr>
+            <tr><td>3</td><td>Tóth Eszter</td><td>5.b</td><td>5</td></tr>
+            <tr><td>4</td><td>Szabó Anna</td><td>5.b</td><td>5</td></tr>
+            <tr><td>5</td><td>Varga Bence</td><td>6.a</td><td>6</td></tr>
+            <tr><td>6</td><td>Kiss Dóra</td><td>6.a</td><td>6</td></tr>
+            <tr><td>7</td><td>Horváth Máté</td><td>6.b</td><td>6</td></tr>
+            <tr><td>8</td><td>Molnár Zsófia</td><td>6.b</td><td>6</td></tr>
+            <tr><td>9</td><td>Németh Levente</td><td>7.a</td><td>7</td></tr>
+            <tr><td>10</td><td>Farkas Nóra</td><td>7.a</td><td>7</td></tr>
+            <tr><td>11</td><td>Balogh Gergő</td><td>7.b</td><td>7</td></tr>
+            <tr><td>12</td><td>Papp Lili</td><td>7.b</td><td>7</td></tr>
+            <tr><td>13</td><td>Takács Dávid</td><td>8.a</td><td>8</td></tr>
+            <tr><td>14</td><td>Juhász Emma</td><td>8.a</td><td>8</td></tr>
+            <tr><td>15</td><td>Lakatos Ádám</td><td>8.b</td><td>8</td></tr>
+            <tr><td>16</td><td>Fekete Hanna</td><td>8.b</td><td>8</td></tr>
+            <tr><td>17</td><td>Oláh Bence</td><td>5.a</td><td>5</td></tr>
+            <tr><td>18</td><td>Simon Panna</td><td>5.b</td><td>5</td></tr>
+            <tr><td>19</td><td>Szilágyi Márk</td><td>6.a</td><td>6</td></tr>
+            <tr><td>20</td><td>Vass Rebeka</td><td>6.b</td><td>6</td></tr>
+            <tr><td>21</td><td>Pintér Zoltán</td><td>7.a</td><td>7</td></tr>
+            <tr><td>22</td><td>Kovács Lili</td><td>7.b</td><td>7</td></tr>
+            <tr><td>23</td><td>Rácz Dániel</td><td>8.a</td><td>8</td></tr>
+            <tr><td>24</td><td>Fehér Anna</td><td>8.b</td><td>8</td></tr>
+            <tr><td>25</td><td>Deák Tamás</td><td>5.a</td><td>5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="data-block">
+      <div class="data-head">
+        <div class="data-title">konyvek.csv <span class="count">· 25</span></div>
+        <button class="copy-btn" data-source="csv-konyvek" onclick="copyCsv(this)">📋 CSV másolása</button>
+      </div>
+      <div class="data-scroll">
+        <table class="data-table">
+          <thead><tr><th>id</th><th>cim</th><th>szerzo</th><th>mufaj</th><th>kiadas_eve</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Egri csillagok</td><td>Gárdonyi Géza</td><td>történelmi regény</td><td>1901</td></tr>
+            <tr><td>2</td><td>A Pál utcai fiúk</td><td>Molnár Ferenc</td><td>ifjúsági regény</td><td>1907</td></tr>
+            <tr><td>3</td><td>Harry Potter és a bölcsek köve</td><td>J.K. Rowling</td><td>fantasy</td><td>1997</td></tr>
+            <tr><td>4</td><td>A Gyűrűk Ura</td><td>J.R.R. Tolkien</td><td>fantasy</td><td>1954</td></tr>
+            <tr><td>5</td><td>Kincskereső kisködmön</td><td>Móra Ferenc</td><td>ifjúsági regény</td><td>1913</td></tr>
+            <tr><td>6</td><td>Toldi</td><td>Arany János</td><td>elbeszélő költemény</td><td>1847</td></tr>
+            <tr><td>7</td><td>A kis herceg</td><td>Antoine de Saint-Exupéry</td><td>mese</td><td>1943</td></tr>
+            <tr><td>8</td><td>Százszorszép</td><td>Fekete István</td><td>ifjúsági regény</td><td>1960</td></tr>
+            <tr><td>9</td><td>Abigél</td><td>Szabó Magda</td><td>regény</td><td>1970</td></tr>
+            <tr><td>10</td><td>Légy jó mindhalálig</td><td>Móricz Zsigmond</td><td>regény</td><td>1920</td></tr>
+            <tr><td>11</td><td>Pöttyös Panni</td><td>Zsoldos Vera</td><td>gyermekkönyv</td><td>1966</td></tr>
+            <tr><td>12</td><td>A Hobbit</td><td>J.R.R. Tolkien</td><td>fantasy</td><td>1937</td></tr>
+            <tr><td>13</td><td>Harry Potter és a Titkok Kamrája</td><td>J.K. Rowling</td><td>fantasy</td><td>1998</td></tr>
+            <tr><td>14</td><td>Vuk</td><td>Fekete István</td><td>ifjúsági regény</td><td>1965</td></tr>
+            <tr><td>15</td><td>Kire ütött ez a gyerek?</td><td>Janikovszky Éva</td><td>gyermekkönyv</td><td>1965</td></tr>
+            <tr><td>16</td><td>Rab ember fiai</td><td>Móra Ferenc</td><td>ifjúsági regény</td><td>1908</td></tr>
+            <tr><td>17</td><td>Szegény Dzsoni és Árnika</td><td>Lázár Ervin</td><td>mese</td><td>1981</td></tr>
+            <tr><td>18</td><td>Harry Potter és az azkabani fogoly</td><td>J.K. Rowling</td><td>fantasy</td><td>1999</td></tr>
+            <tr><td>19</td><td>Csongor és Tünde</td><td>Vörösmarty Mihály</td><td>dráma</td><td>1831</td></tr>
+            <tr><td>20</td><td>A nagy Gatsby</td><td>F. Scott Fitzgerald</td><td>regény</td><td>1925</td></tr>
+            <tr><td>21</td><td>Állatfarm</td><td>George Orwell</td><td>szatíra</td><td>1945</td></tr>
+            <tr><td>22</td><td>1984</td><td>George Orwell</td><td>sci-fi</td><td>1949</td></tr>
+            <tr><td>23</td><td>Üvegtigris</td><td>Vámos Miklós</td><td>regény</td><td>2003</td></tr>
+            <tr><td>24</td><td>Berzsián és Dideki</td><td>Lázár Ervin</td><td>mese</td><td>1979</td></tr>
+            <tr><td>25</td><td>Pom Pom meséi</td><td>Csukás István</td><td>gyermekkönyv</td><td>1975</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="data-block full">
+      <div class="data-head">
+        <div class="data-title">kolcsonzesek.csv <span class="count">· 30</span></div>
+        <button class="copy-btn" data-source="csv-kolcsonzesek" onclick="copyCsv(this)">📋 CSV másolása</button>
+      </div>
+      <div class="data-scroll">
+        <table class="data-table">
+          <thead><tr><th>id</th><th>tanulo_id</th><th>konyv_id</th><th>kolcsonzes_datuma</th><th>visszahozva</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>3</td><td>1</td><td>2025-09-02</td><td>2025-09-16</td></tr>
+            <tr><td>2</td><td>7</td><td>4</td><td>2025-09-03</td><td class="empty">—</td></tr>
+            <tr><td>3</td><td>12</td><td>12</td><td>2025-09-03</td><td>2025-09-20</td></tr>
+            <tr><td>4</td><td>5</td><td>7</td><td>2025-09-04</td><td>2025-09-18</td></tr>
+            <tr><td>5</td><td>19</td><td>3</td><td>2025-09-05</td><td class="empty">—</td></tr>
+            <tr><td>6</td><td>2</td><td>2</td><td>2025-09-05</td><td>2025-09-19</td></tr>
+            <tr><td>7</td><td>9</td><td>14</td><td>2025-09-08</td><td>2025-09-22</td></tr>
+            <tr><td>8</td><td>15</td><td>21</td><td>2025-09-08</td><td class="empty">—</td></tr>
+            <tr><td>9</td><td>21</td><td>22</td><td>2025-09-09</td><td>2025-09-23</td></tr>
+            <tr><td>10</td><td>4</td><td>9</td><td>2025-09-10</td><td>2025-09-24</td></tr>
+            <tr><td>11</td><td>25</td><td>6</td><td>2025-09-10</td><td class="empty">—</td></tr>
+            <tr><td>12</td><td>17</td><td>8</td><td>2025-09-11</td><td>2025-09-25</td></tr>
+            <tr><td>13</td><td>11</td><td>13</td><td>2025-09-12</td><td class="empty">—</td></tr>
+            <tr><td>14</td><td>6</td><td>18</td><td>2025-09-12</td><td>2025-09-26</td></tr>
+            <tr><td>15</td><td>23</td><td>5</td><td>2025-09-15</td><td>2025-09-29</td></tr>
+            <tr><td>16</td><td>8</td><td>10</td><td>2025-09-15</td><td class="empty">—</td></tr>
+            <tr><td>17</td><td>13</td><td>15</td><td>2025-09-16</td><td>2025-09-30</td></tr>
+            <tr><td>18</td><td>20</td><td>16</td><td>2025-09-17</td><td class="empty">—</td></tr>
+            <tr><td>19</td><td>1</td><td>19</td><td>2025-09-17</td><td>2025-10-01</td></tr>
+            <tr><td>20</td><td>24</td><td>20</td><td>2025-09-18</td><td>2025-10-02</td></tr>
+            <tr><td>21</td><td>10</td><td>24</td><td>2025-09-19</td><td class="empty">—</td></tr>
+            <tr><td>22</td><td>16</td><td>25</td><td>2025-09-19</td><td>2025-10-03</td></tr>
+            <tr><td>23</td><td>14</td><td>11</td><td>2025-09-22</td><td>2025-10-06</td></tr>
+            <tr><td>24</td><td>22</td><td>17</td><td>2025-09-22</td><td class="empty">—</td></tr>
+            <tr><td>25</td><td>18</td><td>23</td><td>2025-09-23</td><td>2025-10-07</td></tr>
+            <tr><td>26</td><td>3</td><td>4</td><td>2025-09-24</td><td class="empty">—</td></tr>
+            <tr><td>27</td><td>5</td><td>12</td><td>2025-09-24</td><td>2025-10-08</td></tr>
+            <tr><td>28</td><td>7</td><td>1</td><td>2025-09-25</td><td class="empty">—</td></tr>
+            <tr><td>29</td><td>9</td><td>2</td><td>2025-09-25</td><td>2025-10-09</td></tr>
+            <tr><td>30</td><td>12</td><td>3</td><td>2025-09-26</td><td class="empty">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- hidden raw CSV sources used by the copy buttons -->
+  <pre id="csv-tanulok" hidden>id,nev,osztaly,evfolyam
+1,Kovács Péter,5.a,5
+2,Nagy Zoltán,5.a,5
+3,Tóth Eszter,5.b,5
+4,Szabó Anna,5.b,5
+5,Varga Bence,6.a,6
+6,Kiss Dóra,6.a,6
+7,Horváth Máté,6.b,6
+8,Molnár Zsófia,6.b,6
+9,Németh Levente,7.a,7
+10,Farkas Nóra,7.a,7
+11,Balogh Gergő,7.b,7
+12,Papp Lili,7.b,7
+13,Takács Dávid,8.a,8
+14,Juhász Emma,8.a,8
+15,Lakatos Ádám,8.b,8
+16,Fekete Hanna,8.b,8
+17,Oláh Bence,5.a,5
+18,Simon Panna,5.b,5
+19,Szilágyi Márk,6.a,6
+20,Vass Rebeka,6.b,6
+21,Pintér Zoltán,7.a,7
+22,Kovács Lili,7.b,7
+23,Rácz Dániel,8.a,8
+24,Fehér Anna,8.b,8
+25,Deák Tamás,5.a,5</pre>
+
+  <pre id="csv-konyvek" hidden>id,cim,szerzo,mufaj,kiadas_eve
+1,Egri csillagok,Gárdonyi Géza,történelmi regény,1901
+2,A Pál utcai fiúk,Molnár Ferenc,ifjúsági regény,1907
+3,Harry Potter és a bölcsek köve,J.K. Rowling,fantasy,1997
+4,A Gyűrűk Ura,J.R.R. Tolkien,fantasy,1954
+5,Kincskereső kisködmön,Móra Ferenc,ifjúsági regény,1913
+6,Toldi,Arany János,elbeszélő költemény,1847
+7,A kis herceg,Antoine de Saint-Exupéry,mese,1943
+8,Százszorszép,Fekete István,ifjúsági regény,1960
+9,Abigél,Szabó Magda,regény,1970
+10,Légy jó mindhalálig,Móricz Zsigmond,regény,1920
+11,Pöttyös Panni,Zsoldos Vera,gyermekkönyv,1966
+12,A Hobbit,J.R.R. Tolkien,fantasy,1937
+13,Harry Potter és a Titkok Kamrája,J.K. Rowling,fantasy,1998
+14,Vuk,Fekete István,ifjúsági regény,1965
+15,Kire ütött ez a gyerek?,Janikovszky Éva,gyermekkönyv,1965
+16,Rab ember fiai,Móra Ferenc,ifjúsági regény,1908
+17,Szegény Dzsoni és Árnika,Lázár Ervin,mese,1981
+18,Harry Potter és az azkabani fogoly,J.K. Rowling,fantasy,1999
+19,Csongor és Tünde,Vörösmarty Mihály,dráma,1831
+20,A nagy Gatsby,F. Scott Fitzgerald,regény,1925
+21,Állatfarm,George Orwell,szatíra,1945
+22,1984,George Orwell,sci-fi,1949
+23,Üvegtigris,Vámos Miklós,regény,2003
+24,Berzsián és Dideki,Lázár Ervin,mese,1979
+25,Pom Pom meséi,Csukás István,gyermekkönyv,1975</pre>
+
+  <pre id="csv-kolcsonzesek" hidden>id,tanulo_id,konyv_id,kolcsonzes_datuma,visszahozva
+1,3,1,2025-09-02,2025-09-16
+2,7,4,2025-09-03,
+3,12,12,2025-09-03,2025-09-20
+4,5,7,2025-09-04,2025-09-18
+5,19,3,2025-09-05,
+6,2,2,2025-09-05,2025-09-19
+7,9,14,2025-09-08,2025-09-22
+8,15,21,2025-09-08,
+9,21,22,2025-09-09,2025-09-23
+10,4,9,2025-09-10,2025-09-24
+11,25,6,2025-09-10,
+12,17,8,2025-09-11,2025-09-25
+13,11,13,2025-09-12,
+14,6,18,2025-09-12,2025-09-26
+15,23,5,2025-09-15,2025-09-29
+16,8,10,2025-09-15,
+17,13,15,2025-09-16,2025-09-30
+18,20,16,2025-09-17,
+19,1,19,2025-09-17,2025-10-01
+20,24,20,2025-09-18,2025-10-02
+21,10,24,2025-09-19,
+22,16,25,2025-09-19,2025-10-03
+23,14,11,2025-09-22,2025-10-06
+24,22,17,2025-09-22,
+25,18,23,2025-09-23,2025-10-07
+26,3,4,2025-09-24,
+27,5,12,2025-09-24,2025-10-08
+28,7,1,2025-09-25,
+29,9,2,2025-09-25,2025-10-09
+30,12,3,2025-09-26,</pre>
+
+  <!-- ================= HU ================= -->
+  <div class="lang-hu-section">
+    <div class="steps">
+
+      <div class="step-card cat-check"><div class="step-num">1</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-check">ELLENŐRZÉS</span><span class="step-target">EN: preview the CSV file</span></div>
+        <p class="step-text">Mielőtt importálnál, nézd át a <strong>tanulok.csv</strong> előnézetét fent. Figyeld meg: az első sor a fejléc (oszlopnevek), utána vesszővel elválasztva jönnek az adatok.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Importálás előtt mindig érdemes megnézni a forrásfájlt — ha rossz az elválasztó vagy hiányzik a fejléc, az import hibás lesz vagy értelmetlen oszlopneveket kapsz.</div>
+        <label class="done-check"><input type="checkbox" data-task="1" onchange="toggleTask(1,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-create"><div class="step-num">2</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-create">ÚJ ADATBÁZIS</span><span class="step-target">EN: File → New Database</span></div>
+        <p class="step-text">Hozz létre egy teljesen új, üres adatbázist <code>konyvtar.db</code> néven. Ebbe importáljuk majd mind a három táblát.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Egy üres adatbázis a tiszta kiindulópont — nem kell kézzel megterveznünk a táblákat, mert az import automatikusan létrehozza őket a CSV szerkezete alapján.</div>
+        <label class="done-check"><input type="checkbox" data-task="2" onchange="toggleTask(2,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">3</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">EN: File → Import → Table from CSV file...</span></div>
+        <p class="step-text">Másold ki a <strong>tanulok.csv</strong> adatait a 📋 gombbal, illeszd be egy üres szöveges fájlba, mentsd el <code>tanulok.csv</code> néven, majd importáld. Az első sor legyen fejléc, az elválasztó vessző (,).</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Ez a valódi munkafolyamat: 25 sort begépelni percekig tartana és hibázni is könnyű lenne — az import másodpercek alatt, hiba nélkül tölti be ugyanazt.</div>
+        <label class="done-check"><input type="checkbox" data-task="3" onchange="toggleTask(3,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">4</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">konyvek.csv</span></div>
+        <p class="step-text">Ugyanígy importáld a <strong>konyvek.csv</strong> adatait is, külön <code>Konyvek</code> táblába.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Ugyanaz a technika, más adatforrás — ez mutatja, hogy az import folyamat bármilyen táblára megismételhető.</div>
+        <label class="done-check"><input type="checkbox" data-task="4" onchange="toggleTask(4,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">5</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">kolcsonzesek.csv</span></div>
+        <p class="step-text">Importáld a <strong>kolcsonzesek.csv</strong> adatait a <code>Kolcsonzesek</code> táblába. Figyelj: néhány sorban a <code>visszahozva</code> mező üres — ez szándékos, ezeket a könyveket még nem hozták vissza.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Ez a tábla köti össze a másik kettőt (tanuló ↔ könyv) — enélkül nem derülne ki, ki mit kölcsönzött.</div>
+        <label class="done-check"><input type="checkbox" data-task="5" onchange="toggleTask(5,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-check"><div class="step-num">6</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-check">ELLENŐRZÉS</span><span class="step-target">EN: Database Structure / Browse Data</span></div>
+        <p class="step-text">Nyisd meg a <code>Database Structure</code> fület: mind három tábla létrejött? A <code>Browse Data</code> fülön alul nézd meg a sorok számát — egyezik-e a forrással (25 / 25 / 30)?</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Egy hibás import gyakran néma — nem dob hibaüzenetet, csak kevesebb sor érkezik be. Mindig ellenőrizd a sorok számát import után.</div>
+        <label class="done-check"><input type="checkbox" data-task="6" onchange="toggleTask(6,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">7</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">SZŰRÉS</span><span class="step-target">EN: Browse Data · Tanulok</span></div>
+        <p class="step-text">A <strong>Tanulok</strong> táblánál használd az <code>osztaly</code> oszlop feletti szűrőmezőt. Hány tanuló van a <code>8.a</code> osztályban?</p>
+        <div class="why-box">💡 <strong>Miért?</strong> A szűrés teszi lehetővé, hogy nagy adathalmazból gyorsan kiválogassuk a releváns sorokat — pontosan ezt fogja majd a SQL <code>WHERE</code> parancsa is csinálni.</div>
+        <label class="done-check"><input type="checkbox" data-task="7" onchange="toggleTask(7,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">8</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">RENDEZÉS</span><span class="step-target">EN: Browse Data · Konyvek</span></div>
+        <p class="step-text">A <strong>Konyvek</strong> táblánál kattints a <code>kiadas_eve</code> oszlop fejére a rendezéshez. Melyik a legrégebbi és melyik a legújabb könyv a könyvtárban?</p>
+        <div class="why-box">💡 <strong>Miért?</strong> A rendezés segít mintákat észrevenni anélkül, hogy végig kellene nézni mind a 25 sort egyenként.</div>
+        <label class="done-check"><input type="checkbox" data-task="8" onchange="toggleTask(8,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">9</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">SZŰRÉS</span><span class="step-target">EN: Browse Data · Kolcsonzesek</span></div>
+        <p class="step-text">A <strong>Kolcsonzesek</strong> táblánál szűrj úgy, hogy a <code>visszahozva</code> mező üres legyen. Hány könyv van jelenleg kölcsönben, amit még nem hoztak vissza?</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Az üres mező felismerése és szűrése gyakori valós feladat — pontosan így derítené ki egy könyvtáros, kinél van még könyv.</div>
+        <label class="done-check"><input type="checkbox" data-task="9" onchange="toggleTask(9,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">10</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">KAPCSOLÁS</span><span class="step-target">EN: cross-reference two tables</span></div>
+        <p class="step-text">Keresd meg, mely <code>8.a</code> osztályos tanulóknak van jelenleg kint lévő (vissza nem hozott) könyve! Nézd meg a <strong>Tanulok</strong> táblában a 8.a-sok <code>id</code>-ját, majd keresd meg ezeket a <strong>Kolcsonzesek</strong> táblában, ahol üres a <code>visszahozva</code>.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Ez a feladat gyakorolja, hogy a kapcsolódó táblák (<code>tanulo_id</code>) hogyan kötik össze az információt két tábla között — pontosan ez a gondolkodásmód kell majd a SQL <code>JOIN</code>-hoz.</div>
+        <label class="done-check"><input type="checkbox" data-task="10" onchange="toggleTask(10,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-fix"><div class="step-num">11</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-fix">JAVÍTÁS</span><span class="step-target">EN: Database Structure → Modify Table</span></div>
+        <p class="step-text">Importálás után ellenőrizd az oszlopok típusát — a CSV import gyakran mindent <code>TEXT</code>-ként hoz be. Javítsd <code>INTEGER</code>-re az <code>evfolyam</code>, <code>kiadas_eve</code>, <code>tanulo_id</code> és <code>konyv_id</code> oszlopokat.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> A helyes típus fontos: szövegként a "9" nagyobbnak tűnhet, mint "10" (mert karakterenként hasonlítja össze), számként viszont helyesen rendeződik.</div>
+        <label class="done-check"><input type="checkbox" data-task="11" onchange="toggleTask(11,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-export"><div class="step-num">12</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-export">EXPORT</span><span class="step-target">EN: File → Export → Table(s) as CSV file...</span></div>
+        <p class="step-text">Exportáld vissza a <strong>Konyvek</strong> táblát CSV fájlba. Nyisd meg az exportált fájlt, és ellenőrizd, hogy minden sor benne van.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> Az adatbázis nemcsak befogad, hanem ki is tud adni adatot — ez zárja a kört: import → munka az adatbázisban → export, például ha valakinek Excelben kell továbbküldeni az eredményt.</div>
+        <label class="done-check"><input type="checkbox" data-task="12" onchange="toggleTask(12,this)"><span>Kész</span></label>
+      </div></div>
+
+      <div class="step-card cat-save"><div class="step-num">13</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-save">MENTÉS</span><span class="step-target">EN: Write Changes</span></div>
+        <p class="step-text">Kattints a <code>Write Changes</code> gombra, zárd be a programot, majd nyisd meg újra a <code>konyvtar.db</code> fájlt. Ellenőrizd, hogy mindhárom tábla és minden sor megmaradt.</p>
+        <div class="why-box">💡 <strong>Miért?</strong> A <code>Write Changes</code> nélkül minden módosítás elvész, amint bezárod a programot — ez legyen minden munka utolsó lépése.</div>
+        <label class="done-check"><input type="checkbox" data-task="13" onchange="toggleTask(13,this)"><span>Kész</span></label>
+      </div></div>
+
+    </div>
+
+    <div class="check-block">
+      <h3>Készen vagy, ha:</h3>
+      <label><input type="checkbox"><span>mindhárom tábla importálva van, kézi adatbevitel nélkül,</span></label>
+      <label><input type="checkbox"><span>a sorok száma megegyezik a forrással (25 / 25 / 30),</span></label>
+      <label><input type="checkbox"><span>meg tudod mondani, hány tanuló van a 8.a osztályban,</span></label>
+      <label><input type="checkbox"><span>meg tudod mondani, melyik a legrégebbi és legújabb könyv,</span></label>
+      <label><input type="checkbox"><span>meg tudod mondani, mely 8.a-s tanulóknál van jelenleg könyv,</span></label>
+      <label><input type="checkbox"><span>a szám-oszlopok típusa INTEGER, nem TEXT,</span></label>
+      <label><input type="checkbox"><span>sikeresen exportáltál egy táblát CSV-be,</span></label>
+      <label><input type="checkbox"><span>a Write Changes utáni újranyitás után is megvan minden adat.</span></label>
+    </div>
+  </div>
+
+  <!-- ================= SR ================= -->
+  <div class="lang-sr-section">
+    <div class="steps">
+
+      <div class="step-card cat-check"><div class="step-num">1</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-check">PREGLED</span><span class="step-target">EN: preview the CSV file</span></div>
+        <p class="step-text">Pre uvoza, pogledaj pregled <strong>tanulok.csv</strong> iznad. Primeti: prvi red je zaglavlje (nazivi kolona), a zatim slede podaci odvojeni zarezom.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Pre uvoza je uvek dobro pogledati izvornu datoteku — ako je separator pogrešan ili nedostaje zaglavlje, uvoz će biti neispravan ili ćeš dobiti besmislene nazive kolona.</div>
+        <label class="done-check"><input type="checkbox" data-task="1" onchange="toggleTask(1,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-create"><div class="step-num">2</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-create">NOVA BAZA</span><span class="step-target">EN: File → New Database</span></div>
+        <p class="step-text">Napravi potpuno novu, praznu bazu podataka pod nazivom <code>konyvtar.db</code>. U nju ćemo uvesti sve tri tabele.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Prazna baza je čista polazna tačka — ne moramo ručno da projektujemo tabele, jer ih uvoz automatski pravi na osnovu strukture CSV-a.</div>
+        <label class="done-check"><input type="checkbox" data-task="2" onchange="toggleTask(2,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">3</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">UVOZ</span><span class="step-target">EN: File → Import → Table from CSV file...</span></div>
+        <p class="step-text">Kopiraj podatke iz <strong>tanulok.csv</strong> dugmetom 📋, nalepi ih u praznu tekstualnu datoteku, sačuvaj kao <code>tanulok.csv</code>, pa uvezi. Prvi red neka bude zaglavlje, separator zarez (,).</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Ovo je pravi tok rada: ručno upisivanje 25 redova bi trajalo i lako bi doveli do greške — uvoz isto to učita za nekoliko sekundi, bez greške.</div>
+        <label class="done-check"><input type="checkbox" data-task="3" onchange="toggleTask(3,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">4</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">UVOZ</span><span class="step-target">konyvek.csv</span></div>
+        <p class="step-text">Na isti način uvezi i podatke iz <strong>konyvek.csv</strong>, u posebnu tabelu <code>Konyvek</code>.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Ista tehnika, drugi izvor podataka — ovo pokazuje da se postupak uvoza može ponoviti za bilo koju tabelu.</div>
+        <label class="done-check"><input type="checkbox" data-task="4" onchange="toggleTask(4,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">5</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">UVOZ</span><span class="step-target">kolcsonzesek.csv</span></div>
+        <p class="step-text">Uvezi podatke iz <strong>kolcsonzesek.csv</strong> u tabelu <code>Kolcsonzesek</code>. Pažnja: u nekim redovima je polje <code>visszahozva</code> prazno — to je namerno, te knjige još nisu vraćene.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Ova tabela povezuje druge dve (učenik ↔ knjiga) — bez nje ne bismo znali ko je šta pozajmio.</div>
+        <label class="done-check"><input type="checkbox" data-task="5" onchange="toggleTask(5,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-check"><div class="step-num">6</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-check">PROVERA</span><span class="step-target">EN: Database Structure / Browse Data</span></div>
+        <p class="step-text">Otvori karticu <code>Database Structure</code>: da li su sve tri tabele nastale? Na kartici <code>Browse Data</code> pogledaj broj redova — poklapa li se sa izvorom (25 / 25 / 30)?</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Neuspešan uvoz je često "tih" — ne prijavljuje grešku, samo stigne manje redova. Uvek proveri broj redova nakon uvoza.</div>
+        <label class="done-check"><input type="checkbox" data-task="6" onchange="toggleTask(6,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">7</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">FILTRIRANJE</span><span class="step-target">EN: Browse Data · Tanulok</span></div>
+        <p class="step-text">Kod tabele <strong>Tanulok</strong> koristi polje za filter iznad kolone <code>osztaly</code>. Koliko učenika je u odeljenju <code>8.a</code>?</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Filtriranje omogućava da iz velikog skupa podataka brzo izdvojimo relevantne redove — baš to će raditi i <code>WHERE</code> naredba u SQL-u.</div>
+        <label class="done-check"><input type="checkbox" data-task="7" onchange="toggleTask(7,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">8</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">SORTIRANJE</span><span class="step-target">EN: Browse Data · Konyvek</span></div>
+        <p class="step-text">Kod tabele <strong>Konyvek</strong> klikni na zaglavlje kolone <code>kiadas_eve</code> da sortiraš. Koja je najstarija, a koja najnovija knjiga u biblioteci?</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Sortiranje pomaže da uočiš obrasce bez potrebe da ručno pregledaš svih 25 redova.</div>
+        <label class="done-check"><input type="checkbox" data-task="8" onchange="toggleTask(8,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">9</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">FILTRIRANJE</span><span class="step-target">EN: Browse Data · Kolcsonzesek</span></div>
+        <p class="step-text">Kod tabele <strong>Kolcsonzesek</strong> filtriraj tako da polje <code>visszahozva</code> bude prazno. Koliko knjiga je trenutno pozajmljeno, a nije vraćeno?</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Prepoznavanje i filtriranje praznog polja je čest, stvaran zadatak — baš tako bi bibliotekar otkrio kod koga je još knjiga.</div>
+        <label class="done-check"><input type="checkbox" data-task="9" onchange="toggleTask(9,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">10</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">POVEZIVANJE</span><span class="step-target">EN: cross-reference two tables</span></div>
+        <p class="step-text">Pronađi koji učenici iz odeljenja <code>8.a</code> trenutno imaju pozajmljenu (nevraćenu) knjigu! Pogledaj <code>id</code> učenika iz 8.a u tabeli <strong>Tanulok</strong>, pa potraži te identifikatore u tabeli <strong>Kolcsonzesek</strong>, tamo gde je <code>visszahozva</code> prazno.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Ovaj zadatak vežba kako povezane tabele (<code>tanulo_id</code>) spajaju informacije iz dve tabele — baš taj način razmišljanja će ti trebati za SQL <code>JOIN</code>.</div>
+        <label class="done-check"><input type="checkbox" data-task="10" onchange="toggleTask(10,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-fix"><div class="step-num">11</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-fix">ISPRAVKA</span><span class="step-target">EN: Database Structure → Modify Table</span></div>
+        <p class="step-text">Nakon uvoza, provери tip kolona — uvoz iz CSV-a često sve uveze kao <code>TEXT</code>. Promeni u <code>INTEGER</code> kolone <code>evfolyam</code>, <code>kiadas_eve</code>, <code>tanulo_id</code> i <code>konyv_id</code>.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Tačan tip je važan: kao tekst, "9" može izgledati veće od "10" (jer se poredi karakter po karakter), a kao broj se ispravno sortira.</div>
+        <label class="done-check"><input type="checkbox" data-task="11" onchange="toggleTask(11,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-export"><div class="step-num">12</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-export">IZVOZ</span><span class="step-target">EN: File → Export → Table(s) as CSV file...</span></div>
+        <p class="step-text">Izvezi tabelu <strong>Konyvek</strong> nazad u CSV datoteku. Otvori izvezenu datoteku i proveri da li su svi redovi tu.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Baza podataka ne samo da prima, nego i izdaje podatke — ovo zatvara krug: uvoz → rad u bazi → izvoz, na primer kada rezultat treba poslati dalje u Excelu.</div>
+        <label class="done-check"><input type="checkbox" data-task="12" onchange="toggleTask(12,this)"><span>Gotovo</span></label>
+      </div></div>
+
+      <div class="step-card cat-save"><div class="step-num">13</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-save">ČUVANJE</span><span class="step-target">EN: Write Changes</span></div>
+        <p class="step-text">Klikni <code>Write Changes</code>, zatvori program, pa ponovo otvori <code>konyvtar.db</code>. Proveri da li su sve tri tabele i svi redovi ostali sačuvani.</p>
+        <div class="why-box">💡 <strong>Zašto?</strong> Bez <code>Write Changes</code> svaka izmena se gubi čim zatvoriš program — ovo mora biti poslednji korak svakog rada.</div>
+        <label class="done-check"><input type="checkbox" data-task="13" onchange="toggleTask(13,this)"><span>Gotovo</span></label>
+      </div></div>
+
+    </div>
+
+    <div class="check-block">
+      <h3>Gotov si kada:</h3>
+      <label><input type="checkbox"><span>sve tri tabele su uvezene, bez ručnog unosa podataka,</span></label>
+      <label><input type="checkbox"><span>broj redova se poklapa sa izvorom (25 / 25 / 30),</span></label>
+      <label><input type="checkbox"><span>znaš koliko učenika je u odeljenju 8.a,</span></label>
+      <label><input type="checkbox"><span>znaš koja je najstarija a koja najnovija knjiga,</span></label>
+      <label><input type="checkbox"><span>znaš koji 8.a učenici trenutno imaju knjigu,</span></label>
+      <label><input type="checkbox"><span>tip kolona sa brojevima je INTEGER, a ne TEXT,</span></label>
+      <label><input type="checkbox"><span>uspešno si izvezao/la jednu tabelu u CSV,</span></label>
+      <label><input type="checkbox"><span>nakon Write Changes i ponovnog otvaranja svi podaci su sačuvani.</span></label>
+    </div>
+  </div>
+
+  <!-- ================= EN ================= -->
+  <div class="lang-en-section">
+    <div class="steps">
+
+      <div class="step-card cat-check"><div class="step-num">1</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-check">CHECK</span><span class="step-target">preview the CSV file</span></div>
+        <p class="step-text">Before importing, look at the <strong>tanulok.csv</strong> preview above. Notice: the first row is the header (column names), followed by comma-separated data.</p>
+        <div class="why-box">💡 <strong>Why?</strong> Always check a source file before importing — a wrong delimiter or a missing header will break the import or give you meaningless column names.</div>
+        <label class="done-check"><input type="checkbox" data-task="1" onchange="toggleTask(1,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-create"><div class="step-num">2</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-create">NEW DATABASE</span><span class="step-target">File → New Database</span></div>
+        <p class="step-text">Create a brand-new, empty database named <code>konyvtar.db</code>. We will import all three tables into it.</p>
+        <div class="why-box">💡 <strong>Why?</strong> An empty database is a clean starting point — we don't need to design the tables by hand, because the import wizard creates them automatically from the CSV structure.</div>
+        <label class="done-check"><input type="checkbox" data-task="2" onchange="toggleTask(2,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">3</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">File → Import → Table from CSV file...</span></div>
+        <p class="step-text">Copy the <strong>tanulok.csv</strong> data with the 📋 button, paste it into an empty text file, save it as <code>tanulok.csv</code>, then import it. The first row should be the header, the delimiter a comma (,).</p>
+        <div class="why-box">💡 <strong>Why?</strong> This is the real workflow: typing 25 rows by hand would take minutes and invite mistakes — importing loads the same data in seconds, error-free.</div>
+        <label class="done-check"><input type="checkbox" data-task="3" onchange="toggleTask(3,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">4</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">konyvek.csv</span></div>
+        <p class="step-text">Import the <strong>konyvek.csv</strong> data the same way, into a separate <code>Konyvek</code> table.</p>
+        <div class="why-box">💡 <strong>Why?</strong> Same technique, different data source — this shows the import process is repeatable for any table.</div>
+        <label class="done-check"><input type="checkbox" data-task="4" onchange="toggleTask(4,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-import"><div class="step-num">5</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">kolcsonzesek.csv</span></div>
+        <p class="step-text">Import the <strong>kolcsonzesek.csv</strong> data into the <code>Kolcsonzesek</code> table. Note: in some rows the <code>visszahozva</code> field is empty — that's intentional, those books haven't been returned yet.</p>
+        <div class="why-box">💡 <strong>Why?</strong> This table links the other two (student ↔ book) — without it we couldn't tell who borrowed what.</div>
+        <label class="done-check"><input type="checkbox" data-task="5" onchange="toggleTask(5,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-check"><div class="step-num">6</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-check">CHECK</span><span class="step-target">Database Structure / Browse Data</span></div>
+        <p class="step-text">Open the <code>Database Structure</code> tab: were all three tables created? On the <code>Browse Data</code> tab check the row count at the bottom — does it match the source (25 / 25 / 30)?</p>
+        <div class="why-box">💡 <strong>Why?</strong> A broken import often fails silently — no error message, just fewer rows arrive. Always verify the row count after importing.</div>
+        <label class="done-check"><input type="checkbox" data-task="6" onchange="toggleTask(6,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">7</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">FILTER</span><span class="step-target">Browse Data · Tanulok</span></div>
+        <p class="step-text">On the <strong>Tanulok</strong> table, use the filter box above the <code>osztaly</code> column. How many students are in class <code>8.a</code>?</p>
+        <div class="why-box">💡 <strong>Why?</strong> Filtering lets you quickly pick out the relevant rows from a large dataset — this is exactly what the SQL <code>WHERE</code> clause will do later.</div>
+        <label class="done-check"><input type="checkbox" data-task="7" onchange="toggleTask(7,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">8</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">SORT</span><span class="step-target">Browse Data · Konyvek</span></div>
+        <p class="step-text">On the <strong>Konyvek</strong> table, click the <code>kiadas_eve</code> column header to sort. Which is the oldest and which the newest book in the library?</p>
+        <div class="why-box">💡 <strong>Why?</strong> Sorting helps you spot patterns without manually scanning all 25 rows one by one.</div>
+        <label class="done-check"><input type="checkbox" data-task="8" onchange="toggleTask(8,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">9</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">FILTER</span><span class="step-target">Browse Data · Kolcsonzesek</span></div>
+        <p class="step-text">On the <strong>Kolcsonzesek</strong> table, filter so that the <code>visszahozva</code> field is empty. How many books are currently out, not yet returned?</p>
+        <div class="why-box">💡 <strong>Why?</strong> Recognizing and filtering an empty field is a common real task — this is exactly how a librarian would find out who still has a book.</div>
+        <label class="done-check"><input type="checkbox" data-task="9" onchange="toggleTask(9,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-explore"><div class="step-num">10</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-explore">CONNECT</span><span class="step-target">cross-reference two tables</span></div>
+        <p class="step-text">Find which <code>8.a</code> students currently have a book out (not yet returned). First look up the <code>id</code>s of the 8.a students in the <strong>Tanulok</strong> table, then search for those ids in the <strong>Kolcsonzesek</strong> table where <code>visszahozva</code> is empty.</p>
+        <div class="why-box">💡 <strong>Why?</strong> This task practices how linked tables (<code>tanulo_id</code>) connect information across two tables — this exact thinking is what you'll need for a SQL <code>JOIN</code>.</div>
+        <label class="done-check"><input type="checkbox" data-task="10" onchange="toggleTask(10,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-fix"><div class="step-num">11</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-fix">FIX</span><span class="step-target">Database Structure → Modify Table</span></div>
+        <p class="step-text">After importing, check the column types — CSV import often brings everything in as <code>TEXT</code>. Change <code>evfolyam</code>, <code>kiadas_eve</code>, <code>tanulo_id</code> and <code>konyv_id</code> to <code>INTEGER</code>.</p>
+        <div class="why-box">💡 <strong>Why?</strong> The correct type matters: as text, "9" can look bigger than "10" (compared character by character), but as a number it sorts correctly.</div>
+        <label class="done-check"><input type="checkbox" data-task="11" onchange="toggleTask(11,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-export"><div class="step-num">12</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-export">EXPORT</span><span class="step-target">File → Export → Table(s) as CSV file...</span></div>
+        <p class="step-text">Export the <strong>Konyvek</strong> table back to a CSV file. Open the exported file and check that every row is there.</p>
+        <div class="why-box">💡 <strong>Why?</strong> A database doesn't just take in data, it can give it back out too — this closes the loop: import → work in the database → export, for example when the result needs to be sent on in Excel.</div>
+        <label class="done-check"><input type="checkbox" data-task="12" onchange="toggleTask(12,this)"><span>Done</span></label>
+      </div></div>
+
+      <div class="step-card cat-save"><div class="step-num">13</div><div class="step-body">
+        <div class="step-head"><span class="badge cat-save">SAVE</span><span class="step-target">Write Changes</span></div>
+        <p class="step-text">Click <code>Write Changes</code>, close the program, then reopen <code>konyvtar.db</code>. Check that all three tables and every row are still there.</p>
+        <div class="why-box">💡 <strong>Why?</strong> Without <code>Write Changes</code>, every change is lost as soon as you close the program — this should be the last step of every session.</div>
+        <label class="done-check"><input type="checkbox" data-task="13" onchange="toggleTask(13,this)"><span>Done</span></label>
+      </div></div>
+
+    </div>
+
+    <div class="check-block">
+      <h3>You're done when:</h3>
+      <label><input type="checkbox"><span>all three tables are imported, without manual data entry,</span></label>
+      <label><input type="checkbox"><span>the row counts match the source (25 / 25 / 30),</span></label>
+      <label><input type="checkbox"><span>you can say how many students are in class 8.a,</span></label>
+      <label><input type="checkbox"><span>you can say which is the oldest and newest book,</span></label>
+      <label><input type="checkbox"><span>you can say which 8.a students currently have a book out,</span></label>
+      <label><input type="checkbox"><span>the number columns are INTEGER, not TEXT,</span></label>
+      <label><input type="checkbox"><span>you successfully exported a table to CSV,</span></label>
+      <label><input type="checkbox"><span>after Write Changes and reopening, all the data is still there.</span></label>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="lang-hu-section">DB Browser for SQLite gyakorlófeladatok 3 · Készült tanulási céllal</span>
+  <span class="lang-sr-section">DB Browser for SQLite praktični zadaci 3 · Napravljeno u svrhu učenja</span>
+  <span class="lang-en-section">DB Browser for SQLite practice exercises 3 · Made for learning</span>
+</footer>
+
+<script>
+  const I18N = {
+    hu: { copy:'📋 CSV másolása', copied:'✅ Másolva!', progress:n => n + ' / 13' },
+    sr: { copy:'📋 Kopiraj CSV', copied:'✅ Kopirano!', progress:n => n + ' / 13' },
+    en: { copy:'📋 Copy CSV', copied:'✅ Copied!', progress:n => n + ' / 13' }
+  };
+  const TOTAL_TASKS = 13;
+
+  function setLang(lang){
+    document.body.setAttribute('data-lang', lang);
+    document.documentElement.lang = (lang === 'hu') ? 'hu' : (lang === 'sr' ? 'sr' : 'en');
+    ['hu','sr','en'].forEach(l => document.getElementById('btn-' + l).classList.toggle('on', l === lang));
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      if (!btn.classList.contains('copied')) btn.textContent = I18N[lang].copy;
+    });
+    updateProgress();
+  }
+
+  function copyCsv(btn){
+    const sourceId = btn.dataset.source;
+    const text = document.getElementById(sourceId).textContent;
+    const done = () => {
+      const lang = document.body.getAttribute('data-lang');
+      btn.classList.add('copied');
+      btn.textContent = I18N[lang].copied;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.textContent = I18N[document.body.getAttribute('data-lang')].copy;
+      }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+
+  function fallbackCopy(text, done){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    done();
+  }
+
+  function toggleTask(taskNum, checkboxEl){
+    const newState = checkboxEl.checked;
+    try { localStorage.setItem('gyak3_task_' + taskNum, newState ? '1' : '0'); } catch(e){}
+    document.querySelectorAll('[data-task="' + taskNum + '"]').forEach(cb => {
+      cb.checked = newState;
+      const card = cb.closest('.step-card');
+      if (card) card.classList.toggle('done', newState);
+    });
+    updateProgress();
+  }
+
+  function updateProgress(){
+    // Count from the DOM (not localStorage): localStorage can be unavailable
+    // (private browsing, sandboxed previews), but the checkboxes are always
+    // a reliable source of truth for the current session.
+    const doneTasks = new Set();
+    document.querySelectorAll('.done-check input[type="checkbox"]:checked').forEach(cb => {
+      doneTasks.add(cb.dataset.task);
+    });
+    const lang = document.body.getAttribute('data-lang');
+    document.getElementById('progress-label').textContent = I18N[lang].progress(doneTasks.size);
+    document.getElementById('progress-fill').style.width = (doneTasks.size / TOTAL_TASKS * 100) + '%';
+  }
+
+  function restoreState(){
+    for (let i = 1; i <= TOTAL_TASKS; i++){
+      let isDone = false;
+      try { isDone = localStorage.getItem('gyak3_task_' + i) === '1'; } catch(e){}
+      if (isDone){
+        document.querySelectorAll('[data-task="' + i + '"]').forEach(cb => {
+          cb.checked = true;
+          const card = cb.closest('.step-card');
+          if (card) card.classList.add('done');
+        });
+      }
+    }
+    updateProgress();
+  }
+
+  setLang('hu');
+  restoreState();
+</script>
+
+</body>
+</html>
