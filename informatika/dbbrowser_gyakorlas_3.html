@@ -45,10 +45,9 @@ body{
 code, .mono{ font-family:'JetBrains Mono', monospace; }
 h1,h2,h3{ font-family:'Poppins', 'Inter', sans-serif; }
 
-.lang-hu-section,.lang-sr-section,.lang-en-section{display:none;}
+.lang-hu-section,.lang-sr-section{display:none;}
 body[data-lang="hu"] .lang-hu-section{display:block;}
 body[data-lang="sr"] .lang-sr-section{display:block;}
-body[data-lang="en"] .lang-en-section{display:block;}
 
 .wrap{ max-width:1180px; margin:0 auto; padding:0 1.25rem 3rem; }
 
@@ -263,7 +262,6 @@ button:focus-visible{ outline:2px solid var(--purple); outline-offset:2px; }
       <div class="lang-switch">
         <button class="lang-pill" id="btn-hu" onclick="setLang('hu')">HU</button>
         <button class="lang-pill" id="btn-sr" onclick="setLang('sr')">SR</button>
-        <button class="lang-pill" id="btn-en" onclick="setLang('en')">EN</button>
       </div>
     </div>
 
@@ -275,11 +273,6 @@ button:focus-visible{ outline:2px solid var(--purple); outline-offset:2px; }
       <h1>Uvoz velikog skupa podataka</h1>
       <p>13 koraka — tri povezane tabele školske biblioteke, ukupno 80 redova, sve uvozimo bez ručnog upisivanja.</p>
     </div>
-    <div class="lang-en-section">
-      <h1>Importing a Large Dataset</h1>
-      <p>13 steps — a school library's three linked tables, 80 rows in total, all loaded by importing, not typed by hand.</p>
-    </div>
-
     <div class="progress-wrap">
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       <div class="progress-label" id="progress-label">0 / 13</div>
@@ -301,13 +294,6 @@ button:focus-visible{ outline:2px solid var(--purple); outline-offset:2px; }
     </div>
     <p class="legend">Oznake kolona u strukturi koju očekujemo nakon uvoza: <code>PK</code> primarni ključ · <code>AI</code> automatsko numerisanje · <code>NN</code> obavezno polje · <code>FK</code> strani ključ (veza sa drugom tabelom)</p>
   </div>
-  <div class="lang-en-section">
-    <div class="note-block">
-      <strong>Why import instead of typing everything by hand?</strong> In the real world a database is almost never built by someone typing in data one row at a time. Data usually already exists somewhere — in a spreadsheet, in an export from another school system, in a public statistical dataset — and you <strong>import</strong> it into the database as <code>CSV</code>. DB Browser's interface is in English, so every task also gives the English menu path, and a short <strong>Why?</strong> box at the end of each task explains the point of that step.
-    </div>
-    <p class="legend">Column markers in the structure expected after import: <code>PK</code> primary key · <code>AI</code> auto-increment · <code>NN</code> not null · <code>FK</code> foreign key (points to another table)</p>
-  </div>
-
   <!-- shared: expected schema after import -->
   <div class="schema-wrap">
     <div class="schema-table">
@@ -772,136 +758,25 @@ button:focus-visible{ outline:2px solid var(--purple); outline-offset:2px; }
     </div>
   </div>
 
-  <!-- ================= EN ================= -->
-  <div class="lang-en-section">
-    <div class="steps">
-
-      <div class="step-card cat-check"><div class="step-num">1</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-check">CHECK</span><span class="step-target">preview the CSV file</span></div>
-        <p class="step-text">Before importing, look at the <strong>tanulok.csv</strong> preview above. Notice: the first row is the header (column names), followed by comma-separated data.</p>
-        <div class="why-box">💡 <strong>Why?</strong> Always check a source file before importing — a wrong delimiter or a missing header will break the import or give you meaningless column names.</div>
-        <label class="done-check"><input type="checkbox" data-task="1" onchange="toggleTask(1,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-create"><div class="step-num">2</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-create">NEW DATABASE</span><span class="step-target">File → New Database</span></div>
-        <p class="step-text">Create a brand-new, empty database named <code>konyvtar.db</code>. We will import all three tables into it.</p>
-        <div class="why-box">💡 <strong>Why?</strong> An empty database is a clean starting point — we don't need to design the tables by hand, because the import wizard creates them automatically from the CSV structure.</div>
-        <label class="done-check"><input type="checkbox" data-task="2" onchange="toggleTask(2,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-import"><div class="step-num">3</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">File → Import → Table from CSV file...</span></div>
-        <p class="step-text">Copy the <strong>tanulok.csv</strong> data with the 📋 button, paste it into an empty text file, save it as <code>tanulok.csv</code>, then import it. The first row should be the header, the delimiter a comma (,).</p>
-        <div class="why-box">💡 <strong>Why?</strong> This is the real workflow: typing 25 rows by hand would take minutes and invite mistakes — importing loads the same data in seconds, error-free.</div>
-        <label class="done-check"><input type="checkbox" data-task="3" onchange="toggleTask(3,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-import"><div class="step-num">4</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">konyvek.csv</span></div>
-        <p class="step-text">Import the <strong>konyvek.csv</strong> data the same way, into a separate <code>Konyvek</code> table.</p>
-        <div class="why-box">💡 <strong>Why?</strong> Same technique, different data source — this shows the import process is repeatable for any table.</div>
-        <label class="done-check"><input type="checkbox" data-task="4" onchange="toggleTask(4,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-import"><div class="step-num">5</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-import">IMPORT</span><span class="step-target">kolcsonzesek.csv</span></div>
-        <p class="step-text">Import the <strong>kolcsonzesek.csv</strong> data into the <code>Kolcsonzesek</code> table. Note: in some rows the <code>visszahozva</code> field is empty — that's intentional, those books haven't been returned yet.</p>
-        <div class="why-box">💡 <strong>Why?</strong> This table links the other two (student ↔ book) — without it we couldn't tell who borrowed what.</div>
-        <label class="done-check"><input type="checkbox" data-task="5" onchange="toggleTask(5,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-check"><div class="step-num">6</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-check">CHECK</span><span class="step-target">Database Structure / Browse Data</span></div>
-        <p class="step-text">Open the <code>Database Structure</code> tab: were all three tables created? On the <code>Browse Data</code> tab check the row count at the bottom — does it match the source (25 / 25 / 30)?</p>
-        <div class="why-box">💡 <strong>Why?</strong> A broken import often fails silently — no error message, just fewer rows arrive. Always verify the row count after importing.</div>
-        <label class="done-check"><input type="checkbox" data-task="6" onchange="toggleTask(6,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-explore"><div class="step-num">7</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-explore">FILTER</span><span class="step-target">Browse Data · Tanulok</span></div>
-        <p class="step-text">On the <strong>Tanulok</strong> table, use the filter box above the <code>osztaly</code> column. How many students are in class <code>8.a</code>?</p>
-        <div class="why-box">💡 <strong>Why?</strong> Filtering lets you quickly pick out the relevant rows from a large dataset — this is exactly what the SQL <code>WHERE</code> clause will do later.</div>
-        <label class="done-check"><input type="checkbox" data-task="7" onchange="toggleTask(7,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-explore"><div class="step-num">8</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-explore">SORT</span><span class="step-target">Browse Data · Konyvek</span></div>
-        <p class="step-text">On the <strong>Konyvek</strong> table, click the <code>kiadas_eve</code> column header to sort. Which is the oldest and which the newest book in the library?</p>
-        <div class="why-box">💡 <strong>Why?</strong> Sorting helps you spot patterns without manually scanning all 25 rows one by one.</div>
-        <label class="done-check"><input type="checkbox" data-task="8" onchange="toggleTask(8,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-explore"><div class="step-num">9</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-explore">FILTER</span><span class="step-target">Browse Data · Kolcsonzesek</span></div>
-        <p class="step-text">On the <strong>Kolcsonzesek</strong> table, filter so that the <code>visszahozva</code> field is empty. How many books are currently out, not yet returned?</p>
-        <div class="why-box">💡 <strong>Why?</strong> Recognizing and filtering an empty field is a common real task — this is exactly how a librarian would find out who still has a book.</div>
-        <label class="done-check"><input type="checkbox" data-task="9" onchange="toggleTask(9,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-explore"><div class="step-num">10</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-explore">CONNECT</span><span class="step-target">cross-reference two tables</span></div>
-        <p class="step-text">Find which <code>8.a</code> students currently have a book out (not yet returned). First look up the <code>id</code>s of the 8.a students in the <strong>Tanulok</strong> table, then search for those ids in the <strong>Kolcsonzesek</strong> table where <code>visszahozva</code> is empty.</p>
-        <div class="why-box">💡 <strong>Why?</strong> This task practices how linked tables (<code>tanulo_id</code>) connect information across two tables — this exact thinking is what you'll need for a SQL <code>JOIN</code>.</div>
-        <label class="done-check"><input type="checkbox" data-task="10" onchange="toggleTask(10,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-fix"><div class="step-num">11</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-fix">FIX</span><span class="step-target">Database Structure → Modify Table</span></div>
-        <p class="step-text">After importing, check the column types — CSV import often brings everything in as <code>TEXT</code>. Change <code>evfolyam</code>, <code>kiadas_eve</code>, <code>tanulo_id</code> and <code>konyv_id</code> to <code>INTEGER</code>.</p>
-        <div class="why-box">💡 <strong>Why?</strong> The correct type matters: as text, "9" can look bigger than "10" (compared character by character), but as a number it sorts correctly.</div>
-        <label class="done-check"><input type="checkbox" data-task="11" onchange="toggleTask(11,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-export"><div class="step-num">12</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-export">EXPORT</span><span class="step-target">File → Export → Table(s) as CSV file...</span></div>
-        <p class="step-text">Export the <strong>Konyvek</strong> table back to a CSV file. Open the exported file and check that every row is there.</p>
-        <div class="why-box">💡 <strong>Why?</strong> A database doesn't just take in data, it can give it back out too — this closes the loop: import → work in the database → export, for example when the result needs to be sent on in Excel.</div>
-        <label class="done-check"><input type="checkbox" data-task="12" onchange="toggleTask(12,this)"><span>Done</span></label>
-      </div></div>
-
-      <div class="step-card cat-save"><div class="step-num">13</div><div class="step-body">
-        <div class="step-head"><span class="badge cat-save">SAVE</span><span class="step-target">Write Changes</span></div>
-        <p class="step-text">Click <code>Write Changes</code>, close the program, then reopen <code>konyvtar.db</code>. Check that all three tables and every row are still there.</p>
-        <div class="why-box">💡 <strong>Why?</strong> Without <code>Write Changes</code>, every change is lost as soon as you close the program — this should be the last step of every session.</div>
-        <label class="done-check"><input type="checkbox" data-task="13" onchange="toggleTask(13,this)"><span>Done</span></label>
-      </div></div>
-
-    </div>
-
-    <div class="check-block">
-      <h3>You're done when:</h3>
-      <label><input type="checkbox"><span>all three tables are imported, without manual data entry,</span></label>
-      <label><input type="checkbox"><span>the row counts match the source (25 / 25 / 30),</span></label>
-      <label><input type="checkbox"><span>you can say how many students are in class 8.a,</span></label>
-      <label><input type="checkbox"><span>you can say which is the oldest and newest book,</span></label>
-      <label><input type="checkbox"><span>you can say which 8.a students currently have a book out,</span></label>
-      <label><input type="checkbox"><span>the number columns are INTEGER, not TEXT,</span></label>
-      <label><input type="checkbox"><span>you successfully exported a table to CSV,</span></label>
-      <label><input type="checkbox"><span>after Write Changes and reopening, all the data is still there.</span></label>
-    </div>
-  </div>
 
 </div>
 
 <footer>
   <span class="lang-hu-section">DB Browser for SQLite gyakorlófeladatok 3 · Készült tanulási céllal</span>
   <span class="lang-sr-section">DB Browser for SQLite praktični zadaci 3 · Napravljeno u svrhu učenja</span>
-  <span class="lang-en-section">DB Browser for SQLite practice exercises 3 · Made for learning</span>
 </footer>
 
 <script>
   const I18N = {
     hu: { copy:'📋 CSV másolása', copied:'✅ Másolva!', progress:n => n + ' / 13' },
-    sr: { copy:'📋 Kopiraj CSV', copied:'✅ Kopirano!', progress:n => n + ' / 13' },
-    en: { copy:'📋 Copy CSV', copied:'✅ Copied!', progress:n => n + ' / 13' }
+    sr: { copy:'📋 Kopiraj CSV', copied:'✅ Kopirano!', progress:n => n + ' / 13' }
   };
   const TOTAL_TASKS = 13;
 
   function setLang(lang){
     document.body.setAttribute('data-lang', lang);
-    document.documentElement.lang = (lang === 'hu') ? 'hu' : (lang === 'sr' ? 'sr' : 'en');
-    ['hu','sr','en'].forEach(l => document.getElementById('btn-' + l).classList.toggle('on', l === lang));
+    document.documentElement.lang = (lang === 'hu') ? 'hu' : 'sr';
+    ['hu','sr'].forEach(l => document.getElementById('btn-' + l).classList.toggle('on', l === lang));
     document.querySelectorAll('.copy-btn').forEach(btn => {
       if (!btn.classList.contains('copied')) btn.textContent = I18N[lang].copy;
     });
