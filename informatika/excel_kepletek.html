@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel képletek – elméleti útmutató</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --xl-green:#217346;
+    --xl-green-dark:#185c36;
+    --xl-amber:#ffb900;
+    --xl-grid:#e5e7eb;
+  }
+  body{
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color:#f5f6f7;
+    background-image:
+      linear-gradient(var(--xl-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--xl-grid) 1px, transparent 1px);
+    background-size:24px 24px;
+  }
+
+  /* ---- fejléc / ribbon ---- */
+  .ribbon{background:var(--xl-green);}
+  .rb-tab{
+    padding:7px 14px;font-size:.88rem;font-weight:500;color:#ffffffbb;
+    border-radius:6px 6px 0 0;white-space:nowrap;cursor:default;
+  }
+  .rb-tab.active{background:#fff;color:var(--xl-green);font-weight:600;position:relative;}
+  .rb-tab.active::after{
+    content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--xl-amber);
+  }
+
+  /* ---- kártyák ---- */
+  .card{
+    background:#fff;border:1px solid #e5e7eb;border-left:4px solid var(--xl-green);
+    border-radius:10px;transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 26px -12px rgba(33,115,70,.35);
+    border-left-color:var(--xl-amber);
+  }
+  .fx{
+    display:inline-block;font-family:'Consolas','Courier New',monospace;font-weight:700;
+    background:#e7f0ea;color:var(--xl-green-dark);padding:2px 8px;border-radius:5px;
+    border:1px solid #cfe3d7;
+  }
+  .hu{
+    display:inline-block;font-family:'Consolas','Courier New',monospace;font-weight:600;
+    background:#f1f5f9;color:#64748b;padding:2px 7px;border-radius:5px;
+    border:1px solid #e2e8f0;font-size:.85em;
+  }
+  code.cell{
+    font-family:'Consolas','Courier New',monospace;background:#f1f5f9;color:#0f172a;
+    padding:1px 6px;border-radius:4px;border:1px solid #e2e8f0;font-size:.92em;
+  }
+  .badge{
+    background:linear-gradient(135deg,var(--xl-green),var(--xl-green-dark));
+    color:#fff;padding:5px 15px;border-radius:999px;font-size:.82rem;font-weight:600;
+    letter-spacing:.02em;
+  }
+  .pill{
+    padding:5px 12px;border-radius:999px;font-size:.8rem;font-weight:500;
+    color:var(--xl-green);background:#fff;border:1px solid #e5e7eb;transition:all .15s;
+  }
+  .pill:hover{background:var(--xl-green);color:#fff;border-color:var(--xl-green);}
+
+  /* ---- mini táblázat Excel-stílusban ---- */
+  .sheet{border-collapse:collapse;font-family:'Consolas','Courier New',monospace;font-size:.84rem;}
+  .sheet th,.sheet td{border:1px solid #c9d2cd;padding:4px 10px;text-align:center;}
+  .sheet thead th{background:#e7f0ea;color:var(--xl-green-dark);font-weight:700;}
+  .sheet tbody th{background:#e7f0ea;color:var(--xl-green-dark);font-weight:700;width:34px;}
+  .sheet td.hl{background:#fff6dd;font-weight:700;}
+
+  .tip{border-left:4px solid var(--xl-amber);background:#fffbeb;}
+  .warn{border-left:4px solid #dc2626;background:#fef2f2;}
+
+  @media print{
+    body{background:#fff;}
+    .card{break-inside:avoid;box-shadow:none;}
+    .no-print{display:none !important;}
+  }
+</style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+<!-- ================= FEJLÉC ================= -->
+<header class="ribbon text-white sticky top-0 z-40 shadow-lg">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center gap-3 pt-4 pb-3">
+      <div class="bg-white/15 p-2.5 rounded-lg ring-1 ring-white/25">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold leading-tight">Excel képletek és függvények</h1>
+        <p class="text-xs sm:text-sm text-emerald-100/90">Elméleti útmutató középiskolásoknak – mikor melyiket használd?</p>
+      </div>
+    </div>
+    <div class="flex items-end gap-1 -mb-px overflow-x-auto">
+      <span class="rb-tab">Home</span>
+      <span class="rb-tab">Insert</span>
+      <span class="rb-tab active">Formulas</span>
+      <span class="rb-tab">Data</span>
+      <span class="rb-tab">View</span>
+    </div>
+  </div>
+</header>
+
+<!-- szerkesztőléc-utánzat -->
+<div class="bg-white border-b border-slate-200 no-print hidden sm:block">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-1.5 flex items-center gap-3 text-xs">
+    <span class="border border-slate-300 rounded px-2 py-0.5 font-mono text-emerald-700 font-bold bg-slate-50">A1</span>
+    <span class="text-slate-300 font-serif italic">fx</span>
+    <span class="font-mono text-slate-400">=LEARN("formulas")</span>
+  </div>
+</div>
+
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+  <!-- navigáció -->
+  <nav class="bg-white border border-slate-200 rounded-xl p-3 mb-8 no-print">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-sm font-semibold text-slate-600 mr-1">Ugrás:</span>
+      <a href="#alapok" class="pill">Alapok</a>
+      <a href="#matek" class="pill">Matematikai</a>
+      <a href="#logika" class="pill">Logikai</a>
+      <a href="#kereses" class="pill">Keresés</a>
+      <a href="#szoveg" class="pill">Szöveges</a>
+      <a href="#dollar" class="pill">A $ jel</a>
+      <a href="#hibak" class="pill">Hibaüzenetek</a>
+      <a href="#osszefoglalo" class="pill">Összefoglaló</a>
+    </div>
+  </nav>
+
+  <!-- ============ ALAPOK ============ -->
+  <section id="alapok" class="mb-14 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">Alapok</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="card p-6 mb-5">
+      <h2 class="text-xl font-bold mb-3">Mi a képlet és mi a függvény?</h2>
+      <p class="leading-relaxed mb-3">
+        A <strong>képlet</strong> minden Excelben mindig <span class="fx">=</span> jellel kezdődik. Ez mondja meg a programnak,
+        hogy nem szöveget, hanem számolnivalót írunk be. Ha az egyenlőségjel lemarad, az Excel egyszerű szövegként kezeli a beírtakat.
+      </p>
+      <p class="leading-relaxed mb-4">
+        A <strong>függvény</strong> egy előre megírt, névvel ellátott számolási eljárás, amelynek zárójelben megadjuk,
+        hogy mivel dolgozzon. Ezeket <em>argumentumoknak</em> nevezzük.
+      </p>
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-sm">
+        <span class="text-emerald-700 font-bold">=</span>SUM<span class="text-slate-400">(</span>A1:A10<span class="text-slate-400">)</span>
+        <div class="mt-2 text-xs font-sans text-slate-600">
+          ↑ egyenlőségjel &nbsp;·&nbsp; ↑ függvény neve &nbsp;·&nbsp; ↑ a tartomány, amin dolgozik
+        </div>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-5">
+      <div class="card p-5">
+        <h3 class="font-bold mb-2">Cella és tartomány</h3>
+        <p class="text-sm leading-relaxed">
+          Egy cellát az oszlop betűje és a sor száma azonosít: <code class="cell">B3</code>.
+          Egy tartományt kettősponttal adunk meg: <code class="cell">B3:B12</code> a B3-tól B12-ig tartó cellákat jelenti.
+        </p>
+      </div>
+      <div class="card p-5">
+        <h3 class="font-bold mb-2">Angol és magyar név</h3>
+        <p class="text-sm leading-relaxed">
+          Az útmutatóban az <strong>angol függvénynevek</strong> szerepelnek elsőként, mert ez a nemzetközi,
+          mindenhol használt forma – ezt találod a dokumentációban, a netes példákban és a legtöbb tananyagban is.
+          A magyar nevet szürke jelöléssel adjuk meg mellette, hogy magyar nyelvű Excelben is megtaláld.
+        </p>
+      </div>
+    </div>
+
+    <div class="tip rounded-r-lg p-4 text-sm mt-5">
+      <strong>Az argumentumok elválasztása.</strong> Angol nyelvű Excelben az argumentumokat <strong>vessző</strong> választja el:
+      <code class="cell">=IF(B2&gt;=50,"OK","Nem")</code>. Magyar nyelvű verzióban viszont <strong>pontosvessző</strong>:
+      <code class="cell">=HA(B2&gt;=50;"OK";"Nem")</code>. Ha hibát jelez a program, gyakran csak ez a különbség az oka.
+    </div>
+  </section>
+
+  <!-- ============ MATEMATIKAI ============ -->
+  <section id="matek" class="mb-14 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">Matematikai és statisztikai függvények</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="space-y-5">
+
+      <div class="card p-6">
+        <h3 class="text-lg font-bold mb-2"><span class="fx">SUM</span> <span class="hu">SZUM</span></h3>
+        <p class="text-sm text-emerald-700 font-medium mb-3">Összeadás</p>
+        <p class="leading-relaxed mb-3">Egy tartomány összes számértékét összeadja. A szöveges és üres cellákat figyelmen kívül hagyja, tehát nem akad el tőlük.</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-sm mb-3">=SUM(B2:B25)</div>
+        <p class="text-sm"><strong>Mikor használd:</strong> osztálypénz összegzése, dolgozatpontok, havi kiadások, bármilyen „összesen” sor.</p>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="text-lg font-bold mb-2"><span class="fx">AVERAGE</span> <span class="hu">ÁTLAG</span></h3>
+        <p class="text-sm text-emerald-700 font-medium mb-3">Számtani középérték</p>
+        <p class="leading-relaxed mb-3">
+          Összeadja az értékeket, majd elosztja a <em>számértéket tartalmazó</em> cellák darabszámával.
+          Fontos: az üres cellát nem tekinti nullának, de a beírt 0-t igen. Ez a kettő más eredményt ad!
+        </p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-sm mb-3">=AVERAGE(C2:C31)</div>
+        <p class="text-sm"><strong>Mikor használd:</strong> tanulmányi átlag, havi átlaghőmérséklet, átlagos napi lépésszám.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="card p-6">
+          <h3 class="text-lg font-bold mb-2"><span class="fx">MIN</span> <span class="fx">MAX</span> <span class="hu">MIN / MAX</span></h3>
+          <p class="text-sm text-emerald-700 font-medium mb-3">Legkisebb és legnagyobb érték</p>
+          <p class="leading-relaxed mb-3 text-sm">Kiválasztja a tartomány legkisebb, illetve legnagyobb számát. Nem azt mondja meg, hol van, csak az értéket adja vissza.</p>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-sm mb-3">=MAX(D2:D40)</div>
+          <p class="text-sm"><strong>Mikor:</strong> legjobb eredmény, leghidegebb nap, legmagasabb ár.</p>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="text-lg font-bold mb-2"><span class="fx">COUNT</span> <span class="fx">COUNTA</span> <span class="hu">DARAB / DARAB2</span></h3>
+          <p class="text-sm text-emerald-700 font-medium mb-3">Darabszám</p>
+          <p class="leading-relaxed mb-3 text-sm">
+            A <span class="fx">COUNT</span> csak a <strong>számokat</strong> tartalmazó cellákat számolja meg.
+            A <span class="fx">COUNTA</span> minden <strong>nem üres</strong> cellát, tehát a szöveget is.
+          </p>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-sm mb-3">=COUNTA(A2:A35)</div>
+          <p class="text-sm"><strong>Mikor:</strong> hány tanuló írta meg a dolgozatot (COUNT), hány név szerepel a listán (COUNTA).</p>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="text-lg font-bold mb-2"><span class="fx">ROUND</span> <span class="hu">KEREKÍTÉS</span></h3>
+        <p class="text-sm text-emerald-700 font-medium mb-3">Kerekítés megadott tizedesjegyre</p>
+        <p class="leading-relaxed mb-3">
+          Két argumentuma van: mit kerekítsen, és hány tizedesjegyre. A 2 két tizedest jelent, a 0 egész számot,
+          a −1 pedig tízesekre kerekít.
+        </p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-sm mb-3">=ROUND(AVERAGE(C2:C31), 2)</div>
+        <div class="tip rounded-r-lg p-3 text-sm">
+          <strong>Figyelj:</strong> a cellaformázással beállított tizedesjegy csak a <em>megjelenítést</em> változtatja,
+          a tárolt érték marad a régi. A ROUND viszont valóban átírja az értéket. Pénzügyi számításnál ez számít.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ LOGIKAI ============ -->
+  <section id="logika" class="mb-14 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">Logikai függvények</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="space-y-5">
+
+      <div class="card p-6">
+        <h3 class="text-lg font-bold mb-2"><span class="fx">IF</span> <span class="hu">HA</span></h3>
+        <p class="text-sm text-emerald-700 font-medium mb-3">Feltételes elágazás</p>
+        <p class="leading-relaxed mb-3">
+          Ez az első „igazi” döntést hozó függvény. Három része van: a <strong>feltétel</strong>, az <strong>igaz ág</strong>
+          és a <strong>hamis ág</strong>. Az Excel megvizsgálja a feltételt, és attól függően adja vissza az egyik vagy a másik értéket.
+        </p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-sm mb-3 overflow-x-auto">
+          =IF(B2&gt;=50, "Megfelelt", "Nem felelt meg")
+        </div>
+        <p class="text-sm mb-3"><strong>Szöveget mindig idézőjelbe kell tenni</strong>, számot viszont nem.</p>
+        <p class="text-sm mb-3">
+          Az IF függvények egymásba is ágyazhatók, így több fokozatot is kezelhetsz – például pontszámból osztályzatot:
+        </p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-xs sm:text-sm overflow-x-auto">
+          =IF(B2&gt;=85, 5, IF(B2&gt;=70, 4, IF(B2&gt;=55, 3, IF(B2&gt;=40, 2, 1))))
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="card p-6">
+          <h3 class="text-lg font-bold mb-2"><span class="fx">AND</span> <span class="hu">ÉS</span></h3>
+          <p class="text-sm leading-relaxed mb-3">Csak akkor igaz, ha <strong>minden</strong> megadott feltétel teljesül. Általában az IF feltétel-részébe tesszük.</p>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-xs overflow-x-auto">
+            =IF(AND(B2&gt;=50, C2&gt;=50), "Átment", "Pótvizsga")
+          </div>
+          <p class="text-sm mt-3">Mindkét dolgozatnak jónak kell lennie.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="text-lg font-bold mb-2"><span class="fx">OR</span> <span class="hu">VAGY</span></h3>
+          <p class="text-sm leading-relaxed mb-3">Akkor igaz, ha <strong>legalább egy</strong> feltétel teljesül. A többi mehet akárhogy.</p>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-xs overflow-x-auto">
+            =IF(OR(B2="igazolt", C2&gt;3), "Rendben", "Egyeztetni")
+          </div>
+          <p class="text-sm mt-3">Elég az egyik körülmény ahhoz, hogy rendben legyen.</p>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="card p-6">
+          <h3 class="text-lg font-bold mb-2"><span class="fx">COUNTIF</span> <span class="hu">DARABTELI</span></h3>
+          <p class="text-sm text-emerald-700 font-medium mb-3">Feltételes darabszám</p>
+          <p class="text-sm leading-relaxed mb-3">Megszámolja, hány cella felel meg egy feltételnek. Két argumentum: hol keressen, és mit keressen.</p>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-xs overflow-x-auto">=COUNTIF(D2:D31, 5)</div>
+          <p class="text-sm mt-3"><strong>Mikor:</strong> hány ötös született az osztályban, hány fiú van a listán.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="text-lg font-bold mb-2"><span class="fx">SUMIF</span> <span class="hu">SZUMHA</span></h3>
+          <p class="text-sm text-emerald-700 font-medium mb-3">Feltételes összegzés</p>
+          <p class="text-sm leading-relaxed mb-3">Csak azoknak a soroknak az értékét adja össze, amelyek megfelelnek a feltételnek.</p>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-xs overflow-x-auto">=SUMIF(A2:A50, "ital", C2:C50)</div>
+          <p class="text-sm mt-3"><strong>Mikor:</strong> mennyi bevétel jött italból a büfében, mennyit költöttél összesen tankönyvre.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ KERESÉS ============ -->
+  <section id="kereses" class="mb-14 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">Kereső függvények</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="card p-6 mb-5">
+      <h3 class="text-lg font-bold mb-2"><span class="fx">VLOOKUP</span> <span class="hu">FKERES</span></h3>
+      <p class="text-sm text-emerald-700 font-medium mb-3">Függőleges keresés</p>
+      <p class="leading-relaxed mb-4">
+        Egy táblázat első oszlopában megkeres egy értéket, majd ugyanabból a sorból visszaadja egy másik oszlop tartalmát.
+        Ezzel kapcsolhatsz össze két külön táblázatot: például egy azonosítóhoz megtalálja a hozzá tartozó nevet vagy árat.
+      </p>
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-sm mb-4 overflow-x-auto">
+        =VLOOKUP(A2, $F$2:$H$40, 3, FALSE)
+      </div>
+      <ul class="text-sm space-y-2 mb-4">
+        <li><strong>1. argumentum</strong> – mit keresünk (<code class="cell">A2</code>),</li>
+        <li><strong>2. argumentum</strong> – hol keressük; ez a tábla, ahol az <strong>első oszlop</strong> a keresési oszlop,</li>
+        <li><strong>3. argumentum</strong> – hányadik oszlopból kérjük az eredményt (a tábla elejétől számolva),</li>
+        <li><strong>4. argumentum</strong> – <code class="cell">FALSE</code> (magyarul <code class="cell">HAMIS</code>) = pontos egyezés, <code class="cell">TRUE</code> / <code class="cell">IGAZ</code> = közelítő.</li>
+      </ul>
+      <div class="warn rounded-r-lg p-3 text-sm">
+        <strong>Két tipikus hiba:</strong> a keresési táblát nem rögzítjük <code class="cell">$</code> jelekkel, ezért lefelé másolva elcsúszik;
+        illetve lemarad a negyedik argumentum, és az Excel közelítő egyezést keres, ami rendezetlen adatokon rossz eredményt ad.
+      </div>
+      <p class="text-sm mt-4">
+        Újabb Excel-verziókban az <span class="fx">XLOOKUP</span> <span class="hu">XKERES</span> ugyanezt egyszerűbben csinálja, és balra is tud keresni,
+        de régebbi gépeken nem érhető el.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SZÖVEG ============ -->
+  <section id="szoveg" class="mb-14 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">Szöveges függvények</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-5">
+      <div class="card p-5">
+        <h3 class="font-bold mb-2"><span class="fx">CONCAT</span></h3>
+        <p class="mb-2"><span class="hu">ÖSSZEFŰZ</span> <span class="text-xs text-slate-500">vagy az &amp; operátor</span></p>
+        <p class="text-sm leading-relaxed mb-3">Több cella tartalmát egyetlen szöveggé fűzi. Az <code class="cell">&amp;</code> operátor ugyanezt rövidebben teszi.</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 font-mono text-xs overflow-x-auto">=A2&amp;" "&amp;B2</div>
+        <p class="text-sm mt-3">Vezetéknév és keresztnév egy cellába.</p>
+      </div>
+      <div class="card p-5">
+        <h3 class="font-bold mb-2"><span class="fx">LEFT</span> <span class="fx">RIGHT</span></h3>
+        <p class="mb-2"><span class="hu">BAL / JOBB</span></p>
+        <p class="text-sm leading-relaxed mb-3">A szöveg elejéről, illetve végéről vág ki megadott számú karaktert.</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 font-mono text-xs overflow-x-auto">=LEFT(A2, 3)</div>
+        <p class="text-sm mt-3">Azonosító kódok első három jegyének kinyerése.</p>
+      </div>
+      <div class="card p-5">
+        <h3 class="font-bold mb-2"><span class="fx">LEN</span></h3>
+        <p class="mb-2"><span class="hu">HOSSZ</span></p>
+        <p class="text-sm leading-relaxed mb-3">Megszámolja a karaktereket, a szóközöket is beleértve.</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 font-mono text-xs overflow-x-auto">=LEN(A2)</div>
+        <p class="text-sm mt-3">Ellenőrzés: minden adószám 11 jegyű-e.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ A $ JEL ============ -->
+  <section id="dollar" class="mb-14 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">A $ jel – hivatkozástípusok</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="card p-6 mb-6">
+      <h3 class="text-lg font-bold mb-3">Miért van rá szükség?</h3>
+      <p class="leading-relaxed mb-3">
+        Amikor egy képletet lemásolsz egy másik cellába, az Excel alapértelmezetten <strong>elmozdítja</strong> a benne lévő
+        hivatkozásokat. Egy sorral lejjebb másolva <code class="cell">A1</code>-ből <code class="cell">A2</code> lesz.
+        Ez legtöbbször pont jó: ezért elég egyetlen képletet megírni és lehúzni az egész oszlopra.
+      </p>
+      <p class="leading-relaxed">
+        Néha viszont pont nem ezt akarjuk. Ha a képlet egy rögzített értékre hivatkozik – ÁFA-kulcs, árfolyam, egy konstans –,
+        akkor annak a cellának <strong>helyben kell maradnia</strong>. Erre való a dollárjel: a <code class="cell">$</code>
+        „leszögezi” az utána álló oszlopot vagy sort.
+      </p>
+    </div>
+
+    <h3 class="text-lg font-bold mb-4">A négy eset</h3>
+    <div class="space-y-5 mb-8">
+
+      <div class="card p-6">
+        <div class="flex flex-wrap items-baseline gap-3 mb-2">
+          <span class="fx text-base">A1</span>
+          <h4 class="font-bold">Relatív hivatkozás <span class="text-sm font-normal text-slate-500">(relative reference)</span></h4>
+        </div>
+        <p class="leading-relaxed mb-2">Sem az oszlop, sem a sor nincs rögzítve. Másoláskor <strong>mindkettő mozog</strong>.</p>
+        <p class="text-sm"><strong>Mikor:</strong> ez az alapeset. Egy oszlop értékeit soronként dolgozod fel – pontszámból osztályzat, árból bruttó ár.</p>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex flex-wrap items-baseline gap-3 mb-2">
+          <span class="fx text-base">$A$1</span>
+          <h4 class="font-bold">Abszolút hivatkozás <span class="text-sm font-normal text-slate-500">(absolute reference)</span></h4>
+        </div>
+        <p class="leading-relaxed mb-2">Az oszlop és a sor is rögzített. Akárhová másolod, <strong>mindig ugyanarra a cellára</strong> mutat.</p>
+        <p class="text-sm mb-3"><strong>Mikor:</strong> egyetlen közös értékre hivatkozol az egész táblázatból – ÁFA-kulcs, euró árfolyam, egységár, maximális pontszám.</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 font-mono text-sm overflow-x-auto">
+          =B2*$E$1 &nbsp;&nbsp;<span class="font-sans text-xs text-slate-500">← E1-ben áll az árfolyam</span>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex flex-wrap items-baseline gap-3 mb-2">
+          <span class="fx text-base">$A1</span>
+          <h4 class="font-bold">Vegyes – az oszlop rögzített <span class="text-sm font-normal text-slate-500">(mixed reference)</span></h4>
+        </div>
+        <p class="leading-relaxed mb-2">Az oszlop fix marad, a sor viszont mozog. Jobbra másolva nem csúszik el, lefelé másolva igen.</p>
+        <p class="text-sm"><strong>Mikor:</strong> ha minden oszlopnak ugyanabból a bal oldali oszlopból kell dolgoznia – például a nevek mindig az A oszlopban állnak.</p>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex flex-wrap items-baseline gap-3 mb-2">
+          <span class="fx text-base">A$1</span>
+          <h4 class="font-bold">Vegyes – a sor rögzített <span class="text-sm font-normal text-slate-500">(mixed reference)</span></h4>
+        </div>
+        <p class="leading-relaxed mb-2">A sor fix, az oszlop mozog. Lefelé másolva nem csúszik el, jobbra másolva igen.</p>
+        <p class="text-sm"><strong>Mikor:</strong> a fejlécsorban álló értékekre hivatkozol – hónapnevek, kategóriák, szorzótényezők az 1. sorban.</p>
+      </div>
+    </div>
+
+    <!-- szorzótábla példa -->
+    <div class="card p-6 mb-6">
+      <h3 class="text-lg font-bold mb-3">A klasszikus példa: szorzótábla</h3>
+      <p class="leading-relaxed mb-4">
+        Ez az a feladat, ahol a vegyes hivatkozás értelme egy pillanat alatt világossá válik. A bal oldali oszlopban
+        és a felső sorban állnak a szorzandó számok, középen pedig <strong>egyetlen képlet</strong>, amit minden irányba
+        lehúzhatsz.
+      </p>
+      <div class="overflow-x-auto mb-4">
+        <table class="sheet">
+          <thead>
+            <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>1</th><td class="bg-slate-50">×</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+            <tr><th>2</th><td>1</td><td class="hl">1</td><td>2</td><td>3</td><td>4</td></tr>
+            <tr><th>3</th><td>2</td><td>2</td><td class="hl">4</td><td>6</td><td>8</td></tr>
+            <tr><th>4</th><td>3</td><td>3</td><td>6</td><td class="hl">9</td><td>12</td></tr>
+            <tr><th>5</th><td>4</td><td>4</td><td>8</td><td>12</td><td class="hl">16</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mb-3">A B2 cellába ez a képlet kerül, majd lehúzható jobbra és lefelé is:</p>
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-sm mb-4">=$A2*B$1</div>
+      <ul class="text-sm space-y-1.5">
+        <li><code class="cell">$A2</code> – az A oszlop rögzítve, így jobbra másolva is mindig a bal szélső számot hozza, a sor viszont követi, hogy hányadik sorban vagy.</li>
+        <li><code class="cell">B$1</code> – az 1. sor rögzítve, így lefelé másolva is a fejlécből olvas, az oszlop viszont lépked.</li>
+      </ul>
+      <div class="tip rounded-r-lg p-3 text-sm mt-4">
+        Próbáld ki: ha elhagyod a dollárjeleket, és egyszerűen <code class="cell">=A2*B1</code>-et írsz, a második sorban már
+        üres cellákra mutat a képlet, és végig nullákat kapsz.
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-5">
+      <div class="card p-6">
+        <h3 class="font-bold mb-3">F4 – a gyorsbillentyű</h3>
+        <p class="text-sm leading-relaxed mb-3">
+          Nem kell kézzel beírni a dollárjeleket. Állj a képletben a hivatkozásra, és nyomd meg az <kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded text-xs font-mono">F4</kbd> billentyűt.
+          Minden lenyomásra továbblép a négy változat között:
+        </p>
+        <div class="font-mono text-sm bg-slate-50 border border-slate-200 rounded-lg p-3 leading-relaxed">
+          A1 → $A$1 → A$1 → $A1 → A1 …
+        </div>
+      </div>
+      <div class="card p-6">
+        <h3 class="font-bold mb-3">Hol lesz még fontos?</h3>
+        <ul class="text-sm space-y-2 leading-relaxed">
+          <li>• <strong>VLOOKUP</strong> keresési táblája – mindig abszolút: <code class="cell">$F$2:$H$40</code></li>
+          <li>• <strong>SUMIF / COUNTIF</strong> tartományai, ha több sorra másolod a képletet</li>
+          <li>• <strong>Százalékszámítás</strong>, ahol az osztó egy fix összesen-cella</li>
+          <li>• Bármi, amit egy <strong>külön kiemelt paramétercellából</strong> olvasol</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HIBÁK ============ -->
+  <section id="hibak" class="mb-14 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">Gyakori hibaüzenetek</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="card p-6">
+      <p class="mb-4 leading-relaxed">A hibaüzenet nem baj, hanem információ: megmondja, mi a gond a képlettel.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-emerald-50 text-emerald-800">
+              <th class="text-left p-3 font-bold border border-emerald-100">Üzenet</th>
+              <th class="text-left p-3 font-bold border border-emerald-100">Magyar Excelben</th>
+              <th class="text-left p-3 font-bold border border-emerald-100">Mit jelent, mit tegyél</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="p-3 border border-slate-200 font-mono text-red-600 font-bold">#N/A</td>
+              <td class="p-3 border border-slate-200 font-mono text-slate-500">#HIÁNYZIK</td>
+              <td class="p-3 border border-slate-200">A kereső függvény nem találta meg az értéket. Nézd meg, pontosan ugyanúgy van-e írva mindkét helyen, nincs-e felesleges szóköz.</td>
+            </tr>
+            <tr class="bg-slate-50">
+              <td class="p-3 border border-slate-200 font-mono text-red-600 font-bold">#DIV/0!</td>
+              <td class="p-3 border border-slate-200 font-mono text-slate-500">#ZÉRÓOSZTÓ!</td>
+              <td class="p-3 border border-slate-200">Nullával vagy üres cellával osztasz. Gyakran az elcsúszott hivatkozás az ok – ellenőrizd a <code class="cell">$</code> jeleket.</td>
+            </tr>
+            <tr>
+              <td class="p-3 border border-slate-200 font-mono text-red-600 font-bold">#REF!</td>
+              <td class="p-3 border border-slate-200 font-mono text-slate-500">#HIV!</td>
+              <td class="p-3 border border-slate-200">A képlet olyan cellára mutat, ami már nem létezik. Valószínűleg törölted a hivatkozott sort vagy oszlopot.</td>
+            </tr>
+            <tr class="bg-slate-50">
+              <td class="p-3 border border-slate-200 font-mono text-red-600 font-bold">#VALUE!</td>
+              <td class="p-3 border border-slate-200 font-mono text-slate-500">#ÉRTÉK!</td>
+              <td class="p-3 border border-slate-200">Szöveggel próbálsz számolni. Ellenőrizd, tényleg szám van-e a cellában, nem pedig szövegként tárolt szám.</td>
+            </tr>
+            <tr>
+              <td class="p-3 border border-slate-200 font-mono text-red-600 font-bold">#####</td>
+              <td class="p-3 border border-slate-200 font-mono text-slate-500">#####</td>
+              <td class="p-3 border border-slate-200">Nem hibás a képlet, csak keskeny az oszlop. Húzd szélesebbre.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ÖSSZEFOGLALÓ ============ -->
+  <section id="osszefoglalo" class="mb-10 scroll-mt-28">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="badge">Összefoglaló táblázat</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"></div>
+    </div>
+
+    <div class="card p-6">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-emerald-50 text-emerald-800">
+              <th class="text-left p-3 font-bold border border-emerald-100">Függvény</th>
+              <th class="text-left p-3 font-bold border border-emerald-100">Magyarul</th>
+              <th class="text-left p-3 font-bold border border-emerald-100">Mire jó</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="p-2.5 border border-slate-200 font-mono font-bold">SUM</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">SZUM</td><td class="p-2.5 border border-slate-200">Összeadás</td></tr>
+            <tr class="bg-slate-50"><td class="p-2.5 border border-slate-200 font-mono font-bold">AVERAGE</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">ÁTLAG</td><td class="p-2.5 border border-slate-200">Számtani középérték</td></tr>
+            <tr><td class="p-2.5 border border-slate-200 font-mono font-bold">MIN / MAX</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">MIN / MAX</td><td class="p-2.5 border border-slate-200">Legkisebb / legnagyobb érték</td></tr>
+            <tr class="bg-slate-50"><td class="p-2.5 border border-slate-200 font-mono font-bold">COUNT / COUNTA</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">DARAB / DARAB2</td><td class="p-2.5 border border-slate-200">Számok / nem üres cellák darabszáma</td></tr>
+            <tr><td class="p-2.5 border border-slate-200 font-mono font-bold">ROUND</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">KEREKÍTÉS</td><td class="p-2.5 border border-slate-200">Kerekítés tizedesjegyre</td></tr>
+            <tr class="bg-slate-50"><td class="p-2.5 border border-slate-200 font-mono font-bold">IF</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">HA</td><td class="p-2.5 border border-slate-200">Feltételes elágazás</td></tr>
+            <tr><td class="p-2.5 border border-slate-200 font-mono font-bold">AND / OR</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">ÉS / VAGY</td><td class="p-2.5 border border-slate-200">Összetett feltételek</td></tr>
+            <tr class="bg-slate-50"><td class="p-2.5 border border-slate-200 font-mono font-bold">COUNTIF</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">DARABTELI</td><td class="p-2.5 border border-slate-200">Feltételes darabszám</td></tr>
+            <tr><td class="p-2.5 border border-slate-200 font-mono font-bold">SUMIF</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">SZUMHA</td><td class="p-2.5 border border-slate-200">Feltételes összegzés</td></tr>
+            <tr class="bg-slate-50"><td class="p-2.5 border border-slate-200 font-mono font-bold">VLOOKUP</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">FKERES</td><td class="p-2.5 border border-slate-200">Keresés táblázatban</td></tr>
+            <tr><td class="p-2.5 border border-slate-200 font-mono font-bold">XLOOKUP</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">XKERES</td><td class="p-2.5 border border-slate-200">Újabb, rugalmasabb keresés</td></tr>
+            <tr class="bg-slate-50"><td class="p-2.5 border border-slate-200 font-mono font-bold">CONCAT / &amp;</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">ÖSSZEFŰZ</td><td class="p-2.5 border border-slate-200">Szövegek összefűzése</td></tr>
+            <tr><td class="p-2.5 border border-slate-200 font-mono font-bold">LEFT / RIGHT</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">BAL / JOBB</td><td class="p-2.5 border border-slate-200">Karakterek kivágása</td></tr>
+            <tr class="bg-slate-50"><td class="p-2.5 border border-slate-200 font-mono font-bold">LEN</td><td class="p-2.5 border border-slate-200 font-mono text-slate-500">HOSSZ</td><td class="p-2.5 border border-slate-200">Karakterek száma</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="rounded-xl p-6 sm:p-7 mt-6 text-white" style="background:linear-gradient(135deg,var(--xl-green),var(--xl-green-dark));">
+      <h2 class="text-xl font-bold mb-3">Mit érdemes megjegyezni?</h2>
+      <p class="text-emerald-50 leading-relaxed mb-3">
+        Nem a függvénynevek bemagolása a cél. Sokkal fontosabb, hogy <strong>felismerd a feladat típusát</strong>:
+        összegezni kell, megszámolni, dönteni, vagy egy másik táblából adatot behozni. Ha ez megvan, a függvény már adja magát.
+      </p>
+      <p class="text-emerald-50 leading-relaxed">
+        A dollárjel pedig nem extra dísz. Az a különbség a kétperces és a félórás munka között, hogy egyetlen jól megírt képletet
+        húzol le az egész táblázatra, vagy minden cellába külön írsz valamit.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="bg-white border-t border-slate-200 py-5 text-center text-sm text-slate-500">
+  Excel képletek – elméleti útmutató · Informatika, középiskola
+</footer>
+
+</body>
+</html>
