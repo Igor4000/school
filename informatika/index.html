@@ -157,9 +157,7 @@
             left: 50%;
             transform: translateX(-50%);
             min-width: 200px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background: #ffffff;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(30, 64, 175, 0.08);
@@ -248,9 +246,7 @@
             left: 100%;
             margin-left: 6px;
             min-width: 200px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background: #ffffff;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(30, 64, 175, 0.08);
@@ -630,28 +626,25 @@
             <a href="excel_page_layout.html" class="lang-sr">💻 Page layout</a>
         </div>
 
-        <!-- Formulas (sima link) -->
-        <div>
+        <!-- Formulas + jobbra nyíló almenü a gyakorlással -->
+        <div class="has-submenu" tabindex="0">
             <a href="excel_formula.html" class="lang-hu">💻 Formulas</a>
             <a href="excel_formula.html" class="lang-sr">💻 Formulas</a>
+            <span class="submenu-arrow">▶</span>
+
+            <div class="submenu-content">
+                <a href="excel_kepletek_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
+                <a href="excel_kepletek_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
+
+                <a href="excel_kepletek_gyakorlas.html" class="lang-hu">📝 Gyakorlás 2</a>
+                <a href="excel_kepletek_gyakorlas.html" class="lang-sr">📝 Vežbe 2</a>
+            </div>
         </div>
 
         <!-- Data (sima link) -->
         <div>
             <a href="excel_data.html" class="lang-hu">💻 Data</a>
             <a href="excel_data.html" class="lang-sr">💻 Data</a>
-        </div>
-
-        <!-- Képletek (elmélet) + jobbra nyíló almenü a gyakorlással -->
-        <div class="has-submenu" tabindex="0">
-            <a href="excel_kepletek.html" class="lang-hu">💻 Képletek</a>
-            <a href="excel_kepletek.html" class="lang-sr">💻 Formule</a>
-            <span class="submenu-arrow">▶</span>
-
-            <div class="submenu-content">
-                <a href="excel_kepletek_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
-                <a href="excel_kepletek_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
-            </div>
         </div>
 
     </div>
