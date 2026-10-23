@@ -227,6 +227,24 @@
             margin-left: auto;
         }
 
+        .dropdown-group-label {
+            padding: 12px 14px 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-medium);
+            opacity: 0.65;
+        }
+
+        .dropdown-group-label:first-child {
+            padding-top: 8px;
+        }
+
+        .dropdown-content a.dropdown-sub-link {
+            padding-left: 24px;
+        }
+
         /* TARTALMI SZEKCIÓK */
         .content-section {
             display: grid;
@@ -347,14 +365,14 @@
 
                 <div class="dropdown" id="dropdown-lab-vezbe">
                     <button class="dropbtn" onclick="toggleDropdown('dropdown-lab-vezbe')" aria-expanded="false">
-                        <span data-translate-key="nav-labvezbe">1. Lab gyakorlat</span>
+                        <span data-translate-key="nav-labvezbe">Lab. gyakorlatok</span>
                         <i>▼</i>
                     </button>
                     <div class="dropdown-content">
-                        <!-- IDE ÍRD BE A LAB. GYAKORLATOK (LAB. VEŽBE) FÁJLOK LINKJEIT -->
-                        <!-- OVDE UPIŠI LINKOVE KA FAJLOVIMA SA LAB. VEŽBAMA -->
-                        <a href="vezba1-mehur-mikelova-cev_1.html">Mehur u Mikelovoj cevi <span class="lesson-badge"></span></a>
-                        <a href="vezba2-kolica-strma-ravan_1.html">Kolica niz strmu ravan <span class="lesson-badge"></span></a>
+                        <!-- ÚJ ALCÍM (pl. "2. lab vežba") HOZZÁADÁSA: másold az alábbi label + <a> blokkokat. -->
+                        <div class="dropdown-group-label">1. lab vežba</div>
+                        <a class="dropdown-sub-link" href="vezba1-mehur-mikelova-cev_1.html">Mehur u Mikelovoj cevi <span class="lesson-badge"></span></a>
+                        <a class="dropdown-sub-link" href="vezba2-kolica-strma-ravan_1.html">Kolica niz strmu ravan <span class="lesson-badge"></span></a>
                     </div>
                 </div>
 
@@ -463,8 +481,8 @@
                     sr: 'Skripte'
                 },
                 'nav-labvezbe': {
-                    hu: '1. Lab gyakorlat',
-                    sr: '1. Lab vežba'
+                    hu: 'Lab. gyakorlatok',
+                    sr: 'Lab. vežbe'
                 },
                 'nav-interaktiv': {
                     hu: 'Interaktív anyagok',
