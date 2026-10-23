@@ -189,7 +189,7 @@
             <h1 class="main-title" data-translate-key="main-title">II. osztály – Hő és elektromosság</h1>
             <p class="subtitle" data-translate-key="subtitle">A gázok láthatatlan mozgásától a kristályok rendjéig és az elektromos áram erejéig – a fizika második lépcsőfoka</p>
 
-            <!-- CENTRÍROZOTT LECKE-MENÜK – 3 kategória: szkriptek / munkafüzetek / interaktív anyagok -->
+            <!-- CENTRÍROZOTT LECKE-MENÜK – 3 kategória: szkriptek / lab. gyakorlatok / interaktív anyagok -->
             <div class="lesson-menus">
                 <div class="dropdown" id="dropdown-skripte">
                     <button class="dropbtn" onclick="toggleDropdown('dropdown-skripte')" aria-expanded="false">
@@ -216,21 +216,21 @@
 
                 <div class="dropdown" id="dropdown-radne-sveske">
                     <button class="dropbtn" onclick="toggleDropdown('dropdown-radne-sveske')" aria-expanded="false">
-                        <span data-translate-key="nav-radnesveske">Munkafüzetek</span>
+                        <span data-translate-key="nav-radnesveske">Lab. gyakorlatok</span>
                         <i>▼</i>
                     </button>
                     <div class="dropdown-content">
                         <!--
-                            data-href-hu  -> IDE ÍRD A MAGYAR NYELVŰ MUNKAFÜZET FÁJL ELÉRÉSI ÚTJÁT
-                            data-href-sr  -> OVDE UPIŠI PUTANJU DO RADNE SVESKE NA SRPSKOM JEZIKU
+                            data-href-hu  -> IDE ÍRD A MAGYAR NYELVŰ LAB. GYAKORLAT FÁJL ELÉRÉSI ÚTJÁT
+                            data-href-sr  -> OVDE UPIŠI PUTANJU DO LAB. VEŽBE NA SRPSKOM JEZIKU
                         -->
                         <a href="Radna_sveska_kineticka_teorija_HU.html"
                            data-href-hu="Radna_sveska_kineticka_teorija_HU.html"
                            data-href-sr="Radna_sveska_kineticka_teorija.html">
-                           <span data-translate-key="link-radnasveska1">Kinetikai elmélet – munkafüzet</span>
+                           <span data-translate-key="link-radnasveska1">Kinetikai elmélet – lab. gyakorlat</span>
                            <span class="lesson-badge"></span>
                         </a>
-                        <!-- ÚJ MUNKAFÜZET HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, cseréld a fájlneveket és a data-translate-key-t. -->
+                        <!-- ÚJ LAB. GYAKORLAT HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, cseréld a fájlneveket és a data-translate-key-t. -->
                     </div>
                 </div>
 
@@ -320,8 +320,8 @@
                     sr: 'Skripte'
                 },
                 'nav-radnesveske': {
-                    hu: 'Munkafüzetek',
-                    sr: 'Radne sveske'
+                    hu: 'Lab. gyakorlatok',
+                    sr: 'Lab. vežbe'
                 },
                 'nav-interaktiv': {
                     hu: 'Interaktív anyagok',
@@ -343,8 +343,8 @@
                     sr: 'Kinetička teorija – skripta'
                 },
                 'link-radnasveska1': {
-                    hu: 'Kinetikai elmélet – munkafüzet',
-                    sr: 'Kinetička teorija – radna sveska'
+                    hu: 'Kinetikai elmélet – lab. gyakorlat',
+                    sr: 'Kinetička teorija – lab. vežbe'
                 },
                 'link-interaktiv1': {
                     hu: 'Kinetikai elmélet – interaktív anyag',
@@ -416,7 +416,7 @@
                     }
                 });
 
-                // ÚJ: a jegyzetek / munkafüzetek / interaktív anyagok linkjeinek
+                // ÚJ: a jegyzetek / lab. gyakorlatok / interaktív anyagok linkjeinek
                 // href-jét is a kiválasztott nyelvhez igazítjuk.
                 document.querySelectorAll('a[data-href-' + lang + ']').forEach(function(link) {
                     const newHref = link.getAttribute('data-href-' + lang);
