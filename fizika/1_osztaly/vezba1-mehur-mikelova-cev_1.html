@@ -1,0 +1,1515 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<!--TITLE-BEGIN--><title>Mehur u Mikelovoj cevi — virtuelna laboratorija</title><!--TITLE-END-->
+<!--PLAN-BEGIN-->
+<!--
+================================================================================
+PLAN TRI ČASA — Vežba: Ravnomerno kretanje mehura u Mikelovoj cevi
+Samostalan rad, 3 × 45 min, učenik sam meri ručnom štopericom (brzina ×1 / ×2)
+================================================================================
+
+A. ANALIZA (skripta „Kinematika, Deo I", pogl. 4 i 7)
+- Zakon: s = v · t (ravnomerno pravolinijsko kretanje, v = const).
+- Meri se: vreme t (ručna štoperica, rezolucija 0,01 s).
+- Nezavisna promenljiva: rastojanje s između oznake 0 i gumice (bira učenik).
+- Traži se: brzina mehura v. Linearizacija: grafik s–t je prava, nagib = v.
+- Nesigurnost: granične prave kroz krajeve „brkova" ±Δt prve i poslednje tačke,
+  Δv = (k_max − k_min) : 2.
+
+PROCENA TRAJANJA (realan tempo, ×1)
+- Priprema: ≈ 10 min (uvod, podaci o učeniku, izbor ugla α).
+- Merenje: 1 puštanje po rastojanju. Pri α = 20° mehur pređe 0,90 m za ≈ 30 s
+  (10° ≈ 42 s, 40° ≈ 23 s). Puštanje + kretanje ≈ 0,3–0,7 min, podešavanje gumice,
+  štoperice i upis ≈ 1 min → 6–8 rastojanja ≈ 10–14 min.
+- Obrada I: kolona v = s : t ≈ 1–2 min po redu (8–12 min), dva grafika ≈ 5 min,
+  nagib iz dve tačke ≈ 8 min.
+- Obrada II: v iz nagiba ≈ 5 min, nesigurnost Δv ≈ 10 min, konačan rezultat ≈ 5 min.
+- Zaključak: ≈ 15–20 min.
+
+Čas | Pogledi              | Koraci                                         | Procena     | Čeklista
+----+----------------------+------------------------------------------------+-------------+------------------------------------
+ 1  | Priprema, Merenje    | podaci, ugao α; merenje 6–8 rastojanja          | ≈ 25–30 min | ime; ≥ 6 rastojanja; raspon ≥ 0,45 m
+ 2  | Obrada I             | tabela v = s : t; grafici s–t i v–s; A, B; nagib| ≈ 25–30 min | tabela tačna; grafici; A i B; nagib
+ 3  | Obrada II, Zaključak | v = nagib; Δv; v ± Δv; zaključak               | ≈ 40 min    | v; Δv; rezultat; zaključak
+
+Raspored je zadao nastavnik (1. merenje, 2. obrada, 3. provera, nesigurnost i
+zaključak). Časovi 1 i 2 imaju ≈ 15 min rezerve (ponavljanje promašenog merenja,
+sporiji tempo) — nove aktivnosti nisu dodavane.
+
+PODACI IZ SVESKE (rad na više uređaja / izgubljeni podaci)
+- Učenik svako merenje odmah prepisuje u svesku. Prozor „Kraj časa" posle
+  1. i 2. časa pokazuje šta mora da ima zapisano (ugao, tabelu merenja,
+  a posle 2. časa i tačke A, B i nagib).
+- Na Obradi I, Obradi II i Zaključku kartica „Podaci iz sveske" služi za
+  ponovni unos ugla i merenja; tabela, grafici i granične prave crtaju se
+  iz unetih podataka. Na Obradi II nagib iz sveske se unosi i proverava
+  (dozvoljeno odstupanje 8 % od najbolje prave).
+
+RAČUNANJE (sve računa učenik digitronom; program samo crta i proverava)
+- Program crta grafike, najbolju pravu i granične prave i proverava upisano.
+- Učenik računa: kolone tabele, nagib iz tačaka A i B, v iz nagiba,
+  k_max i k_min, Δv, zaokruživanje rezultata i odstupanje u %.
+- Automatsko popunjavanje tabele i linearna regresija vidljivi su samo uz
+  „Pomoć (za nastavnika)" (O modelu).
+- Na 3. času se uz merenja iz sveske unose i izračunate kolone tabele
+  i nagib — ništa se ne računa ponovo.
+
+PRETPOSTAVKE (skripta je teorijska i nema protokol vežbe)
+- Cev 1,00 m; skala 0–0,90 m (oznaka 0 je 6 cm od donjeg kraja); gumica se
+  pomera u koracima od 5 cm, interval 0,10–0,90 m.
+- Ugao nagiba α: 10°–40°, podrazumevano 20°.
+- Brzina mehura 3,0 cm/s pri 20° (skripta je ne daje); zavisnost od ugla:
+  v ~ √(sin α) · (cos α)^0,25 (empirijska pretpostavka).
+- Δt ručne štoperice ≈ 0,2 s.
+- Uslov pokrivenosti: bar 6 različitih rastojanja, raspon bar 0,45 m (pola skale).
+================================================================================
+-->
+<!--PLAN-END-->
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#f3efe6;--surface:#fffcf6;--surface2:#f6f1e6;--ink:#24272c;--muted:#626973;--line:#ddd5c5;
+  --acc:#c0612b;--acc-soft:#f7e4d6;--blue:#2d6aae;--blue-soft:#e3edf8;
+  --ok:#2d7a4c;--ok-soft:#e1f1e6;--bad:#b2352e;--bad-soft:#f8e2df;--warn:#8f5c00;--warn-soft:#fbefd6;
+  --stage:#1c2330;--stage2:#273142;--stage-ink:#e7ecf3;--stage-muted:#9aa7b8;
+  --r:14px;--sh:0 1px 2px rgba(50,35,10,.06),0 6px 18px rgba(50,35,10,.07);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font);font-variant-numeric:tabular-nums;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+h1{font-size:1.45rem}h3{font-size:1.05rem}
+p{margin:.35em 0 .8em}
+a{color:var(--blue)}
+kbd{font:inherit;font-size:.85em;background:var(--surface2);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px}
+.skip{position:absolute;left:-9999px;top:0}.skip:focus{left:10px;top:10px;z-index:99;background:var(--surface);padding:8px 12px;border-radius:8px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.muted{color:var(--muted)}.small{font-size:.875rem}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+
+/* razlomci vodoravnom crtom */
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.25;margin:0 .22em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding-bottom:.08em}
+.frac>span:last-child{padding-top:.08em}
+
+/* zaglavlje */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;background:rgba(255,252,246,.95);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+  padding:calc(8px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left))}
+.brand{display:none;font-weight:800;font-size:.95rem;line-height:1.2;max-width:270px}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:.78rem}
+.lesson{flex:1;min-width:0}
+.lrow{display:flex;gap:8px;align-items:baseline;white-space:nowrap;overflow:hidden}
+.lnum{font-weight:800;color:var(--acc)}
+.ltitle{overflow:hidden;text-overflow:ellipsis;font-weight:600;font-size:.92rem}
+.lbar{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:5px;max-width:330px}
+.lbar i{height:6px;border-radius:3px;background:var(--line)}
+.lbar i.c{background:linear-gradient(90deg,var(--acc) 50%,var(--acc-soft) 50%)}
+.lbar i.d{background:var(--ok)}
+
+/* raspored */
+.layout{max-width:1260px;margin:0 auto}
+main{padding:14px max(14px,env(safe-area-inset-right)) 24px max(14px,env(safe-area-inset-left));min-width:0}
+.view{display:none}.view.active{display:block}
+.vh{font-size:1.25rem;margin:4px 0 12px}
+.vh:focus{outline:none}
+.side{display:none}
+.sg{margin-bottom:14px}
+.sg-h{font-size:.74rem;font-weight:800;letter-spacing:.07em;color:var(--muted);padding:6px 10px;display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline}
+.sg-h small{font-weight:600;letter-spacing:0;font-size:.8rem;flex-basis:100%;color:var(--ink)}
+.sg-ok{color:var(--ok);font-style:normal;font-size:.9rem}
+.nav-b{display:block;width:100%;text-align:left;min-height:44px;border:0;background:none;font:inherit;font-weight:600;padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--ink)}
+.nav-b:hover{background:var(--surface2)}.nav-b.on{background:var(--acc-soft);color:var(--acc)}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:rgba(255,252,246,.97);border-top:1px solid var(--line);
+  padding:4px max(4px,env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left))}
+.tab{min-height:56px;border:0;background:none;font:inherit;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;padding:4px 2px}
+.tab small{font-size:.66rem;font-weight:800;letter-spacing:.05em}
+.tab span{font-size:.78rem;font-weight:600;line-height:1.15;text-align:center}
+.tab.on{color:var(--acc);background:var(--acc-soft)}
+
+/* komponente */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin:0 0 14px}
+.hero{display:grid;gap:14px;align-items:center}
+.illus{margin:0;background:var(--surface2);border-radius:12px;padding:10px}
+.illus svg{display:block;width:100%;height:auto}
+.illus figcaption{font-size:.85rem;color:var(--muted);margin-top:6px}
+.illus .mv{animation:mv 6s linear infinite}
+@keyframes mv{from{transform:translateX(0)}to{transform:translateX(var(--d,150px))}}
+.law{background:var(--surface2);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:10px;padding:10px 14px;font-size:1.08rem}
+.law .small{font-size:.9rem;margin-top:4px}
+.btn{min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font:inherit;font-weight:650;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;touch-action:manipulation}
+.btn:hover{filter:brightness(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{background:transparent;color:var(--bad);border-color:#e5b8b2}
+.btn.dark{background:var(--stage2);border-color:#3a4659;color:var(--stage-ink)}
+.btn.xl{min-height:54px;font-size:1.08rem;padding:12px 22px}
+.btn.wide{width:100%}
+.btn.sm{min-height:44px;padding:6px 12px;font-size:.9rem}
+.btn.sq{width:44px;padding:0;font-size:1.35rem;flex:0 0 44px}
+.btn.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:700;background:var(--surface2);border:1px solid var(--line)}
+.pill.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+.pill.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.xb{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:700;background:var(--bad-soft);color:var(--bad);border-radius:6px;padding:0 5px;vertical-align:middle}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.row.between{justify-content:space-between}
+.banner{border-radius:12px;padding:10px 14px;margin:0 0 12px;background:var(--blue-soft);border:1px solid #c7d8ee}
+.banner.next{background:var(--acc-soft);border-color:#eccab3}
+.banner.warn{background:var(--warn-soft);border-color:#ebd29b}
+.banner.ok{background:var(--ok-soft);border-color:#b9dcc5}
+.banner .btn{margin-top:6px}
+.msg{margin-top:8px;font-size:.95rem;min-height:1.2em}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}.msg.warn{color:var(--warn)}
+.ok-t{color:var(--ok);font-weight:600;margin:6px 0}
+input:not([type=range]):not([type=checkbox]),textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;min-height:44px;padding:8px 10px;width:100%}
+input:not([type=range]):not([type=checkbox]):focus,textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px var(--blue-soft)}
+textarea{min-height:170px;resize:vertical;line-height:1.5}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--muted)}
+.form3{display:grid;gap:10px}
+.inunit{display:inline-flex;align-items:center;gap:6px}
+.inunit input{width:126px}
+.inunit em{font-style:normal;color:var(--muted)}
+.formula{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:1.06rem;margin:10px 0}
+
+/* klizač sa − / + */
+.stp{margin:10px 0 14px}
+.stp-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.stp-h label{font-weight:650}
+.stp-h output{font-weight:800;font-size:1.15rem;color:var(--acc);white-space:nowrap}
+.stp-r{display:flex;gap:8px;align-items:center;margin-top:4px}
+.stp-lim{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);padding:0 52px}
+.slider{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:44px;background:transparent;margin:0;cursor:pointer}
+.slider::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:var(--line)}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--acc);border:3px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.28);margin-top:-10px}
+.slider::-moz-range-track{height:8px;border-radius:4px;background:var(--line)}
+.slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--acc);border:3px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.28)}
+.slider:disabled{opacity:.4;cursor:not-allowed}
+
+/* segmentisani izbor */
+.seg{display:inline-flex;gap:4px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:3px}
+.chip{min-height:44px;min-width:56px;border:0;border-radius:9px;background:none;font:inherit;font-weight:700;cursor:pointer;padding:6px 14px;color:var(--muted)}
+.chip[aria-checked="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+
+/* cilj časa, podsetnik */
+.goal{border-left:4px solid var(--acc)}
+.goal-h{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:4px}
+.goal p{margin:.2em 0 .5em}
+.checklist{list-style:none;padding:0;margin:6px 0;display:grid;gap:6px}
+.checklist li{display:flex;gap:10px;align-items:center}
+.ck{width:22px;height:22px;border-radius:6px;border:2px solid #cbbfa9;display:inline-grid;place-items:center;font-size:.8rem;font-weight:800;flex:0 0 auto;color:#fff}
+.checklist li.ok .ck{background:var(--ok);border-color:var(--ok)}
+.checklist li.ok .ct{color:var(--muted)}
+.remind{background:var(--blue-soft);border-color:#c7d8ee}
+.kv{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}
+.kv li{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;border-bottom:1px dashed var(--line);padding-bottom:5px}
+.kv li b{font-variant-numeric:tabular-nums}
+
+/* pozornica */
+.stage{background:var(--stage);color:var(--stage-ink);border-radius:var(--r);padding:12px;box-shadow:var(--sh)}
+.stage-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.spill{background:var(--stage2);color:var(--stage-ink);border-radius:999px;padding:4px 11px;font-size:.84rem;font-weight:650}
+.stage-top .btn{margin-left:auto}
+.scene svg{display:block;width:100%;height:auto}
+.reads{display:grid;grid-template-columns:1.25fr 1fr;gap:10px;margin-top:8px}
+.read{background:var(--stage2);border-radius:12px;padding:8px 12px;min-width:0}
+.rl{font-size:.72rem;color:var(--stage-muted);text-transform:uppercase;letter-spacing:.07em}
+.rv{font-size:2.1rem;font-weight:750;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rv.sm{font-size:1.3rem}
+.read.run .rv{color:#9fe3b3}
+.helpbox{margin-top:8px;font-size:.84rem;color:#f2d69a;background:rgba(242,214,154,.08);border:1px dashed rgba(242,214,154,.45);border-radius:10px;padding:6px 10px}
+.ctrl h3{margin-top:16px;padding-top:10px;border-top:1px solid var(--line)}
+.ctrl h3:first-of-type{border-top:0;padding-top:0;margin-top:4px}
+.rec-row{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.rchip{min-height:44px;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer;display:inline-flex;gap:6px;align-items:center;color:var(--ink)}
+.rchip span{color:var(--muted);font-weight:700}
+.rchip i{font-style:normal;color:var(--bad);font-weight:800}
+.cover{margin:10px 0}
+.cov-row{display:grid;gap:4px;margin:8px 0;font-size:.92rem}
+.bar{display:block;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue)}
+
+/* tabela */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px}
+.tbl{border-collapse:collapse;width:100%;min-width:420px}
+.tbl th,.tbl td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.tbl th{background:var(--surface2);font-size:.86rem}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.exr td{color:var(--muted);background:repeating-linear-gradient(-45deg,transparent 0 6px,rgba(0,0,0,.03) 6px 12px)}
+.tbl .cell{min-width:100px;text-align:center;border:1.5px dashed #c8bda9;padding:4px 6px}
+.tbl .cell.ok{border:1.5px solid var(--ok);background:var(--ok-soft)}
+.tbl .cell.bad{border:1.5px solid var(--bad);background:var(--bad-soft)}
+.tbl-foot{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-top:10px}
+
+/* grafici */
+.fig{margin:0 0 14px}
+.figt{font-weight:700;margin-bottom:6px}
+.plot{display:block;width:100%;height:270px;border-radius:10px;border:1px solid var(--line);background:var(--surface);touch-action:manipulation}
+#cv-lin{cursor:crosshair}
+.abg{display:grid;gap:10px;margin:10px 0}
+.abp{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--surface2);border-radius:12px;padding:10px}
+.abp label{display:flex;align-items:center;gap:6px}
+.abp input{width:104px}
+.abl{width:32px;height:32px;border-radius:50%;display:inline-grid;place-items:center;color:#fff;background:var(--acc);font-weight:800}
+.abl.b{background:var(--ink)}
+.res{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:1.15rem}
+.res input{width:130px}
+.big-res{font-size:1.45rem;font-weight:800;margin:6px 0 4px}
+.tips{margin:4px 0 10px;padding-left:20px}
+.empty{text-align:center;padding:28px 16px}
+.empty-ic{font-size:2rem;color:var(--muted)}
+details.card summary{cursor:pointer;font-weight:650;min-height:32px;display:flex;align-items:center}
+.tgl{display:flex;gap:10px;align-items:center;min-height:44px;cursor:pointer}
+.tgl input{width:22px;height:22px;flex:0 0 22px}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+
+/* modal i toast */
+.modal{position:fixed;inset:0;background:rgba(20,22,28,.45);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.modal.open{display:flex}
+.sheet{background:var(--surface);width:100%;max-width:580px;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -6px 30px rgba(0,0,0,.18)}
+.sheet ul.checklist{margin:10px 0}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:#2a2f37;color:#f7f4ee;border-radius:12px;padding:10px 16px;max-width:min(92vw,540px);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;font-size:.93rem;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+#toast.show{opacity:1;transform:translateX(-50%)}
+#toast.ok{background:#245b3c}#toast.bad{background:#8e2a24}#toast.warn{background:#6f4b00}
+
+.paper{border-left:4px solid var(--blue)}
+.paper summary{gap:8px;flex-wrap:wrap}
+.paper summary::after{content:"▾";margin-left:auto;color:var(--muted)}
+.paper[open] summary::after{content:"▴"}
+.tbl.ptbl,.tbl.ctbl{min-width:0}
+.tbl.ptbl th.pc,.tbl.ptbl td.pc{background:var(--blue-soft)}
+.tbl.ptbl th,.tbl.ptbl td,.tbl.ctbl th,.tbl.ctbl td{padding:4px 3px}
+.tbl.ptbl input.pin{width:54px;min-width:48px;min-height:40px;padding:4px 3px;text-align:center}
+.ptbl .btn.sq{width:32px;flex-basis:32px;padding:0;min-height:40px;font-size:.95rem}
+@media (min-width:500px){.tbl.ptbl input.pin{width:84px}.tbl.ptbl th,.tbl.ptbl td,.tbl.ctbl th,.tbl.ctbl td{padding:5px 8px}}
+@media (min-width:720px){
+  .brand{display:block}
+  .hero{grid-template-columns:1.25fr 1fr}
+  .form3{grid-template-columns:2fr 1fr 1fr}
+  .abg{grid-template-columns:1fr 1fr}
+  .plot{height:300px}
+  .modal{align-items:center}
+  .sheet{border-radius:18px}
+}
+@media (min-width:1000px){
+  body{padding-bottom:0}
+  .tabs{display:none}
+  .layout{display:grid;grid-template-columns:236px minmax(0,1fr);gap:6px}
+  .side{display:block;position:sticky;top:64px;align-self:start;max-height:calc(100vh - 64px);overflow:auto;padding:18px 4px 18px 18px}
+  .mgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+  .stageWrap{position:sticky;top:78px}
+  .graphs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  #toast{bottom:28px}
+}
+@media (max-width:420px){
+  .rv{font-size:1.75rem}.rv.sm{font-size:1.1rem}
+  .stp-lim{padding:0 50px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Preskoči na sadržaj</a>
+<header class="top">
+  <div class="brand" id="brand"></div>
+  <div class="lesson" aria-live="polite">
+    <div class="lrow"><span class="lnum" id="lnum">Čas 1 / 3</span><span class="ltitle" id="ltitle"></span></div>
+    <div class="lbar" id="lbar" aria-hidden="true"><i></i><i></i><i></i></div>
+  </div>
+  <button class="btn ghost sm" type="button" data-about aria-label="O modelu i pomoć za nastavnika">ⓘ O modelu</button>
+</header>
+<div class="layout">
+  <nav class="side" id="side" aria-label="Pogledi po časovima"></nav>
+  <main id="main">
+    <section class="view" id="v-priprema" aria-label="Priprema"></section>
+    <section class="view" id="v-merenje" aria-label="Merenje"></section>
+    <section class="view" id="v-obrada1" aria-label="Obrada I"></section>
+    <section class="view" id="v-obrada2" aria-label="Obrada II"></section>
+    <section class="view" id="v-zakljucak" aria-label="Zaključak"></section>
+    <noscript><div class="card">Za ovu laboratoriju potreban je uključen JavaScript.</div></noscript>
+  </main>
+</div>
+<nav class="tabs" id="tabs" aria-label="Pogledi"></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal" aria-hidden="true"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div id="mBody"></div></div></div>
+
+<script>
+(function(){
+'use strict';
+
+/* =========================================================
+   1. POMOĆNE FUNKCIJE
+   ========================================================= */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const FR=(n,d)=>`<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const G=9.81;
+function fmt(x,dec){
+  if(x==null||!isFinite(x)) return '—';
+  let s=Number(x).toFixed(dec);
+  if(/^-0(\.0*)?$/.test(s)) s=s.slice(1);
+  return s.replace('.',',').replace('-','−');
+}
+function fmtSig(x,sig){
+  if(!isFinite(x)) return '—';
+  if(x===0) return '0';
+  const d=sig-1-Math.floor(Math.log10(Math.abs(x)));
+  return fmt(x,Math.max(0,Math.min(8,d)));
+}
+function num(v){
+  if(v==null) return NaN;
+  const s=String(v).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(',','.');
+  if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+  return parseFloat(s);
+}
+function near(a,ex,abs,rel){return isFinite(a)&&isFinite(ex)&&Math.abs(a-ex)<=abs+Math.abs(ex)*rel;}
+function nearAny(a,list,abs,rel){return (list||[]).some(e=>near(a,e,abs,rel));}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function randn(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function fmtTime(t){
+  const cs=Math.max(0,Math.floor(t*100+1e-6));
+  const m=Math.floor(cs/6000),r=cs-m*6000,s=Math.floor(r/100),c=r%100;
+  return m+':'+String(s).padStart(2,'0')+','+String(c).padStart(2,'0');
+}
+function decimalsOf(str){const s=String(str).trim().replace(',','.');const i=s.indexOf('.');return i<0?0:s.length-i-1;}
+function sigDigits(str){let s=String(str).trim().replace(',','.').replace(/^[-+−]/,'').replace('.','');s=s.replace(/^0+/,'');return s.length;}
+function disp(s){return String(s).replace('.',',').replace('-','−');}
+function linfit(pts){
+  const n=pts.length; if(n<2) return null;
+  let sx=0,sy=0,sxx=0,sxy=0;
+  pts.forEach(p=>{sx+=p.x;sy+=p.y;sxx+=p.x*p.x;sxy+=p.x*p.y;});
+  const D=n*sxx-sx*sx; if(Math.abs(D)<1e-14) return null;
+  const k=(n*sxy-sx*sy)/D,b=(sy-k*sx)/n,ym=sy/n;
+  let ssr=0,sst=0;
+  pts.forEach(p=>{const e=p.y-(k*p.x+b);ssr+=e*e;sst+=(p.y-ym)*(p.y-ym);});
+  return {k,n:b,r2:sst>0?1-ssr/sst:1};
+}
+/* granične prave: kroz krajeve „brkova" prve i poslednje tačke (po x) */
+function bounds(pts){
+  if(pts.length<2) return null;
+  const s=pts.slice().sort((a,b)=>a.x-b.x),p1=s[0],p2=s[s.length-1],dy=p2.y-p1.y;
+  const d1=p1.dx||0,d2=p2.dx||0;
+  const xa=p1.x+d1,xb=p2.x-d2,xc=p1.x-d1,xd=p2.x+d2;
+  if(xb-xa<=1e-9||xd-xc<=1e-9||!(dy>0)) return null;
+  const kmax=dy/(xb-xa),kmin=dy/(xd-xc);
+  return {kmax,nmax:p1.y-kmax*xa,kmin,nmin:p1.y-kmin*xc};
+}
+
+/*EX-BEGIN*/
+/* =========================================================
+   2. VEŽBA: Ravnomerno kretanje mehura u Mikelovoj cevi
+   ========================================================= */
+const EX=(function(){
+  const PX0=50,PY0=350,PXL=500;             // cev na ekranu: donji kraj (50,350), 1,00 m = 500 px
+  const Z0=0.06;                            // oznaka 0 je 6 cm od donjeg kraja cevi
+  const XSTART=-0.035,XTOP=0.925,BUB=0.025; // položaj prednjeg kraja mehura u odnosu na oznaku 0 (m)
+  const V20=0.030,TAU=0.4;                  // brzina pri 20° (pretpostavka), vreme „zaletanja"
+  const IRR_A=0.008,IRR_L=0.37,PHI=0.9;     // blaga nepravilnost prečnika cevi
+  const JIT=0.004,DT_H=0.2;                 // razlika između puštanja; nesigurnost ručne štoperice
+  const rad=a=>a*Math.PI/180;
+  const fA=a=>Math.sqrt(Math.sin(rad(a)))*Math.pow(Math.cos(rad(a)),0.25);
+  const vInf=a=>V20*fA(a)/fA(20);
+  const vx=(x,tt,vi)=>vi*(1-Math.exp(-tt/TAU))*(1+IRR_A*Math.sin(2*Math.PI*(x+Z0)/IRR_L+PHI));
+  function rk(x,tt,vi,h){
+    const k1=vx(x,tt,vi),k2=vx(x+h*k1/2,tt+h/2,vi),k3=vx(x+h*k2/2,tt+h/2,vi),k4=vx(x+h*k3,tt+h,vi);
+    return x+h*(k1+2*k2+2*k3+k4)/6;
+  }
+  const sim={phase:'ready',tilt:0,x:XSTART,tt:0,vi:0,sRun:null,tZero:null,tS:null};
+  let last=null; const el={};
+
+  function back(){sim.phase='ready';sim.tilt=0;sim.x=XSTART;sim.tt=0;sim.sRun=null;sim.tZero=null;sim.tS=null;}
+  function go(){
+    if(sim.phase!=='ready') return;
+    sim.phase='tilting';sim.tilt=0;sim.sRun=S.sPos;
+    sim.vi=vInf(S.p.ang)*(1+JIT*randn());
+    last={s:S.sPos,tTrue:null,done:false,used:false};
+  }
+  function advance(dt){
+    if(!(dt>0)) return;
+    if(sim.phase==='tilting'){
+      sim.tilt+=dt/0.6;
+      if(sim.tilt>=1){sim.tilt=1;sim.phase='run';sim.tt=0;}
+      return;
+    }
+    if(sim.phase!=='run') return;
+    const n=Math.max(1,Math.ceil(dt/0.01)),h=dt/n;
+    for(let i=0;i<n;i++){
+      const x0=sim.x,t0=sim.tt,x1=rk(x0,t0,sim.vi,h);
+      if(!isFinite(x1)){back();return;}
+      if(sim.tZero==null&&x0<0&&x1>=0) sim.tZero=t0+h*(0-x0)/(x1-x0);
+      if(sim.tS==null&&sim.sRun!=null&&x0<sim.sRun&&x1>=sim.sRun){
+        sim.tS=t0+h*(sim.sRun-x0)/(x1-x0);
+        if(last&&sim.tZero!=null){last.tTrue=sim.tS-sim.tZero;last.done=true;}
+      }
+      sim.x=x1;sim.tt=t0+h;
+      if(sim.x>=XTOP){sim.x=XTOP;sim.phase='top';break;}
+    }
+  }
+  function sceneSVG(){
+    let tk='';
+    for(let i=0;i<=90;i++){
+      const x=(PX0+(Z0+i/100)*PXL).toFixed(1),big=i%10===0,mid=i%5===0;
+      tk+=`<line x1="${x}" y1="328" x2="${x}" y2="${328-(big?13:mid?8:4)}" stroke="#dfe7f1" stroke-width="${big?1.5:.8}"/>`;
+      if(big) tk+=`<text x="${x}" y="309" text-anchor="middle" font-size="12" fill="#cfd8e6">${i}</text>`;
+    }
+    let pr='';
+    for(let d=0;d<=45;d+=5){
+      const c=Math.cos(rad(d)),s=Math.sin(rad(d)),r1=d%10===0?68:73;
+      pr+=`<line x1="${(PX0+r1*c).toFixed(1)}" y1="${(PY0-r1*s).toFixed(1)}" x2="${(PX0+80*c).toFixed(1)}" y2="${(PY0-80*s).toFixed(1)}" stroke="#7f8da3" stroke-width="1"/>`;
+      if(d%10===0) pr+=`<text x="${(PX0+93*c).toFixed(1)}" y="${(PY0-93*s+4).toFixed(1)}" text-anchor="middle" font-size="10" fill="#8f9db2">${d}°</text>`;
+    }
+    const ax=(PX0+80*Math.cos(rad(45))).toFixed(1),ay=(PY0-80*Math.sin(rad(45))).toFixed(1);
+    return `<svg viewBox="0 0 600 382" role="img" aria-label="Mikelova cev sa obojenom tečnošću i mehurom na nagnutoj dasci, sa skalom u centimetrima, uglomerom i crvenom gumicom na izabranoj oznaci">
+<defs><linearGradient id="lq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe6ef" stop-opacity=".7"/><stop offset=".5" stop-color="#4f9fb3" stop-opacity=".75"/><stop offset="1" stop-color="#2e7b90" stop-opacity=".85"/></linearGradient></defs>
+<path d="M${PX0+80} ${PY0} A80 80 0 0 0 ${ax} ${ay}" fill="none" stroke="#5d6b80" stroke-width="1.2"/>${pr}
+<line x1="0" y1="360" x2="600" y2="360" stroke="#3b475b" stroke-width="2"/>
+<line id="post" x1="0" y1="0" x2="0" y2="360" stroke="#8d7b60" stroke-width="7" stroke-linecap="round" opacity="0"/>
+<g id="tubeG">
+  <rect x="${PX0-4}" y="349" width="${PXL+8}" height="9" rx="2" fill="#7b5b3c"/>
+  <rect x="${PX0}" y="330" width="${PXL}" height="18" rx="9" fill="url(#lq)" stroke="#d3e8ef" stroke-width="1.5"/>
+  ${tk}
+  <text x="${PX0+8}" y="309" font-size="11" fill="#9fb0c6">cm</text>
+  <rect x="${(PX0+Z0*PXL-2.5).toFixed(1)}" y="326" width="5" height="26" rx="2" fill="#eef3f8" opacity=".9"/>
+  <g id="ringS"><rect x="${PX0-3}" y="324" width="6" height="30" rx="2" style="fill:var(--acc)"/></g>
+  <rect id="bub" x="0" y="333.5" width="${BUB*PXL}" height="11" rx="5.5" fill="#f5fbff" fill-opacity=".93" stroke="#ffffff" stroke-width="1"/>
+  <rect x="${PX0-7}" y="331" width="8" height="16" rx="2" fill="#b98b5a"/>
+  <rect x="${PX0+PXL-1}" y="331" width="8" height="16" rx="2" fill="#b98b5a"/>
+</g>
+<text id="angLbl" x="${PX0+102}" y="377" font-size="13" fill="#e7ecf3"></text>
+</svg>`;
+  }
+  function mount(root){
+    el.g=root.querySelector('#tubeG');el.bub=root.querySelector('#bub');el.ring=root.querySelector('#ringS');
+    el.post=root.querySelector('#post');el.ang=root.querySelector('#angLbl');
+    render();
+  }
+  function render(){
+    if(!el.g) return;
+    const a=S.p.ang*sim.tilt,r=rad(a);
+    el.g.setAttribute('transform',`rotate(${(-a).toFixed(3)} ${PX0} ${PY0})`);
+    const front=PX0+(sim.x+Z0)*PXL;
+    el.bub.setAttribute('x',(front-BUB*PXL).toFixed(2));
+    const sr=sim.sRun!=null?sim.sRun:S.sPos;
+    el.ring.setAttribute('transform',`translate(${((sr+Z0)*PXL).toFixed(2)} 0)`);
+    const ex=PX0+(PXL-25)*Math.cos(r),ey=PY0-(PXL-25)*Math.sin(r)+4;
+    el.post.setAttribute('x1',ex.toFixed(1));el.post.setAttribute('x2',ex.toFixed(1));el.post.setAttribute('y1',ey.toFixed(1));
+    el.post.setAttribute('opacity',sim.tilt>0.03?'1':'0');
+    el.ang.textContent=sim.tilt>0?`α = ${fmt(a,0)}°`:`cev je položena (izabrano α = ${fmt(S.p.ang,0)}°)`;
+  }
+  function status(sw){
+    const p=sim.phase,s=fmt(sim.sRun!=null?sim.sRun:S.sPos,2);
+    if(p==='ready') return {ph:'Spremno',next:`<b>Sledeće:</b> postavi gumicu na oznaku s (sada ${s} m), poništi štopericu i pritisni „Nagni cev“.`};
+    if(p==='tilting') return {ph:'Naginjem cev…',next:'<b>Pripremi se:</b> mehur kreće. Pokreni štopericu kad njegov <b>prednji (gornji) kraj</b> prođe oznaku 0.'};
+    if(p==='run'&&sim.x<0) return {ph:'Mehur kreće',next:sw.on?'Štoperica već radi, a mehur još nije stigao do oznake 0. <b>Poništi</b> je i pokreni kad mehur prođe 0.':'<b>Pokreni štopericu</b> tačno kad prednji kraj mehura prođe oznaku 0.'};
+    if(p==='run'&&sim.x<sim.sRun) return {ph:'Mehur putuje',next:sw.on?`Štoperica radi. <b>Zaustavi je</b> kad prednji kraj mehura prođe gumicu na ${s} m.`:'Mehur je prošao oznaku 0, a štoperica ne radi. Pritisni „Vrati cev“ i ponovi merenje.'};
+    if(last&&last.used) return {ph:'Zabeleženo',next:'Merenje je zabeleženo. Pritisni „Vrati cev“ i izaberi sledeće rastojanje.'};
+    return {ph:p==='top'?'Mehur je stigao gore':'Mehur je prošao gumicu',next:sw.on?'<b>Zaustavi štopericu!</b>':'<b>Sledeće:</b> upiši vreme sa štoperice i pritisni „Zabeleži“.'};
+  }
+  function helpHTML(){
+    const v=sim.vi||vInf(S.p.ang);
+    return `Pomoć (za nastavnika): brzina mehura u ovom puštanju ${fmt(v*100,3)} cm/s · tačno vreme od 0 do s: ${last&&last.tTrue!=null?fmt(last.tTrue,2)+' s':'—'}`;
+  }
+  function distinct(){return [...new Set(S.records.map(r=>+(+r.s).toFixed(2)))].sort((a,b)=>a-b);}
+  function span(){const d=distinct();return d.length?d[d.length-1]-d[0]:0;}
+  function rows(){
+    const rs=S.records.slice().sort((a,b)=>a.s-b.s||a.id-b.id)
+      .map(r=>({key:'r'+r.id,id:r.id,s:r.s,t:r.t,v:r.t>0?r.s/r.t:NaN,ex:!(r.t>0)}));
+    const vs=rs.filter(r=>!r.ex).map(r=>r.v).sort((a,b)=>a-b);
+    if(vs.length>=3){
+      const med=vs[Math.floor(vs.length/2)];
+      rs.forEach(r=>{if(!r.ex&&Math.abs(r.v/med-1)>0.25) r.ex=true;});
+    }
+    return rs;
+  }
+  function expected(){
+    const ang=S.p.ang,vi=vInf(ang);
+    let ss=distinct(); if(ss.length<2) ss=[0.1,0.3,0.5,0.7,0.9];
+    let x=XSTART,tt=0,tz=null,i=0,guard=0; const h=0.01,out={};
+    while(i<ss.length&&guard<200000){
+      const x1=rk(x,tt,vi,h);
+      if(tz==null&&x<0&&x1>=0) tz=tt+h*(-x)/(x1-x);
+      while(i<ss.length&&x<ss[i]&&x1>=ss[i]){out[ss[i]]=tt+h*(ss[i]-x)/(x1-x)-tz;i++;}
+      x=x1;tt+=h;guard++;
+    }
+    const p=ss.filter(s=>out[s]!=null).map(s=>({x:out[s],y:s}));
+    const f=linfit(p);
+    return {val:f?f.k:vi,label:`Očekivana brzina mehura za α = ${fmt(ang,0)}° (podatak o cevi)`,extra:[]};
+  }
+  return {
+    slug:'mehur-mikel',rep:1,dxAsk:false,dxTip:'',
+    dxHTML:'<p class="small">Nesigurnost vremena ista je za sve tačke: Δt<sub>1</sub> = Δt<sub>2</sub> = 0,2 s (ručna štoperica).</p>',accent:'#c0612b',accentSoft:'#f7e4d6',
+    title:'Ravnomerno kretanje mehura u Mikelovoj cevi',short:'Mehur u Mikelovoj cevi',grade:'I razred srednje škole',
+    kicker:'Kinematika · vežba 1',
+    goalText:'Proveri da se mehur kreće ravnomerno i odredi njegovu brzinu iz nagiba grafika s–t.',
+    lawHTML:`<div><b>Zakon:</b> s = v · t</div><div class="small muted">Grafik s–t je prava, a njen nagib je brzina: v = nagib = ${FR('Δs','Δt')}</div>`,
+    illusSVG:`<svg viewBox="0 0 260 140" aria-hidden="true"><line x1="6" y1="134" x2="254" y2="134" stroke="#cbbfa9" stroke-width="2"/><g transform="rotate(-20 20 134)"><rect x="20" y="120" width="226" height="14" rx="7" fill="#9fd0dc" stroke="#5c95a6"/><g class="mv" style="--d:175px;animation-duration:7s"><rect x="26" y="123" width="22" height="8" rx="4" fill="#ffffff" stroke="#5c95a6"/></g><rect x="150" y="116" width="5" height="22" rx="2" style="fill:var(--acc)"/><rect x="40" y="117" width="3" height="20" fill="#7d8796"/></g><path d="M64 134 A44 44 0 0 0 61.3 119" fill="none" stroke="#626973"/><text x="68" y="130" font-size="13" fill="#626973">α</text></svg>`,
+    illusCap:'Mikelova cev: zatvorena staklena cev sa tečnošću i jednim mehurom vazduha. Kad je nagneš, mehur se penje stalnom brzinom.',
+    paramIntro:'Izaberi ugao nagiba cevi. On važi za sva merenja u ovoj vežbi.',
+    params:[{key:'ang',label:'Ugao nagiba cevi α',unit:'°',min:10,max:40,step:1,def:20,dec:0,fixed:true,note:'Ugao ne menjaj između merenja — promena briše zabeležena merenja.'}],
+    sPos:{key:'sPos',label:'Gumica na oznaci s',unit:' m',min:0.10,max:0.90,step:0.05,def:0.50,dec:2,note:'Rastojanje s se meri od oznake 0 do crvene gumice.'},
+    howHTML:'Pomeri crvenu gumicu na oznaku s i nagni cev. Kad <b>prednji kraj mehura</b> prođe oznaku 0, pokreni štopericu; kad prođe gumicu, zaustavi je. Upiši vreme i zabeleži. Izmeri <b>bar 6 različitih rastojanja</b> koja pokrivaju <b>bar 0,45 m</b> (pola skale) — rastojanja biraš sam.',
+    part1:'Cev i gumica',goLabel:'Nagni cev',backLabel:'Vrati cev',auxLabel:'Gumica (oznaka s)',
+    auxText:()=>`s = ${fmt(sim.sRun!=null?sim.sRun:S.sPos,2)} m`,
+    parText:()=>`α = ${fmt(S.p.ang,0)}°`,
+    noRunMsg:'Prvo izvedi merenje za ovu oznaku: pritisni „Nagni cev“ i sačekaj da mehur prođe gumicu.',
+    plaus(rec,lr){
+      if(lr&&lr.tTrue!=null&&Math.abs(rec.t-lr.tTrue)>Math.max(0.8,0.15*lr.tTrue))
+        return 'Zabeleženo, ali ovo vreme dosta odstupa od očekivanog za ovo rastojanje. Proveri da li si štopericu pokrenuo na oznaci 0 i zaustavio na gumici — po potrebi obriši merenje (dodirni ga u listi) i ponovi.';
+      return '';
+    },
+    coverage(){
+      const n=distinct().length,sp=span(),ok=n>=6&&sp>=0.449;
+      return {ok,html:`<div class="cov-row"><span>Različita rastojanja: <b>${n}</b> (treba bar 6)</span><span class="bar"><i style="width:${Math.min(100,n/6*100)}%"></i></span></div>
+<div class="cov-row"><span>Raspon rastojanja: <b>${fmt(sp,2)} m</b> (treba bar 0,45 m)</span><span class="bar"><i style="width:${Math.min(100,sp/0.45*100)}%"></i></span></div>
+${ok?'<p class="ok-t">✓ Uslov pokrivenosti je ispunjen. Sa 7–8 rastojanja grafik je još pouzdaniji.</p>':'<p class="small muted">Biraj rastojanja raspoređena duž cele skale — i kratka i duga.</p>'}`};
+    },
+    countAt:()=>0,
+    sim:{advance,render,mount,back,go,status,helpHTML,
+      canGo:()=>sim.phase==='ready',
+      canMoveS:()=>sim.phase==='ready'||sim.phase==='top',
+      phase:()=>sim.phase,lastRun:()=>last,resetLast:()=>{last=null;}},
+    sceneSVG,
+    rows,
+    tableIntro:`Za svako merenje izračunaj brzinu v = ${FR('s','t')}. Polja se proveravaju odmah: zeleno je tačno, crveno — proveri ponovo.`,
+    cols:[
+      {key:'#',label:'Rb.'},
+      {key:'s',label:'s (m)',get:r=>fmt(r.s,2)},
+      {key:'t',label:'t (s)',get:r=>fmt(r.t,2)},
+      {key:'v',label:`v = ${FR('s','t')} (m/s)`,aria:'brzina v',input:true,dec:4,tol:[0.00015,0.01],
+        exact:r=>[r.s/r.t],tip:`Podeli put sa vremenom: v = ${FR('s','t')}. Upiši u m/s sa 4 decimale (npr. 0,0298).`}
+    ],
+    pts:()=>rows().filter(r=>r.t>0).map(r=>({x:r.t,y:r.s,dx:DT_H,ex:r.ex})),
+    lin:{dxi:i=>`Δt<sub>${i}</sub>`,xLabel:'t (s)',yLabel:'s (m)',xSym:'t',ySym:'s',xUnit:'s',yUnit:'m',kUnit:'m/s',xDec:2,yDec:3,
+      xi:i=>`t<sub>${i}</sub>`,yi:i=>`s<sub>${i}</sub>`,
+      title:'Grafik s–t (linearizacija)',caption:'Plava puna linija je najbolja prava kroz sve tačke; isprekidane su granične prave. Vodoravni „brkovi“ su nesigurnost vremena ±0,2 s.'},
+    extra:{id:'aux',first:false,title:`Brzina na pojedinačnim rastojanjima (v = ${FR('s','t')})`,
+      caption:'Ako je kretanje ravnomerno, tačke leže oko iste vodoravne linije.',
+      cfg(fit){
+        const rs=rows().filter(r=>r.t>0);
+        const vmax=Math.max(0.001,...rs.map(r=>r.v),fit?fit.k:0);
+        return {xLabel:'s (m)',yLabel:'v (m/s)',xMin:0,xMax:1.0,yMin:0,yMax:vmax*1.6,
+          pts:rs.map(r=>({x:r.s,y:r.v,ex:r.ex})),
+          hline:fit?{y:fit.k,color:'--acc',dash:[7,5],label:'nagib prave s–t'}:null};
+      }},
+    slopeIntro:'Nagib određuješ iz dve tačke <b>na najboljoj pravoj</b> (ne iz izmerenih tačaka). Uzmi ih što dalje jednu od druge.',
+    kOkText:'Nagib grafika s–t je brzina mehura — iskoristićeš ga na sledećem času.',
+    constSym:'v',constUnit:'m/s',constFromK:k=>k,constFormula:'v = nagib',
+    cTitle:'Brzina iz nagiba',
+    cIntro:'Kod ravnomernog kretanja je s = v · t, pa je nagib prave na grafiku s–t upravo brzina: <b>v = nagib</b>. Brzinu uzimaš iz nagiba (prava prolazi kroz sve tačke), a ne iz jednog reda tabele.',
+    cOkText:'Ovo je brzina mehura dobijena iz svih tačaka.',
+    cTip:'Brzina je jednaka nagibu prave — upiši nagib sa prethodnog časa (u m/s).',
+    deltaFrom:(a,b)=>(a-b)/2,
+    deltaFormula:`Δv = ${FR('k<sub>max</sub> − k<sub>min</sub>','2')}`,
+    dIntro:'Granične prave prolaze kroz krajeve „brkova“ prve i poslednje tačke: strmija i blaža prava koje se još slažu sa merenjima. Polovina razlike njihovih nagiba je nesigurnost brzine.',
+    dTip:(d,B)=>near(d,B.kmax-B.kmin,0,0.03)?'Ne zaboravi da razliku nagiba podeliš sa 2.':'Oduzmi nagib blaže prave od nagiba strmije, pa podeli sa 2.',
+    conclTips:['koliku brzinu v ± Δv si dobio;','da li tačke na grafiku s–t leže na pravoj, tj. da li je kretanje mehura zaista ravnomerno;','da li se tvoj rezultat slaže sa očekivanom vrednošću;','koji je glavni izvor greške u tvom merenju.'],
+    expected,
+    aboutHTML:`<p><b>Zakon:</b> mehur se kreće stalnom brzinom, s = v · t. Nagib grafika s–t je brzina v.</p>
+<p><b>Model brzine (pretpostavka):</b> skripta ne daje brzinu mehura, pa je uzeto da je pri α = 20° brzina 3,0 cm/s. Sa uglom brzina raste po empirijskom izrazu v ∝ √(sin α) · (cos α)<sup>0,25</sup> (10° → ≈ 2,2 cm/s, 40° → ≈ 3,9 cm/s). Položaj mehura računa se brojčanom integracijom (RK4, korak 0,01 s).</p>
+<p><b>Efekti drugog reda:</b> mehur kreće 3,5 cm ispod oznake 0 i za oko pola sekunde dostigne stalnu brzinu; prečnik cevi nije savršeno isti, pa se brzina duž cevi menja za ±0,8 %; svako puštanje se malo razlikuje (±0,4 %).</p>
+<p><b>Merenje:</b> štoperica meri vreme simulacije (i pri ×2) i pokazuje 0,01 s, ali je nesigurnost ručnog merenja Δt ≈ 0,2 s (reakcija pri startu i stopu). Greška položaja oznaka (±1 mm) je mnogo manja i zanemarena je.</p>
+<p><b>Nesigurnost:</b> granične prave prolaze kroz krajeve „brkova“ ±0,2 s prve i poslednje tačke; Δv = ${FR('k<sub>max</sub> − k<sub>min</sub>','2')}. Tačke koje od ostalih odstupaju više od 25 % (verovatno promašena štoperica) automatski se isključuju iz grafika.</p>`,
+    LESSONS:[
+      {n:1,title:'Priprema i merenje',time:'≈ 45 min',goal:'Podesi ugao cevi, pa ručnom štopericom izmeri vreme za koje mehur pređe bar 6 različitih rastojanja s.',views:['priprema','merenje'],check:[
+        {t:'Upiši ime i prezime',f:()=>S.student.name.trim().length>=3},
+        {t:'Izmeri bar 6 različitih rastojanja s',f:()=>distinct().length>=6},
+        {t:'Raspon rastojanja bar 0,45 m',f:()=>span()>=0.449}]},
+      {n:2,title:'Obrada I: tabela, grafici, nagib',time:'≈ 45 min',goal:'Izračunaj brzinu za svaki red, pogledaj grafike i odredi nagib prave s–t iz dve tačke.',views:['obrada1'],check:[
+        {t:`Popuni kolonu v = ${FR('s','t')} (sve tačno)`,f:()=>tableAllOk()},
+        {t:'Pogledaj oba grafika',f:()=>!!S.proc.seen},
+        {t:'Postavi tačke A i B na pravu',f:()=>abSet()},
+        {t:'Izračunaj i proveri nagib',f:()=>!!S.proc.kOk}]},
+      {n:3,title:'Provera, nesigurnost i zaključak',time:'≈ 45 min',goal:'Iz nagiba odredi brzinu mehura, proceni nesigurnost Δv, zapiši rezultat i napiši kratak zaključak.',views:['obrada2','zakljucak'],check:[
+        {t:'Brzina v iz nagiba',f:()=>!!S.proc.cOk},
+        {t:'Nagibi graničnih pravih k<sub>max</sub> i k<sub>min</sub>',f:()=>!!S.proc.bOk},
+        {t:'Nesigurnost Δv iz graničnih pravih',f:()=>!!S.proc.dOk},
+        {t:'Konačan rezultat v ± Δv',f:()=>!!S.proc.rOk},
+        {t:'Odstupanje od očekivane vrednosti (%)',f:()=>!!S.proc.devOk},
+        {t:'Zaključak (3–5 rečenica)',f:()=>conclOk()}]}
+    ]
+  };
+})();
+/*EX-END*/
+
+/* =========================================================
+   3. STANJE I ČUVANJE (samo na ovom uređaju)
+   ========================================================= */
+const KEY=EX.slug+'-lab-v1';
+const LESSONS=EX.LESSONS;
+const VIEW_ORDER=['priprema','merenje','obrada1','obrada2','zakljucak'];
+const VIEW_LABEL={priprema:'Priprema',merenje:'Merenje',obrada1:'Obrada I',obrada2:'Obrada II',zakljucak:'Zaključak'};
+function lessonOf(v){const L=LESSONS.find(l=>l.views.indexOf(v)>=0);return L?L.n:1;}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function DEFPROC(){return {cells:{},A:{x:'',y:''},B:{x:'',y:''},abSel:'A',k:'',kOk:false,c:'',cOk:false,d:'',dOk:false,rv:'',rd:'',rOk:false,usedAuto:false,seen:false,dx1:'',dx2:'',dxOk:false,kmx:'',kmn:'',bOk:false,dev:'',devOk:false};}
+function DEF(){
+  const p={};EX.params.forEach(q=>p[q.key]=q.def);
+  return {v:1,student:{name:'',group:'',date:today()},p,sPos:EX.sPos.def,speed:1,records:[],nextId:1,proc:DEFPROC(),concl:'',view:'priprema',done:{1:false,2:false,3:false},help:false,src:''};
+}
+function sanitize(o){
+  const d=DEF();
+  if(!o||typeof o!=='object') return d;
+  const str=(v,m)=>typeof v==='string'?v.slice(0,m||400):'';
+  if(o.student){d.student.name=str(o.student.name,80);d.student.group=str(o.student.group,40);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(o.student.date||'')) d.student.date=o.student.date;}
+  EX.params.forEach(q=>{const v=Number(o.p&&o.p[q.key]);if(isFinite(v)) d.p[q.key]=clamp(v,q.min,q.max);});
+  const sp=Number(o.sPos);if(isFinite(sp)) d.sPos=clamp(sp,EX.sPos.min,EX.sPos.max);
+  d.speed=o.speed===2?2:1;
+  if(Array.isArray(o.records)) d.records=o.records.filter(r=>r&&Number.isInteger(r.id)&&isFinite(r.s)&&isFinite(r.t)&&r.t>0).slice(0,400).map(r=>({id:r.id,s:+r.s,t:+r.t}));
+  d.nextId=Math.max(1,Number.isInteger(o.nextId)?o.nextId:1,...d.records.map(r=>r.id+1));
+  if(o.proc&&typeof o.proc==='object'){
+    const P=o.proc,q=d.proc;
+    if(P.cells&&typeof P.cells==='object') Object.keys(P.cells).forEach(k=>{const row=P.cells[k];if(row&&typeof row==='object'){q.cells[k]={};Object.keys(row).forEach(c=>{if(typeof row[c]==='string') q.cells[k][c]=row[c].slice(0,24);});}});
+    ['A','B'].forEach(n=>{if(P[n]&&typeof P[n]==='object') q[n]={x:str(P[n].x,24),y:str(P[n].y,24)};});
+    q.abSel=P.abSel==='B'?'B':'A';
+    ['k','c','d','rv','rd','dx1','dx2','kmx','kmn','dev'].forEach(k=>q[k]=str(P[k],24));
+    ['kOk','cOk','dOk','rOk','usedAuto','seen','dxOk','bOk','devOk'].forEach(k=>q[k]=!!P[k]);
+  }
+  d.concl=str(o.concl,5000);
+  d.view=VIEW_ORDER.indexOf(o.view)>=0?o.view:'priprema';
+  if(o.done) [1,2,3].forEach(n=>d.done[n]=!!o.done[n]);
+  d.help=!!o.help;d.src=o.src==='papir'?'papir':'';
+  return d;
+}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw) return sanitize(JSON.parse(raw));}catch(e){}return DEF();}
+let S=load();
+let saveT=null;
+function scheduleSave(){clearTimeout(saveT);saveT=setTimeout(saveNow,300);}
+function saveNow(){clearTimeout(saveT);saveT=null;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+/* izvedene provere */
+function cellOk(r,c,val){const v=num(val);if(!isFinite(v)) return null;return nearAny(v,c.exact(r,S.proc.cells[r.key]||{}),c.tol[0],c.tol[1]);}
+function tableStats(){
+  let total=0,ok=0;
+  EX.rows().filter(r=>!r.ex).forEach(r=>EX.cols.forEach(c=>{if(!c.input) return;total++;if(cellOk(r,c,(S.proc.cells[r.key]||{})[c.key])===true) ok++;}));
+  return {total,ok};
+}
+function tableAllOk(){const t=tableStats();return t.total>0&&t.ok===t.total;}
+function abPt(n){const p=S.proc[n],x=num(p.x),y=num(p.y);return isFinite(x)&&isFinite(y)?{x,y}:null;}
+function abSet(){return !!(abPt('A')&&abPt('B'));}
+function conclOk(){const t=S.concl.trim();return t.length>=80&&t.split(/[.!?]+/).filter(s=>s.trim().length>3).length>=3;}
+function hasData(){return S.records.length>0||S.student.name.trim().length>0;}
+function procData(){
+  const p=EX.pts().filter(q=>isFinite(q.x)&&isFinite(q.y)),use=p.filter(q=>!q.ex);
+  return {p,use,fit:use.length>=2?linfit(use):null,bnd:use.length>=2?bounds(use):null};
+}
+function kStudent(P){const k=num(S.proc.k);return S.proc.kOk&&isFinite(k)?k:(P.fit?P.fit.k:NaN);}
+
+/* =========================================================
+   3a. PODACI IZ SVESKE (ponovni unos na 2. i 3. času)
+   ========================================================= */
+const REP=EX.rep||1;
+const ICOLS=EX.cols.filter(c=>c.input);
+function groupRecords(){
+  const recs=S.records.slice().sort((a,b)=>a.s-b.s||a.id-b.id);
+  if(REP===1) return recs.map(r=>({s:r.s,ts:[r.t],id:r.id}));
+  const g={},out=[];
+  recs.forEach(r=>{const k=(+r.s).toFixed(2);if(!g[k]){g[k]={s:+k,ts:[]};out.push(g[k]);}g[k].ts.push(r.t);});
+  return out;
+}
+function rowOf(g,rs){rs=rs||EX.rows();return REP===1?rs.find(x=>x.id===g.id):rs.find(x=>Math.abs(x.s-g.s)<1e-9);}
+function cellsOf(g,rs){const r=rowOf(g,rs);return r?(S.proc.cells[r.key]||{}):{};}
+function tCols(gr){return Math.max(REP,...gr.map(g=>g.ts.length));}
+function tHead(TC){return TC===1?'<th>t (s)</th>':Array.from({length:TC},(_,i)=>`<th>t<sub>${i+1}</sub> (s)</th>`).join('');}
+function copyHTML(n){
+  const gr=groupRecords(),TC=tCols(gr),L=EX.lin,rs=EX.rows();
+  const par=EX.params.map(q=>`${q.label}: <b>${fmt(S.p[q.key],q.dec)}${q.unit}</b>`).join(' · ');
+  const ic=n>=2?ICOLS:[];
+  const body=gr.map((g,i)=>{const cv=cellsOf(g,rs);return `<tr><td>${i+1}</td><td>${fmt(g.s,2)}</td>${Array.from({length:TC},(_,j)=>`<td>${g.ts[j]!=null?fmt(g.ts[j],2):''}</td>`).join('')}${ic.map(c=>`<td>${cv[c.key]?esc(disp(cv[c.key])):'—'}</td>`).join('')}</tr>`;}).join('');
+  let h=`<p class="small">${par}</p>`+(gr.length?`<div class="tbl-wrap"><table class="tbl ctbl"><thead><tr><th>Rb.</th><th>s (m)</th>${tHead(TC)}${ic.map(c=>`<th>${c.label}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>`:'<p class="small muted">Još nema merenja.</p>');
+  if(n>=2){
+    const A=abPt('A'),B=abPt('B'),k=num(S.proc.k);
+    const pt=p=>`(${fmt(p.x,L.xDec)} ${L.xUnit}; ${fmt(p.y,L.yDec)} ${L.yUnit})`;
+    h+=`<ul class="kv">${A?`<li><span>Tačka A na pravoj</span><b>${pt(A)}</b></li>`:''}${B?`<li><span>Tačka B na pravoj</span><b>${pt(B)}</b></li>`:''}
+<li><span>Nagib prave</span><b>${S.proc.kOk&&isFinite(k)?esc(disp(S.proc.k))+' '+L.kUnit:'nije proveren'}</b></li></ul>`;
+  }
+  return h;
+}
+function pdRow(i,r,TC){
+  let h=`<tr><td>${i+1}</td><td><input class="pin" data-k="s" inputmode="decimal" autocomplete="off" aria-label="s u metrima, red ${i+1}" value="${esc(r.s)}"></td>`;
+  for(let j=0;j<TC;j++) h+=`<td><input class="pin" data-k="t" inputmode="decimal" autocomplete="off" aria-label="${TC===1?'t':'t'+(j+1)} u sekundama, red ${i+1}" value="${esc(r.ts[j]||'')}"></td>`;
+  ICOLS.forEach(c=>{h+=`<td class="pc"><input class="pin" data-k="c" data-c="${c.key}" inputmode="decimal" autocomplete="off" aria-label="${c.aria} (izračunato), red ${i+1}" value="${esc((r.cv&&r.cv[c.key])||'')}"></td>`;});
+  return h+`<td><button class="btn ghost sq" type="button" data-pdrm aria-label="Ukloni red ${i+1}">✕</button></td></tr>`;
+}
+function pdHTML(open,intro){
+  const gr=groupRecords(),TC=tCols(gr),n=S.records.length,rs=EX.rows();
+  const rows=gr.map(g=>{const cv=cellsOf(g,rs),o={};ICOLS.forEach(c=>{if(cv[c.key]) o[c.key]=disp(cv[c.key]);});return {s:fmt(g.s,2),ts:g.ts.map(t=>fmt(t,2)),cv:o};});
+  while(rows.length<6) rows.push({s:'',ts:[]});
+  const cnt=n?`<span class="pill">${REP===1?n+' merenja':gr.length+' puteva · '+n+' merenja'}</span>`:'';
+  return `<details class="card paper" id="pd"${open?' open':''}><summary>✎ Podaci iz sveske ${cnt}${S.src==='papir'?'<span class="pill ok">uneto iz sveske</span>':''}</summary>
+${intro?`<p class="banner warn" style="margin-top:10px">${intro}</p>`:''}
+<p class="small muted">Ako si merio na drugom uređaju ili su podaci nestali, prepiši ih ovde iz sveske i pritisni „Učitaj podatke“.${REP>1?' U jedan red upiši sva merenja za isti put s.':''} <b>Plave kolone</b> su vrednosti koje si izračunao digitronom na prethodnom času — upiši ih ako ih već imaš (na 2. času ostaju prazne).</p>
+<div class="form3">${EX.params.map(q=>`<label class="fld"><span>${q.label} (${fmt(q.min,q.dec)}–${fmt(q.max,q.dec)}${q.unit})</span><span class="inunit"><input id="pd-${q.key}" inputmode="decimal" autocomplete="off" value="${fmt(S.p[q.key],q.dec)}"><em>${q.unit.trim()}</em></span></label>`).join('')}</div>
+<div class="tbl-wrap" style="margin-top:10px"><table class="tbl ptbl" data-tc="${TC}"><thead><tr><th>Rb.</th><th>s (m)</th>${tHead(TC)}${ICOLS.map(c=>`<th class="pc">${c.label}</th>`).join('')}<th><span class="sr">Ukloni red</span></th></tr></thead><tbody id="pdBody">${rows.map((r,i)=>pdRow(i,r,TC)).join('')}</tbody></table></div>
+<div class="row"><button class="btn ghost sm" type="button" id="pdAdd">+ Dodaj red</button><button class="btn primary" type="button" id="pdLoad">Učitaj podatke iz sveske</button></div>
+<div class="msg" id="pdMsg" role="status"></div></details>`;
+}
+function pdAdd(){
+  const tb=$('#pdBody');if(!tb) return;
+  const TC=+tb.closest('table').dataset.tc||REP,n=tb.rows.length;
+  tb.insertAdjacentHTML('beforeend',pdRow(n,{s:'',ts:[]},TC));
+  const i=tb.rows[n].querySelector('input');if(i) i.focus();
+}
+function pdRm(btn){
+  const tb=$('#pdBody'),tr=btn.closest('tr');if(!tb||!tr) return;
+  if(tb.rows.length<=1){$$('input',tr).forEach(x=>x.value='');return;}
+  tr.remove();
+  Array.from(tb.rows).forEach((r,i)=>{r.cells[0].textContent=i+1;$$('[aria-label]',r).forEach(x=>x.setAttribute('aria-label',x.getAttribute('aria-label').replace(/\d+$/,String(i+1))));});
+}
+function pdLoad(){
+  const m=$('#pdMsg'),p={};
+  for(const q of EX.params){
+    const v=num($('#pd-'+q.key).value);
+    if(!isFinite(v)||v<q.min-1e-9||v>q.max+1e-9){msg(m,'bad',`${q.label} mora biti između ${fmt(q.min,q.dec)} i ${fmt(q.max,q.dec)}${q.unit}.`);return;}
+    p[q.key]=+clamp(Math.round(v/q.step)*q.step,q.min,q.max).toFixed(6);
+  }
+  const recs=[],prs=[];let bad='';
+  $$('#pdBody tr').forEach((tr,i)=>{
+    if(bad) return;
+    const sv=$('[data-k="s"]',tr).value.trim(),tv=$$('[data-k="t"]',tr).map(x=>x.value.trim());
+    const cv={};$$('[data-k="c"]',tr).forEach(x=>{const v=x.value.trim();if(v) cv[x.dataset.c]=v;});
+    if(!sv&&tv.every(x=>!x)&&!Object.keys(cv).length) return;
+    const s=num(sv);
+    if(!isFinite(s)){bad=`Red ${i+1}: upiši put s u metrima.`;return;}
+    if(s<EX.sPos.min-1e-9||s>EX.sPos.max+1e-9){bad=`Red ${i+1}: s mora biti između ${fmt(EX.sPos.min,2)} i ${fmt(EX.sPos.max,2)} m.`;return;}
+    const ts=tv.filter(x=>x).map(num);
+    if(!ts.length){bad=`Red ${i+1}: upiši izmereno vreme t.`;return;}
+    if(ts.some(t=>!isFinite(t)||t<=0||t>600)){bad=`Red ${i+1}: vreme mora biti pozitivan broj u sekundama.`;return;}
+    for(const c of ICOLS){if(cv[c.key]&&!isFinite(num(cv[c.key]))){bad=`Red ${i+1}: izračunata vrednost (${c.aria}) nije broj.`;return;}cv[c.key]&&(cv[c.key]=cv[c.key].slice(0,24));}
+    ts.forEach(t=>recs.push({s:+s.toFixed(2),t:+t.toFixed(3)}));
+    prs.push({s:+s.toFixed(2),t0:+ts[0].toFixed(3),cv});
+  });
+  if(bad){msg(m,'bad',bad);return;}
+  if(new Set(recs.map(r=>r.s)).size<2){msg(m,'bad','Upiši merenja za bar 2 različita puta s (za obradu treba bar 6).');return;}
+  const sig=(rs,pp)=>JSON.stringify([EX.params.map(q=>+(+pp[q.key]).toFixed(6)),rs.map(r=>(+r.s).toFixed(2)+'|'+(+r.t).toFixed(2)).sort()]);
+  const same=sig(S.records,S.p)===sig(recs,p);
+  if(!same){
+    if(S.records.length&&!confirm(`Zameniti postojećih ${S.records.length} merenja podacima iz sveske? Nagib i rezultat ćeš morati ponovo da proveriš.`)) return;
+    S.p=p;S.records=recs.map((r,i)=>({id:S.nextId+i,s:r.s,t:r.t}));S.nextId+=recs.length;S.src='papir';
+    EX.sim.back();EX.sim.resetLast();dataChanged();
+    const keys=new Set(EX.rows().map(r=>r.key));
+    Object.keys(S.proc.cells).forEach(k=>{if(!keys.has(k)) delete S.proc.cells[k];});
+  }
+  /* izračunate vrednosti iz sveske → tabela Obrade I */
+  const rs=EX.rows(),used=new Set();let nc=0;
+  prs.forEach(pr=>{
+    if(!Object.keys(pr.cv).length) return;
+    let r=null;
+    if(REP===1){const rec=S.records.find(x=>!used.has(x.id)&&Math.abs(x.s-pr.s)<1e-9&&Math.abs(x.t-pr.t0)<0.0005);if(rec){used.add(rec.id);r=rs.find(x=>x.id===rec.id);}}
+    else r=rs.find(x=>Math.abs(x.s-pr.s)<1e-9);
+    if(!r) return;
+    const cells=S.proc.cells[r.key]=S.proc.cells[r.key]||{};
+    Object.keys(pr.cv).forEach(k=>{if(cells[k]!==pr.cv[k]){cells[k]=pr.cv[k];nc++;}});
+  });
+  if(same&&!nc){msg(m,'ok','✓ Ovi podaci su već učitani.');return;}
+  saveNow();go(S.view,{noFocus:true});
+  toast(same?'Izračunate vrednosti iz sveske su upisane u tabelu.':`Učitano iz sveske: ${recs.length} merenja.`+(nc?' Izračunate vrednosti su upisane u tabelu.':' Tabela i grafici su spremni.'),'ok',4500);
+}
+function kPaper(){
+  const P=procData(),m=$('#kPaperMsg'),inp=$('#kPaper');if(!P.fit||!inp) return;
+  const k=num(inp.value);
+  if(!isFinite(k)||k<=0){msg(m,'bad','Upiši nagib kao pozitivan broj.');return;}
+  if(near(k,P.fit.k,0,0.08)){
+    S.proc.k=inp.value.trim().slice(0,24);S.proc.kOk=true;saveNow();buildObrada2();renderGoals();
+    toast('Nagib iz sveske je prihvaćen.','ok');
+  }else msg(m,'bad','✗ Ovaj nagib se ne slaže sa pravom kroz tvoje podatke. Proveri da li si tačno prepisao nagib i merenja — ili ga ponovo odredi na Obradi I.');
+}
+
+/* =========================================================
+   4. UI POMOĆNICI: toast, modal, kontrole
+   ========================================================= */
+let toastT=null;
+function toast(msg,kind,ms){const t=$('#toast');t.innerHTML=msg;t.className='show '+(kind||'');clearTimeout(toastT);toastT=setTimeout(()=>{t.className='';},ms||3200);}
+let lastFocus=null;
+function openModal(html){
+  lastFocus=document.activeElement;$('#mBody').innerHTML=html;
+  const m=$('#modal');m.classList.add('open');m.setAttribute('aria-hidden','false');
+  const f=$('#mBody button, #mBody input');if(f) f.focus();
+}
+function closeModal(){
+  const m=$('#modal');if(!m.classList.contains('open')) return;
+  m.classList.remove('open');m.setAttribute('aria-hidden','true');
+  if(lastFocus&&lastFocus.focus&&lastFocus.isConnected) lastFocus.focus();
+}
+function msg(el,kind,html){if(!el) return;el.className='msg '+kind;el.innerHTML=html;}
+function emptyHTML(t,p,v,b){return `<div class="card empty"><div class="empty-ic" aria-hidden="true">∅</div><h3>${t}</h3><p class="muted">${p}</p><button class="btn primary" type="button" data-go="${v}">${b}</button></div>`;}
+function stpHTML(id,q,val){
+  return `<div class="stp" data-stp="${id}"><div class="stp-h"><label for="${id}">${q.label}</label><output id="${id}-o" for="${id}">${fmt(val,q.dec)}${q.unit}</output></div>
+<div class="stp-r"><button type="button" class="btn ghost sq" data-step="-1" aria-label="Smanji: ${q.label}">−</button><input type="range" class="slider" id="${id}" min="${q.min}" max="${q.max}" step="${q.step}" value="${val}"><button type="button" class="btn ghost sq" data-step="1" aria-label="Povećaj: ${q.label}">+</button></div>
+<div class="stp-lim" aria-hidden="true"><span>${fmt(q.min,q.dec)}${q.unit}</span><span>${fmt(q.max,q.dec)}${q.unit}</span></div>${q.note?`<p class="small muted">${q.note}</p>`:''}</div>`;
+}
+function bindStp(id,q,get,set){
+  const sl=$('#'+id);if(!sl) return;
+  const box=sl.closest('.stp'),out=$('#'+id+'-o');
+  const apply=v=>{
+    v=clamp(Math.round(v/q.step)*q.step,q.min,q.max);v=+v.toFixed(6);
+    if(set(v)===false){sl.value=get();return;}
+    sl.value=get();out.textContent=fmt(get(),q.dec)+q.unit;
+  };
+  sl.addEventListener('input',()=>apply(parseFloat(sl.value)));
+  $$('[data-step]',box).forEach(b=>b.addEventListener('click',()=>apply(get()+q.step*(+b.dataset.step))));
+}
+function setParam(q,v){
+  if(v===S.p[q.key]) return true;
+  if(q.fixed&&S.records.length){
+    if(!confirm(`${q.label} važi za sva merenja. Ako ga promeniš, obrisaće se ${S.records.length} zabeleženih merenja i obrada. Nastaviti?`)) return false;
+    S.records=[];S.proc=DEFPROC();EX.sim.resetLast();
+    toast('Merenja su obrisana — kreni ispočetka sa novim podešavanjem.','warn');
+  }
+  S.p[q.key]=v;EX.sim.back();scheduleSave();goalsSoon();
+  const sp=$('#stPar');if(sp) sp.textContent=EX.parText();
+  return true;
+}
+function setSPos(v){
+  if(!EX.sim.canMoveS()){toast(`Sačekaj kraj merenja ili pritisni „${EX.backLabel}“.`,'warn');return false;}
+  if(EX.sim.phase()!=='ready') EX.sim.back();
+  S.sPos=v;scheduleSave();return true;
+}
+
+/* =========================================================
+   5. GRAFICI (canvas, bez biblioteka)
+   ========================================================= */
+function setupCanvas(cv){
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth||320,h=cv.clientHeight||260;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h};
+}
+function niceStep(span,n){const raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+function ticksArr(a,b,n){const st=niceStep(b-a,n),out=[],i0=Math.ceil(a/st-1e-9),i1=Math.floor(b/st+1e-9);for(let i=i0;i<=i1;i++) out.push(i*st);return {ticks:out,step:st};}
+function tickDec(st){return Math.max(0,Math.ceil(-Math.log10(st)-1e-9));}
+function plot(cv,cfg){
+  if(!cv||!cv.isConnected||!cv.clientWidth) return;
+  const {c,w,h}=setupCanvas(cv);
+  const cs=getComputedStyle(document.documentElement);
+  const col=k=>!k?'#555':(k.indexOf('--')===0?(cs.getPropertyValue(k).trim()||'#555'):k);
+  const font=(cs.getPropertyValue('--font')||'sans-serif').trim();
+  const pL=58,pR=14,pT=12,pB=46;
+  const pts=(cfg.pts||[]).filter(p=>isFinite(p.x)&&isFinite(p.y));
+  const marks=(cfg.marks||[]).filter(m=>m&&isFinite(m.x)&&isFinite(m.y));
+  let x0=cfg.xMin!=null?cfg.xMin:0,y0=cfg.yMin!=null?cfg.yMin:0,x1=cfg.xMax,y1=cfg.yMax;
+  if(x1==null){x1=x0;pts.forEach(p=>x1=Math.max(x1,p.x+(p.dx||0)));marks.forEach(m=>x1=Math.max(x1,m.x));x1=x0+(x1-x0)*1.06;}
+  if(!(x1>x0)) x1=x0+1;
+  if(y1==null){y1=y0;pts.forEach(p=>y1=Math.max(y1,p.y));marks.forEach(m=>y1=Math.max(y1,m.y));if(cfg.hline) y1=Math.max(y1,cfg.hline.y);y1=y0+(y1-y0)*1.1;}
+  if(!(y1>y0)) y1=y0+1;
+  const nx=w<440?4:6;
+  let TX=ticksArr(x0,x1,nx);x1=Math.ceil(x1/TX.step-1e-9)*TX.step;TX=ticksArr(x0,x1,nx);
+  let TY=ticksArr(y0,y1,5);y1=Math.ceil(y1/TY.step-1e-9)*TY.step;TY=ticksArr(y0,y1,5);
+  const W=w-pL-pR,H=h-pT-pB;
+  const X=v=>pL+(v-x0)/(x1-x0)*W,Y=v=>pT+H-(v-y0)/(y1-y0)*H;
+  cv._tf={x0,x1,y0,y1,pL,pR,pT,pB,w,h};
+  c.clearRect(0,0,w,h);c.fillStyle=col('--surface');c.fillRect(0,0,w,h);
+  c.font='12px '+font;c.textBaseline='middle';c.lineWidth=1;
+  const dxd=tickDec(TX.step),dyd=tickDec(TY.step);
+  TX.ticks.forEach(t=>{const x=Math.round(X(t))+.5;c.strokeStyle=col('--line');c.beginPath();c.moveTo(x,pT);c.lineTo(x,pT+H);c.stroke();c.fillStyle=col('--muted');c.textAlign='center';c.fillText(fmt(t,dxd),x,pT+H+14);});
+  TY.ticks.forEach(t=>{const y=Math.round(Y(t))+.5;c.strokeStyle=col('--line');c.beginPath();c.moveTo(pL,y);c.lineTo(pL+W,y);c.stroke();c.fillStyle=col('--muted');c.textAlign='right';c.fillText(fmt(t,dyd),pL-6,y);});
+  c.strokeStyle=col('--ink');c.lineWidth=1.4;c.beginPath();c.moveTo(pL,pT);c.lineTo(pL,pT+H);c.lineTo(pL+W,pT+H);c.stroke();
+  c.fillStyle=col('--ink');c.font='600 12.5px '+font;c.textAlign='center';c.fillText(cfg.xLabel||'',pL+W/2,h-12);
+  c.save();c.translate(14,pT+H/2);c.rotate(-Math.PI/2);c.fillText(cfg.yLabel||'',0,0);c.restore();
+  c.save();c.beginPath();c.rect(pL,pT,W,H);c.clip();
+  (cfg.lines||[]).forEach(L=>{if(!L||!isFinite(L.k)||!isFinite(L.n)) return;c.strokeStyle=col(L.color);c.lineWidth=L.w||1.6;c.setLineDash(L.dash||[]);c.beginPath();c.moveTo(X(x0),Y(L.k*x0+L.n));c.lineTo(X(x1),Y(L.k*x1+L.n));c.stroke();});
+  c.setLineDash([]);
+  if(cfg.curve&&cfg.curve.f){const C=cfg.curve;c.strokeStyle=col(C.color);c.lineWidth=1.8;c.setLineDash(C.dash||[]);c.beginPath();for(let i=0;i<=160;i++){const xv=x0+(x1-x0)*i/160,yv=C.f(xv);if(!isFinite(yv)) continue;if(i===0) c.moveTo(X(xv),Y(yv));else c.lineTo(X(xv),Y(yv));}c.stroke();c.setLineDash([]);}
+  if(cfg.hline&&isFinite(cfg.hline.y)){const L=cfg.hline;c.strokeStyle=col(L.color);c.lineWidth=1.8;c.setLineDash(L.dash||[]);c.beginPath();c.moveTo(pL,Y(L.y));c.lineTo(pL+W,Y(L.y));c.stroke();c.setLineDash([]);}
+  pts.forEach(p=>{
+    const x=X(p.x),y=Y(p.y),cc=p.ex?col('--bad'):col('--blue');
+    c.strokeStyle=cc;c.lineWidth=1.3;
+    if(p.dx){c.beginPath();c.moveTo(X(p.x-p.dx),y);c.lineTo(X(p.x+p.dx),y);c.moveTo(X(p.x-p.dx),y-4);c.lineTo(X(p.x-p.dx),y+4);c.moveTo(X(p.x+p.dx),y-4);c.lineTo(X(p.x+p.dx),y+4);c.stroke();}
+    c.beginPath();c.arc(x,y,4.6,0,Math.PI*2);
+    if(p.ex){c.fillStyle=col('--surface');c.fill();c.lineWidth=2;c.stroke();}else{c.fillStyle=cc;c.fill();}
+  });
+  marks.forEach(m=>{const x=X(m.x),y=Y(m.y);c.fillStyle=m.t==='A'?col('--acc'):col('--ink');c.beginPath();c.moveTo(x,y-7);c.lineTo(x+7,y);c.lineTo(x,y+7);c.lineTo(x-7,y);c.closePath();c.fill();c.font='800 13px '+font;c.textAlign='left';c.fillText(m.t,x+9,y-10);});
+  c.restore();
+  const leg=[];
+  if(pts.some(p=>!p.ex)) leg.push({t:'pt',c:col('--blue'),l:'izmerene tačke'});
+  if(pts.some(p=>p.ex)) leg.push({t:'px',c:col('--bad'),l:'isključene tačke'});
+  (cfg.lines||[]).forEach(L=>{if(L&&L.label) leg.push({t:'ln',c:col(L.color),d:L.dash,l:L.label});});
+  if(cfg.curve&&cfg.curve.label) leg.push({t:'ln',c:col(cfg.curve.color),d:cfg.curve.dash,l:cfg.curve.label});
+  if(cfg.hline&&cfg.hline.label) leg.push({t:'ln',c:col(cfg.hline.color),d:cfg.hline.dash,l:cfg.hline.label});
+  if(leg.length){
+    c.font='11.5px '+font;
+    const lw=Math.max(...leg.map(e=>c.measureText(e.l).width))+42,lh=17,bx=pL+8,by=pT+6;
+    c.fillStyle='rgba(255,252,246,.92)';c.strokeStyle=col('--line');c.lineWidth=1;c.beginPath();c.rect(bx,by,lw,leg.length*lh+8);c.fill();c.stroke();
+    leg.forEach((e,i)=>{const yy=by+12+i*lh;
+      if(e.t==='ln'){c.strokeStyle=e.c;c.lineWidth=2;c.setLineDash(e.d||[]);c.beginPath();c.moveTo(bx+6,yy);c.lineTo(bx+30,yy);c.stroke();c.setLineDash([]);}
+      else{c.beginPath();c.arc(bx+18,yy,4,0,Math.PI*2);if(e.t==='px'){c.strokeStyle=e.c;c.lineWidth=2;c.stroke();}else{c.fillStyle=e.c;c.fill();}}
+      c.fillStyle=col('--ink');c.textAlign='left';c.fillText(e.l,bx+36,yy);});
+  }
+}
+function linCfg(P,mode){
+  const L=EX.lin,lines=[],em=mode==='bnd';
+  if(P.fit) lines.push({k:P.fit.k,n:P.fit.n,color:'--blue',w:2.2,label:'najbolja prava'});
+  if(P.bnd){
+    lines.push({k:P.bnd.kmax,n:P.bnd.nmax,color:em?'--acc':'--muted',dash:[7,5],w:em?2:1.3,label:'granične prave'});
+    lines.push({k:P.bnd.kmin,n:P.bnd.nmin,color:em?'--acc':'--muted',dash:[7,5],w:em?2:1.3});
+  }
+  const A=abPt('A'),B=abPt('B'),marks=[];
+  if(A) marks.push({x:A.x,y:A.y,t:'A'});if(B) marks.push({x:B.x,y:B.y,t:'B'});
+  return {xLabel:L.xLabel,yLabel:L.yLabel,xMin:0,yMin:0,pts:P.p,lines,marks:em?[]:marks};
+}
+
+/* =========================================================
+   6. NAVIGACIJA I ČASOVI
+   ========================================================= */
+function buildNav(){
+  $('#side').innerHTML=LESSONS.map(L=>`<div class="sg"><div class="sg-h"><span>ČAS ${L.n}</span><i class="sg-ok" data-ld="${L.n}" aria-hidden="true"></i><small>${L.title}</small></div>${L.views.map(v=>`<button type="button" class="nav-b" data-nav="${v}">${VIEW_LABEL[v]}</button>`).join('')}</div>`).join('');
+  $('#tabs').innerHTML=VIEW_ORDER.map(v=>`<button type="button" class="tab" data-nav="${v}"><small>ČAS ${lessonOf(v)}</small><span>${VIEW_LABEL[v]}</span></button>`).join('');
+}
+function updNav(){
+  $$('[data-nav]').forEach(b=>{const on=b.dataset.nav===S.view;b.classList.toggle('on',on);if(on) b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  $$('[data-ld]').forEach(i=>i.textContent=S.done[i.dataset.ld]?'✓ završen':'');
+}
+function updLesson(){
+  const n=lessonOf(S.view),L=LESSONS[n-1];
+  $('#lnum').textContent=`Čas ${n} / 3`;$('#ltitle').textContent=L.title;
+  $$('#lbar i').forEach((i,k)=>{i.className=S.done[k+1]?'d':(k+1===n?'c':'');});
+}
+function goalHTML(L){
+  let done=0;
+  const items=L.check.map(c=>{const ok=!!c.f();if(ok) done++;return `<li class="${ok?'ok':''}"><span class="ck" aria-hidden="true">${ok?'✓':''}</span><span class="ct">${c.t}</span><span class="sr">${ok?'(urađeno)':'(nije urađeno)'}</span></li>`;}).join('');
+  return `<div class="card goal"><div class="goal-h"><span class="pill acc">Čas ${L.n} / 3</span><b>Cilj ${L.n}. časa: ${L.title}</b><span class="small muted">${L.time}</span></div><p>${L.goal}</p><ul class="checklist">${items}</ul><div class="small muted">${done} od ${L.check.length} urađeno</div></div>`;
+}
+function renderGoals(){
+  const v=S.view,L=LESSONS[lessonOf(v)-1];
+  $$('#v-'+v+' .goalSlot').forEach(s=>s.innerHTML=goalHTML(L));
+  updNav();updLesson();
+}
+let goalT=null;
+function goalsSoon(){clearTimeout(goalT);goalT=setTimeout(renderGoals,250);}
+function go(v,opts){
+  if(VIEW_ORDER.indexOf(v)<0) v='priprema';
+  S.view=v;
+  $$('.view').forEach(s=>s.classList.toggle('active',s.id==='v-'+v));
+  if(v==='priprema') buildPriprema();
+  else if(v==='merenje') syncMeas();
+  else if(v==='obrada1') buildObrada1();
+  else if(v==='obrada2') buildObrada2();
+  else buildZakljucak();
+  renderGoals();scheduleSave();
+  window.scrollTo(0,0);
+  const h=$('#v-'+v+' .vh');if(h&&!(opts&&opts.noFocus)) h.focus({preventScroll:true});
+}
+function endLesson(n){
+  S.done[n]=true;saveNow();updNav();updLesson();
+  const L=LESSONS[n-1],next=LESSONS[n];
+  const all=L.check.every(c=>c.f());
+  const items=L.check.map(c=>{const ok=!!c.f();return `<li class="${ok?'ok':''}"><span class="ck" aria-hidden="true">${ok?'✓':''}</span><span class="ct">${c.t}</span></li>`;}).join('');
+  openModal(`<h2 id="mTitle">Kraj ${n}. časa — ${L.title}</h2><ul class="checklist">${items}</ul>
+${n<3?`<div class="card remind" style="margin-top:10px"><h3>✎ Proveri svesku</h3><p class="small">Ovo mora da imaš zapisano u svesci. Ako se podaci na uređaju izgube (ili sledeći put radiš na drugom), uneseš ih ponovo na Obradi.</p>${copyHTML(n)}</div>`:''}
+${all?'':'<p class="banner warn">Neke stavke nisu završene. Možeš da ih dovršiš na početku sledećeg časa.</p>'}
+<p class="banner ok">Podaci su sačuvani na ovom uređaju. ${next?`Sledeći čas: <b>${n+1}. čas — ${next.title}</b>.`:'Vežba je završena — vežbanku sredi kod kuće.'}</p>
+<div class="row">${next?`<button class="btn primary" type="button" data-go="${next.views[0]}">Pređi na ${n+1}. čas</button>`:''}<button class="btn ghost" type="button" data-close>Zatvori</button></div>`);
+}
+function resumeModal(){
+  let n=lessonOf(S.view),v=S.view;
+  if(S.done[n]&&n<3){n=n+1;v=LESSONS[n-1].views[0];}
+  const L=LESSONS[n-1];
+  openModal(`<h2 id="mTitle">Nastavak vežbe</h2><p style="font-size:1.1rem">Nastavljaš <b>${n}. čas — ${L.title}</b>.</p>
+<p class="small muted">${S.student.name?esc(S.student.name)+' · ':''}zabeleženo merenja: ${S.records.length}. Podaci su sačuvani samo na ovom uređaju.</p>
+<div class="row"><button class="btn primary xl" type="button" data-go="${v}">Nastavi ${n}. čas</button><button class="btn danger" type="button" data-wipe>Počni ispočetka</button></div>`);
+}
+function about(){
+  openModal(`<h2 id="mTitle">O modelu</h2>${EX.aboutHTML}<hr>
+<label class="tgl"><input type="checkbox" id="helpTgl" ${S.help?'checked':''}><span><b>Pomoć (za nastavnika)</b> — prikaži tačne vrednosti na pozornici, dugme za automatsko popunjavanje tabele i linearnu regresiju. Učenik sve računa sam digitronom; program samo crta grafike i proverava.</span></label>
+<p class="small muted">Svi podaci (merenja, obrada, zaključak) čuvaju se samo na ovom uređaju, u pregledaču. Ništa se ne šalje na internet; radi i bez mreže. Ako se podaci izgube ili učenik radi na drugom uređaju, merenja i nagib se ponovo unose iz sveske (kartica „Podaci iz sveske“ na Obradi I i II).</p>
+<div class="row"><button class="btn primary" type="button" data-close>Zatvori</button><button class="btn danger" type="button" data-wipe>Obriši sve podatke</button></div>`);
+}
+function wipeAll(){
+  if(!confirm('Obrisati SVE podatke ove vežbe sa ovog uređaja? Ovo ne može da se vrati.')) return;
+  try{localStorage.removeItem(KEY);}catch(e){}
+  S=DEF();SW.on=false;SW.t=0;EX.sim.back();EX.sim.resetLast();
+  buildMerenje();closeModal();go('priprema');toast('Svi podaci su obrisani.');
+}
+
+/* =========================================================
+   7. POGLED: PRIPREMA
+   ========================================================= */
+function buildPriprema(){
+  const el=$('#v-priprema');
+  el.innerHTML=`<h2 class="vh sr" tabindex="-1">Priprema</h2>
+<div class="card hero"><div><span class="pill acc">${EX.kicker}</span><h1 style="margin-top:8px">${EX.title}</h1><p>${EX.goalText}</p><div class="law">${EX.lawHTML}</div></div>
+<figure class="illus">${EX.illusSVG}<figcaption>${EX.illusCap}</figcaption></figure></div>
+<div class="goalSlot"></div>
+<div class="card"><h3>Podaci o učeniku</h3><div class="form3">
+<label class="fld"><span>Ime i prezime</span><input id="stName" autocomplete="name" value="${esc(S.student.name)}"></label>
+<label class="fld"><span>Grupa / odeljenje</span><input id="stGroup" value="${esc(S.student.group)}"></label>
+<label class="fld"><span>Datum</span><input id="stDate" type="date" value="${esc(S.student.date)}"></label></div></div>
+<div class="card"><h3>Aparatura</h3><p class="muted">${EX.paramIntro}</p>${EX.params.map(q=>stpHTML('p-'+q.key,q,S.p[q.key])).join('')}</div>
+<div class="banner"><b>Kako meriš</b><div>${EX.howHTML}</div><div style="margin-top:6px">✎ <b>Svako zabeleženo merenje odmah prepiši i u svesku.</b> Ako se podaci na uređaju izgube ili sledeći čas radiš na drugom uređaju, na Obradi ih samo ponovo uneseš.</div></div>
+<button class="btn primary xl wide" type="button" data-go="merenje">Pokreni merenje →</button>`;
+  EX.params.forEach(q=>bindStp('p-'+q.key,q,()=>S.p[q.key],v=>setParam(q,v)));
+}
+
+/* =========================================================
+   8. POGLED: MERENJE (štoperica, beleženje)
+   ========================================================= */
+const SW={on:false,t:0};
+let liveCache={};
+function setTxt(id,val,html){if(liveCache[id]===val) return;liveCache[id]=val;const e=document.getElementById(id);if(!e) return;if(html) e.innerHTML=val;else e.textContent=val;}
+function buildMerenje(){
+  const el=$('#v-merenje');liveCache={};
+  el.innerHTML=`<h2 class="vh" tabindex="-1">Merenje</h2><div class="goalSlot"></div>
+<div class="mgrid">
+ <div class="stageWrap"><div class="stage">
+  <div class="stage-top"><span class="spill" id="stPar"></span><span class="spill" id="stPh"></span><button class="btn dark sm" type="button" data-about>O modelu</button></div>
+  <div class="scene" id="scene">${EX.sceneSVG()}</div>
+  <div class="reads"><div class="read" id="swRead"><div class="rl">Štoperica</div><div class="rv" id="swV">0:00,00</div></div>
+  <div class="read"><div class="rl">${EX.auxLabel}</div><div class="rv sm" id="auxV"></div></div></div>
+  <div class="helpbox" id="helpBox" hidden></div>
+ </div></div>
+ <div class="card ctrl">
+  <div class="banner next" id="nextB" role="status" aria-live="polite"></div>
+  <h3>1. ${EX.part1}</h3>
+  ${stpHTML('sPos',EX.sPos,S.sPos)}
+  <div class="row"><button class="btn primary" type="button" id="goBtn">${EX.goLabel}</button><button class="btn ghost" type="button" id="backBtn">${EX.backLabel}</button></div>
+  <h3>2. Štoperica</h3>
+  <div class="row"><button class="btn blue xl" type="button" id="swBtn" aria-pressed="false">Start</button><button class="btn ghost" type="button" id="swRst">Poništi</button></div>
+  <p class="small muted">Taster <kbd>razmaknica</kbd> = Start / Stop.</p>
+  <h3>3. Zabeleži</h3>
+  <div class="rec-row"><label class="fld"><span>Vreme t sa štoperice</span><span class="inunit"><input id="tIn" inputmode="decimal" placeholder="npr. 12,34" autocomplete="off"><em>s</em></span></label><button class="btn primary" type="button" id="recBtn">Zabeleži</button></div>
+  <p class="small muted">✎ Svako zabeleženo merenje odmah prepiši i u svesku (s i t).</p>
+  <div class="row between" style="margin-top:12px"><span class="small muted">Brzina simulacije (za tačno merenje ×1)</span><div class="seg" role="radiogroup" aria-label="Brzina simulacije"><button class="chip" type="button" role="radio" data-sp="1">×1</button><button class="chip" type="button" role="radio" data-sp="2">×2</button></div></div>
+  <h3>Zabeležena merenja</h3>
+  <div class="chips" id="recChips"></div>
+  <div class="cover" id="cover"></div>
+  <button class="btn wide" type="button" id="end1">Završi 1. čas</button>
+ </div>
+</div>`;
+  EX.sim.mount($('#scene'));
+  bindStp('sPos',EX.sPos,()=>S.sPos,setSPos);
+  $('#goBtn').addEventListener('click',()=>{EX.sim.go();liveCache={};});
+  $('#backBtn').addEventListener('click',()=>{EX.sim.back();liveCache={};});
+  $('#swBtn').addEventListener('click',swToggle);
+  $('#swRst').addEventListener('click',swReset);
+  $('#recBtn').addEventListener('click',record);
+  $('#tIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();record();}});
+  $$('[data-sp]',el).forEach(b=>b.addEventListener('click',()=>{S.speed=+b.dataset.sp;updSpeed();scheduleSave();}));
+  $('#recChips').addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(b) delRecord(+b.dataset.del);});
+  $('#end1').addEventListener('click',()=>endLesson(1));
+}
+function updSpeed(){$$('[data-sp]').forEach(b=>b.setAttribute('aria-checked',String(+b.dataset.sp===S.speed)));}
+function syncMeas(){
+  const sl=$('#sPos');if(sl){sl.value=S.sPos;$('#sPos-o').textContent=fmt(S.sPos,EX.sPos.dec)+EX.sPos.unit;}
+  $('#stPar').textContent=EX.parText();
+  updSpeed();renderChips();renderCover();liveCache={};live();
+}
+function swToggle(){SW.on=!SW.on;const b=$('#swBtn');if(b){b.textContent=SW.on?'Stop':'Start';b.classList.toggle('on',SW.on);b.setAttribute('aria-pressed',String(SW.on));}}
+function swReset(){SW.on=false;SW.t=0;const b=$('#swBtn');if(b){b.textContent='Start';b.classList.remove('on');b.setAttribute('aria-pressed','false');}liveCache.swV=null;}
+function dataChanged(){
+  const P=S.proc;
+  if(P.kOk||P.cOk||P.dOk||P.rOk||P.bOk||P.dxOk||P.devOk){P.kOk=P.cOk=P.dOk=P.rOk=P.bOk=P.dxOk=P.devOk=false;return true;}
+  return false;
+}
+function record(){
+  const inp=$('#tIn'),t=num(inp.value);
+  if(SW.on){toast('Prvo zaustavi štopericu.','warn');return;}
+  if(!isFinite(t)||t<=0){toast('Upiši vreme sa štoperice u sekundama, npr. 12,34.','bad');inp.focus();return;}
+  const lr=EX.sim.lastRun();
+  if(!lr||!lr.done||Math.abs(lr.s-S.sPos)>1e-9){toast(EX.noRunMsg,'warn',4200);return;}
+  if(lr.used){toast(`Ovo merenje je već zabeleženo. Pritisni „${EX.backLabel}“ i izvedi novo.`,'warn',4200);return;}
+  const rec={id:S.nextId++,s:S.sPos,t:t};
+  S.records.push(rec);lr.used=true;inp.value='';
+  const ch=dataChanged();
+  const w=EX.plaus(rec,lr);
+  if(w) toast(w,'warn',6500);
+  else toast(`Zabeleženo: s = ${fmt(rec.s,2)} m, t = ${fmt(rec.t,2)} s`+(ch?' · nagib i rezultat treba ponovo proveriti':''),'ok');
+  renderChips();renderCover();scheduleSave();goalsSoon();liveCache={};
+}
+function delRecord(id){
+  const i=S.records.findIndex(r=>r.id===id);if(i<0) return;
+  const r=S.records[i];
+  if(!confirm(`Obrisati merenje s = ${fmt(r.s,2)} m, t = ${fmt(r.t,2)} s?`)) return;
+  S.records.splice(i,1);delete S.proc.cells['r'+id];dataChanged();
+  renderChips();renderCover();scheduleSave();goalsSoon();toast('Merenje je obrisano.');
+}
+function renderChips(){
+  const c=$('#recChips');if(!c) return;
+  if(!S.records.length){c.innerHTML='<p class="small muted">Još nema zabeleženih merenja.</p>';return;}
+  c.innerHTML=S.records.map((r,i)=>`<button type="button" class="rchip" data-del="${r.id}" aria-label="Obriši merenje ${i+1}: s = ${fmt(r.s,2)} metara, t = ${fmt(r.t,2)} sekundi"><span>${i+1}.</span>s = ${fmt(r.s,2)} m · t = ${fmt(r.t,2)} s <i aria-hidden="true">✕</i></button>`).join('');
+}
+function renderCover(){const c=$('#cover');if(c) c.innerHTML=EX.coverage().html;}
+function live(){
+  EX.sim.render();
+  setTxt('swV',fmtTime(SW.t));
+  const rd=$('#swRead');if(rd) rd.classList.toggle('run',SW.on);
+  const st=EX.sim.status(SW);
+  setTxt('stPh',st.ph);setTxt('nextB',st.next,true);setTxt('auxV',EX.auxText(),true);
+  const gb=$('#goBtn');if(gb) gb.disabled=!EX.sim.canGo();
+  const bb=$('#backBtn');if(bb) bb.disabled=EX.sim.phase()==='ready';
+  const can=EX.sim.canMoveS(),sl=$('#sPos');
+  if(sl&&sl.disabled===can){sl.disabled=!can;$$('[data-stp="sPos"] [data-step]').forEach(b=>b.disabled=!can);}
+  const sp=$('#sPos-o');if(sp) setTxt('sPos-o',fmt(S.sPos,EX.sPos.dec)+EX.sPos.unit);
+  const hb=$('#helpBox');if(hb){hb.hidden=!S.help;if(S.help) setTxt('helpBox',EX.sim.helpHTML(),true);}
+}
+let lastTs=null;
+function frame(ts){
+  if(lastTs==null) lastTs=ts;
+  let dt=(ts-lastTs)/1000;lastTs=ts;
+  if(!(dt>0)) dt=0;if(dt>0.1) dt=0.1;
+  const ds=dt*S.speed;
+  if(SW.on) SW.t+=ds;
+  try{EX.sim.advance(ds);}catch(e){EX.sim.back();}
+  if(S.view==='merenje') live();
+  requestAnimationFrame(frame);
+}
+
+/* =========================================================
+   9. POGLED: OBRADA I (tabela, grafici, nagib)
+   ========================================================= */
+let rowMap={},colMap={};
+function buildObrada1(){
+  const el=$('#v-obrada1'),P=procData(),L=EX.lin;
+  let h=`<h2 class="vh" tabindex="-1">Obrada I</h2><div class="goalSlot"></div>`;
+  if(P.use.length<2){el.innerHTML=h+pdHTML(true,'Na ovom uređaju nema dovoljno merenja. Ako su ti merenja u svesci, prepiši ih ovde — tabela i grafici će se napraviti od njih.')+'<div class="row"><button class="btn ghost" type="button" data-go="merenje">← Nazad na merenje</button></div>';return;}
+  h+=pdHTML(false);
+  const rows=EX.rows();rowMap={};colMap={};
+  rows.forEach(r=>rowMap[r.key]=r);EX.cols.forEach(c=>colMap[c.key]=c);
+  const head=EX.cols.map(c=>`<th scope="col">${c.label}</th>`).join('');
+  const body=rows.map((r,i)=>`<tr class="${r.ex?'exr':''}">`+EX.cols.map(c=>{
+    if(c.key==='#') return `<td>${i+1}${r.ex?'<span class="xb">isključena</span>':''}</td>`;
+    if(c.input){
+      if(r.ex) return '<td class="muted">—</td>';
+      const v=(S.proc.cells[r.key]||{})[c.key]||'';
+      return `<td><input class="cell" data-r="${r.key}" data-c="${c.key}" inputmode="decimal" autocomplete="off" aria-label="${c.aria}, red ${i+1}" value="${esc(v)}"></td>`;
+    }
+    return `<td>${c.get(r)}</td>`;
+  }).join('')+'</tr>').join('');
+  const exN=rows.filter(r=>r.ex).length;
+  S.proc.seen=true;
+  const linFig=`<figure class="fig"><figcaption class="figt">${L.title}</figcaption><canvas id="cv-lin" class="plot" role="img" aria-label="${L.title}. Dodirni grafik da postaviš tačku A ili B na pravu."></canvas><p class="small muted">${L.caption}</p></figure>`;
+  const exFig=EX.extra?`<figure class="fig"><figcaption class="figt">${EX.extra.title}</figcaption><canvas id="cv-${EX.extra.id}" class="plot" role="img" aria-label="Grafik: ${EX.extra.id}"></canvas><p class="small muted">${EX.extra.caption}</p></figure>`:'';
+  h+=`<div class="card"><h3>1. Tabela</h3><p>${EX.tableIntro}</p>
+<div class="tbl-wrap"><table class="tbl"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+${exN?`<p class="small muted">Isključeno tačaka: ${exN} — grubo odstupaju od ostalih (verovatno greška pri merenju) i ne ulaze u grafik i nagib.</p>`:''}
+<div class="tbl-foot"><span class="pill" id="tblCount"></span>${S.help?'<button class="btn ghost sm" type="button" id="autoBtn">Automatski izračunaj (pomoć za nastavnika)</button>':''}</div>
+<div class="msg warn" id="tblTip" role="status"></div></div>
+<div class="card"><h3>2. Grafici</h3><div class="graphs">${EX.extra&&EX.extra.first?exFig+linFig:linFig+exFig}</div></div>
+<div class="card"><h3>3. Nagib prave iz dve tačke</h3><p>${EX.slopeIntro} Dodirni grafik „${L.title}“ — tačka se postavi na plavu pravu. Koordinate možeš i da upišeš.</p>
+<div class="seg" role="radiogroup" aria-label="Koju tačku postavljaš"><button class="chip" type="button" role="radio" data-ab="A">Tačka A</button><button class="chip" type="button" role="radio" data-ab="B">Tačka B</button></div>
+<div class="abg">
+ <div class="abp"><b class="abl">A</b><label>${L.xi('A')} = <input id="Ax" inputmode="decimal" autocomplete="off"> ${L.xUnit}</label><label>${L.yi('A')} = <input id="Ay" inputmode="decimal" autocomplete="off"> ${L.yUnit}</label></div>
+ <div class="abp"><b class="abl b">B</b><label>${L.xi('B')} = <input id="Bx" inputmode="decimal" autocomplete="off"> ${L.xUnit}</label><label>${L.yi('B')} = <input id="By" inputmode="decimal" autocomplete="off"> ${L.yUnit}</label></div>
+</div>
+<div class="formula">nagib = ${FR(L.yi('B')+' − '+L.yi('A'),L.xi('B')+' − '+L.xi('A'))} = <span class="inunit"><input id="kIn" inputmode="decimal" autocomplete="off" aria-label="nagib" value="${esc(S.proc.k)}"><em>${L.kUnit}</em></span><button class="btn primary" type="button" id="kChk">Proveri</button></div>
+<div class="msg" id="kMsg" role="status">${S.proc.kOk?'✓ Nagib je proveren.':''}</div></div>
+<button class="btn primary xl wide" type="button" id="end2">Završi 2. čas</button>`;
+  el.innerHTML=h;
+  if(S.proc.kOk) $('#kMsg').className='msg ok';
+  $$('.cell',el).forEach(markCell);
+  updCount();syncAB();drawO1();
+}
+function markCell(inp){
+  const r=rowMap[inp.dataset.r],c=colMap[inp.dataset.c];if(!r||!c) return null;
+  const ok=cellOk(r,c,inp.value);
+  inp.classList.toggle('ok',ok===true);inp.classList.toggle('bad',ok===false);
+  inp.setAttribute('aria-invalid',ok===false?'true':'false');
+  return ok;
+}
+function updCount(){const t=tableStats(),e=$('#tblCount');if(e){e.textContent=`Tačno ${t.ok} od ${t.total}`;e.className='pill'+(t.total&&t.ok===t.total?' ok':'');}}
+function drawO1(){
+  const P=procData();
+  plot($('#cv-lin'),linCfg(P,'o1'));
+  if(EX.extra) plot($('#cv-'+EX.extra.id),EX.extra.cfg(P.fit));
+}
+function syncAB(){
+  ['A','B'].forEach(n=>{const ix=$('#'+n+'x'),iy=$('#'+n+'y');
+    if(ix&&document.activeElement!==ix) ix.value=S.proc[n].x;
+    if(iy&&document.activeElement!==iy) iy.value=S.proc[n].y;});
+  $$('[data-ab]').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.ab===S.proc.abSel)));
+}
+function autoFill(){
+  const rows=EX.rows().filter(r=>!r.ex);
+  rows.forEach(r=>{const cells=S.proc.cells[r.key]=S.proc.cells[r.key]||{};
+    EX.cols.forEach(c=>{if(!c.input) return;const ex=c.exact(r,cells)[0];if(isFinite(ex)) cells[c.key]=fmt(ex,c.dec).replace('−','-');});});
+  S.proc.usedAuto=true;scheduleSave();buildObrada1();renderGoals();
+  toast('Tabela je popunjena automatski. To će pisati i uz rezultat.','warn',4500);
+}
+function canvasPick(e){
+  const cv=e.target.closest('#cv-lin');if(!cv||!cv._tf) return;
+  const P=procData();if(!P.fit) return;
+  const r=cv.getBoundingClientRect(),tf=cv._tf;
+  let x=tf.x0+(e.clientX-r.left-tf.pL)/(tf.w-tf.pL-tf.pR)*(tf.x1-tf.x0);
+  x=clamp(x,tf.x0,tf.x1);
+  const y=P.fit.k*x+P.fit.n,n=S.proc.abSel;
+  S.proc[n]={x:fmt(x,EX.lin.xDec),y:fmt(y,EX.lin.yDec)};
+  S.proc.abSel=n==='A'?'B':'A';S.proc.kOk=false;
+  syncAB();drawO1();scheduleSave();goalsSoon();
+  toast(`Tačka ${n} je postavljena na pravu: (${S.proc[n].x} ${EX.lin.xUnit}; ${S.proc[n].y} ${EX.lin.yUnit}).`);
+}
+function checkK(){
+  const A=abPt('A'),B=abPt('B'),m=$('#kMsg'),k=num(S.proc.k),L=EX.lin;
+  if(!A||!B){msg(m,'bad','Prvo postavi obe tačke A i B (dodirom na grafik ili upisom).');return;}
+  if(Math.abs(B.x-A.x)<1e-12){msg(m,'bad',`Tačke A i B ne smeju imati isto ${L.xSym}.`);return;}
+  if(!isFinite(k)){msg(m,'bad','Upiši nagib kao broj.');return;}
+  const kAB=(B.y-A.y)/(B.x-A.x),P=procData();let warn='';
+  const xs=P.use.map(p=>p.x),xr=xs.length?Math.max(...xs)-Math.min(...xs):0;
+  if(Math.abs(B.x-A.x)<0.4*xr) warn+='<br>⚠ Tačke su blizu jedna drugoj — za tačniji nagib uzmi ih što dalje (bliže krajevima prave).';
+  if(P.fit&&!near(kAB,P.fit.k,0,0.05)) warn+='<br>⚠ Tačke ne leže baš na najboljoj pravoj. Postavi ih dodirom na punu plavu liniju.';
+  if(near(k,kAB,1e-12,0.02)){S.proc.kOk=true;msg(m,'ok',`✓ Tačno: nagib = ${fmtSig(kAB,3)} ${L.kUnit}. ${EX.kOkText} ✎ Zapiši tačke A i B i nagib u svesku — trebaće ti na 3. času.${warn}`);}
+  else{
+    S.proc.kOk=false;
+    let tip=`Proveri računanje: razliku ${L.ySym} podeli razlikom ${L.xSym} (B minus A).`;
+    if(near(k,1/kAB,0,0.02)) tip=`Izgleda da si podelio obrnuto — u brojiocu je ${L.ySym}, a u imeniocu ${L.xSym}.`;
+    msg(m,'bad','✗ '+tip+warn);
+  }
+  scheduleSave();renderGoals();
+}
+
+/* =========================================================
+   10. POGLED: OBRADA II (konstanta, nesigurnost, rezultat)
+   ========================================================= */
+function buildObrada2(){
+  const el=$('#v-obrada2'),P=procData(),L=EX.lin;
+  let h=`<h2 class="vh" tabindex="-1">Obrada II</h2><div class="goalSlot"></div>`;
+  if(!P.fit){el.innerHTML=h+pdHTML(true,'Na ovom uređaju nema podataka sa merenja. Prepiši ih iz sveske — tabela, grafici i granične prave će se ponovo nacrtati.');return;}
+  const A=abPt('A'),B=abPt('B'),Bn=P.bnd,kS=num(S.proc.k),dxi=L.dxi||(i=>'Δ'+L.xi(i));
+  const pt=p=>p?`(${fmt(p.x,L.xDec)} ${L.xUnit}; ${fmt(p.y,L.yDec)} ${L.yUnit})`:'—';
+  h+=pdHTML(false);
+  h+=`<div class="card remind"><h3>Podsetnik sa prethodnog časa</h3><ul class="kv">
+${A?`<li><span>Tačka A na pravoj</span><b>${pt(A)}</b></li>`:''}${B?`<li><span>Tačka B na pravoj</span><b>${pt(B)}</b></li>`:''}
+<li><span>Nagib prave</span><b>${S.proc.kOk&&isFinite(kS)?fmtSig(kS,4)+' '+L.kUnit+' ✓':'nije proveren'}</b></li>
+<li><span>Tačaka u grafiku</span><b>${P.use.length}</b></li></ul>
+${S.proc.kOk?'':`<div class="banner warn"><b>Nagib još nije unet.</b> Upiši nagib koji si na prošlom času zapisao u svesku:<div class="formula">nagib = <span class="inunit"><input id="kPaper" inputmode="decimal" autocomplete="off" aria-label="nagib iz sveske" value="${esc(S.proc.k)}"><em>${L.kUnit}</em></span><button class="btn primary" type="button" id="kPaperChk">Unesi</button></div><div class="msg" id="kPaperMsg" role="status"></div>Ako nagib nemaš, odredi ga ponovo na Obradi I.<br><button class="btn sm ghost" type="button" data-go="obrada1">← Na Obradu I</button></div>`}</div>
+<div class="card"><h3>1. ${EX.cTitle}</h3><p>${EX.cIntro}</p>
+<div class="formula">${EX.constFormula} = <span class="inunit"><input id="cIn" inputmode="decimal" autocomplete="off" aria-label="${EX.constSym}" value="${esc(S.proc.c)}"><em>${EX.constUnit}</em></span><button class="btn primary" type="button" id="cChk">Proveri</button></div>
+<div class="msg${S.proc.cOk?' ok':''}" id="cMsg" role="status">${S.proc.cOk?'✓ Provereno.':''}</div></div>
+<div class="card"><h3>2. Nesigurnost — granične prave</h3><p>${EX.dIntro}</p>
+<figure class="fig"><canvas id="cv-bnd" class="plot" role="img" aria-label="Grafik sa najboljom i graničnim pravama"></canvas></figure>
+${Bn?`<p class="small">Granične prave računaš iz <b>prve</b> (najmanje ${L.xSym}) i <b>poslednje</b> tačke na grafiku (najveće ${L.xSym}); isključene tačke se ne računaju. Vrednosti ${L.xSym} i ${L.ySym} uzmi iz svoje tabele.</p>
+${EX.dxHTML}
+${EX.dxAsk?`<div class="formula">${dxi(1)} = <span class="inunit"><input id="dx1In" inputmode="decimal" autocomplete="off" aria-label="nesigurnost prve tačke" value="${esc(S.proc.dx1)}"><em>${L.xUnit}</em></span></div>
+<div class="formula">${dxi(2)} = <span class="inunit"><input id="dx2In" inputmode="decimal" autocomplete="off" aria-label="nesigurnost poslednje tačke" value="${esc(S.proc.dx2)}"><em>${L.xUnit}</em></span><button class="btn primary" type="button" id="dxChk">Proveri</button></div>
+<div class="msg${S.proc.dxOk?' ok':''}" id="dxMsg" role="status">${S.proc.dxOk?'✓ Provereno.':''}</div>`:''}
+<div class="formula">k<sub>max</sub> = ${FR(L.yi(2)+' − '+L.yi(1),'('+L.xi(2)+' − '+dxi(2)+') − ('+L.xi(1)+' + '+dxi(1)+')')} = <span class="inunit"><input id="kmxIn" inputmode="decimal" autocomplete="off" aria-label="nagib strmije granične prave" value="${esc(S.proc.kmx)}"><em>${L.kUnit}</em></span></div>
+<div class="formula">k<sub>min</sub> = ${FR(L.yi(2)+' − '+L.yi(1),'('+L.xi(2)+' + '+dxi(2)+') − ('+L.xi(1)+' − '+dxi(1)+')')} = <span class="inunit"><input id="kmnIn" inputmode="decimal" autocomplete="off" aria-label="nagib blaže granične prave" value="${esc(S.proc.kmn)}"><em>${L.kUnit}</em></span><button class="btn primary" type="button" id="bChk">Proveri</button></div>
+<div class="msg${S.proc.bOk?' ok':''}" id="bMsg" role="status">${S.proc.bOk?'✓ Nagibi graničnih pravih su provereni.':''}</div>
+<div class="formula">${EX.deltaFormula} = <span class="inunit"><input id="dIn" inputmode="decimal" autocomplete="off" aria-label="nesigurnost" value="${esc(S.proc.d)}"><em>${EX.constUnit}</em></span><button class="btn primary" type="button" id="dChk">Proveri</button></div>
+<div class="msg${S.proc.dOk?' ok':''}" id="dMsg" role="status">${S.proc.dOk?'✓ Provereno.':''}</div>`:'<div class="banner warn">Za granične prave treba više tačaka sa većim rasponom. Vrati se na merenje i dodaj tačke.</div>'}</div>
+<div class="card"><h3>3. Konačan rezultat</h3><p class="small muted">Nesigurnost zaokruži na 1 značajnu cifru (na 2 ako je prva cifra 1), a vrednost na isto decimalno mesto.</p>
+<div class="res"><b>${EX.constSym} =</b><input id="rvIn" inputmode="decimal" autocomplete="off" aria-label="vrednost" value="${esc(S.proc.rv)}"><b>±</b><input id="rdIn" inputmode="decimal" autocomplete="off" aria-label="nesigurnost" value="${esc(S.proc.rd)}"><span>${EX.constUnit}</span></div>
+<div class="row"><button class="btn primary" type="button" id="rChk">Proveri rezultat</button></div>
+<div class="msg${S.proc.rOk?' ok':''}" id="rMsg" role="status">${S.proc.rOk?'✓ Rezultat je proveren.':''}</div>
+${S.proc.usedAuto?'<p class="small muted">Napomena: tabela je popunjena uz automatsku pomoć — to piše i uz rezultat.</p>':''}</div>
+${S.help?`<details class="card"><summary>Linearna regresija (pomoć za nastavnika)</summary><p class="small">Računar je kroz sve tačke povukao pravu metodom najmanjih kvadrata: nagib = <b>${fmtSig(P.fit.k,4)} ${L.kUnit}</b>, odsečak = ${fmtSig(P.fit.n,3)} ${L.yUnit}, R² = ${fmt(P.fit.r2,4)}. Što je R² bliže 1, tačke bolje leže na pravoj.</p></details>`:''}
+<button class="btn primary xl wide" type="button" data-go="zakljucak">Dalje: zaključak →</button>`;
+  el.innerHTML=h;
+  plot($('#cv-bnd'),linCfg(P,'bnd'));
+}
+function checkC(){
+  const P=procData(),m=$('#cMsg'),v=num(S.proc.c);
+  if(!isFinite(v)){msg(m,'bad','Upiši broj.');return;}
+  const exs=[EX.constFromK(kStudent(P))];if(P.fit) exs.push(EX.constFromK(P.fit.k));
+  if(nearAny(v,exs,1e-12,0.01)){S.proc.cOk=true;msg(m,'ok','✓ Tačno. '+EX.cOkText);}
+  else{S.proc.cOk=false;msg(m,'bad','✗ '+EX.cTip);}
+  scheduleSave();renderGoals();
+}
+function bEnds(P){const s=P.use.slice().sort((a,b)=>a.x-b.x);return s.length>=2?{p1:s[0],p2:s[s.length-1]}:null;}
+function checkDx(){
+  const P=procData(),m=$('#dxMsg'),E=bEnds(P);if(!E) return;
+  const d1=num(S.proc.dx1),d2=num(S.proc.dx2);
+  if(!isFinite(d1)||!isFinite(d2)||d1<=0||d2<=0){msg(m,'bad','Upiši obe nesigurnosti kao pozitivne brojeve.');return;}
+  const o1=near(d1,E.p1.dx,0.006,0.06),o2=near(d2,E.p2.dx,0.006,0.06);
+  if(o1&&o2){S.proc.dxOk=true;msg(m,'ok','✓ Tačno. Sada izračunaj nagibe graničnih pravih.');}
+  else{S.proc.dxOk=false;msg(m,'bad','✗ Proveri '+(!o1&&!o2?'obe vrednosti':!o1?'prvu tačku':'poslednju tačku')+'. '+EX.dxTip);}
+  scheduleSave();renderGoals();
+}
+function checkB(){
+  const P=procData(),m=$('#bMsg'),E=bEnds(P),B=P.bnd;if(!E||!B) return;
+  if(EX.dxAsk&&!S.proc.dxOk){msg(m,'bad','Prvo izračunaj i proveri nesigurnosti prve i poslednje tačke.');return;}
+  const a=num(S.proc.kmx),b=num(S.proc.kmn);
+  if(!isFinite(a)||!isFinite(b)){msg(m,'bad','Upiši oba nagiba kao brojeve.');return;}
+  const d1=EX.dxAsk?num(S.proc.dx1):E.p1.dx,d2=EX.dxAsk?num(S.proc.dx2):E.p2.dx,dy=E.p2.y-E.p1.y;
+  const kx=dy/((E.p2.x-d2)-(E.p1.x+d1)),kn=dy/((E.p2.x+d2)-(E.p1.x-d1));
+  const oa=nearAny(a,[B.kmax,kx],0,0.03),ob=nearAny(b,[B.kmin,kn],0,0.03);
+  if(oa&&ob){S.proc.bOk=true;msg(m,'ok','✓ Tačno. k<sub>max</sub> je nagib strmije, a k<sub>min</sub> blaže granične prave.');}
+  else{
+    S.proc.bOk=false;
+    if(nearAny(a,[B.kmin,kn],0,0.03)&&nearAny(b,[B.kmax,kx],0,0.03)) msg(m,'bad','✗ Zamenio si ih: k<sub>max</sub> je veći nagib (manji imenilac).');
+    else msg(m,'bad','✗ Proveri '+(!oa&&!ob?'oba nagiba':!oa?'k<sub>max</sub>':'k<sub>min</sub>')+'. Kod k<sub>max</sub> imenilac je razlika „unutrašnjih“ krajeva brkova (manja), a kod k<sub>min</sub> „spoljašnjih“ (veća).');
+  }
+  scheduleSave();renderGoals();
+}
+function checkD(){
+  const P=procData(),m=$('#dMsg'),d=num(S.proc.d),B=P.bnd;if(!B) return;
+  if(!S.proc.bOk){msg(m,'bad','Prvo izračunaj i proveri k<sub>max</sub> i k<sub>min</sub>.');return;}
+  if(!isFinite(d)||d<=0){msg(m,'bad','Upiši pozitivan broj.');return;}
+  const ex=EX.deltaFrom(B.kmax,B.kmin),exS=EX.deltaFrom(num(S.proc.kmx),num(S.proc.kmn));
+  const rnd=[ex,exS].flatMap(x=>[num(fmtSig(x,1)),num(fmtSig(x,2))]);
+  if(nearAny(d,[ex,exS],1e-12,0.03)||nearAny(d,rnd,1e-12,1e-6)){S.proc.dOk=true;msg(m,'ok','✓ Tačno. Ovo je nesigurnost tvog rezultata.');}
+  else{S.proc.dOk=false;msg(m,'bad','✗ '+EX.dTip(d,B));}
+  scheduleSave();renderGoals();
+}
+function checkR(){
+  const P=procData(),m=$('#rMsg'),B=P.bnd;
+  const cRef=S.proc.cOk?num(S.proc.c):EX.constFromK(kStudent(P));
+  const dRef=S.proc.dOk?num(S.proc.d):(B?EX.deltaFrom(B.kmax,B.kmin):NaN);
+  const rv=num(S.proc.rv),rd=num(S.proc.rd);
+  if(!isFinite(rv)||!isFinite(rd)||rd<=0){msg(m,'bad','Upiši vrednost i nesigurnost (pozitivan broj).');return;}
+  let okV,okD;
+  if(isFinite(dRef)){okV=Math.abs(rv-cRef)<=0.6*dRef+0.002*Math.abs(cRef);okD=rd>=0.5*dRef&&rd<=2*dRef;}
+  else{okV=near(rv,cRef,0,0.02);okD=true;}
+  const hints=[];
+  if(sigDigits(S.proc.rd)>2) hints.push('nesigurnost ima previše cifara — zaokruži je na 1 (ili 2) značajne cifre');
+  if(decimalsOf(S.proc.rv)!==decimalsOf(S.proc.rd)) hints.push('vrednost zaokruži na isto decimalno mesto kao nesigurnost');
+  if(okV&&okD){S.proc.rOk=true;msg(m,hints.length?'warn':'ok',`✓ Rezultat: <b>${EX.constSym} = ${esc(disp(S.proc.rv))} ± ${esc(disp(S.proc.rd))} ${EX.constUnit}</b>`+(hints.length?'<br>Savet: '+hints.join('; ')+'.':''));}
+  else{
+    S.proc.rOk=false;const e=[];
+    if(!okV) e.push(`vrednost ne odgovara onoj koju si dobio iz nagiba (korak 1)`);
+    if(!okD) e.push(`nesigurnost ne odgovara onoj iz graničnih pravih (korak 2)`);
+    msg(m,'bad','✗ Proveri: '+e.join('; ')+'.');
+  }
+  scheduleSave();renderGoals();
+}
+
+/* =========================================================
+   11. POGLED: ZAKLJUČAK
+   ========================================================= */
+function buildZakljucak(){
+  const el=$('#v-zakljucak'),P=procData(),sym=EX.constSym;
+  let h=`<h2 class="vh" tabindex="-1">Zaključak</h2><div class="goalSlot"></div>`;
+  if(!P.fit){el.innerHTML=h+pdHTML(true,'Na ovom uređaju nema podataka. Prepiši merenja iz sveske, pa na Obradi II unesi nagib.')+'<div class="row"><button class="btn ghost" type="button" data-go="obrada2">← Na Obradu II</button></div>';return;}
+  if(S.proc.rOk){
+    const E=EX.expected(),c=num(S.proc.rv),d=num(S.proc.rd);
+    const inside=Math.abs(c-E.val)<=d,within2=Math.abs(c-E.val)<=2*d;
+    h+=`<div class="card"><h3>Tvoj rezultat</h3>
+<div class="big-res">${sym} = ${esc(disp(S.proc.rv))} ± ${esc(disp(S.proc.rd))} ${EX.constUnit}</div>
+<ul class="kv"><li><span>${E.label}</span><b>${fmtSig(E.val,3)} ${EX.constUnit}</b></li>${(E.extra||[]).map(x=>`<li><span>${x.label}</span><b>${x.val}</b></li>`).join('')}</ul>
+<p>Izračunaj relativno odstupanje svog rezultata od očekivane vrednosti:</p>
+<div class="formula">δ = ${FR('|'+sym+' − '+sym+'<sub>oč</sub>|',sym+'<sub>oč</sub>')} · 100 % = <span class="inunit"><input id="devIn" inputmode="decimal" autocomplete="off" aria-label="relativno odstupanje u procentima" value="${esc(S.proc.dev)}"><em>%</em></span><button class="btn primary" type="button" id="devChk">Proveri</button></div>
+<div class="msg${S.proc.devOk?' ok':''}" id="devMsg" role="status">${S.proc.devOk?'✓ Provereno.':''}</div>
+${S.proc.devOk?`<p class="banner ${inside?'ok':within2?'':'warn'}">${inside?'Očekivana vrednost je unutar tvoje nesigurnosti — rezultat se dobro slaže.':within2?'Očekivana vrednost je malo izvan tvoje nesigurnosti (unutar dvostruke). Razmisli koji izvor greške je to izazvao.':'Rezultat se primetno razlikuje od očekivanog. Razmisli o mogućem izvoru greške.'}</p>`:''}
+${S.proc.usedAuto?'<p class="small muted">Tabela je popunjena uz automatsku pomoć.</p>':''}</div>`;
+  }else{
+    h+=`<div class="card"><h3>Tvoj rezultat</h3><div class="banner warn">Konačan rezultat ${sym} ± Δ${sym} još nije proveren na Obradi II. Završi ga, pa se vrati ovde.<br><button class="btn sm ghost" type="button" data-go="obrada2">← Na Obradu II</button></div></div>`;
+  }
+  h+=`<div class="card"><h3>Zaključak</h3><p>Napiši 3–5 rečenica. Pomeni:</p><ul class="tips">${EX.conclTips.map(t=>`<li>${t}</li>`).join('')}</ul>
+<label class="sr" for="concl">Tvoj zaključak</label><textarea id="concl" rows="7" placeholder="Moj zaključak…">${esc(S.concl)}</textarea>
+<div class="row between"><span class="small muted" id="conclCnt"></span><button class="btn primary" type="button" id="conclSave">Sačuvaj zaključak</button></div></div>
+<div class="row"><button class="btn primary xl" type="button" id="end3">Završi 3. čas</button><button class="btn danger" type="button" data-wipe>Obriši sve podatke</button></div>`;
+  el.innerHTML=h;updConclCnt();
+}
+function checkDev(){
+  const m=$('#devMsg'),v=num(S.proc.dev);
+  if(!isFinite(v)){msg(m,'bad','Upiši broj (u procentima).');return;}
+  const E=EX.expected(),c=num(S.proc.rv),Er=num(fmtSig(E.val,3));
+  const ex=[Math.abs(c-E.val)/E.val*100,Math.abs(c-Er)/Er*100];
+  if(nearAny(Math.abs(v),ex,0.15,0.05)){S.proc.devOk=true;saveNow();buildZakljucak();renderGoals();toast('Odstupanje je tačno izračunato.','ok');}
+  else{S.proc.devOk=false;msg(m,'bad','✗ Razliku tvog rezultata i očekivane vrednosti (bez znaka) podeli očekivanom vrednošću i pomnoži sa 100.');scheduleSave();}
+}
+function updConclCnt(){const e=$('#conclCnt');if(!e) return;const n=S.concl.trim().split(/[.!?]+/).filter(s=>s.trim().length>3).length;e.textContent=`Rečenica: ${n}`+(conclOk()?' ✓':' (treba 3–5)');}
+
+/* =========================================================
+   12. DOGAĐAJI I POKRETANJE
+   ========================================================= */
+function bindViews(){
+  $('#v-priprema').addEventListener('input',e=>{
+    const t=e.target;
+    if(t.id==='stName') S.student.name=t.value.slice(0,80);
+    else if(t.id==='stGroup') S.student.group=t.value.slice(0,40);
+    else if(t.id==='stDate') S.student.date=t.value;
+    else return;
+    scheduleSave();goalsSoon();
+  });
+  const o1=$('#v-obrada1');
+  o1.addEventListener('input',e=>{
+    const t=e.target;
+    if(t.classList.contains('cell')){
+      const r=t.dataset.r,c=t.dataset.c;
+      (S.proc.cells[r]=S.proc.cells[r]||{})[c]=t.value.slice(0,24);
+      const okNow=markCell(t);
+      $$(`.cell[data-r="${r}"]`,o1).forEach(x=>{if(x!==t) markCell(x);});
+      const tip=$('#tblTip');if(tip) tip.innerHTML=okNow===false?'Savet: '+colMap[c].tip:'';
+      updCount();scheduleSave();goalsSoon();
+    }else if(/^[AB][xy]$/.test(t.id)){
+      S.proc[t.id[0]][t.id[1]]=t.value.slice(0,24);S.proc.kOk=false;
+      drawO1();scheduleSave();goalsSoon();
+    }else if(t.id==='kIn'){S.proc.k=t.value.slice(0,24);S.proc.kOk=false;scheduleSave();goalsSoon();}
+  });
+  o1.addEventListener('click',e=>{
+    if(e.target.closest('#autoBtn')) autoFill();
+    else if(e.target.closest('#kChk')) checkK();
+    else if(e.target.closest('#end2')) endLesson(2);
+    else if(e.target.closest('[data-ab]')){S.proc.abSel=e.target.closest('[data-ab]').dataset.ab;syncAB();scheduleSave();}
+    else if(e.target.closest('#cv-lin')) canvasPick(e);
+  });
+  o1.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='kIn'){e.preventDefault();checkK();}});
+  const o2=$('#v-obrada2');
+  o2.addEventListener('input',e=>{
+    const t=e.target,map={cIn:['c','cOk'],dIn:['d','dOk'],rvIn:['rv','rOk'],rdIn:['rd','rOk'],dx1In:['dx1','dxOk'],dx2In:['dx2','dxOk'],kmxIn:['kmx','bOk'],kmnIn:['kmn','bOk']};
+    if(map[t.id]){S.proc[map[t.id][0]]=t.value.slice(0,24);S.proc[map[t.id][1]]=false;scheduleSave();goalsSoon();}
+  });
+  o2.addEventListener('click',e=>{
+    if(e.target.closest('#cChk')) checkC();
+    else if(e.target.closest('#dChk')) checkD();
+    else if(e.target.closest('#rChk')) checkR();
+    else if(e.target.closest('#kPaperChk')) kPaper();
+    else if(e.target.closest('#dxChk')) checkDx();
+    else if(e.target.closest('#bChk')) checkB();
+  });
+  o2.addEventListener('keydown',e=>{
+    if(e.key!=='Enter') return;const id=e.target.id;
+    if(id==='kPaper'){e.preventDefault();kPaper();}else if(id==='dx1In'||id==='dx2In'){e.preventDefault();checkDx();}else if(id==='kmxIn'||id==='kmnIn'){e.preventDefault();checkB();}else if(id==='cIn'){e.preventDefault();checkC();}else if(id==='dIn'){e.preventDefault();checkD();}else if(id==='rvIn'||id==='rdIn'){e.preventDefault();checkR();}
+  });
+  const z=$('#v-zakljucak');
+  z.addEventListener('input',e=>{if(e.target.id==='devIn'){S.proc.dev=e.target.value.slice(0,24);S.proc.devOk=false;scheduleSave();goalsSoon();return;}if(e.target.id==='concl'){S.concl=e.target.value.slice(0,5000);updConclCnt();scheduleSave();goalsSoon();}});
+  z.addEventListener('click',e=>{
+    if(e.target.closest('#devChk')){checkDev();return;}
+    if(e.target.closest('#conclSave')){saveNow();renderGoals();toast(conclOk()?'Zaključak je sačuvan na ovom uređaju.':'Sačuvano. Zaključak treba da ima 3–5 rečenica.',conclOk()?'ok':'warn');}
+    else if(e.target.closest('#end3')){saveNow();endLesson(3);}
+  });
+}
+function bindGlobal(){
+  document.addEventListener('click',e=>{
+    const nb=e.target.closest('[data-nav]');if(nb){go(nb.dataset.nav);return;}
+    const g=e.target.closest('[data-go]');if(g){closeModal();go(g.dataset.go);return;}
+    if(e.target.closest('[data-close]')){closeModal();return;}
+    if(e.target.closest('[data-wipe]')){wipeAll();return;}
+    if(e.target.closest('[data-about]')){about();return;}
+    if(e.target.closest('#pdAdd')){pdAdd();return;}
+    if(e.target.closest('#pdLoad')){pdLoad();return;}
+    const rm=e.target.closest('[data-pdrm]');if(rm){pdRm(rm);return;}
+    if(e.target.id==='modal') closeModal();
+  });
+  document.addEventListener('change',e=>{if(e.target.id==='helpTgl'){S.help=e.target.checked;liveCache={};scheduleSave();if(S.view==='obrada1'||S.view==='obrada2') go(S.view,{noFocus:true});}});
+  const isField=t=>t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){closeModal();return;}
+    if((e.code==='Space'||e.key===' ')&&S.view==='merenje'&&!$('#modal').classList.contains('open')&&!isField(e.target)){
+      if(e.target&&e.target.id==='swBtn') return;
+      e.preventDefault();if(!e.repeat) swToggle();
+    }
+  });
+  document.addEventListener('keyup',e=>{
+    if((e.code==='Space'||e.key===' ')&&S.view==='merenje'&&!isField(e.target)&&e.target&&e.target.tagName==='BUTTON'&&e.target.id!=='swBtn') e.preventDefault();
+  });
+  let rt=null;
+  window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
+    if(S.view==='obrada1') drawO1();
+    else if(S.view==='obrada2') plot($('#cv-bnd'),linCfg(procData(),'bnd'));
+  },150);});
+  window.addEventListener('beforeunload',saveNow);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden') saveNow();});
+}
+function init(){
+  const R=document.documentElement.style;R.setProperty('--acc',EX.accent);R.setProperty('--acc-soft',EX.accentSoft);
+  document.title=EX.title+' — virtuelna laboratorija';
+  $('#brand').innerHTML=`${EX.short}<small>Virtuelna laboratorija · ${EX.grade}</small>`;
+  buildNav();buildMerenje();bindViews();bindGlobal();
+  go(S.view,{noFocus:true});
+  if(hasData()) resumeModal();
+  requestAnimationFrame(frame);
+}
+init();
+})();
+</script>
+</body>
+</html>
