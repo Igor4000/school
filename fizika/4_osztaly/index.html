@@ -203,7 +203,7 @@
             <h1 class="main-title" data-translate-key="main-title">IV. osztály – A modern fizika küszöbén</h1>
             <p class="subtitle" data-translate-key="subtitle">A sugárzástól az atommagig – belépő a kvantumvilág titokzatos birodalmába</p>
 
-            <!-- CENTRÍROZOTT LECKE-MENÜK – 3 kategória: szkriptek / lab. gyakorlatok / interaktív anyagok -->
+            <!-- CENTRÍROZOTT LECKE-MENÜK – 2 kategória: szkriptek / interaktív anyagok -->
             <div class="lesson-menus">
                 <div class="dropdown" id="dropdown-skripte">
                     <button class="dropbtn" onclick="toggleDropdown('dropdown-skripte')" aria-expanded="false">
@@ -231,35 +231,6 @@
                            <span class="lesson-badge"></span>
                         </a>
                         <!-- ÚJ JEGYZET HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, és cseréld ki a fájlneveket és a data-translate-key értékét (pl. link-skripta2), majd a translations objektumban is add hozzá az új kulcsot. -->
-                    </div>
-                </div>
-
-                <div class="dropdown" id="dropdown-radne-sveske">
-                    <button class="dropbtn" onclick="toggleDropdown('dropdown-radne-sveske')" aria-expanded="false">
-                        <span data-translate-key="nav-radnesveske">Lab. gyakorlatok</span>
-                        <i>▼</i>
-                    </button>
-                    <div class="dropdown-content">
-                        <!--
-                            data-href-hu  -> IDE ÍRD A MAGYAR NYELVŰ LAB. GYAKORLAT FÁJL ELÉRÉSI ÚTJÁT
-                            data-href-sr  -> OVDE UPIŠI PUTANJU DO LAB. VEŽBE NA SRPSKOM JEZIKU
-                            Megjegyzés: jelenleg csak egy (szerb) fájl létezik, ezért mindkét nyelv
-                            egyelőre ugyanoda mutat. Ha elkészül a külön magyar verzió, csak a
-                            data-href-hu értékét kell átírni az új fájl nevére.
-                        -->
-                        <a href="radne_sveske/Radna_sveska_relativnost.html"
-                           data-href-hu="radne_sveske/Radna_sveska_relativnost.html"
-                           data-href-sr="radne_sveske/Radna_sveska_relativnost.html">
-                           <span data-translate-key="link-radnasveska1">Relativitás – lab. gyakorlat</span>
-                           <span class="lesson-badge"></span>
-                        </a>
-                        <a href="radne_sveske/Kvantna_priroda_EM_zracenja_radna_sveska_hu.html"
-                           data-href-hu="radne_sveske/Kvantna_priroda_EM_zracenja_radna_sveska_hu.html"
-                           data-href-sr="radne_sveske/Kvantna_priroda_EM_zracenja_radna_sveska_srb.html">
-                           <span data-translate-key="link-radnasveska2">A kvantumos EM sugárzás – lab. gyakorlat</span>
-                           <span class="lesson-badge"></span>
-                        </a>
-                        <!-- ÚJ LAB. GYAKORLAT HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, cseréld a fájlneveket és a data-translate-key-t. -->
                     </div>
                 </div>
 
@@ -378,10 +349,6 @@
                     hu: 'Jegyzetek',
                     sr: 'Skripte'
                 },
-                'nav-radnesveske': {
-                    hu: 'Lab. gyakorlatok',
-                    sr: 'Lab. vežbe'
-                },
                 'nav-interaktiv': {
                     hu: 'Interaktív anyagok',
                     sr: 'Interaktivni materijali'
@@ -426,14 +393,6 @@
                 'link-skripta2': {
                     hu: 'A kvantumos EM sugárzás – jegyzet',
                     sr: 'Kvantna priroda EM zračenja – skripta'
-                },
-                'link-radnasveska1': {
-                    hu: 'Relativitás – lab. gyakorlat',
-                    sr: 'Relativnost – lab. vežbe'
-                },
-                'link-radnasveska2': {
-                    hu: 'A kvantumos EM sugárzás – lab. gyakorlat',
-                    sr: 'Kvantna priroda EM zračenja – lab. vežbe'
                 },
                 'link-interaktiv1': {
                     hu: 'A kvantumos EM sugárzás – interaktív anyag',
@@ -505,7 +464,7 @@
                     }
                 });
 
-                // ÚJ: a jegyzetek / lab. gyakorlatok / interaktív anyagok linkjeinek
+                // ÚJ: a jegyzetek / interaktív anyagok linkjeinek
                 // href-jét is a kiválasztott nyelvhez igazítjuk.
                 document.querySelectorAll('a[data-href-' + lang + ']').forEach(function(link) {
                     const newHref = link.getAttribute('data-href-' + lang);
