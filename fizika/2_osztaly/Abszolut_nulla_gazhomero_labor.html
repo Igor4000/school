@@ -1,0 +1,1189 @@
+<!doctype html>
+<!--
+  ÓRATERV (2 × 45 perc) · Az abszolút nulla fok meghatározása gázhőmérővel (Charles-törvény, izochor folyamat)
+  Önálló munka, a tanuló maga mér.
+
+  | Óra | Nézetek                     | Lépések                                                                 | Becsült idő | Ellenőrzőlista (LESSONS.checks)                          |
+  |-----|-----------------------------|-------------------------------------------------------------------------|-------------|----------------------------------------------------------|
+  | 1.  | Előkészítés, Mérés          | adatok; légnyomás leolvasása; lombik térfogatának kiválasztása;         | ~40 perc    | név; pL ellenőrizve; legalább 6 hőmérséklet;              |
+  |     |                             | 6–7 mérés: termosztát → várakozás → A szint a nullajelre → t és h       |             | tartomány >= 50 °C; adatok a füzetben (kézi pipa)         |
+  | 2.  | Feldolgozás, Következtetés  | p oszlop; két grafikon (mért tartomány + extrapoláció); A és B pont;    | ~45 perc    | p oszlop helyes; A, B; a és t0; t0', t0'', Δt0;           |
+  |     |                             | a; t0; két határegyenes (t0', t0''); Δt0; végeredmény; következtetés    |             | végeredmény; következtetés >= 3 mondat                    |
+
+  Hogyan becsültem:
+  - Előkészítés ~10 perc (bevezető, adatok, barométer, lombik).
+  - Mérés: 7 pont × (termosztát + várakozás ×1-es sebességnél 30–50 s + a tartály igazítása ~1 perc + leolvasás, beírás ~1 perc)
+    ≈ 3,5 perc/pont ≈ 25 perc, + adatok füzetbe írása ~5 perc → az 1. óra kb. 40 perc.
+  - Feldolgozás: p oszlop 7 sor ≈ 7 perc, A–B pont 4 perc, meredekség 3 perc, t0 4 perc, két határegyenes 2 × 4 perc,
+    Δt0 2 perc, végeredmény 3 perc; következtetés ~12 perc → kb. 43 perc.
+  - Az órák határa természetes törés: az 1. óra a mérés végén zárul, a 2. óra emlékeztetővel indul
+    (a füzetből minden adat visszaírható, ha más gépen folytatja).
+
+  Feltételezések (a szkript a gázhőmérőt elméletben írja le, mérési protokollt nem ad):
+  - Vízfürdő 0–90 °C (termosztát, kis eltolódással és ingadozással), digitális hőmérő 0,1 °C felbontással;
+    időállandók ×1-nél: fürdő ~7 s, gáz ~6 s, hőmérő ~2 s.
+  - Lombik 100–500 mL (a tanuló választja), szobahőmérsékleten és légköri nyomáson lezárva; a vízfürdőn kívüli
+    csőszakasz 0,8 mL (szobahőmérsékleten marad); az üveg hőtágulása 1·10^-5 1/K (térfogati).
+  - Higanyos manométer: cső keresztmetszete 12,6 mm², vonalzó mm-beosztással; ρHg = 13 600 kg/m³, g = 9,81 m/s²
+    → 1 mm = 0,1334 kPa. A tanulónak a bal szintet a nullajelre kell hoznia (szkript 13. fejezet).
+  - Elméleti érték: t0 = −273,15 °C, γ = 1/273,15 °C^-1 (szkript 12. fejezet).
+  - Bizonytalanság: Δp = 0,2 kPa; két határegyenes az A és B pont ±Δp eltolásával → Δt0 = |t0' − t0''| / 2.
+  - Légnyomás 99,6–102,4 kPa és szobahőmérséklet 19,5–24,5 °C, véletlenszerűen, minden új kezdésnél.
+
+-->
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f1ea">
+<title>Az abszolút nulla fok – gázhőmérő, virtuális labor</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f1ea; --surface:#fffdf8; --surface2:#f7f3eb; --ink:#232a33; --muted:#66707c; --line:#e1dace; --line2:#cfc6b6;
+  --accent:#c4553a; --accent-ink:#fff8f2; --accent-soft:#f6e1d8;
+  --blue:#2f6aa8; --blue-soft:#e1ecf7;
+  --ok:#2e8b57; --ok-soft:#e2f2e8; --bad:#c0392b; --bad-soft:#f8e1de; --warn:#b7791f; --warn-soft:#fbf0d9;
+  --stage:#1b2330; --stage2:#243042; --stage-ink:#e9eef5; --stage-muted:#9fb0c5; --stage-line:#3a4a60;
+  --r:14px; --r-sm:10px; --shadow:0 1px 2px rgba(35,42,51,.06),0 4px 14px rgba(35,42,51,.06);
+  --font: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --safe-b: env(safe-area-inset-bottom,0px); --safe-t: env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+h1{font-size:1.45rem} h2{font-size:1.15rem} h3{font-size:1rem}
+p{margin:0 0 .7em}
+small,.muted{color:var(--muted)}
+.num,table,.read,.mono{font-variant-numeric:tabular-nums}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.25;margin:0 .22em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding-bottom:.08em}
+.frac>span:last-child{padding-top:.08em}
+sub,sup{line-height:0}
+
+/* ---------- top bar & lesson indicator ---------- */
+.top{position:sticky;top:0;z-index:30;background:rgba(244,241,234,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:calc(8px + var(--safe-t)) 16px 8px}
+.top-in{display:flex;align-items:center;gap:12px;max-width:1280px;margin:0 auto}
+.brand{font-weight:700;font-size:.98rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font-weight:500;font-size:.78rem}
+.lesson-ind{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:150px}
+.lesson-ind b{font-size:.86rem;white-space:nowrap}
+.lesson-ind span{font-size:.76rem;color:var(--muted);white-space:nowrap;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.segs{display:flex;gap:4px;width:100%}
+.segs i{flex:1;height:6px;border-radius:4px;background:var(--line)}
+.segs i.cur{background:var(--accent)} .segs i.done{background:var(--ok)}
+.icon-btn{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--surface);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* ---------- layout ---------- */
+.shell{max-width:1280px;margin:0 auto;padding:14px 16px calc(96px + var(--safe-b))}
+.side{display:none}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);display:flex;padding:4px 4px calc(4px + var(--safe-b))}
+.tab{flex:1;min-height:56px;border:0;background:none;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;color:var(--muted);padding:4px 2px}
+.tab .tl{font-size:.64rem;letter-spacing:.04em;text-transform:uppercase}
+.tab .tn{font-size:.8rem;font-weight:600}
+.tab[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+.view{display:none} .view.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (min-width:1000px){
+  .layout{display:grid;grid-template-columns:230px 1fr;gap:20px;align-items:start}
+  .side{display:block;position:sticky;top:84px}
+  .tabs{display:none}
+  .shell{padding-bottom:40px}
+  .side .grp{margin-bottom:14px}
+  .side .gl{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;padding:0 10px 4px;display:flex;justify-content:space-between}
+  .side button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;border:0;background:none;border-radius:10px;padding:8px 10px;cursor:pointer;text-align:left;font-weight:600;color:var(--ink)}
+  .side button:hover{background:var(--surface2)}
+  .side button[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+  .side .tools{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+  .side .tools button{font-weight:500;color:var(--muted)}
+}
+
+/* ---------- cards & components ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{display:flex;align-items:center;gap:8px}
+.step-no{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.82rem;font-weight:700;flex:none}
+.hero{display:grid;gap:16px;background:linear-gradient(135deg,var(--surface),var(--accent-soft));}
+.hero figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px}
+.hero figcaption{font-size:.85rem;color:var(--muted);margin-top:6px}
+.law{border:2px solid var(--accent);border-radius:12px;padding:10px 14px;background:var(--surface);display:inline-block;font-size:1.08rem;margin:4px 0 10px}
+.law .eq{font-weight:600;font-style:italic;font-family:Georgia,"Times New Roman",serif;font-size:1.15rem}
+@media (min-width:720px){.hero{grid-template-columns:1.1fr 1fr;align-items:center}}
+.btn{min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--surface);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:transform .08s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#f4f8fc}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.xl{min-height:56px;font-size:1.06rem;padding:12px 22px}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.end{justify-content:flex-end}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:600;background:var(--surface2);border:1px solid var(--line)}
+.pill.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.pill.blue{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+.banner{border-radius:12px;padding:10px 14px;background:var(--blue-soft);color:#1d4370;margin:10px 0;font-size:.94rem}
+.banner.warn{background:var(--warn-soft);color:#6b4710}
+.banner.ok{background:var(--ok-soft);color:#1d5a38}
+.banner b{font-weight:700}
+label.f{display:block;font-size:.86rem;color:var(--muted);margin-bottom:4px;font-weight:600}
+.inp{min-height:44px;border:1.5px solid var(--line2);border-radius:10px;padding:8px 10px;background:#fff;width:100%;font-variant-numeric:tabular-nums}
+.inp:focus{border-color:var(--blue)}
+.inp.ok{border-color:var(--ok);background:var(--ok-soft)}
+.inp.bad{border-color:var(--bad);background:var(--bad-soft)}
+.form-grid{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:560px){.form-grid.c3{grid-template-columns:2fr 1fr 1fr}.form-grid.c2{grid-template-columns:1fr 1fr}}
+textarea.inp{min-height:150px;resize:vertical;line-height:1.5}
+
+/* checklist goal card */
+.goal{border-left:5px solid var(--accent)}
+.goal .gh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.goal .gh h2{margin:0}
+.goal ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.goal li{display:flex;align-items:center;gap:10px;min-height:32px;font-size:.94rem}
+.goal li .bx{width:24px;height:24px;border-radius:7px;border:2px solid var(--line2);flex:none;display:flex;align-items:center;justify-content:center;background:#fff}
+.goal li.on .bx{background:var(--ok);border-color:var(--ok)}
+.goal li.on .bx::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.goal li.on{color:var(--muted)}
+.goal li button{all:unset;display:flex;align-items:center;gap:10px;cursor:pointer;min-height:40px}
+.goal li button:focus-visible{outline:3px solid var(--blue);border-radius:6px}
+.remind{border-left:5px solid var(--blue)}
+
+/* stepper control */
+.stp{margin:8px 0 14px}
+.stp .sh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.stp .sh b{font-size:.95rem}
+.stp .sh .v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--blue);font-size:1.05rem}
+.stp .sh .v.hint{color:var(--muted);font-weight:500;font-size:.85rem}
+.stp .sr{display:flex;align-items:center;gap:10px}
+.stp .sr button{width:48px;height:48px;flex:none;border-radius:12px;border:1px solid var(--line2);background:var(--surface);font-size:1.4rem;font-weight:700;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.stp .sr button:active{background:var(--blue-soft)}
+.stp .bounds{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:2px;padding:0 58px}
+.slider{-webkit-appearance:none;appearance:none;flex:1;height:44px;background:transparent;cursor:pointer;min-width:0}
+.slider::-webkit-slider-runnable-track{height:8px;border-radius:6px;background:linear-gradient(90deg,var(--blue) var(--p,50%),var(--line) var(--p,50%))}
+.slider::-moz-range-track{height:8px;border-radius:6px;background:var(--line)}
+.slider::-moz-range-progress{height:8px;border-radius:6px;background:var(--blue)}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--blue);margin-top:-10px;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.slider::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
+
+/* chips segmented */
+.chips{display:inline-flex;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--surface)}
+.chips button{min-height:44px;min-width:56px;padding:6px 14px;border:0;background:none;cursor:pointer;font-weight:600}
+.chips button+button{border-left:1px solid var(--line2)}
+.chips button[aria-pressed="true"]{background:var(--blue);color:#fff}
+.reclist{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.rec{display:inline-flex;align-items:center;gap:4px;background:var(--blue-soft);color:#1d4370;border-radius:999px;padding:2px 2px 2px 12px;font-size:.86rem;font-variant-numeric:tabular-nums}
+.rec button{width:36px;height:36px;border:0;background:none;border-radius:50%;cursor:pointer;color:#1d4370;font-size:1.1rem}
+.rec button:hover{background:rgba(47,106,168,.15)}
+
+/* stage */
+.stage{background:var(--stage);color:var(--stage-ink);border-radius:var(--r);padding:12px;margin-bottom:14px;border:1px solid #121821}
+.stage svg{display:block;width:100%;height:auto}
+.reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.readbox{background:var(--stage2);border:1px solid var(--stage-line);border-radius:10px;padding:8px 10px}
+.readbox .rl{font-size:.74rem;color:var(--stage-muted);text-transform:uppercase;letter-spacing:.06em}
+.readbox .read{font-size:1.75rem;font-weight:700;line-height:1.15;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+.readbox .read small{font-size:.9rem;color:var(--stage-muted);font-family:var(--font);font-weight:500;margin-left:4px}
+.readbox.help{border-style:dashed;opacity:.9}
+.loupes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.loupe{background:#f3efe4;border-radius:10px;padding:4px 6px 6px;color:#222}
+.loupe .ll{font-size:.72rem;font-weight:700;color:#55606d;text-transform:uppercase;letter-spacing:.05em}
+.loupe svg{width:100%;height:auto;display:block}
+.loupe.one{grid-column:1/-1}
+.loupe.one svg{max-width:460px;margin:0 auto}
+@media (min-width:1000px){
+  .meas-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start}
+  .meas-grid .stage{position:sticky;top:84px}
+}
+
+/* fields (processing steps) */
+.fld{display:grid;gap:6px;padding:10px 0;border-top:1px dashed var(--line)}
+.fld:first-of-type{border-top:0}
+.fld .fl{font-size:.95rem}
+.fld .fr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fld .fr .inp{flex:1;min-width:120px;max-width:240px}
+.fld .unit{color:var(--muted);font-size:.92rem;min-width:40px}
+.fb{font-size:.88rem;min-height:1.2em}
+.fb.ok{color:var(--ok);font-weight:600} .fb.bad{color:var(--bad)} .fb.warn{color:var(--warn)}
+.expv{font-size:.8rem;color:var(--warn);border:1px dashed var(--warn);border-radius:6px;padding:1px 6px}
+.formula{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0;font-family:Georgia,"Times New Roman",serif;font-size:1.06rem;overflow-x:auto;white-space:nowrap}
+.formula i{font-style:italic}
+
+/* table */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px -4px;padding:0 4px}
+table.dt{border-collapse:collapse;width:100%;min-width:340px;font-size:.9rem}
+table.dt th{background:var(--surface2);font-weight:700;text-align:center;padding:8px 3px;font-size:.84rem;border-bottom:2px solid var(--line2);white-space:nowrap}
+table.dt th.calc{color:var(--accent)}
+table.dt td{padding:3px 2px;border-bottom:1px solid var(--line);text-align:center}
+table.dt td.idx{color:var(--muted);width:22px;font-size:.8rem}
+table.dt td input{width:100%;min-width:60px;min-height:40px;border:1.5px solid var(--line2);border-radius:8px;padding:4px 6px;text-align:center;background:#fff;font-variant-numeric:tabular-nums}
+table.dt td.calc input{border-style:dashed;border-color:var(--accent)}
+table.dt td input.ok{border-style:solid;border-color:var(--ok);background:var(--ok-soft)}
+table.dt td input.bad{border-style:solid;border-color:var(--bad);background:var(--bad-soft)}
+table.dt td.del button{width:36px;height:40px;border:0;background:none;border-radius:8px;cursor:pointer;color:var(--muted);font-size:1.1rem}
+table.dt td.del button:hover{background:var(--bad-soft);color:var(--bad)}
+table.dt tr.off td{opacity:.55}
+
+/* graphs */
+.gwrap{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;margin:8px 0}
+.gwrap canvas{display:block;width:100%;height:300px;touch-action:manipulation}
+.gwrap.tall canvas{height:340px}
+.gcap{font-size:.84rem;color:var(--muted);margin:2px 4px 6px}
+@media (min-width:1000px){.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+
+/* result & summary */
+.result{font-size:1.3rem;font-weight:700;text-align:center;padding:14px;border-radius:12px;background:var(--surface2);border:1px solid var(--line);font-variant-numeric:tabular-nums;margin:8px 0}
+.sumgrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:8px 0 12px}
+.sum{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.sum .sl{font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.sum .sv{font-size:1.15rem;font-weight:700;font-variant-numeric:tabular-nums}
+.sum.ok{background:var(--ok-soft);border-color:transparent}
+.sum.warn{background:var(--warn-soft);border-color:transparent}
+.empty{text-align:center;padding:24px 10px;color:var(--muted)}
+
+/* modal & toast */
+.modal-bg{position:fixed;inset:0;background:rgba(20,25,32,.45);z-index:80;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px 18px calc(18px + var(--safe-b));box-shadow:0 -4px 30px rgba(0,0,0,.2);animation:up .22s ease}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+@media (min-width:720px){.modal-bg{align-items:center}.modal{border-radius:18px}}
+.modal h2{margin-bottom:10px}
+.modal .row{margin-top:14px}
+.modal ul{padding-left:20px;margin:6px 0 10px}
+#toast{position:fixed;left:50%;bottom:calc(84px + var(--safe-b));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fbf8f2;padding:10px 16px;border-radius:12px;font-size:.92rem;z-index:90;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:min(92vw,520px);text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.ok{background:#1f6b43} #toast.bad{background:#9b2c20} #toast.warn{background:#8a5a12}
+@media (min-width:1000px){#toast{bottom:28px}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.foot-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:10px}
+
+/* animations */
+.anim-float{animation:flt 3s ease-in-out infinite}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+:root{--accent:#b8641c;--accent-soft:#f7e6d3}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand">Abszolút nulla fok gázhőmérővel<small class="muted">Virtuális labor · 2 óra</small></div>
+  <div class="lesson-ind" aria-live="polite"><b id="liB">1. óra / 2</b><span id="liS"></span><div class="segs" id="liSegs" aria-hidden="true"></div></div>
+</div></header>
+<div class="shell"><div class="layout">
+  <nav class="side" id="side" aria-label="Nézetek órák szerint"></nav>
+  <main id="main">
+<section class="view" id="v-prep" aria-label="Előkészítés">
+  <div class="card hero">
+    <div>
+      <span class="pill blue">Gáztörvények · 2 órás virtuális gyakorlat</span>
+      <h1 style="margin-top:8px">Az abszolút nulla fok meghatározása gázhőmérővel</h1>
+      <p>Egy lombikba zárt gáz nyomását méred különböző hőmérsékleteken, <b>állandó térfogaton</b>. A nyomás–hőmérséklet egyenest meghosszabbítod addig, ahol a nyomás nulla lenne – ez az abszolút nulla fok.</p>
+      <div class="law"><span class="eq">p = p<sub>0</sub> · (1 + γ · t)</span> &nbsp;(V = állandó)</div>
+      <p class="muted" style="font-size:.93rem"><i>p</i><sub>0</sub> – a gáz nyomása 0 °C-on, γ = <span class="frac"><span>1</span><span>273,15 °C</span></span>. Ha <i>p</i> = 0, akkor <i>t</i><sub>0</sub> = −<span class="frac"><span>1</span><span>γ</span></span> = −273,15 °C.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 280 150" role="img" aria-label="Animált ábra: a p–t egyenesek meghosszabbítva −273,15 °C-nál metszik a hőmérséklet-tengelyt">
+        <style>.gl{stroke-dasharray:5 5;animation:gl 2.4s linear infinite}@keyframes gl{to{stroke-dashoffset:-20}}</style>
+        <line x1="20" y1="120" x2="270" y2="120" stroke="#3b4a5f" stroke-width="1.5"/>
+        <line x1="190" y1="10" x2="190" y2="128" stroke="#3b4a5f" stroke-width="1.5"/>
+        <text x="266" y="136" font-size="11" fill="#3b4a5f">t</text><text x="196" y="18" font-size="11" fill="#3b4a5f">p</text>
+        <text x="190" y="138" font-size="10" text-anchor="middle" fill="#66707c">0 °C</text>
+        <text x="32" y="138" font-size="10" text-anchor="middle" fill="#b8641c" font-weight="700">−273,15 °C</text>
+        <line class="gl" x1="32" y1="120" x2="190" y2="70" stroke="#b8641c" stroke-width="1.5"/>
+        <line class="gl" x1="32" y1="120" x2="190" y2="48" stroke="#b8641c" stroke-width="1.5"/>
+        <line class="gl" x1="32" y1="120" x2="190" y2="88" stroke="#b8641c" stroke-width="1.5"/>
+        <line x1="190" y1="70" x2="262" y2="47" stroke="#b8641c" stroke-width="3"/>
+        <line x1="190" y1="48" x2="262" y2="15" stroke="#b8641c" stroke-width="3"/>
+        <line x1="190" y1="88" x2="262" y2="74" stroke="#b8641c" stroke-width="3"/>
+        <circle cx="32" cy="120" r="4" fill="#b8641c"/>
+      </svg>
+      <figcaption>Különböző gázmennyiségekkel mérve más-más egyenest kapunk, de meghosszabbítva mind ugyanott metszi a hőmérséklet-tengelyt: −273,15 °C-nál. A vastag szakasz a mérhető tartomány.</figcaption>
+    </figure>
+  </div>
+  <div data-goal="1"></div>
+  <div class="card">
+    <h2><span class="step-no">1</span>Adataid</h2>
+    <div class="form-grid c3">
+      <div><label class="f" for="stName">Név</label><input id="stName" class="inp" data-bind="student.name" autocomplete="name"></div>
+      <div><label class="f" for="stGrp">Osztály / csoport</label><input id="stGrp" class="inp" data-bind="student.group"></div>
+      <div><label class="f" for="stDate">Dátum</label><input id="stDate" class="inp" type="date" data-bind="student.date"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">2</span>Légnyomás és lombik</h2>
+    <p>Olvasd le a légnyomásmérőt, írd be kPa-ban, ellenőrizd, és jegyezd le a füzetedbe.</p>
+    <div class="stage" style="margin-bottom:6px"><div class="reads" style="margin-top:0">
+      <div class="readbox"><div class="rl">Légnyomásmérő (barométer)</div><div class="read" id="envP">–</div></div>
+    </div></div>
+    <div data-f="pL"></div>
+    <p style="margin-top:12px">Válaszd ki a gázzal töltött lombik térfogatát. A lombikot szobahőmérsékleten, légköri nyomáson zárták le.</p>
+    <div id="stpVf"></div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">3</span>Hogyan mérsz?</h2>
+    <ol style="padding-left:20px;margin:0 0 8px">
+      <li>Állítsd be a termosztátot egy általad választott hőmérsékletre (<b>0 és 90 °C között</b>).</li>
+      <li>Várd meg, amíg a hőmérő kijelzése már nem változik (×1-es sebességnél kb. fél perc).</li>
+      <li>A kiegyenlítő tartály (B szár) emelésével vagy süllyesztésével hozd a <b>bal (A) higanyszintet pontosan a piros nullajelre</b> – így marad állandó a gáz térfogata. Figyeld a bal nagyítót.</li>
+      <li>Olvasd le a hőmérsékletet (<i>t</i>) és a jobb oldali higanyszint magasságát a vonalzón (<i>h</i>, mm-ben, a nullajeltől mérve; a nullajel alatt negatív). Mindkettőt te írod be.</li>
+    </ol>
+    <div class="banner">Feltétel: legalább <b>6 különböző hőmérséklet</b>, és a legkisebb és legnagyobb között legalább <b>50 °C</b> legyen.</div>
+    <button type="button" class="btn primary xl wide" data-go="meas">Indul a mérés →</button>
+  </div>
+</section>
+
+<section class="view" id="v-meas" aria-label="Mérés">
+  <div data-goal="1"></div>
+  <div class="meas-grid">
+    <div class="stage" aria-label="Kísérleti összeállítás">
+      <div id="scene"></div>
+      <div class="reads">
+        <div class="readbox"><div class="rl">Hőmérő (vízfürdő)</div><div class="read" id="rdT">–<small>°C</small></div></div>
+        <div class="readbox help" id="helpBox" hidden><div class="rl">Segítség (tanárnak)</div><div id="helpTxt" style="font-size:.86rem;line-height:1.45"></div></div>
+      </div>
+      <div class="loupes">
+        <div class="loupe"><div class="ll">A szár – nullajel</div><div id="loupeA"></div></div>
+        <div class="loupe"><div class="ll">B szár – vonalzó (mm)</div><div id="loupeB"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2><span class="step-no">1</span>Vízfürdő és tartály</h2>
+        <div id="stpSet"></div>
+        <div id="stpR"></div>
+        <p class="muted" style="font-size:.88rem;margin:0">A tartályt addig mozgasd, amíg a bal nagyítóban a higany teteje pontosan a piros vonalon áll. Ha a gáz még melegszik vagy hűl, a szint elmászik – várj, és igazítsd újra.</p>
+      </div>
+      <div class="card">
+        <h2><span class="step-no">2</span>Leolvasás és feljegyzés</h2>
+        <div class="banner" id="nextBanner"></div>
+        <div class="form-grid c2">
+          <div><label class="f" for="recT">t (°C) – a hőmérőről</label><input id="recT" class="inp" type="text" inputmode="decimal" autocomplete="off"></div>
+          <div><label class="f" for="recH">h (mm) – a jobb nagyítóról</label><input id="recH" class="inp" type="text" inputmode="decimal" autocomplete="off"></div>
+        </div>
+        <button type="button" class="btn primary wide" style="margin-top:10px" data-act="rec">Feljegyzem</button>
+        <p class="muted" id="coverTxt" style="margin:10px 0 0;font-size:.9rem"></p>
+        <div class="reclist" id="recList"></div>
+        <div class="row" style="margin-top:14px;justify-content:space-between">
+          <div class="row"><span class="muted" style="font-size:.88rem">Sebesség:</span><div class="chips" role="group" aria-label="A szimuláció sebessége"><button type="button" data-act="speed" data-v="1">×1</button><button type="button" data-act="speed" data-v="2">×2</button></div></div>
+          <button type="button" class="btn ghost" data-act="help" aria-pressed="false">Segítség (tanárnak)</button>
+        </div>
+      </div>
+      <div data-finish="1"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-proc" aria-label="Feldolgozás">
+  <div data-goal="2"></div>
+  <div class="card remind">
+    <h2>Emlékeztető az 1. óráról</h2>
+    <p class="muted" style="font-size:.92rem">Ellenőrizd az adatokat. Ha más gépen dolgozol, vagy az adatok elvesztek, írd be őket a füzetedből.</p>
+    <div class="form-grid c2">
+      <div><label class="f" for="rP">Légnyomás p<sub>L</sub> (kPa)</label><input id="rP" class="inp" data-bind="f.pL" inputmode="decimal" autocomplete="off"></div>
+    </div>
+    <p id="remRows" style="margin:10px 0 0;font-size:.92rem"></p>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">1</span>A gáz nyomása</h2>
+    <p>A gáz nyomása a légnyomás és a higanyoszlop nyomásának összege. Számológéppel számold ki minden sorra (két tizedesre):</p>
+    <div class="formula"><i>p</i> = <i>p</i><sub>L</sub> + <i>ρ·g·h</i> = <i>p</i><sub>L</sub> + 0,1334 · <i>h</i> &nbsp;&nbsp;(h mm-ben, p kPa-ban)</div>
+    <p class="muted" style="font-size:.88rem">ρ<sub>Hg</sub> = 13 600 kg/m³, g = 9,81 m/s², ezért 1 mm higanyoszlop nyomása 0,1334 kPa.</p>
+    <div id="tbl"></div>
+    <div class="row" style="justify-content:space-between">
+      <div class="row"><button type="button" class="btn" data-act="addRow">+ Sor hozzáadása</button><button type="button" class="btn blue" data-act="chkTable">Táblázat ellenőrzése</button></div>
+      <span class="pill" id="tblCount">Helyes: 0 / 0</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">2</span>Grafikonok</h2>
+    <p class="muted" style="font-size:.92rem">A grafikonokat a program rajzolja meg a t és h oszlopból.</p>
+    <div class="g2">
+      <div><div class="gwrap"><canvas id="g1" aria-label="A nyomás a hőmérséklet függvényében – koppints az A és B pont kijelöléséhez"></canvas></div><p class="gcap">p–t grafikon a mért tartományban. <b>Ide koppints</b> az A és B ponthoz.</p></div>
+      <div><div class="gwrap"><canvas id="g3" aria-label="A meghosszabbított egyenes a p = 0 nyomásig"></canvas></div><p class="gcap">Ugyanaz az egyenes meghosszabbítva p = 0-ig (extrapoláció).</p></div>
+    </div>
+    <p class="muted" id="r2" style="font-size:.85rem;margin:4px 0 0"></p>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">3</span>Meredekség és t₀</h2>
+    <div id="abCard"></div>
+    <div data-f="a"></div>
+    <div data-f="t0"></div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">4</span>Bizonytalanság – határegyenesek</h2>
+    <p style="font-size:.94rem">A nyomást nem tudjuk tökéletesen leolvasni: <b>Δp = 0,2 kPa</b> (a h leolvasása ±1 mm ≈ 0,13 kPa, a barométer ±0,1 kPa). Ha az A és B pontot ennyivel eltoljuk, a legmeredekebb és a legkevésbé meredek még elfogadható egyenest kapjuk. Ezek is megjelennek a második grafikonon.</p>
+    <div data-f="t0p"></div>
+    <div data-f="t0m"></div>
+    <div data-f="dt0"></div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">5</span>Végeredmény</h2>
+    <p style="font-size:.94rem">Kerekítsd Δt₀-t 1–2 értékes jegyre (pl. 5 vagy 4,6), a t₀ értéket pedig ugyanarra a helyiértékre.</p>
+    <div class="form-grid c2">
+      <div><label class="f" for="tr">t₀ (°C, kerekítve)</label><input id="tr" class="inp" data-bind="f.tr" inputmode="decimal" autocomplete="off" placeholder="pl. −275"></div>
+      <div><label class="f" for="dtr">Δt₀ (°C, kerekítve)</label><input id="dtr" class="inp" data-bind="f.dtr" inputmode="decimal" autocomplete="off" placeholder="pl. 5"></div>
+    </div>
+    <div class="row" style="margin-top:10px"><button type="button" class="btn blue" data-act="chkRes">Végeredmény ellenőrzése</button><span class="expv" id="resHelp" hidden></span></div>
+    <div class="fb" id="resFb" aria-live="polite" style="margin-top:6px"></div>
+    <div class="result" id="resLine" hidden></div>
+    <div class="foot-actions"><button type="button" class="btn ghost" data-act="help" aria-pressed="false">Segítség (tanárnak)</button><button type="button" class="btn primary" data-go="concl">Tovább a következtetéshez →</button></div>
+  </div>
+</section>
+
+<section class="view" id="v-concl" aria-label="Következtetés">
+  <div data-goal="2"></div>
+  <div class="card">
+    <h2>A mérésed eredménye</h2>
+    <div id="summary"></div>
+  </div>
+  <div class="card">
+    <h2>Következtetés</h2>
+    <p>Írj <b>3–5 mondatot</b>. Térj ki ezekre:</p>
+    <ul style="margin:0 0 10px;padding-left:20px">
+      <li>Milyen t₀ értéket kaptál (bizonytalansággal együtt)?</li>
+      <li>Egyezik-e az elméleti −273,15 °C-kal? Igazolja-e a mérésed, hogy állandó térfogaton a nyomás lineárisan nő a hőmérséklettel (Charles-törvény)?</li>
+      <li>Mi lehetett a mérés fő hibaforrása?</li>
+    </ul>
+    <label class="f" for="concl">A következtetésed</label>
+    <textarea id="concl" class="inp" placeholder="Mérésem szerint az abszolút nulla fok …"></textarea>
+    <div class="row" style="justify-content:space-between;margin-top:10px"><span class="pill" id="sentCnt">Mondatok: 0</span><button type="button" class="btn blue" data-act="saveConcl">Mentés</button></div>
+  </div>
+  <div data-finish="2"></div>
+  <div class="row" style="justify-content:center;margin-top:16px"><button type="button" class="btn danger" data-act="reset">Minden adat törlése</button></div>
+</section>
+
+  </main>
+</div></div>
+<nav class="tabs" id="tabs" aria-label="Nézetek"></nav>
+<div class="modal-bg" id="modalBg"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><h2 id="modalTitle"></h2><div id="modalBody"></div><div class="row end" id="modalBtns"></div></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+/* ===================== KÖZÖS KERET (minden gyakorlathoz azonos) ===================== */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const FR=(n,d)=>`<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const kB=1.38e-23;
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','+':''};
+const UNSUP={'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-','⁺':'+'};
+const C_PT='#2f6aa8',C_BEST='#c4553a',C_BND='#6f7d8c',C_MY='#2e8b57';
+const ICON={
+  prep:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM8.5 12h7M8.5 16h5"/></svg>',
+  meas:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 13l4-4M12 3v2"/></svg>',
+  proc:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/></svg>',
+  concl:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>',
+  info:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  trash:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  flag:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>'
+};
+
+/* ---------- számok ---------- */
+function parseNum(v){
+  if(v==null) return NaN;
+  let s=String(v).trim(); if(!s) return NaN;
+  s=s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g,m=>'^'+m.split('').map(c=>UNSUP[c]).join(''));
+  s=s.replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'.');
+  s=s.replace(/^([+-]?[\d.]+)[·×*xX•⋅]10\^?\(?([+-]?\d+)\)?$/,'$1e$2');
+  s=s.replace(/^([+-]?)10\^\(?([+-]?\d+)\)?$/,'$11e$2');
+  if(!/^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(s)) return NaN;
+  const x=parseFloat(s); return isFinite(x)?x:NaN;
+}
+function fmt(x,d){ if(!isFinite(x)) return '–'; const s=(Math.abs(x)<Math.pow(10,-d)/2?0:x).toFixed(Math.max(0,Math.min(12,d))); return s.replace('.',',').replace('-','−'); }
+function fmtSig(x,sig){ if(!isFinite(x)) return '–'; if(x===0) return '0'; const d=sig-1-Math.floor(Math.log10(Math.abs(x))); return fmt(x,Math.max(0,d)); }
+function supNum(e){ return String(e).split('').map(c=>SUP[c]||c).join(''); }
+function fmtSci(x,sig){ if(!isFinite(x)) return '–'; if(x===0) return '0'; let e=Math.floor(Math.log10(Math.abs(x))); let ms=(x/Math.pow(10,e)).toFixed(sig-1); if(Math.abs(parseFloat(ms))>=10){ e++; ms=(x/Math.pow(10,e)).toFixed(sig-1); } return ms.replace('.',',').replace('-','−')+'·10'+supNum(e); }
+function roundTo(x,d){ const p=Math.pow(10,d); return Math.round(x*p)/p; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function gauss(){ let u=0,v=0; while(!u) u=Math.random(); while(!v) v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function sentences(t){ const m=String(t||'').trim().match(/[^.!?…]{3,}[.!?…]+/g); return m?m.length:0; }
+function sigDigits(str){ let s=String(str||'').trim().replace(/[−–]/g,'-').replace(/,/g,'.'); s=s.replace(/[eE].*$/,'').replace(/[·×*xX•⋅].*$/,'').replace(/^[+-]/,'').replace('.',''); s=s.replace(/^0+/,''); return Math.max(1,s.length); }
+function safe(f){ try{ return f(); }catch(e){ return false; } }
+function safeNum(f){ try{ const v=f(); return typeof v==='number'?v:NaN; }catch(e){ return NaN; } }
+function fit(xs,ys){ const n=xs.length; if(n<2) return null; let sx=0,sy=0; for(let i=0;i<n;i++){sx+=xs[i];sy+=ys[i];} const mx=sx/n,my=sy/n; let sxx=0,sxy=0,syy=0; for(let i=0;i<n;i++){const dx=xs[i]-mx,dy=ys[i]-my; sxx+=dx*dx; sxy+=dx*dy; syy+=dy*dy;} if(!(sxx>0)) return null; const a=sxy/sxx; return {a,b:my-a*mx,r2:syy>0?sxy*sxy/(sxx*syy):1}; }
+
+/* ---------- állapot és mentés ---------- */
+let S=null; const FB={};
+const KEY=()=>LAB.slug+'-lab-v1';
+function today(){ const d=new Date(); const z=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()); }
+function baseDEF(){ return Object.assign({student:{name:'',group:'',date:today()},view:'prep',done:{1:false,2:false},conclusion:'',help:false,speed:1,rows:[],f:{},ok:{},manual:{},pick:'A'},LAB.DEF()); }
+function mergeDeep(a,b){ for(const k in b){ const bv=b[k],av=a[k]; if(bv&&typeof bv==='object'&&!Array.isArray(bv)&&av&&typeof av==='object'&&!Array.isArray(av)) mergeDeep(av,bv); else if(bv!==undefined) a[k]=bv; } return a; }
+function load(){
+  let o=null; try{ o=JSON.parse(localStorage.getItem(KEY())||'null'); }catch(e){ o=null; }
+  S=baseDEF(); if(o&&typeof o==='object') mergeDeep(S,o);
+  if(!Array.isArray(S.rows)) S.rows=[];
+  S.rows=S.rows.filter(r=>r&&typeof r==='object').map(r=>{ const q={}; LAB.table.cols.forEach(c=>q[c.id]=typeof r[c.id]==='string'?r[c.id]:(r[c.id]==null?'':String(r[c.id]))); return q; });
+  ['f','ok','manual','done','student'].forEach(k=>{ if(!S[k]||typeof S[k]!=='object') S[k]=baseDEF()[k]; });
+  if(!LAB.views.some(v=>v.id===S.view)) S.view='prep';
+  if(S.speed!==2) S.speed=1; if(S.pick!=='B') S.pick='A';
+  if(typeof S.conclusion!=='string') S.conclusion='';
+  if(LAB.sanitize) LAB.sanitize();
+  return !!o;
+}
+let saveT=0;
+function save(){ clearTimeout(saveT); saveT=setTimeout(saveNow,350); }
+function saveNow(){ clearTimeout(saveT); try{ localStorage.setItem(KEY(),JSON.stringify(S)); }catch(e){} }
+let chgQ=false;
+function changed(){ save(); if(chgQ) return; chgQ=true; requestAnimationFrame(()=>{ chgQ=false; renderGoals(); if(LAB.onChange) LAB.onChange(); }); }
+function hasData(){ return S.rows.length>0||S.student.name.trim().length>0||Object.keys(S.f).length>0; }
+
+/* ---------- visszajelzés: toast és modális ablak ---------- */
+let toastT=0;
+function toast(msg,kind){ const t=$('#toast'); t.textContent=msg; t.className='show '+(kind||''); clearTimeout(toastT); toastT=setTimeout(()=>{ t.className=''; },3600); }
+let lastFocus=null;
+function openModal(title,html,btns){
+  $('#modalTitle').innerHTML=title; $('#modalBody').innerHTML=html;
+  const row=$('#modalBtns'); row.innerHTML='';
+  (btns||[{t:'Bezárás',cls:'primary'}]).forEach(b=>{ const e=document.createElement('button'); e.type='button'; e.className='btn '+(b.cls||''); e.textContent=b.t; e.addEventListener('click',()=>{ closeModal(); if(b.fn) setTimeout(b.fn,30); }); row.appendChild(e); });
+  if(!$('#modalBg').classList.contains('open')) lastFocus=document.activeElement;
+  $('#modalBg').classList.add('open');
+  setTimeout(()=>{ const bs=row.querySelectorAll('button'); if(bs.length) bs[bs.length-1].focus(); },40);
+}
+function closeModal(){ $('#modalBg').classList.remove('open'); if(lastFocus&&lastFocus.focus) try{ lastFocus.focus(); }catch(e){} }
+
+/* ---------- navigáció és órák ---------- */
+const art=n=>(n===1||n===5)?'Az':'A';
+function lessonOf(id){ const v=LAB.views.find(x=>x.id===id); return v?v.lesson:1; }
+function firstView(n){ return LAB.views.find(v=>v.lesson===n).id; }
+function buildNav(){
+  let h='';
+  LAB.lessons.forEach(L=>{
+    h+=`<div class="grp"><div class="gl"><span>${L.n}. óra</span><span id="sgl${L.n}"></span></div>`;
+    LAB.views.filter(v=>v.lesson===L.n).forEach(v=>{ h+=`<button type="button" data-go="${v.id}">${ICON[v.icon]}<span>${v.label}</span></button>`; });
+    h+='</div>';
+  });
+  h+=`<div class="tools"><button type="button" data-act="about">${ICON.info}<span>A modellről</span></button><button type="button" data-act="reset">${ICON.trash}<span>Minden adat törlése</span></button></div>`;
+  $('#side').innerHTML=h;
+  $('#tabs').innerHTML=LAB.views.map(v=>`<button type="button" class="tab" data-go="${v.id}"><span class="tl">${v.lesson}. óra</span>${ICON[v.icon]}<span class="tn">${v.short||v.label}</span></button>`).join('');
+}
+function go(id,opt){
+  if(!LAB.views.some(v=>v.id===id)) id='prep';
+  S.view=id;
+  $$('.view').forEach(s=>s.classList.toggle('active',s.id==='v-'+id));
+  $$('[data-go]').forEach(b=>{ if(b.closest('#side')||b.closest('#tabs')){ if(b.dataset.go===id) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); } });
+  renderLessonInd(); renderGoals();
+  if(LAB.onView) LAB.onView(id);
+  save();
+  if(!(opt&&opt.noScroll)) window.scrollTo({top:0,behavior:RM?'auto':'smooth'});
+}
+function renderLessonInd(){
+  const n=lessonOf(S.view), L=LAB.lessons[n-1];
+  $('#liB').textContent=`${n}. óra / ${LAB.lessons.length}`;
+  $('#liS').textContent=L.name;
+  $('#liSegs').innerHTML=LAB.lessons.map(x=>`<i class="${x.n===n?'cur':''} ${S.done[x.n]&&x.n!==n?'done':''}"></i>`).join('');
+}
+function checkItems(n){ return LAB.lessons[n-1].checks.map(c=>({t:c.t,manual:c.manual,on:c.manual?!!S.manual[c.manual]:!!safe(c.f)})); }
+function renderGoals(){
+  LAB.lessons.forEach(L=>{ const it=checkItems(L.n); const el=$('#sgl'+L.n); if(el) el.textContent=it.filter(i=>i.on).length+'/'+it.length; });
+  $$('[data-goal]').forEach(el=>{
+    const n=+el.dataset.goal, L=LAB.lessons[n-1], it=checkItems(n), k=it.filter(i=>i.on).length;
+    el.className='card goal';
+    el.innerHTML=`<div class="gh"><h2>${art(n)} ${n}. óra célja</h2><span class="pill">${L.time}</span></div><p>${L.goal}</p>
+      <ul>${it.map((i,j)=>i.manual?`<li class="${i.on?'on':''}"><button type="button" data-man="${i.manual}" role="checkbox" aria-checked="${i.on}"><span class="bx"></span><span>${i.t}</span></button></li>`:`<li class="${i.on?'on':''}"><span class="bx" aria-hidden="true"></span><span>${i.t}<span class="sr-only">${i.on?' – kész':' – még nincs kész'}</span></span></li>`).join('')}</ul>
+      <p class="muted" style="margin:8px 0 0;font-size:.85rem">Kész: <b>${k} / ${it.length}</b></p>`;
+  });
+  $$('[data-man]').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.man; S.manual[k]=!S.manual[k]; changed(); }));
+}
+function renderFinish(){
+  $$('[data-finish]').forEach(el=>{
+    const n=+el.dataset.finish;
+    el.innerHTML=`<button type="button" class="btn primary xl wide">${ICON.flag}<span>${art(n)} ${n}. óra befejezése</span></button>`;
+    el.querySelector('button').addEventListener('click',()=>finishLesson(n));
+  });
+}
+function finishLesson(n){
+  const miss=checkItems(n).filter(i=>!i.on);
+  const doIt=()=>{
+    S.done[n]=true; saveNow(); renderLessonInd(); renderGoals();
+    const next=LAB.lessons[n];
+    const html=`${LAB.lessonSummary(n)}<p class="banner ok"><b>Az adatok ezen az eszközön vannak elmentve.</b> ${next?`Következő óra: <b>${next.n}. óra – ${next.name}</b>.`:'A gyakorlat végére értél. Otthon rendezd el a mérési naplót a füzetedben.'}</p>${n===1?'<p><b>Fontos:</b> minden mért adatot írj le a füzetedbe! Ha a következő órán más gépen dolgozol, a füzetből vissza tudod írni őket.</p>':''}`;
+    openModal(`${art(n)} ${n}. óra kész`,html,next?[{t:'Itt maradok',cls:'ghost'},{t:`Tovább: ${next.n}. óra`,cls:'primary',fn:()=>go(firstView(next.n))}]:[{t:'Rendben',cls:'primary'}]);
+  };
+  if(miss.length) openModal('Még nincs minden kész',`<p>Ezek a pontok még hiányoznak:</p><ul>${miss.map(m=>`<li>${m.t}</li>`).join('')}</ul><p>Így is befejezed az órát?</p>`,[{t:'Vissza',cls:'ghost'},{t:'Igen, befejezem',cls:'primary',fn:doIt}]);
+  else doIt();
+}
+function resume(){
+  let n=lessonOf(S.view);
+  if(n===1&&S.done[1]){ S.view=firstView(2); n=2; }
+  const L=LAB.lessons[n-1];
+  openModal('Folytatod a gyakorlatot?',`<p><b>Folytatod ${art(n).toLowerCase()} ${n}. órát — ${L.name}.</b></p><p class="muted">Eddig ${S.rows.length} mérési sor van feljegyezve. Az adatok csak ezen az eszközön vannak elmentve.</p>`,
+    [{t:'Új kezdés (törlés)',cls:'danger',fn:()=>resetAll(true)},{t:'Folytatom',cls:'primary',fn:()=>go(S.view)}]);
+}
+function resetAll(ask){
+  if(ask&&!confirm('Biztosan törölsz minden adatot (mérések, számítások, következtetés)? Ez nem vonható vissza.')) return;
+  try{ localStorage.removeItem(KEY()); }catch(e){}
+  S=baseDEF(); if(LAB.sanitize) LAB.sanitize(); if(LAB.resetRuntime) LAB.resetRuntime();
+  renderAll(); go('prep'); toast('Minden adat törölve.','ok');
+}
+
+/* ---------- csúszka − / + gombokkal ---------- */
+function holdRepeat(btn,fn){
+  let t1=0,t2=0; const stop=()=>{ clearTimeout(t1); clearInterval(t2); };
+  btn.addEventListener('pointerdown',e=>{ e.preventDefault(); fn(); t1=setTimeout(()=>{ t2=setInterval(fn,85); },420); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev,stop));
+  btn.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fn(); } });
+}
+function makeStp(host,o){
+  const id='s'+Math.random().toString(36).slice(2,8);
+  host.classList.add('stp');
+  host.innerHTML=`<div class="sh"><b id="${id}">${o.label}</b><span class="v ${o.hideValue?'hint':''}"></span></div>
+    <div class="sr"><button type="button" aria-label="${o.label}: csökkentés">−</button><input type="range" class="slider" min="${o.min}" max="${o.max}" step="${o.step}" aria-labelledby="${id}"><button type="button" aria-label="${o.label}: növelés">+</button></div>
+    <div class="bounds"><span>${o.bl||o.fmt(o.min)}</span><span>${o.br||o.fmt(o.max)}</span></div>`;
+  const bs=host.querySelectorAll('button'), r=host.querySelector('input'), vEl=host.querySelector('.v');
+  const show=()=>{ const v=o.get(); r.value=v; r.style.setProperty('--p',((v-o.min)/(o.max-o.min)*100)+'%'); const t=o.hideValue?(o.hint||''):o.fmt(v); vEl.textContent=t; r.setAttribute('aria-valuetext',o.hideValue?(o.hint||''):t); };
+  const setV=v=>{ v=clamp(Math.round(v/o.step)*o.step,o.min,o.max); v=+v.toFixed(6); if(v!==o.get()) o.set(v); show(); };
+  r.addEventListener('input',()=>setV(parseFloat(r.value)));
+  holdRepeat(bs[0],()=>setV(o.get()-o.step)); holdRepeat(bs[1],()=>setV(o.get()+o.step));
+  show(); return {show};
+}
+
+/* ---------- kötött beviteli mezők (data-bind) ---------- */
+function getPath(p){ return p.split('.').reduce((o,k)=>o==null?undefined:o[k],S); }
+function setPath(p,v){ const ks=p.split('.'); let o=S; for(let i=0;i<ks.length-1;i++){ if(o[ks[i]]==null) o[ks[i]]={}; o=o[ks[i]]; } o[ks[ks.length-1]]=v; }
+function renderBinds(){
+  $$('[data-bind]').forEach(inp=>{
+    const p=inp.dataset.bind; inp.value=getPath(p)||'';
+    if(inp._b) return; inp._b=true;
+    inp.addEventListener('input',()=>{ setPath(p,inp.value); if(p.startsWith('f.')){ const k=p.slice(2); delete S.ok[k]; delete FB[k]; syncField(k,inp); invalidateAfter(k); } changed(); });
+  });
+}
+function syncField(k,src){
+  $$(`[data-f="${k}"] input`).forEach(i=>{ if(i!==src) i.value=S.f[k]||''; });
+  $$(`[data-bind="f.${k}"]`).forEach(i=>{ if(i!==src) i.value=S.f[k]||''; });
+  $$(`[data-f="${k}"]`).forEach(markField);
+}
+
+/* ---------- számítási lépések (mezők ellenőrzéssel) ---------- */
+function num(id){ return parseNum(S.f[id]); }
+function val(id,fb){ const v=num(id); return isFinite(v)?v:fb; }
+function invalidateAfter(id){
+  const ord=LAB.order||[]; const i=ord.indexOf(id); if(i<0) return;
+  ord.slice(i+1).forEach(k=>{ if(S.ok[k]!==undefined){ delete S.ok[k]; delete FB[k]; $$(`[data-f="${k}"]`).forEach(markField); } });
+  if(LAB.onInvalidate) LAB.onInvalidate();
+}
+function renderFields(){ $$('[data-f]').forEach(renderField); }
+function renderField(el){
+  const id=el.dataset.f, F=LAB.fields[id]; if(!F) return;
+  el.className='fld';
+  el.innerHTML=`<div class="fl">${F.label}</div>${F.formula?`<div class="formula">${F.formula}</div>`:''}
+    <div class="fr"><input class="inp" type="text" ${F.sci?'':'inputmode="decimal"'} autocomplete="off" spellcheck="false" aria-label="${esc(F.aria||id)}" placeholder="${esc(F.ph||'')}"><span class="unit">${F.unit||''}</span><button class="btn blue" type="button">Ellenőrzés</button><span class="expv" hidden></span></div>
+    <div class="fb" aria-live="polite"></div>`;
+  const inp=el.querySelector('input'); inp.value=S.f[id]||'';
+  inp.addEventListener('input',()=>{ S.f[id]=inp.value; delete S.ok[id]; delete FB[id]; syncField(id,inp); invalidateAfter(id); changed(); });
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); checkField(id); } });
+  el.querySelector('button').addEventListener('click',()=>checkField(id));
+  markField(el);
+}
+function markField(el){
+  const id=el.dataset.f, F=LAB.fields[id]; if(!F) return;
+  const inp=el.querySelector('input'), fb=el.querySelector('.fb'), ev=el.querySelector('.expv'); if(!inp) return;
+  inp.classList.toggle('ok',S.ok[id]===true); inp.classList.toggle('bad',S.ok[id]===false);
+  const m=FB[id]; fb.className='fb '+(m?m.k:''); fb.textContent=m?m.m:(S.ok[id]===true?'✓ Helyes.':'');
+  if(S.help){ const e=safeNum(F.exp); ev.hidden=!isFinite(e); ev.textContent='várt: '+(F.show?F.show(e):fmtSig(e,4)); } else ev.hidden=true;
+}
+function checkField(id){
+  const F=LAB.fields[id], v=num(id); let ok,msg;
+  if(!isFinite(v)){ ok=false; msg='Írj be egy számot'+(F.sci?' (pl. 1,24·10^21 vagy 1,24e21).':' (tizedesvesszővel is lehet).'); }
+  else{
+    const e=safeNum(F.exp);
+    if(!isFinite(e)){ ok=null; msg=F.need||'Előbb végezd el az előző lépéseket.'; }
+    else{ ok=Math.abs(v-e)<=F.tol[0]+Math.abs(e)*F.tol[1]; msg=ok?(F.okMsg||'Helyes!'):(typeof F.hint==='function'?F.hint(v,e):(F.hint||'Nem egészen. Számold újra.')); }
+  }
+  if(ok===null){ delete S.ok[id]; FB[id]={k:'warn',m:msg}; }
+  else{ S.ok[id]=ok; FB[id]={k:ok?'ok':'bad',m:(ok?'✓ ':'')+msg}; }
+  $$(`[data-f="${id}"]`).forEach(markField);
+  if(LAB.onCheck) LAB.onCheck(id);
+  changed();
+}
+
+/* ---------- eredmény (érték ± bizonytalanság) ellenőrzése ---------- */
+function checkResult(vStr,dStr,v0,d0){
+  const v=parseNum(vStr),d=parseNum(dStr);
+  if(!isFinite(v)||!isFinite(d)||d<=0) return {ok:false,msg:'Írd be az értéket és a bizonytalanságot is (a bizonytalanság pozitív szám).'};
+  if(!isFinite(v0)||!isFinite(d0)||d0<=0) return {ok:null,msg:'Előbb végezd el az előző lépéseket (érték és bizonytalanság).'};
+  const sd=sigDigits(dStr);
+  if(sd>2) return {ok:false,msg:'A bizonytalanságot 1 vagy 2 értékes jegyre kerekítsd.'};
+  if(d<d0*0.7||d>d0*1.8) return {ok:false,msg:'A bizonytalanság nem egyezik a kiszámolt Δ értékkel. Kerekítsd 1–2 értékes jegyre (inkább felfelé).'};
+  const unit=Math.pow(10,Math.floor(Math.log10(d)+1e-9)-sd+1);
+  if(Math.abs(v-v0)>unit*0.55+Math.abs(v0)*1e-9) return {ok:false,msg:'Az értéket ugyanarra a helyiértékre kerekítsd, ahol a bizonytalanság utolsó jegye áll.'};
+  return {ok:true,msg:'Helyes végeredmény!'};
+}
+
+/* ---------- táblázat ---------- */
+const COL=id=>LAB.table.cols.find(c=>c.id===id);
+function emptyRow(){ const r={}; LAB.table.cols.forEach(c=>r[c.id]=''); return r; }
+function rowValid(r){ return LAB.table.cols.filter(c=>!c.calc).every(c=>isFinite(parseNum(r[c.id]))); }
+function cellExp(r,c){ const C=COL(c); if(!C||!C.calc||!rowValid(r)) return NaN; return safeNum(()=>C.exp(r)); }
+function cellOk(r,c){ const C=COL(c),v=parseNum(r[c]),e=cellExp(r,c); if(!isFinite(v)||!isFinite(e)) return null; return Math.abs(v-e)<=C.tol[0]+Math.abs(e)*C.tol[1]; }
+function tableStats(){ let tot=0,good=0; S.rows.forEach(r=>{ if(!rowValid(r)) return; LAB.table.cols.filter(c=>c.calc).forEach(c=>{ tot++; if(cellOk(r,c.id)===true) good++; }); }); return {tot,good}; }
+function markRow(tr){
+  const i=+tr.dataset.i, r=S.rows[i]; if(!r) return;
+  tr.querySelectorAll('input').forEach(inp=>{
+    const c=inp.dataset.c, C=COL(c);
+    if(!C.calc){ inp.classList.toggle('bad',r[c]!==''&&!isFinite(parseNum(r[c]))); return; }
+    const ok=r[c]===''?null:cellOk(r,c);
+    inp.classList.toggle('ok',ok===true); inp.classList.toggle('bad',ok===false);
+    const e=cellExp(r,c); inp.title=S.help&&isFinite(e)?'várt: '+C.show(e):'';
+  });
+}
+function updTblCount(){ const el=$('#tblCount'); if(!el) return; const s=tableStats(); el.textContent=`Helyes: ${s.good} / ${s.tot}`; el.className='pill '+(s.tot&&s.good===s.tot?'ok':''); }
+function renderTable(){
+  const host=$('#tbl'); if(!host) return;
+  const cols=LAB.table.cols;
+  let h=`<div class="tbl-wrap"><table class="dt"><thead><tr><th scope="col">#</th>${cols.map(c=>`<th scope="col" class="${c.calc?'calc':''}">${c.head}</th>`).join('')}<th scope="col"><span class="sr-only">Törlés</span></th></tr></thead><tbody>`;
+  S.rows.forEach((r,i)=>{ h+=`<tr data-i="${i}"><td class="idx">${i+1}</td>${cols.map(c=>`<td class="${c.calc?'calc':''}"><input data-c="${c.id}" type="text" inputmode="decimal" autocomplete="off" aria-label="${i+1}. sor: ${esc(c.aria)}"></td>`).join('')}<td class="del"><button type="button" aria-label="${i+1}. sor törlése">✕</button></td></tr>`; });
+  if(!S.rows.length) h+=`<tr><td colspan="${cols.length+2}" class="empty">Még nincs adat. Mérj az 1. órán, vagy írd be a füzetedből (+ Sor hozzáadása).</td></tr>`;
+  h+='</tbody></table></div>';
+  host.innerHTML=h;
+  host.querySelectorAll('tbody tr[data-i]').forEach(tr=>{
+    const i=+tr.dataset.i;
+    tr.querySelectorAll('input').forEach(inp=>{
+      const c=inp.dataset.c; inp.value=S.rows[i][c]||'';
+      inp.addEventListener('input',()=>{ S.rows[i][c]=inp.value; inp.classList.remove('ok','bad'); tableChanged(!COL(c).calc); });
+      inp.addEventListener('blur',()=>{ markRow(tr); updTblCount(); });
+    });
+    tr.querySelector('.del button').addEventListener('click',()=>{ if(confirm(`Törlöd a(z) ${i+1}. sort?`)){ S.rows.splice(i,1); renderTable(); tableChanged(true); } });
+    markRow(tr);
+  });
+  updTblCount();
+}
+function checkTable(){
+  $$('#tbl tbody tr[data-i]').forEach(markRow); updTblCount();
+  const s=tableStats();
+  if(!s.tot) toast('Még nincs kitöltött sor a táblázatban.','warn');
+  else if(s.good===s.tot) toast(`Minden számolt érték helyes (${s.good} / ${s.tot}).`,'ok');
+  else toast(`Helyes: ${s.good} / ${s.tot}. ${LAB.table.hint}`,'bad');
+  changed();
+}
+function tableChanged(measured){
+  if(measured){ delete S.ok.AB; (LAB.order||[]).forEach(k=>{ delete S.ok[k]; delete FB[k]; }); renderFields(); renderAB(); }
+  else (LAB.tableDeps||[]).forEach(k=>{ if(S.ok[k]!==undefined){ delete S.ok[k]; delete FB[k]; $$(`[data-f="${k}"]`).forEach(markField);} });
+  if(LAB.onInvalidate) LAB.onInvalidate();
+  changed(); scheduleGraphs();
+}
+
+/* ---------- grafikonok (canvas, könyvtár nélkül) ---------- */
+function setupCanvas(cv){
+  const dpr=Math.min(3,window.devicePixelRatio||1), w=cv.clientWidth||320, h=cv.clientHeight||300;
+  const W=Math.round(w*dpr),H=Math.round(h*dpr); if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,w,h); return {c,w,h};
+}
+function niceStep(span,n){ if(!(span>0)) return 1; const raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+function ticksArr(a,b,n){ const st=niceStep(b-a,n),arr=[]; for(let v=Math.ceil(a/st-1e-9)*st,i=0;v<=b+st*1e-6&&i<60;v+=st,i++) arr.push(Math.abs(v)<st*1e-9?0:+v.toPrecision(12)); return {arr,st}; }
+function decOf(st){ return Math.max(0,-Math.floor(Math.log10(st)+1e-9)); }
+function niceRange(mn,mx,pad){ if(!(mx>mn)){ const d=Math.abs(mx)||1; mn-=d*0.1; mx+=d*0.1; } const p=(mx-mn)*(pad==null?0.08:pad); return [mn-p,mx+p]; }
+function plot(cv,o){
+  const {c,w,h}=setupCanvas(cv), m={l:60,r:14,t:14,b:44}, pw=w-m.l-m.r, ph=h-m.t-m.b;
+  const [x0,x1]=o.xr,[y0,y1]=o.yr;
+  const X=x=>m.l+(x-x0)/(x1-x0)*pw, Y=y=>m.t+ph-(y-y0)/(y1-y0)*ph;
+  c.fillStyle='#fff'; c.fillRect(0,0,w,h);
+  const tx=ticksArr(x0,x1,Math.max(4,Math.floor(pw/52))), ty=ticksArr(y0,y1,Math.max(4,Math.floor(ph/38)));
+  const dx=o.xdec!=null?o.xdec:decOf(tx.st), dy=o.ydec!=null?o.ydec:decOf(ty.st);
+  c.lineWidth=1; c.strokeStyle='#ece6da';
+  tx.arr.forEach(v=>{ c.beginPath(); c.moveTo(Math.round(X(v))+.5,m.t); c.lineTo(Math.round(X(v))+.5,m.t+ph); c.stroke(); });
+  ty.arr.forEach(v=>{ c.beginPath(); c.moveTo(m.l,Math.round(Y(v))+.5); c.lineTo(m.l+pw,Math.round(Y(v))+.5); c.stroke(); });
+  c.strokeStyle='#8f98a3';
+  if(x0<0&&x1>0){ c.beginPath(); c.moveTo(Math.round(X(0))+.5,m.t); c.lineTo(Math.round(X(0))+.5,m.t+ph); c.stroke(); }
+  if(y0<0&&y1>0){ c.beginPath(); c.moveTo(m.l,Math.round(Y(0))+.5); c.lineTo(m.l+pw,Math.round(Y(0))+.5); c.stroke(); }
+  c.strokeStyle='#5d6672'; c.strokeRect(m.l+.5,m.t+.5,pw,ph);
+  c.font='12px system-ui,-apple-system,sans-serif'; c.fillStyle='#4a535e';
+  c.textAlign='center'; c.textBaseline='top'; tx.arr.forEach(v=>c.fillText(fmt(v,dx),X(v),m.t+ph+5));
+  c.textAlign='right'; c.textBaseline='middle'; ty.arr.forEach(v=>c.fillText(fmt(v,dy),m.l-6,Y(v)));
+  c.font='600 12.5px system-ui,-apple-system,sans-serif'; c.fillStyle='#232a33'; c.textAlign='center'; c.textBaseline='alphabetic';
+  c.fillText(o.xl,m.l+pw/2,h-6);
+  c.save(); c.translate(14,m.t+ph/2); c.rotate(-Math.PI/2); c.fillText(o.yl,0,0); c.restore();
+  c.save(); c.beginPath(); c.rect(m.l,m.t,pw,ph); c.clip();
+  (o.vlines||[]).forEach(v=>{ c.strokeStyle=v.color||'#999'; c.lineWidth=1.5; c.setLineDash([3,4]); c.beginPath(); c.moveTo(X(v.x),m.t); c.lineTo(X(v.x),m.t+ph); c.stroke(); c.setLineDash([]); if(v.label){ c.font='12px system-ui'; c.fillStyle=v.color||'#666'; c.textAlign='left'; c.textBaseline='top'; c.fillText(v.label,X(v.x)+4,m.t+4); } });
+  (o.curves||[]).forEach(cu=>{ c.strokeStyle=cu.color; c.lineWidth=cu.w||2; c.setLineDash(cu.dash||[]); c.beginPath(); let st=false; for(let i=0;i<=160;i++){ const x=cu.x1+(cu.x2-cu.x1)*i/160,y=cu.f(x); if(!isFinite(y)){ st=false; continue; } if(st) c.lineTo(X(x),Y(y)); else { c.moveTo(X(x),Y(y)); st=true; } } c.stroke(); c.setLineDash([]); });
+  (o.lines||[]).forEach(L=>{ const xa=L.x1!=null?L.x1:x0,xb=L.x2!=null?L.x2:x1; c.strokeStyle=L.color; c.lineWidth=L.w||2; c.setLineDash(L.dash||[]); c.beginPath(); c.moveTo(X(xa),Y(L.a*xa+L.b)); c.lineTo(X(xb),Y(L.a*xb+L.b)); c.stroke(); c.setLineDash([]); });
+  (o.pts||[]).forEach(p=>{
+    if(!isFinite(p.x)||!isFinite(p.y)) return;
+    c.strokeStyle=C_PT; c.lineWidth=1.3;
+    if(p.ey){ const a=Y(p.y-p.ey),b=Y(p.y+p.ey); c.beginPath(); c.moveTo(X(p.x),a); c.lineTo(X(p.x),b); c.moveTo(X(p.x)-4,a); c.lineTo(X(p.x)+4,a); c.moveTo(X(p.x)-4,b); c.lineTo(X(p.x)+4,b); c.stroke(); }
+    c.beginPath(); c.arc(X(p.x),Y(p.y),4.5,0,7); c.fillStyle=C_PT; c.fill();
+  });
+  (o.marks||[]).forEach(k=>{ if(!isFinite(k.x)||!isFinite(k.y)) return; c.beginPath(); c.arc(X(k.x),Y(k.y),6.5,0,7); c.fillStyle=k.color||C_MY; c.fill(); c.strokeStyle='#fff'; c.lineWidth=2; c.stroke(); c.font='bold 14px system-ui'; c.fillStyle=k.color||C_MY; c.textAlign='left'; c.textBaseline='bottom'; c.fillText(k.label,X(k.x)+8,Y(k.y)-5); });
+  c.restore();
+  if(o.legend&&o.legend.length){
+    c.font='12px system-ui,-apple-system,sans-serif';
+    const lh=18, lw=Math.max(...o.legend.map(l=>c.measureText(l.t).width))+42, H=o.legend.length*lh+8;
+    const lx=o.legendRight?m.l+pw-lw-6:m.l+6, ly=o.legendBottom?m.t+ph-H-6:m.t+6+(o.legendOffset||0);
+    c.fillStyle='rgba(255,255,255,.92)'; c.fillRect(lx,ly,lw,H); c.strokeStyle='#ddd'; c.lineWidth=1; c.strokeRect(lx+.5,ly+.5,lw,H);
+    o.legend.forEach((l,i)=>{ const yy=ly+4+i*lh+lh/2;
+      if(l.pt){ c.fillStyle=C_PT; c.beginPath(); c.arc(lx+16,yy,4.5,0,7); c.fill(); }
+      else if(l.mark){ c.fillStyle=C_MY; c.beginPath(); c.arc(lx+16,yy,5.5,0,7); c.fill(); }
+      else { c.strokeStyle=l.color; c.lineWidth=2; c.setLineDash(l.dash||[]); c.beginPath(); c.moveTo(lx+6,yy); c.lineTo(lx+28,yy); c.stroke(); c.setLineDash([]); }
+      c.fillStyle='#232a33'; c.textAlign='left'; c.textBaseline='middle'; c.fillText(l.t,lx+34,yy); });
+  }
+  cv._tf={ix:px=>x0+(px-m.l)/pw*(x1-x0), iy:py=>y0+(m.t+ph-py)/ph*(y1-y0), m,pw,ph};
+}
+let grQ=false;
+function scheduleGraphs(){ if(grQ) return; grQ=true; requestAnimationFrame(()=>{ grQ=false; if(S.view===LAB.graphView&&LAB.drawGraphs) LAB.drawGraphs(); }); }
+
+/* ---------- A és B pont az egyenesen ---------- */
+function renderAB(){
+  const host=$('#abCard'); if(!host) return; const A=LAB.ab;
+  host.innerHTML=`<p>Koppints a grafikonra (${A.where}) – a pont az illesztett egyenesre kerül. Válaszd a két pontot <b>egymástól messze</b>, a mért tartomány két végénél. A koordinátákat ide is beírhatod.</p>
+   <div class="row" style="margin-bottom:8px"><span class="muted" style="font-size:.88rem">Következő koppintás:</span><div class="chips" role="group" aria-label="Melyik pontot jelölöd"><button type="button" data-pk="A" aria-pressed="${S.pick==='A'}">A pont</button><button type="button" data-pk="B" aria-pressed="${S.pick==='B'}">B pont</button></div></div>
+   <div class="form-grid c2">
+    <div><label class="f">A pont: ${A.xn}, ${A.yn}</label><div class="row" style="flex-wrap:nowrap"><input class="inp" data-bind="f.xA" inputmode="decimal" aria-label="A pont ${A.xn}" placeholder="${A.xn}"><input class="inp" data-bind="f.yA" inputmode="decimal" aria-label="A pont ${A.yn}" placeholder="${A.yn}"></div></div>
+    <div><label class="f">B pont: ${A.xn}, ${A.yn}</label><div class="row" style="flex-wrap:nowrap"><input class="inp" data-bind="f.xB" inputmode="decimal" aria-label="B pont ${A.xn}" placeholder="${A.xn}"><input class="inp" data-bind="f.yB" inputmode="decimal" aria-label="B pont ${A.yn}" placeholder="${A.yn}"></div></div>
+   </div>
+   <div class="row" style="margin-top:10px"><button type="button" class="btn blue" id="abChk">Pontok ellenőrzése</button><span class="fb ${S.ok.AB===true?'ok':S.ok.AB===false?'bad':''}" id="abFb" aria-live="polite">${FB.AB?FB.AB.m:(S.ok.AB?'✓ Jó pontok.':'')}</span></div>`;
+  host.querySelectorAll('[data-pk]').forEach(b=>b.addEventListener('click',()=>{ S.pick=b.dataset.pk; renderAB(); save(); }));
+  host.querySelectorAll('[data-bind]').forEach(i=>{ i._b=false; });
+  renderBinds();
+  host.querySelectorAll('[data-bind]').forEach(i=>i.addEventListener('input',()=>{ delete S.ok.AB; delete FB.AB; invalidateAfter('yB'); scheduleGraphs(); const f=$('#abFb'); if(f){ f.textContent=''; f.className='fb'; } }));
+  $('#abChk').addEventListener('click',checkAB);
+}
+function checkAB(){
+  const L=LAB.bestLine(), A=LAB.ab, xa=num('xA'),ya=num('yA'),xb=num('xB'),yb=num('yB');
+  let ok=false,msg;
+  if(!L) msg='Előbb legyen legalább 2 érvényes mérési sor a táblázatban.';
+  else if(![xa,ya,xb,yb].every(isFinite)) msg='Add meg mind a négy koordinátát (koppintással vagy beírással).';
+  else{
+    const xr=LAB.xRange(), span=xr[1]-xr[0], tol=x=>1.5*Math.pow(10,-A.dy)+Math.abs(x)*0.003, inR=x=>x>=xr[0]-0.2*span&&x<=xr[1]+0.2*span;
+    if(!inR(xa)||!inR(xb)) msg='Az A és B pont a mért pontok tartományán belül legyen (ne nyúlj túl messze a legszélső mérési pontokon).';
+    else if(Math.abs(xb-xa)<0.45*span) msg='A két pont túl közel van egymáshoz. Válaszd őket a mért tartomány két végénél.';
+    else if(Math.abs(ya-(L.a*xa+L.b))>tol(ya)) msg='Az A pont nincs rajta az egyenesen. Olvasd le újra (vagy koppints az egyenesre).';
+    else if(Math.abs(yb-(L.a*xb+L.b))>tol(yb)) msg='A B pont nincs rajta az egyenesen. Olvasd le újra (vagy koppints az egyenesre).';
+    else { ok=true; msg='✓ Jó pontok. Ezeket írd le a füzetedbe.'; }
+  }
+  S.ok.AB=ok; FB.AB={k:ok?'ok':'bad',m:msg};
+  const f=$('#abFb'); f.textContent=msg; f.className='fb '+(ok?'ok':'bad');
+  changed();
+}
+function setupABTap(){
+  const cv=$('#'+LAB.ab.cv); if(!cv) return;
+  cv.addEventListener('click',e=>{
+    const tf=cv._tf, L=LAB.bestLine();
+    if(!tf||!L){ toast('Előbb legyen legalább 2 érvényes mérési sor a táblázatban.','warn'); return; }
+    const r=cv.getBoundingClientRect(); const x=roundTo(tf.ix(e.clientX-r.left),LAB.ab.dx); const y=roundTo(L.a*x+L.b,LAB.ab.dy);
+    const P=S.pick; S.f['x'+P]=fmt(x,LAB.ab.dx); S.f['y'+P]=fmt(y,LAB.ab.dy);
+    delete S.ok.AB; delete FB.AB; invalidateAfter('yB');
+    S.pick=P==='A'?'B':'A'; renderAB(); changed(); scheduleGraphs();
+    toast(`${P} pont: (${fmt(x,LAB.ab.dx)}; ${fmt(y,LAB.ab.dy)})`);
+  });
+}
+
+/* ---------- következtetés ---------- */
+function renderConcl(){
+  const s=$('#summary'); if(s) s.innerHTML=LAB.summary();
+  const ta=$('#concl'); if(ta&&document.activeElement!==ta) ta.value=S.conclusion;
+  updSent();
+}
+function updSent(){ const el=$('#sentCnt'); if(!el) return; const n=sentences(S.conclusion); el.textContent=`Mondatok: ${n} (legalább 3)`; el.className='pill '+(n>=3?'ok':''); }
+
+/* ---------- indítás ---------- */
+function renderAll(){ renderBinds(); renderFields(); renderTable(); renderAB(); renderFinish(); if(LAB.renderStatic) LAB.renderStatic(); renderGoals(); renderLessonInd(); }
+let lastT=0,saveAcc=0;
+function loop(t){
+  const dt=lastT?Math.min(0.1,(t-lastT)/1000):0; lastT=t;
+  if(!document.hidden&&dt>0){ const sim=dt*S.speed, N=Math.max(1,Math.ceil(sim/0.02)); for(let i=0;i<N;i++) LAB.step(sim/N); LAB.render(dt); saveAcc+=dt; if(saveAcc>5){ saveAcc=0; save(); } }
+  requestAnimationFrame(loop);
+}
+function boot(){
+  const had=load();
+  document.title=LAB.title;
+  buildNav();
+  if(LAB.init) LAB.init();
+  renderAll();
+  setupABTap();
+  document.addEventListener('click',e=>{
+    const g=e.target.closest('[data-go]'); if(g){ go(g.dataset.go); return; }
+    const a=e.target.closest('[data-act]'); if(!a) return;
+    const act=a.dataset.act;
+    if(act==='about') openModal('A modellről',LAB.about);
+    else if(act==='reset') resetAll(true);
+    else if(act==='help'){ S.help=!S.help; renderFields(); $$('#tbl tbody tr[data-i]').forEach(markRow); $$('[data-act="help"]').forEach(b=>b.setAttribute('aria-pressed',S.help)); toast(S.help?'Tanári segítség bekapcsolva.':'Tanári segítség kikapcsolva.'); save(); if(LAB.onHelp) LAB.onHelp(); }
+    else if(act==='chkTable') checkTable();
+    else if(act==='addRow'){ S.rows.push(emptyRow()); renderTable(); changed(); const ins=$$('#tbl tbody tr[data-i]'); const last=ins[ins.length-1]; if(last) last.querySelector('input').focus(); }
+    else if(act==='saveConcl'){ saveNow(); toast('A következtetés elmentve.','ok'); }
+    else if(LAB.act) LAB.act(act,a);
+  });
+  $$('[data-act="help"]').forEach(b=>b.setAttribute('aria-pressed',S.help));
+  const ta=$('#concl'); if(ta) ta.addEventListener('input',()=>{ S.conclusion=ta.value; updSent(); changed(); });
+  $('#modalBg').addEventListener('click',e=>{ if(e.target.id==='modalBg') closeModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('#modalBg').classList.contains('open')) closeModal(); });
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) saveNow(); });
+  window.addEventListener('beforeunload',saveNow);
+  if(window.ResizeObserver){ const ro=new ResizeObserver(()=>scheduleGraphs()); $$('.gwrap canvas').forEach(c=>ro.observe(c)); }
+  else window.addEventListener('resize',scheduleGraphs);
+  go(S.view,{noScroll:true});
+  if(had&&hasData()) resume();
+  requestAnimationFrame(loop);
+}
+
+/* ===================== GYAKORLAT: ABSZOLÚT NULLA FOK GÁZHŐMÉRŐVEL (Charles-törvény) ===================== */
+const GVD=0.8;          // a vízfürdőn kívüli csőszakasz térfogata (mL), szobahőmérsékleten marad
+const A3=1.0e-5;        // az üveglombik térfogati hőtágulási együtthatója (1/K)
+const ACOL=12.6;        // a manométercső belső keresztmetszete (mm²)
+const RHOG=0.1334;      // ρ·g a higanyra (kPa/mm): 13 600 kg/m³ · 9,81 m/s²
+const DP=0.2;           // a nyomás leolvasásának bizonytalansága (kPa)
+const ZY0=200, ZK=0.55; // jelenet: nullajel helye és px/mm
+const GT={Tb:295,Tg:295,Tth:295,zA:0,zAd:0,time:0,dT:9,tShow:NaN,noise:0,nT:0,mol:[],els:null,lastLA:NaN,lastLB:NaN};
+const Troom=()=>S.env.tC+273.15;
+const zy=z=>ZY0-z*ZK;
+function Vb(Tg){ return S.sim.Vf*(1+A3*(Tg-Troom())); }
+function pGas(z,Tg){ return S.sim.nk/(Vb(Tg)/Tg+(GVD-ACOL*z*1e-3)/Troom()); }
+function solveZ(R,Tg,z0){ let z=isFinite(z0)?z0:0; for(let i=0;i<6;i++){ const den=Vb(Tg)/Tg+(GVD-ACOL*z*1e-3)/Troom(), p=S.sim.nk/den, f=p-S.env.p0-RHOG*(R-2*z), dp=S.sim.nk*ACOL*1e-3/Troom()/(den*den); z-=f/(dp+2*RHOG); } return clamp(z,-95,60); }
+function hSS(tC){ return (pGas(0,tC+273.15)-S.env.p0)/RHOG; }
+function reseal(){ S.sim.nk=S.env.p0*(S.sim.Vf+GVD)/Troom(); }
+function gcover(){ const ts=[...new Set(S.rows.map(r=>parseNum(r.t)).filter(isFinite).map(v=>Math.round(v)))]; const cnt=ts.length, span=cnt?Math.max(...ts)-Math.min(...ts):0; return {cnt,span,ok:cnt>=6&&span>=50}; }
+function gRows(){ const pL=val('pL',S.env.p0); return S.rows.filter(rowValid).map(r=>({t:parseNum(r.t),h:parseNum(r.h),p:pL+RHOG*parseNum(r.h),r})); }
+
+const LAB={
+  slug:'gazhomero-abszolut-nulla-hu', title:'Abszolút nulla fok gázhőmérővel – virtuális labor',
+  views:[{id:'prep',lesson:1,label:'Előkészítés',icon:'prep'},{id:'meas',lesson:1,label:'Mérés',icon:'meas'},{id:'proc',lesson:2,label:'Feldolgozás',icon:'proc'},{id:'concl',lesson:2,label:'Következtetés',short:'Következt.',icon:'concl'}],
+  lessons:[
+    {n:1,name:'Előkészítés és mérés',time:'kb. 40 perc',goal:'Különböző vízfürdő-hőmérsékleteken megméred az állandó térfogatú gáz nyomását a higanyos manométerrel. Minden adatot leírsz a füzetedbe.',checks:[
+      {t:'Megadtad a neved',f:()=>S.student.name.trim().length>1},
+      {t:'Leolvastad a légnyomást',f:()=>S.ok.pL},
+      {t:'Legalább 6 különböző hőmérséklet',f:()=>gcover().cnt>=6},
+      {t:'A hőmérsékletek legalább 50 °C-os tartományt fednek le',f:()=>gcover().span>=50},
+      {t:'Minden adatot leírtál a füzetedbe',manual:'nb1'}]},
+    {n:2,name:'Feldolgozás és következtetés',time:'kb. 45 perc',goal:'Kiszámolod a gáz nyomását, a p–t egyenest meghosszabbítod p = 0-ig, és megkapod az abszolút nulla fokot (t₀) a bizonytalanságával. Megírod a következtetést.',checks:[
+      {t:'Kiszámoltad a nyomás oszlopot',f:()=>{ const s=tableStats(); return s.tot>0&&s.good===s.tot; }},
+      {t:'Kiválasztottad az A és B pontot',f:()=>S.ok.AB},
+      {t:'Meredekség és t₀ kiszámolva',f:()=>S.ok.a&&S.ok.t0},
+      {t:'Bizonytalanság kiszámolva (t₀′, t₀″, Δt₀)',f:()=>S.ok.t0p&&S.ok.t0m&&S.ok.dt0},
+      {t:'Végeredmény ellenőrizve',f:()=>S.ok.res},
+      {t:'Megírtad a következtetést (legalább 3 mondat)',f:()=>sentences(S.conclusion)>=3}]}
+  ],
+  DEF:()=>{ const tC=+(19.5+Math.random()*5).toFixed(1); return {env:{tC,p0:+(99.6+Math.random()*2.8).toFixed(1),off:+((Math.random()-0.5)*0.6).toFixed(2)},sim:{Vf:250,set:Math.round(tC),R:0,nk:0}}; },
+  sanitize(){
+    const e=S.env; if(!(e.tC>10&&e.tC<35)) e.tC=21; if(!(e.p0>90&&e.p0<110)) e.p0=101.3; if(!(Math.abs(e.off)<=0.5)) e.off=0;
+    const s=S.sim; s.Vf=clamp(Math.round((+s.Vf||250)/10)*10,100,500); s.set=clamp(Math.round(+s.set),0,90); if(!isFinite(s.set)) s.set=Math.round(e.tC);
+    s.R=clamp(Math.round(+s.R||0),-150,300); if(!(s.nk>0)) reseal();
+  },
+  resetRuntime(){ GT.Tb=GT.Tg=GT.Tth=S.sim.set+S.env.off+273.15; if(S.sim.set===Math.round(S.env.tC)&&!S.rows.length) GT.Tb=GT.Tg=GT.Tth=Troom(); GT.zA=solveZ(S.sim.R,GT.Tg,0); GT.zAd=GT.zA; GT.tShow=NaN; GT.lastLA=GT.lastLB=NaN; },
+  table:{cols:[
+    {id:'t',head:'t (°C)',aria:'hőmérséklet'},
+    {id:'h',head:'h (mm)',aria:'szintkülönbség'},
+    {id:'p',head:'p (kPa)',aria:'a gáz nyomása',calc:true,exp:r=>val('pL',S.env.p0)+RHOG*parseNum(r.h),tol:[0.06,0],show:e=>fmt(e,2)}],
+    hint:'Piros mezők: p = p_L + 0,1334 · h (h mm-ben, p kPa-ban, két tizedesre). Negatív h-nál p kisebb a légnyomásnál.'},
+  order:['pL','AB','xA','yA','xB','yB','a','t0','t0p','t0m','dt0','res'],
+  tableDeps:[],
+  graphView:'proc',
+  ab:{cv:'g1',where:'a felső, p–t grafikonon',xn:'t (°C)',yn:'p (kPa)',dx:0,dy:2},
+  bestLine(){ const d=gRows(); return d.length>=2?fit(d.map(q=>q.t),d.map(q=>q.p)):null; },
+  xRange(){ const xs=gRows().map(q=>q.t); return xs.length?[Math.min(...xs),Math.max(...xs)]:[0,0]; },
+  fields:{
+    pL:{label:'Légnyomás: <i>p</i><sub>L</sub> (kPa-ban!)',unit:'kPa',aria:'légnyomás',exp:()=>S.env.p0,tol:[0.051,0],show:e=>fmt(e,1),hint:(v,e)=>Math.abs(v-e*10)<1?'A barométer hPa-ban mutat. Váltsd át: 1 hPa = 0,1 kPa.':'Olvasd le újra a barométert, és váltsd át: 1 hPa = 0,1 kPa.'},
+    a:{label:'Az egyenes meredeksége',formula:`<i>a</i> = ${FR('<i>p</i><sub>B</sub> − <i>p</i><sub>A</sub>','<i>t</i><sub>B</sub> − <i>t</i><sub>A</sub>')}`,unit:'kPa/°C',aria:'meredekség',exp:()=>(num('yB')-num('yA'))/(num('xB')-num('xA')),tol:[0.0002,0.006],show:e=>fmt(e,4),need:'Előbb add meg az A és a B pontot.',hint:'Számold újra: a nyomások különbségét oszd el a hőmérsékletek különbségével (B mínusz A). Legalább 4 tizedesre kerekíts.'},
+    t0:{label:'Hol metszi az egyenes a t tengelyt (p = 0)?',formula:`<i>t</i><sub>0</sub> = <i>t</i><sub>A</sub> − ${FR('<i>p</i><sub>A</sub>','<i>a</i>')}`,unit:'°C',aria:'abszolút nulla fok',exp:()=>num('xA')-num('yA')/val('a',NaN),tol:[0.6,0.002],show:e=>fmt(e,1),need:'Előbb számold ki a meredekséget.',hint:'t₀ = t_A − p_A ÷ a. Előbb az osztást végezd el, utána a kivonást. Az eredmény negatív szám.'},
+    t0p:{label:'1. határegyenes: A-t feljebb (+Δp), B-t lejjebb (−Δp) toljuk',formula:`<i>t</i><sub>0</sub>′ = <i>t</i><sub>A</sub> − (<i>p</i><sub>A</sub> + Δ<i>p</i>) · ${FR('<i>t</i><sub>B</sub> − <i>t</i><sub>A</sub>','(<i>p</i><sub>B</sub> − Δ<i>p</i>) − (<i>p</i><sub>A</sub> + Δ<i>p</i>)')}`,unit:'°C',aria:'első határegyenes metszéspontja',exp:()=>{ const xa=num('xA'),ya=num('yA'),xb=num('xB'),yb=num('yB'); return xa-(ya+DP)*(xb-xa)/((yb-DP)-(ya+DP)); },tol:[0.8,0.003],show:e=>fmt(e,1),need:'Előbb add meg az A és a B pontot.',hint:'Számold lépésenként: p_A + 0,2; p_B − 0,2; a különbségük; t_B − t_A; majd a képlet.'},
+    t0m:{label:'2. határegyenes: A-t lejjebb (−Δp), B-t feljebb (+Δp) toljuk',formula:`<i>t</i><sub>0</sub>″ = <i>t</i><sub>A</sub> − (<i>p</i><sub>A</sub> − Δ<i>p</i>) · ${FR('<i>t</i><sub>B</sub> − <i>t</i><sub>A</sub>','(<i>p</i><sub>B</sub> + Δ<i>p</i>) − (<i>p</i><sub>A</sub> − Δ<i>p</i>)')}`,unit:'°C',aria:'második határegyenes metszéspontja',exp:()=>{ const xa=num('xA'),ya=num('yA'),xb=num('xB'),yb=num('yB'); return xa-(ya-DP)*(xb-xa)/((yb+DP)-(ya-DP)); },tol:[0.8,0.003],show:e=>fmt(e,1),need:'Előbb add meg az A és a B pontot.',hint:'Számold lépésenként: p_A − 0,2; p_B + 0,2; a különbségük; t_B − t_A; majd a képlet.'},
+    dt0:{label:'Az abszolút nulla fok bizonytalansága',formula:`Δ<i>t</i><sub>0</sub> = ${FR('|<i>t</i><sub>0</sub>′ − <i>t</i><sub>0</sub>″|','2')}`,unit:'°C',aria:'t0 bizonytalansága',exp:()=>Math.abs(val('t0p',NaN)-val('t0m',NaN))/2,tol:[0.25,0.05],show:e=>fmt(e,1),need:'Előbb számold ki t₀′-t és t₀″-t.',hint:'A két határegyenesből kapott érték különbségének abszolút értékét oszd el 2-vel.'}
+  },
+
+  init(){
+    $('#scene').innerHTML=gScene();
+    GT.els={water:$('#water'),heat:$('#heat'),ice:$('#ice'),steam:$('#steam'),hgA:$('#hgA'),tubeB:$('#tubeB'),hgB:$('#hgB'),hose:$('#hose'),hoseHg:$('#hoseHg'),lblB:$('#lblB'),gas:$('#gasB'),mol:$$('#gmols circle'),tset:$('#tsetTxt')};
+    GT.mol=GT.els.mol.map(()=>{ const a=Math.random()*6.283,r=Math.sqrt(Math.random()); return {x:r*Math.cos(a),y:r*Math.sin(a),vx:gauss(),vy:gauss()}; });
+    LAB.resetRuntime(); placeFlask();
+    makeStp($('#stpVf'),{label:'A lombik térfogata',min:100,max:500,step:10,bl:'100 mL',br:'500 mL',fmt:v=>v+' mL',get:()=>S.sim.Vf,
+      set:v=>{ if(S.rows.length&&!confirm('Más lombikkal más gázmennyiséggel mérsz, ezért az eddigi mérési soraid törlődnek. Folytatod?')) return; S.rows=[]; S.sim.Vf=v; reseal(); placeFlask(); renderTable(); changed(); }});
+    makeStp($('#stpSet'),{label:'Termosztát (vízfürdő)',min:0,max:90,step:1,bl:'0 °C (jeges víz)',br:'90 °C',fmt:v=>v+' °C (beállítva)',get:()=>S.sim.set,set:v=>{ S.sim.set=v; save(); }});
+    makeStp($('#stpR'),{label:'Kiegyenlítő tartály (B szár)',min:-150,max:300,step:1,hideValue:true,hint:'figyeld a bal nagyítót',bl:'lent',br:'fent',fmt:v=>v+' mm',get:()=>S.sim.R,set:v=>{ S.sim.R=v; save(); }});
+    ['#recT','#recH'].forEach(s=>$(s).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); if(s==='#recT') $('#recH').focus(); else LAB.act('rec'); } }));
+    ['#tr','#dtr'].forEach(s=>$(s).addEventListener('input',()=>{ delete S.ok.res; delete FB.res; gUpdRes(); }));
+  },
+  renderStatic(){
+    $('#envP').innerHTML=Math.round(S.env.p0*10)+'<small>hPa</small>';
+    const c=gcover();
+    $('#coverTxt').innerHTML=`Mérések: <b>${c.cnt} / 6</b> különböző hőmérséklet · tartomány: <b>${c.cnt?c.span:0} / 50 °C</b> ${c.ok?'<span class="pill ok">teljesítve</span>':''}`;
+    $('#recList').innerHTML=S.rows.map((r,i)=>`<span class="rec">${i+1}. ${esc(r.t)} °C; ${esc(r.h)} mm<button type="button" data-act="delRec" data-i="${i}" aria-label="${i+1}. mérés törlése">✕</button></span>`).join('');
+    const nb=$('#nextBanner');
+    if(!S.rows.length) nb.innerHTML='<b>Most:</b> állítsd be a termosztátot egy általad választott hőmérsékletre, várd meg, amíg a hőmérő nem változik, majd a tartállyal hozd a bal higanyszintet a nullajelre.';
+    else if(!c.ok) nb.innerHTML='<b>Következő pont:</b> új hőmérséklet a termosztáton → várakozás (kb. fél perc) → bal higanyszint a nullajelre → t és h leolvasása.';
+    else nb.innerHTML='<b>Megvan a szükséges mérés.</b> Ha szeretnéd, mérj még néhány pontot, aztán írj le mindent a füzetbe és fejezd be az órát.';
+    $$('[data-act="speed"]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===S.speed)));
+    const rr=$('#remRows'); if(rr) rr.innerHTML=`Feljegyzett mérési sorok: <b>${S.rows.length}</b>. A mért értékeket (t, h) lent, a táblázatban is javíthatod vagy beírhatod.`;
+    gUpdRes();
+  },
+  onChange(){ LAB.renderStatic(); if(S.view==='concl') renderConcl(); if(S.view==='proc') scheduleGraphs(); },
+  onInvalidate(){ gUpdRes(); const f=$('#abFb'); if(f&&S.ok.AB===undefined&&!FB.AB){ f.textContent=''; f.className='fb'; } },
+  onHelp(){ const h=$('#helpBox'); if(h) h.hidden=!S.help; },
+  onView(id){
+    LAB.renderStatic(); LAB.onHelp();
+    if(id==='proc'){ renderTable(); renderAB(); renderFields(); scheduleGraphs(); }
+    if(id==='concl') renderConcl();
+    if(id==='meas'){ GT.lastLA=GT.lastLB=NaN; }
+  },
+  act(a,el){
+    if(a==='speed'){ S.speed=+el.dataset.v===2?2:1; LAB.renderStatic(); save(); }
+    else if(a==='rec') gRecord();
+    else if(a==='delRec'){ const i=+el.dataset.i; if(confirm(`Törlöd a(z) ${i+1}. mérést?`)){ S.rows.splice(i,1); renderTable(); changed(); } }
+    else if(a==='chkRes'){ const r=checkResult(S.f.tr,S.f.dtr,val('t0',NaN),val('dt0',NaN)); if(r.ok===null){ delete S.ok.res; FB.res={k:'warn',m:r.msg}; } else { S.ok.res=r.ok; FB.res={k:r.ok?'ok':'bad',m:(r.ok?'✓ ':'')+r.msg}; } gUpdRes(); changed(); }
+  },
+
+  step(dt){
+    GT.time+=dt;
+    const tset=Math.max(273.2,S.sim.set+S.env.off+0.08*Math.sin(GT.time*2*Math.PI/40)+273.15);
+    GT.Tb+=(tset-GT.Tb)*(1-Math.exp(-dt/7));
+    GT.Tg+=(GT.Tb-GT.Tg)*(1-Math.exp(-dt/6));
+    GT.Tth+=(GT.Tb-GT.Tth)*(1-Math.exp(-dt/2));
+    GT.zA=solveZ(S.sim.R,GT.Tg,GT.zA);
+    GT.zAd+=(GT.zA-GT.zAd)*(RM?1:1-Math.exp(-dt/0.25));
+    GT.nT+=dt; if(GT.nT>0.25){ GT.nT=0; GT.noise=gauss()*0.03; }
+    if(!RM){ const spd=0.9*Math.sqrt(GT.Tg/295); GT.mol.forEach(m=>{ m.x+=m.vx*spd*dt; m.y+=m.vy*spd*dt; const r=Math.hypot(m.x,m.y); if(r>0.92){ const nx=m.x/r,ny=m.y/r,d=m.vx*nx+m.vy*ny; m.vx-=2*d*nx; m.vy-=2*d*ny; m.x=nx*0.92; m.y=ny*0.92; } }); }
+  },
+  render(dt){
+    if(S.view!=='meas') return;
+    const E=GT.els, tb=GT.Tb-273.15, R=S.sim.R, zA=GT.zAd, zB=R-zA;
+    const k=clamp(tb/90,0,1); E.water.setAttribute('fill',`rgb(${Math.round(70+150*k)},${Math.round(130-40*k)},${Math.round(200-120*k)})`); E.water.setAttribute('fill-opacity','0.55');
+    const heating=clamp((S.sim.set-S.env.tC)/70,0,1)*(0.6+0.4*clamp((S.sim.set+273.15-GT.Tb)/5+0.5,0,1));
+    E.heat.setAttribute('fill',`rgb(${Math.round(58+197*heating)},${Math.round(67+55*heating)},${Math.round(82-35*heating)})`);
+    E.ice.style.display=tb<5?'':'none'; E.steam.style.opacity=clamp((tb-60)/25,0,1).toFixed(2);
+    E.tset.textContent=S.sim.set+' °C';
+    E.hgA.setAttribute('y',zy(zA).toFixed(1)); E.hgA.setAttribute('height',Math.max(0,300-zy(zA)).toFixed(1));
+    const yTop=zy(R+120), yBot=zy(R-100);
+    E.tubeB.setAttribute('y',yTop.toFixed(1)); E.tubeB.setAttribute('height',(yBot-yTop).toFixed(1));
+    const yHg=clamp(zy(zB),yTop,yBot); E.hgB.setAttribute('y',yHg.toFixed(1)); E.hgB.setAttribute('height',(yBot-yHg).toFixed(1));
+    const hp=`M236 300 C236 ${Math.max(345,yBot+30)}, 308 ${Math.max(345,yBot+30)}, 308 ${yBot.toFixed(1)}`; E.hose.setAttribute('d',hp); E.hoseHg.setAttribute('d',hp);
+    E.lblB.setAttribute('y',(yTop-6).toFixed(1));
+    const fl=GT.flask; if(fl) E.mol.forEach((c,i)=>{ const m=GT.mol[i]; c.setAttribute('cx',(fl.cx+m.x*fl.r).toFixed(1)); c.setAttribute('cy',(fl.cy+m.y*fl.r).toFixed(1)); });
+    GT.dT+=dt;
+    if(GT.dT>0.25){ GT.dT=0; GT.tShow=Math.round((GT.Tth-273.15+GT.noise)*10)/10; $('#rdT').innerHTML=fmt(GT.tShow,1)+'<small>°C</small>';
+      if(S.help) $('#helpTxt').innerHTML=`T<sub>gáz</sub> = ${fmt(GT.Tg-273.15,2)} °C<br>bal szint: ${fmt(GT.zA,1)} mm (0 a jó)<br>h<sub>jobb</sub> = ${fmt(R-GT.zA,1)} mm<br>p<sub>gáz</sub> = ${fmt(pGas(GT.zA,GT.Tg),2)} kPa`; }
+    if(!(Math.abs(zA-GT.lastLA)<0.02)){ GT.lastLA=zA; $('#loupeA').innerHTML=loupeA(zA); }
+    if(!(Math.abs(zB-GT.lastLB)<0.02)){ GT.lastLB=zB; $('#loupeB').innerHTML=loupeB(zB); }
+  },
+
+  lessonSummary(n){
+    if(n===1){ const d=gRows(); if(!d.length) return '<p>Még nincs mérési sor.</p>';
+      const ts=d.map(q=>q.t),hs=d.map(q=>q.h);
+      return `<p>Feljegyzett mérések: <b>${d.length}</b><br>t: ${fmt(Math.min(...ts),1)} … ${fmt(Math.max(...ts),1)} °C · h: ${fmt(Math.min(...hs),0)} … ${fmt(Math.max(...hs),0)} mm<br>Légnyomás: p<sub>L</sub> = ${esc(S.f.pL||'–')} kPa · lombik: ${S.sim.Vf} mL</p>`; }
+    return `<p>${S.ok.res?'Végeredményed: <b>'+gResText()+'</b>':'A végeredmény még nincs ellenőrizve.'}</p>`;
+  },
+  summary(){
+    const t0=S.ok.res?parseNum(S.f.tr):val('t0',NaN), d=S.ok.res?parseNum(S.f.dtr):val('dt0',NaN);
+    if(!isFinite(t0)) return '<p class="empty">Előbb végezd el a feldolgozást (t₀ kiszámolása).</p>';
+    const ref=-273.15, dev=(t0-ref)/Math.abs(ref)*100, inside=isFinite(d)&&Math.abs(t0-ref)<=d, g=-1/t0;
+    return `<div class="sumgrid">
+      <div class="sum"><div class="sl">A mérésed</div><div class="sv">${S.ok.res?gResText():'t₀ ≈ '+fmt(t0,1)+' °C'}</div></div>
+      <div class="sum"><div class="sl">Elméleti érték</div><div class="sv">t₀ = −273,15 °C</div></div>
+      <div class="sum ${Math.abs(dev)<=2?'ok':'warn'}"><div class="sl">Eltérés</div><div class="sv">${fmt(dev,1)} %</div></div>
+      <div class="sum"><div class="sl">γ = −${FR('1','t₀')} (elmélet: 0,003661 °C⁻¹)</div><div class="sv">${isFinite(g)&&g>0?fmt(g,6)+' °C⁻¹':'–'}</div></div></div>
+      ${isFinite(d)?`<p class="banner ${inside?'ok':'warn'}">${inside?'Az elméleti érték (−273,15 °C) a mérésed bizonytalansági tartományán belül van.':'Az elméleti érték kívül esik a bizonytalansági tartományon – gondold végig, mi okozhat rendszeres (mindig egy irányba ható) hibát.'}</p>`:''}`;
+  },
+  about:`<p>A lombikban lévő gáz állandó térfogaton melegszik vagy hűl, ezért a nyomása a Charles-törvény szerint egyenesen arányos az abszolút hőmérséklettel. A nyomást higanyos manométerrel méred: <i>p</i> = <i>p</i><sub>L</sub> + <i>ρ·g·h</i>.</p>
+   <ul><li><b>Állandó térfogat:</b> a bal (A) higanyszintet mindig a nullajelre kell hozni a kiegyenlítő tartállyal. Ha nem ott van, a leolvasott h hamis (1 mm eltérés ≈ 0,13 kPa).</li>
+   <li><b>Késés:</b> a vízfürdő kb. 7 s, a gáz kb. 6 s, a hőmérő kb. 2 s időállandóval követi a változást (×1-es sebességnél). Ezért várni kell, amíg semmi sem változik.</li>
+   <li><b>Rendszeres hibák (kicsik):</b> a vízfürdőn kívüli csőszakasz (0,8 mL) szobahőmérsékleten marad, és az üveglombik kissé tágul (3·10⁻⁶ 1/K lineárisan). Ezek miatt t₀ néhány tized-, illetve néhány egész fokkal eltérhet −273,15 °C-tól; nagyobb lombiknál kisebb a hatás.</li>
+   <li><b>Termosztát:</b> a víz hőmérséklete néhány tized fokkal eltérhet a beállítottól, és kicsit ingadozik – ezért a hőmérőt olvasd le, ne a beállított értéket írd be.</li>
+   <li><b>Hőmérő:</b> digitális, 0,1 °C felbontással. <b>Vonalzó:</b> mm beosztás; ρ<sub>Hg</sub> = 13 600 kg/m³, g = 9,81 m/s², így 1 mm higanyoszlop = 0,1334 kPa.</li>
+   <li><b>Bizonytalanság:</b> a nyomás leolvasását Δp = 0,2 kPa-ra becsüljük (h leolvasása ±1 mm ≈ 0,13 kPa, a barométer ±0,1 kPa). A két határegyenes az A és B pont ±Δp-vel eltolt helyzetéből adódik.</li></ul>
+   <p class="muted">Az adatok csak ezen az eszközön, a böngészőben tárolódnak; a program nem küld semmit az internetre.</p>`
+};
+
+function placeFlask(){
+  const r=36*Math.cbrt(S.sim.Vf/250), cx=80, cy=282-r; GT.flask={cx,cy,r};
+  const b=$('#bulb'); b.setAttribute('cx',cx); b.setAttribute('cy',cy.toFixed(1)); b.setAttribute('r',r.toFixed(1));
+  const n=$('#neck'); n.setAttribute('y',60); n.setAttribute('height',(cy-r-58).toFixed(1));
+}
+function gRecord(){
+  const ts=$('#recT').value.trim(), hs=$('#recH').value.trim(), t=parseNum(ts), h=parseNum(hs);
+  if(!isFinite(t)||!isFinite(h)){ toast('Írd be a leolvasott hőmérsékletet és a h szintkülönbséget is.','warn'); return; }
+  S.rows.push({t:ts,h:hs,p:''});
+  let warn='';
+  if(isFinite(GT.tShow)&&Math.abs(t-GT.tShow)>0.6) warn='A hőmérséklet nem egyezik a hőmérő kijelzésével – olvasd le újra, és ha kell, töröld ezt a sort.';
+  else if(Math.abs(h-hSS(t))>3) warn='A h érték eltér a várhatótól. Pontosan a nullajelen van a bal higanyszint? Megvártad, hogy a gáz felvegye a fürdő hőmérsékletét? Ha kell, töröld ezt a sort.';
+  toast(warn||`Feljegyezve: ${S.rows.length}. mérés. Írd le a füzetedbe is!`,warn?'warn':'ok');
+  $('#recT').value=''; $('#recH').value=''; $('#recT').focus();
+  renderTable(); LAB.renderStatic(); changed();
+}
+function gResText(){
+  const v=parseNum(S.f.tr), d=parseNum(S.f.dtr); if(!isFinite(v)||!isFinite(d)) return '–';
+  const sd=sigDigits(S.f.dtr), dec=Math.max(0,-(Math.floor(Math.log10(d)+1e-9)-sd+1));
+  return `t₀ = (${fmt(v,dec)} ± ${fmt(d,dec)}) °C`;
+}
+function gUpdRes(){
+  const fb=$('#resFb'), ln=$('#resLine'); if(!fb) return;
+  const m=FB.res; fb.className='fb '+(m?m.k:(S.ok.res?'ok':'')); fb.textContent=m?m.m:(S.ok.res?'✓ Helyes végeredmény!':'');
+  ln.hidden=!S.ok.res; if(S.ok.res) ln.textContent=gResText();
+  const rh=$('#resHelp'); if(S.help){ const t=val('t0',NaN),d=val('dt0',NaN); rh.hidden=!(isFinite(t)&&isFinite(d)); rh.textContent='várt kb.: '+fmt(t,1)+' ± '+fmt(d,1); } else rh.hidden=true;
+}
+LAB.drawGraphs=function(){
+  const d=gRows(), L=LAB.bestLine();
+  const ts=d.map(q=>q.t), ps=d.map(q=>q.p);
+  const xr=ts.length?niceRange(Math.min(...ts),Math.max(...ts),0.1):[0,100], yr=ps.length?niceRange(Math.min(...ps),Math.max(...ps),0.15):[90,140];
+  const mk=[]; if(isFinite(num('xA'))&&isFinite(num('yA'))) mk.push({x:num('xA'),y:num('yA'),label:'A'}); if(isFinite(num('xB'))&&isFinite(num('yB'))) mk.push({x:num('xB'),y:num('yB'),label:'B'});
+  plot($('#g1'),{xr,yr,xl:'t (°C)',yl:'p (kPa)',pts:d.map(q=>({x:q.t,y:q.p,ey:DP})),lines:L?[{a:L.a,b:L.b,color:C_BEST}]:[],marks:mk,
+    legend:d.length?[{pt:1,t:'mért pontok (±Δp)'}].concat(L?[{color:C_BEST,t:'legjobb egyenes'}]:[]).concat(mk.length?[{mark:1,t:'A, B pont'}]:[]):null,legendRight:true,legendBottom:true});
+  const pMax=ps.length?Math.max(...ps):140, lines=[];
+  if(L) lines.push({a:L.a,b:L.b,x1:-300,x2:100,color:C_BEST});
+  const xa=num('xA'),ya=num('yA'),xb=num('xB'),yb=num('yB'); let leg=[];
+  if([xa,ya,xb,yb].every(isFinite)&&xb!==xa){
+    const a1=((yb-DP)-(ya+DP))/(xb-xa), b1=(ya+DP)-a1*xa, a2=((yb+DP)-(ya-DP))/(xb-xa), b2=(ya-DP)-a2*xa;
+    lines.push({a:a1,b:b1,x1:-300,x2:100,color:C_BND,dash:[6,4],w:1.5},{a:a2,b:b2,x1:-300,x2:100,color:C_BND,dash:[6,4],w:1.5}); leg=[{color:C_BND,dash:[6,4],t:'határegyenesek'}];
+  }
+  plot($('#g3'),{xr:[-300,100],yr:[0,pMax*1.45],xl:'t (°C)',yl:'p (kPa)',xdec:0,pts:d.map(q=>({x:q.t,y:q.p})),lines,vlines:[{x:-273.15,label:'−273,15 °C',color:'#8a5a12'}],
+    legend:d.length?[{pt:1,t:'mért pontok'}].concat(L?[{color:C_BEST,t:'legjobb egyenes, meghosszabbítva'}]:[]).concat(leg):null,legendOffset:22});
+  const r2=$('#r2'); if(r2) r2.textContent=L?`Ellenőrzésként: az illesztés R² = ${fmt(L.r2,4)}.`:'';
+};
+
+function gScene(){
+  let rt=''; for(let z=-150;z<=260;z+=10){ const y=zy(z), L=z%50===0?11:6; rt+=`<line x1="256" y1="${y.toFixed(1)}" x2="${256+L}" y2="${y.toFixed(1)}" stroke="#333" stroke-width="${z%50===0?1.2:.7}"/>`; if(z%50===0) rt+=`<text x="284" y="${(y+3).toFixed(1)}" font-size="8.5" text-anchor="end" fill="#222">${String(z).replace('-','−')}</text>`; }
+  let mols=''; for(let i=0;i<34;i++) mols+='<circle r="1.8" fill="#bfe0ff"/>';
+  return `<svg viewBox="0 26 400 326" role="img" aria-label="Gázhőmérő: lombik vízfürdőben, higanyos manométer kiegyenlítő tartállyal">
+  <defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#8e959e"/><stop offset=".45" stop-color="#e9edf2"/><stop offset="1" stop-color="#9aa1aa"/></linearGradient></defs>
+  <path d="M82 60 V40 H236 V54" stroke="#cfd6de" stroke-width="4" fill="none"/>
+  <g id="steam" style="opacity:0"><path class="anim-float" d="M40 120 q6 -10 0 -20 q-6 -10 0 -20" stroke="#dfe6ee" stroke-width="2" fill="none" opacity=".6"/><path class="anim-float" d="M100 118 q6 -10 0 -20 q-6 -10 0 -20" stroke="#dfe6ee" stroke-width="2" fill="none" opacity=".5"/><path class="anim-float" d="M140 122 q6 -10 0 -20" stroke="#dfe6ee" stroke-width="2" fill="none" opacity=".5"/></g>
+  <rect id="water" x="20" y="146" width="138" height="144" fill="#4682c8" fill-opacity=".55"/>
+  <g id="ice" style="display:none"><rect x="34" y="144" width="14" height="12" rx="2" fill="#e8f6ff" opacity=".9" transform="rotate(-12 41 150)"/><rect x="118" y="145" width="13" height="11" rx="2" fill="#e8f6ff" opacity=".9" transform="rotate(15 124 150)"/></g>
+  <rect id="neck" x="77" y="60" width="10" height="160" fill="rgba(200,225,250,.25)" stroke="#dfe6ee" stroke-width="1.5"/>
+  <circle id="bulb" cx="80" cy="246" r="36" fill="rgba(200,225,250,.22)" stroke="#dfe6ee" stroke-width="2"/>
+  <g id="gmols">${mols}</g>
+  <rect x="126" y="96" width="5" height="170" rx="2" fill="#b9c3ce"/><rect x="115" y="78" width="27" height="18" rx="3" fill="#2a3546" stroke="#4a5b73"/><text x="128.5" y="91" font-size="8" text-anchor="middle" fill="#b8d4a4">°C</text>
+  <path d="M18 128 V292 H160 V128" stroke="#dfe6ee" stroke-width="2.4" fill="none"/>
+  <rect id="heat" x="12" y="294" width="154" height="12" rx="3" fill="#3a4352"/>
+  <text x="89" y="322" font-size="9.5" text-anchor="middle" fill="#9fb0c5">vízfürdő · termosztát: <tspan id="tsetTxt" fill="#e0a43a" font-weight="700">20 °C</tspan></text>
+  <rect x="254" y="${zy(262).toFixed(1)}" width="32" height="${(zy(-162)-zy(262)).toFixed(1)}" fill="#f3efe4" rx="2"/>
+  ${rt}
+  <path id="hoseHg" d="" stroke="#aeb5be" stroke-width="5" fill="none"/>
+  <path id="hose" d="" stroke="#5c6470" stroke-width="9" fill="none" opacity=".55"/>
+  <rect x="228" y="52" width="16" height="248" rx="3" fill="rgba(220,235,250,.08)" stroke="#dfe6ee" stroke-width="1.5"/>
+  <rect id="hgA" x="230.5" y="200" width="11" height="100" fill="url(#hg)"/>
+  <line x1="221" y1="${ZY0}" x2="251" y2="${ZY0}" stroke="#e05545" stroke-width="2"/><text x="214" y="${ZY0+4}" font-size="10" fill="#e05545" text-anchor="middle" font-weight="700">0</text>
+  <rect id="tubeB" x="300" y="80" width="16" height="200" rx="3" fill="rgba(220,235,250,.08)" stroke="#dfe6ee" stroke-width="1.5"/>
+  <rect id="hgB" x="302.5" y="200" width="11" height="80" fill="url(#hg)"/>
+  <text x="236" y="48" font-size="11" fill="#dfe6ee" text-anchor="middle" font-weight="700" dx="-14">A</text>
+  <text id="lblB" x="308" y="74" font-size="11" fill="#dfe6ee" text-anchor="middle" font-weight="700">B</text>
+  <text x="270" y="345" font-size="9.5" text-anchor="middle" fill="#9fb0c5">higanyos manométer · vonalzó (mm)</text>
+</svg>`;
+}
+function loupeA(z){
+  const K=3.6, c=50; let s=`<svg viewBox="0 0 160 100" aria-hidden="true"><rect width="160" height="100" fill="#f3efe4"/><rect x="58" y="0" width="44" height="100" fill="#e2ebf3" stroke="#7d8a99"/>`;
+  const top=c-z*K;
+  if(top<104){ s+=`<path d="M60 ${(top+4).toFixed(1)} Q80 ${(top-3).toFixed(1)} 100 ${(top+4).toFixed(1)} V100 H60 Z" fill="url(#hgl)"/>`; }
+  for(let m=-14;m<=14;m++){ const y=c-m*K; const L=m%5===0?10:5; s+=`<line x1="${120}" y1="${y.toFixed(1)}" x2="${120+L}" y2="${y.toFixed(1)}" stroke="#333" stroke-width="${m%5===0?1.2:.7}"/>`; if(m%5===0&&m!==0) s+=`<text x="152" y="${(y+3).toFixed(1)}" font-size="9" text-anchor="end" fill="#333">${String(m).replace('-','−')}</text>`; }
+  s+=`<line x1="44" y1="${c}" x2="116" y2="${c}" stroke="#d6453a" stroke-width="2"/><text x="36" y="${c+4}" font-size="12" fill="#d6453a" font-weight="700" text-anchor="middle">0</text>`;
+  s+=`<defs><linearGradient id="hgl" x1="0" x2="1"><stop offset="0" stop-color="#7e858e"/><stop offset=".45" stop-color="#eef1f5"/><stop offset="1" stop-color="#8a919a"/></linearGradient></defs></svg>`;
+  return s;
+}
+function loupeB(z){
+  const K=3.6, c=50; let s=`<svg viewBox="0 0 160 100" aria-hidden="true"><rect width="160" height="100" fill="#f3efe4"/>`;
+  for(let m=Math.floor(z-15);m<=Math.ceil(z+15);m++){ const y=c-(m-z)*K; if(y<-4||y>104) continue; const L=m%10===0?22:m%5===0?15:8; s+=`<line x1="${70-L}" y1="${y.toFixed(1)}" x2="70" y2="${y.toFixed(1)}" stroke="#222" stroke-width="${m%5===0?1.3:.8}"/>`; if(m%5===0) s+=`<text x="${70-L-3}" y="${(y+3.5).toFixed(1)}" font-size="10" text-anchor="end" fill="#222" font-weight="${m%10===0?700:500}">${String(m).replace('-','−')}</text>`; }
+  s+=`<rect x="92" y="0" width="44" height="100" fill="#e2ebf3" stroke="#7d8a99"/><path d="M94 ${c+4} Q114 ${c-3} 134 ${c+4} V100 H94 Z" fill="url(#hgl2)"/>`;
+  s+=`<line x1="70" y1="${c+0.5}" x2="114" y2="${c+0.5}" stroke="#2f6aa8" stroke-width="1" stroke-dasharray="3 3"/>`;
+  s+=`<defs><linearGradient id="hgl2" x1="0" x2="1"><stop offset="0" stop-color="#7e858e"/><stop offset=".45" stop-color="#eef1f5"/><stop offset="1" stop-color="#8a919a"/></linearGradient></defs></svg>`;
+  return s;
+}
+
+boot();
+})();
+</script>
+</body>
+</html>

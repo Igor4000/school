@@ -137,6 +137,20 @@
             border-radius: 20px; margin-left: auto;
         }
 
+        /* ALMENÜ (a legördülő menün belül) */
+        .submenu-btn {
+            width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            padding: 12px 14px; border: none; border-radius: 12px; background: transparent;
+            color: var(--text-medium); font-size: 0.9rem; font-weight: 500; font-family: inherit;
+            cursor: pointer; text-align: left; transition: var(--transition);
+        }
+        .submenu-btn:hover { background: rgba(148, 163, 184, 0.12); color: var(--primary-deep); }
+        .submenu-btn i { font-style: normal; font-size: 0.65rem; transition: transform 0.3s ease; }
+        .submenu.open .submenu-btn i { transform: rotate(180deg); }
+        .submenu-content { display: none; padding: 4px 0 4px 14px; }
+        .submenu.open .submenu-content { display: block; }
+        .submenu-empty { padding: 8px 14px; font-size: 0.8rem; color: var(--text-light); font-style: italic; }
+
         /* TARTALMI SZEKCIÓK */
         .content-section {
             display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
@@ -233,6 +247,81 @@
                         </a>
                     </div>
                 </div>
+
+                <div class="dropdown" id="dropdown-vezbe">
+                    <button class="dropbtn" onclick="toggleDropdown('dropdown-vezbe')" aria-expanded="false">
+                        <span data-translate-key="nav-vezbe">Gyakorlatok</span>
+                        <i>▼</i>
+                    </button>
+                    <div class="dropdown-content">
+                        <!-- ÚJ GYAKORLAT HOZZÁADÁSA EGY MEGLÉVŐ VEZBA-CSOPORTHOZ: másold az alábbi <a> blokkot a megfelelő .submenu-content blokkba. -->
+                        <div class="submenu" id="submenu-vezbe1">
+                            <button class="submenu-btn" onclick="toggleSubmenu('submenu-vezbe1')" aria-expanded="false">
+                                <span data-translate-key="sub-vezbe1">1. gyakorlat</span>
+                                <i>▼</i>
+                            </button>
+                            <div class="submenu-content">
+                                <a href="Abszolut_nulla_gazhomero_labor.html"
+                                   data-href-hu="Abszolut_nulla_gazhomero_labor.html"
+                                   data-href-sr="Apsolutna_nula_gasni_termometar_laboratorija.html">
+                                   <span data-translate-key="link-vezbe1">Abszolút nulla fok – gázhőmérő, virtuális labor</span>
+                                   <span class="lesson-badge"></span>
+                                </a>
+                                <a href="Boyle-Mariotte_virtualis_labor.html"
+                                   data-href-hu="Boyle-Mariotte_virtualis_labor.html"
+                                   data-href-sr="Bojl-Mariotov_zakon_virtuelna_laboratorija.html">
+                                   <span data-translate-key="link-vezbe2">Boyle–Mariotte-törvény – virtuális labor</span>
+                                   <span class="lesson-badge"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="submenu" id="submenu-vezbe2">
+                            <button class="submenu-btn" onclick="toggleSubmenu('submenu-vezbe2')" aria-expanded="false">
+                                <span data-translate-key="sub-vezbe2">2. gyakorlat</span>
+                                <i>▼</i>
+                            </button>
+                            <div class="submenu-content">
+                                <div class="submenu-empty" data-translate-key="sub-empty">Hamarosan...</div>
+                            </div>
+                        </div>
+                        <div class="submenu" id="submenu-vezbe3">
+                            <button class="submenu-btn" onclick="toggleSubmenu('submenu-vezbe3')" aria-expanded="false">
+                                <span data-translate-key="sub-vezbe3">3. gyakorlat</span>
+                                <i>▼</i>
+                            </button>
+                            <div class="submenu-content">
+                                <div class="submenu-empty" data-translate-key="sub-empty">Hamarosan...</div>
+                            </div>
+                        </div>
+                        <div class="submenu" id="submenu-vezbe4">
+                            <button class="submenu-btn" onclick="toggleSubmenu('submenu-vezbe4')" aria-expanded="false">
+                                <span data-translate-key="sub-vezbe4">4. gyakorlat</span>
+                                <i>▼</i>
+                            </button>
+                            <div class="submenu-content">
+                                <div class="submenu-empty" data-translate-key="sub-empty">Hamarosan...</div>
+                            </div>
+                        </div>
+                        <div class="submenu" id="submenu-vezbe5">
+                            <button class="submenu-btn" onclick="toggleSubmenu('submenu-vezbe5')" aria-expanded="false">
+                                <span data-translate-key="sub-vezbe5">5. gyakorlat</span>
+                                <i>▼</i>
+                            </button>
+                            <div class="submenu-content">
+                                <div class="submenu-empty" data-translate-key="sub-empty">Hamarosan...</div>
+                            </div>
+                        </div>
+                        <div class="submenu" id="submenu-vezbe6">
+                            <button class="submenu-btn" onclick="toggleSubmenu('submenu-vezbe6')" aria-expanded="false">
+                                <span data-translate-key="sub-vezbe6">6. gyakorlat</span>
+                                <i>▼</i>
+                            </button>
+                            <div class="submenu-content">
+                                <div class="submenu-empty" data-translate-key="sub-empty">Hamarosan...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -302,6 +391,25 @@
                 'nav-interaktiv': {
                     hu: 'Interaktív anyagok',
                     sr: 'Interaktivni materijali'
+                },
+                'nav-vezbe': {
+                    hu: 'Gyakorlatok',
+                    sr: 'Vežbe'
+                },
+                'sub-vezbe1': { hu: '1. gyakorlat', sr: '1. vežba' },
+                'sub-vezbe2': { hu: '2. gyakorlat', sr: '2. vežba' },
+                'sub-vezbe3': { hu: '3. gyakorlat', sr: '3. vežba' },
+                'sub-vezbe4': { hu: '4. gyakorlat', sr: '4. vežba' },
+                'sub-vezbe5': { hu: '5. gyakorlat', sr: '5. vežba' },
+                'sub-vezbe6': { hu: '6. gyakorlat', sr: '6. vežba' },
+                'sub-empty': { hu: 'Hamarosan...', sr: 'Uskoro...' },
+                'link-vezbe1': {
+                    hu: 'Abszolút nulla fok – gázhőmérő, virtuális labor',
+                    sr: 'Apsolutna nula – gasni termometar, virtuelna laboratorija'
+                },
+                'link-vezbe2': {
+                    hu: 'Boyle–Mariotte-törvény – virtuális labor',
+                    sr: 'Bojl–Mariotov zakon – virtuelna laboratorija'
                 },
                 'main-title': {
                     hu: 'II. osztály – Hő és elektromosság',
@@ -416,6 +524,12 @@
                 const btn = dd.querySelector('.dropbtn');
                 const isOpen = dd.classList.toggle('open');
                 btn.setAttribute('aria-expanded', isOpen);
+            };
+
+            window.toggleSubmenu = function(id) {
+                const sm = document.getElementById(id);
+                const isOpen = sm.classList.toggle('open');
+                sm.querySelector('.submenu-btn').setAttribute('aria-expanded', isOpen);
             };
 
             // Kattintás a menün kívülre -> bezárás

@@ -1,0 +1,1288 @@
+<!doctype html>
+<!--
+PLAN: HÁROM ÓRA — Fényelektromos hatás: a Planck-állandó meghatározása (gimnázium 4. évfolyam)
+Forrás: „Az elektromágneses sugárzás kvantumtermészete” jegyzet, 2. fejezet (Einstein-egyenlet, kilépési munka, határhullámhossz).
+
+A. A JEGYZET ELEMZÉSE
+- Törvény: h·ν = Ai + ½·m·v²  →  e·Uz = h·ν − Ai  →  Uz = (h : e)·ν − Ai : e
+- Mért mennyiség: a Uz zárófeszültség (digitális voltmérő, felbontás 0,01 V); a „áram = 0” pillanatot a tanuló
+  maga veszi észre a mikroampermérőn (felbontás 0,01 nA).
+- Független változó: ν = c : λ (λ-t a tanuló választja a monokromátoron, 250–700 nm, 1 nm-es lépés).
+- Linearizálás: Uz(ν) egyenes; meredekség k = h : e, tengelymetszet n = −Ai : e.
+- Konstans: h = e·k (k V/10¹⁴ Hz-ben → h = 16,0·k ·10⁻³⁴ J·s); Ai = −n (eV); ν0 = −n : k; λ0 = c : ν0.
+- Referenciaértékek a jegyzetből: h = 6,626·10⁻³⁴ J·s; cézium katód Ai ≈ 2,0 eV, λ0 ≈ 620 nm.
+- Bizonytalanság: határegyenesek, Δh = (hmax − hmin) : 2.
+- Feltevések (a jegyzet nem ad gyakorlati protokollt): ΔUz ≈ 0,03 V (becslés arra a pillanatra, amikor az áram nullára esik);
+  monokromátor ±2 nm (a hibaintervallumokban elhanyagolva); kontaktpotenciál 0,06 V és az elektronenergiák hőkiszélesedése
+  0,012 eV (másodrendű hatások); a fény intenzitása 10–100 % (alapérték 60 %).
+- Lefedettségi feltétel: legalább 6 különböző λ fényelektromos hatással (Uz > 0), legalább 3·10¹⁴ Hz frekvenciatartomány.
+
+B. IDŐBECSLÉS ÉS BEOSZTÁS
+| Óra | Nézetek            | Lépések                                                    | Becslés   | Ellenőrzőlista                                        |
+|-----|--------------------|------------------------------------------------------------|-----------|-------------------------------------------------------|
+| 1   | Előkészítés, Mérés | bevezetés, adatok; 7–8 pont × (λ beállítása ~1 perc +      | ~42 perc  | a tanuló adatai; ≥ 6 λ fényelektromos hatással; ν tartomány ≥ 3 |
+|     |                    | az I = 0 feszültség keresése ~1,5 perc + feljegyzés ~0,5 perc) ≈ 25–30 perc |  |                                                       |
+| 2   | I. feldolgozás     | ν táblázat (8 sor × ~1,5 perc = 12 perc), grafikonok 5 perc, | ~35 perc | helyes táblázat; A és B az egyenesen; k meredekség és n tengelymetszet |
+|     |                    | meredekség két pontból 8 perc, tengelymetszet 5 perc (+ útmutató olvasása) |  |                                                       |
+| 3   | II. feldolgozás,   | emlékeztető; h 5 perc; Ai, ν0, λ0 7 perc; Δh 10 perc;      | ~45 perc  | h; Ai, ν0, λ0; Δh; eredmény; következtetés            |
+|     | Következtetés      | eredmény 5 perc; következtetés 15–20 perc                  |           |                                                       |
+Becslés: az univerzális prompt tempója (származtatott oszlop ~1–2 perc soronként, meredekség ~8 perc, bizonytalanság ~10 perc).
+A mérés stacionárius (nincs időbeli szimuláció), ezért nincs ×1/×2 sebességválasztás sem.
+A vágások természetes töréspontokon vannak: a mérés után, a meredekség és a tengelymetszet után.
+C. FÜZET ÉS SZÁMOLÁS (kiegészítés)
+- A tanuló minden mérést azonnal átmásol a füzetébe. Az 1. és 2. óra után megjelenő „az óra véget ért” ablak
+  megmutatja, mit kell felírva tartania (mérések, kiszámított oszlopok, A, B, meredekség, eredmény).
+- A feldolgozásnál és a következtetésnél az „Adatok a füzetből” kártya a mérések és a kiszámított oszlopok
+  újbóli bevitelére szolgál (másik eszköz vagy elveszett adatok).
+  A 3. órán a füzetből az A, B, a meredekség és az n tengelymetszet is betölthető.
+- Mindent a tanuló számol számológéppel; a program rajzolja a grafikonokat és ellenőriz. A határegyenesek az
+  első és az utolsó pont hibaintervallumának végpontjain mennek át; a tanuló számolja ki k_max-ot és k_min-t, a Δ-t és a δ eltérést %-ban.
+  Az automatikus táblázatkitöltés és a lineáris regresszió csak a „Súgó” (tanároknak) bekapcsolásával látható.
+-->
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fffcf7">
+<title>Fényelektromos hatás — Planck-állandó — virtuális labor</title>
+<style>
+:root{
+  --bg:#f5f1ea;--surface:#fffcf7;--surface2:#efe9df;--ink:#23272f;--muted:#646b77;--line:#e1d9cc;
+  --acc:#c95b26;--acc-soft:#fae4d6;--acc-ink:#8a3a12;
+  --blue:#2c69ab;--blue-soft:#e0ebf6;--blue-ink:#1d4a7c;
+  --ok:#2b8352;--ok-soft:#e0f2e6;--bad:#bf3f39;--bad-soft:#f8e0de;--warn:#a96f14;--warn-soft:#faefd6;
+  --stage:#1b222d;--stage2:#262f3d;--stage3:#323d4f;--stage-ink:#e7edf5;--stage-muted:#97a4b6;
+  --r:16px;--shadow:0 1px 2px rgba(35,30,25,.05),0 6px 18px rgba(35,30,25,.06);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:110px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+.num,table,output,.readout b,.pill,.kv dd{font-variant-numeric:tabular-nums}
+h2,h3,h4{line-height:1.25;letter-spacing:-.01em}
+p{margin:0 0 10px}
+ul{margin:0 0 10px;padding-left:20px}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:-9999px;top:0;z-index:100;background:var(--surface);padding:10px 14px;border-radius:10px}
+.skip:focus{left:10px;top:10px}
+.muted{color:var(--muted)}.small{font-size:14px}
+sub,sup{line-height:0}
+
+/* ---------- felső sáv ---------- */
+.topbar{position:sticky;top:0;z-index:30;background:rgba(255,252,247,.95);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  padding:calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 14px) 8px calc(env(safe-area-inset-left) + 14px)}
+.tb-row{display:flex;align-items:center;gap:8px;max-width:1320px;margin:0 auto}
+.brand{flex:1;min-width:0;font-weight:750;font-size:15px;line-height:1.2}
+.brand small{display:block;font-weight:500;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand .dot{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--acc);margin-right:6px;vertical-align:1px}
+.iconbtn{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-size:13px;font-weight:600;padding:0 11px;cursor:pointer;color:var(--ink)}
+.iconbtn[aria-pressed="true"]{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.lesson-ind{display:flex;align-items:center;gap:10px;max-width:1320px;margin:6px auto 0}
+.li-t{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.segs{display:flex;gap:4px;flex:0 0 120px;margin-left:auto}
+.segs i{flex:1;height:7px;border-radius:4px;background:var(--line)}
+.segs i.done{background:var(--ok)}
+.segs i.cur{background:var(--acc)}
+
+/* ---------- elrendezés ---------- */
+.layout{max-width:1320px;margin:0 auto}
+main{padding:14px calc(env(safe-area-inset-right) + 14px) calc(env(safe-area-inset-bottom) + 96px) calc(env(safe-area-inset-left) + 14px);min-width:0;outline:none}
+.side{display:none}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:2px;background:rgba(255,252,247,.97);border-top:1px solid var(--line);
+  padding:4px calc(env(safe-area-inset-right) + 4px) calc(env(safe-area-inset-bottom) + 4px) calc(env(safe-area-inset-left) + 4px)}
+.tabbar button{flex:1;min-width:0;min-height:54px;border:0;background:none;font:inherit;font-size:12px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-radius:12px;cursor:pointer;padding:2px}
+.tabbar button span{white-space:normal;text-align:center;line-height:1.1;font-size:10.5px;overflow:hidden;overflow-wrap:anywhere;max-width:100%}
+.tabbar button small{font-size:10px;font-weight:800;letter-spacing:.06em;opacity:.8}
+.tabbar button[aria-current="page"]{color:var(--acc-ink);background:var(--acc-soft)}
+.tabbar button.done small::after{content:" ✓";color:var(--ok)}
+.navgrp{margin-bottom:16px}
+.navh{font-size:11px;font-weight:800;letter-spacing:.09em;color:var(--muted);padding:4px 12px 6px}
+.navh span{display:block;font-weight:500;letter-spacing:0;font-size:12px;margin-top:1px}
+.navh.done{color:var(--ok)}
+.side button{display:block;width:100%;text-align:left;min-height:44px;border:0;background:none;border-radius:12px;padding:8px 12px;font:inherit;font-size:15px;color:var(--ink);cursor:pointer}
+.side button:hover{background:var(--surface2)}
+.side button[aria-current="page"]{background:var(--acc-soft);color:var(--acc-ink);font-weight:700}
+@media(min-width:1000px){
+  .layout{display:grid;grid-template-columns:232px minmax(0,1fr)}
+  .side{display:block;position:sticky;top:96px;align-self:start;padding:18px 0 18px 14px;max-height:calc(100vh - 100px);overflow:auto}
+  .tabbar{display:none}
+  main{padding:18px 22px 48px}
+}
+
+.view{display:none}
+.view.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.vh{font-size:22px;margin:4px 0 12px}
+
+/* ---------- kártyák ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:0 0 14px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 8px;font-size:22px}
+.card h3{margin:0 0 8px;font-size:18px}
+.card h4{margin:14px 0 6px;font-size:15px}
+.hero{display:grid;gap:14px;background:linear-gradient(160deg,var(--surface) 55%,var(--acc-soft))}
+.hero h2{font-size:25px;margin:6px 0 6px}
+.hero figure{margin:0;background:var(--stage);border-radius:14px;padding:10px;color:var(--stage-ink)}
+.hero figure svg{width:100%;height:auto;display:block}
+.hero figcaption{color:var(--stage-muted);font-size:13px;margin-top:6px}
+@media(min-width:720px){.hero{grid-template-columns:1.1fr 1fr;align-items:center}}
+.law{border:2px solid var(--acc);border-radius:14px;padding:10px 14px;background:var(--surface);font-size:19px;text-align:center;margin:10px 0 4px;line-height:2.1}
+.law small{display:block;font-size:13px;color:var(--muted);line-height:1.4}
+.grid2{display:grid;gap:14px}
+.grid2>*{min-width:0}
+@media(min-width:760px){.grid2{grid-template-columns:1fr 1fr}}
+.grid3{display:grid;gap:10px}
+@media(min-width:600px){.grid3{grid-template-columns:2fr 1fr 1fr}}
+
+/* ---------- gombok ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid transparent;font:inherit;font-weight:650;cursor:pointer;background:var(--acc);color:#fffaf5;text-decoration:none;text-align:center;line-height:1.2}
+.btn:hover{filter:brightness(1.05)}
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn.blue{background:var(--blue)}
+.btn.danger{background:var(--bad)}
+.btn.ok{background:var(--ok)}
+.btn.xl{min-height:56px;font-size:18px;padding:0 24px}
+.btn.wide{width:100%}
+.btn.sm{font-size:14px;padding:0 12px}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface2);font-size:13px;font-weight:700;color:var(--muted)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.acc{background:var(--acc-soft);color:var(--acc-ink)}
+.banner{border-radius:12px;padding:10px 14px;background:var(--blue-soft);color:var(--blue-ink);margin:0 0 12px;font-size:15px}
+.banner.warn{background:var(--warn-soft);color:#6f4a0c}
+.banner.ok{background:var(--ok-soft);color:#1d5e3a}
+.banner.acc{background:var(--acc-soft);color:var(--acc-ink)}
+
+/* ---------- csúszkák (stp) ---------- */
+.stp{margin:0 0 14px}
+.stp-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
+.stp-h label{font-weight:650;font-size:15px}
+.stp-h output{font-weight:800;font-size:19px;color:var(--blue);white-space:nowrap}
+.stp-row{display:flex;align-items:center;gap:8px}
+.stp-row .slider{flex:1;min-width:0}
+.sq{width:44px;height:44px;min-width:44px;padding:0;font-size:22px;font-weight:700}
+.stp-lim{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:0 52px}
+.slider{-webkit-appearance:none;appearance:none;height:30px;background:transparent;margin:0;cursor:pointer}
+.slider::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--blue-soft),var(--line))}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--blue);margin-top:-10px;border:3px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.slider::-moz-range-track{height:6px;border-radius:3px;background:var(--line)}
+.slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid var(--surface)}
+.stage .stp-h output{color:#8cc0f5}
+
+/* ---------- chipek ---------- */
+.chips{display:inline-flex;background:var(--surface2);border-radius:12px;padding:3px;gap:2px;flex-wrap:wrap}
+.chip{min-height:40px;min-width:48px;border:0;background:none;border-radius:9px;padding:0 12px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+
+/* ---------- mezők ---------- */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-weight:650;font-size:14px}
+.in{font:inherit;min-height:44px;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);width:100%}
+.in:focus{border-color:var(--blue)}
+.in.ok{border-color:var(--ok);background:var(--ok-soft)}
+.in.bad{border-color:var(--bad);background:var(--bad-soft)}
+textarea.in{resize:vertical;line-height:1.5}
+.inrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.inrow .in{width:auto;flex:0 1 150px;min-width:96px;text-align:center}
+.inrow label{font-weight:650}
+.unit{color:var(--muted);font-weight:650}
+.fb{font-size:14px;margin-top:8px;min-height:1px}
+.fb:empty{display:none}
+.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}.fb.warn{color:var(--warn)}
+.fb .w{display:block;color:var(--warn);margin-top:3px}
+.formula{font-size:18px;margin:12px 0;line-height:2.2;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;text-align:center}
+.formula .in{width:130px;flex:0 0 auto;text-align:center}
+.qrow{border-top:1px dashed var(--line);padding-top:6px;margin-top:6px}
+.qrow:first-of-type{border-top:0}
+.qrow .qname{font-size:14px;color:var(--muted);text-align:center;margin:4px 0 -6px}
+.stepnum{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;align-items:center;justify-content:center;font-size:14px;font-weight:800;margin-right:8px;vertical-align:2px}
+.ab{display:grid;gap:8px;margin:8px 0}
+.abrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--surface2);border-radius:12px;padding:8px 10px}
+.abrow b{width:22px;color:var(--acc-ink);font-size:17px}
+.abc{display:inline-flex;align-items:center;gap:6px;margin-right:10px}
+.abrow .in{width:96px;flex:0 0 auto;text-align:center;min-height:42px}
+.abrow .lbl{font-weight:650;margin-left:4px}
+
+/* ---------- táblázat ---------- */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.tbl{border-collapse:collapse;width:100%;min-width:430px;font-size:15px}
+.tbl th{font-size:13px;color:var(--muted);text-align:center;padding:8px 6px;border-bottom:2px solid var(--line);white-space:nowrap;font-weight:700}
+.tbl td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.tbl td.ix{color:var(--muted);font-size:13px;width:28px}
+.tbl input{width:100%;min-width:92px;min-height:42px;border:1.5px dashed #c9bba6;border-radius:9px;text-align:center;font:inherit;background:var(--surface);color:var(--ink)}
+.tbl input:focus{border-style:solid;border-color:var(--blue)}
+.tbl input.ok{border-style:solid;border-color:var(--ok);background:var(--ok-soft)}
+.tbl input.bad{border-style:solid;border-color:var(--bad);background:var(--bad-soft)}
+.tbl tr.excl td{color:var(--muted);opacity:.7}
+.tbl tr.exclnote td{font-size:13px;color:var(--warn);text-align:left;border-bottom:1px solid var(--line);white-space:normal}
+
+/* ---------- grafikonok ---------- */
+figure.gr{margin:0}
+figure.gr figcaption{font-size:14px;font-weight:650;color:var(--muted);margin-bottom:4px}
+canvas.plot{width:100%;display:block;border-radius:12px;border:1px solid var(--line);background:#fffdf9;touch-action:manipulation}
+canvas.plot.picking{cursor:crosshair;outline:3px solid var(--acc-soft)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--muted);margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:20px;height:0;border-top:2.5px solid}
+.legend i.dash{border-top-style:dashed}
+.legend i.dot{width:10px;height:10px;border-radius:50%;border:0}
+
+/* ---------- színpad ---------- */
+.stage{background:var(--stage);color:var(--stage-ink);border-radius:var(--r);padding:12px;margin:0 0 14px;box-shadow:var(--shadow)}
+.stage svg{width:100%;height:auto;display:block}
+.stage .cap{font-size:12px;color:var(--stage-muted);margin:4px 2px 0}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:8px;margin-top:10px}
+.readout{background:var(--stage2);border-radius:12px;padding:8px 12px;min-width:0}
+.readout small{display:block;color:var(--stage-muted);font-size:12px;font-weight:600}
+.readout b{display:block;font-size:22px;font-weight:750;letter-spacing:.01em;white-space:nowrap}
+.readout.big b{font-size:26px;color:#ffd79a}
+.minip{margin-top:10px}
+.minip canvas.plot{border-color:var(--stage3);background:var(--stage)}
+.meas-grid{display:block}
+@media(min-width:1000px){
+  .meas-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:14px;align-items:start}
+  .meas-grid .stage{position:sticky;top:100px}
+}
+.ctl h3{display:flex;align-items:center;gap:8px}
+.badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:var(--blue);color:#fff;font-size:14px;font-weight:800}
+.recs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.rec{display:inline-flex;align-items:center;gap:2px;background:var(--blue-soft);color:var(--blue-ink);border-radius:999px;padding:0 0 0 12px;font-size:14px;font-weight:600}
+.rec.warnrec{background:var(--warn-soft);color:#6f4a0c}
+.rec button{width:44px;height:40px;border-radius:999px;border:0;background:none;cursor:pointer;font-size:18px;color:inherit}
+.rec button:hover{background:rgba(0,0,0,.06)}
+.cov{display:grid;gap:6px;margin-top:8px}
+.covbar{display:flex;align-items:center;gap:8px;font-size:14px}
+.covbar .bar{flex:1;height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}
+.covbar .bar i{display:block;height:100%;background:var(--blue);border-radius:4px}
+.covbar.ok .bar i{background:var(--ok)}
+.covbar .t{flex:0 0 auto;min-width:46%}
+
+/* ---------- az óra célja / emlékeztető / vége ---------- */
+.goal{border-left:6px solid var(--acc)}
+.goal .gh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.goal h3{margin:0 0 4px}
+.goal ul{list-style:none;margin:8px 0 0;padding:0}
+.goal li{display:flex;gap:10px;align-items:flex-start;padding:4px 0;font-size:15px}
+.goal li .bx{flex:0 0 22px;height:22px;border-radius:7px;border:2px solid #cdbfa9;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;margin-top:1px}
+.goal li.ok .bx{background:var(--ok);border-color:var(--ok);color:#fff}
+.goal li.ok .t{color:var(--muted)}
+.goal .time{font-size:13px;color:var(--muted);margin:8px 0 0}
+.remind{border-left:6px solid var(--blue);background:#f6f9fc}
+.remind .kv{margin-bottom:8px}
+.endcard{text-align:center;background:var(--surface2);box-shadow:none}
+.empty{text-align:center;padding:26px 16px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:15px;margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:700}
+.resbox{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 10px;background:var(--surface)}
+.resbox .rbn{font-weight:800;margin-bottom:6px}
+details{margin-top:10px}
+details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:650;color:var(--blue)}
+.helponly{display:none!important}
+body.help .helponly{display:block!important}
+.teach{border:1.5px dashed var(--warn);background:var(--warn-soft);color:#6f4a0c;border-radius:12px;padding:8px 12px;font-size:14px;margin-top:10px}
+
+/* ---------- törtek ---------- */
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.25;margin:0 .22em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding-bottom:.08em}
+.frac>span:last-child{padding-top:.08em}
+
+/* ---------- modális ablak és toast ---------- */
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;background:rgba(22,26,34,.45)}
+.modal.open{display:flex}
+.mbox{background:var(--surface);width:100%;max-height:88vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px 18px calc(env(safe-area-inset-bottom) + 18px);animation:up .25s ease;box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+.mbox h2{margin:0 0 10px;font-size:21px}
+.mbox .kv{margin:8px 0}
+@media(min-width:720px){.modal{align-items:center}.mbox{max-width:580px;border-radius:20px;padding:22px 24px}}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 88px);transform:translateX(-50%);z-index:70;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(92vw,520px)}
+.tst{background:#2b3241;color:#fff;border-radius:14px;padding:11px 16px;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.22);animation:up .2s ease;text-align:center}
+.tst.ok{background:#22693f}.tst.bad{background:#9a332e}.tst.warn{background:#865810}
+@media(min-width:1000px){#toast{bottom:26px}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* e gyakorlat színei és animációi */
+:root{--acc:#7a4fd6;--acc-soft:#ece4fb;--acc-ink:#4b2a96}
+.ph{animation:phMove 2.4s linear infinite}
+.ph1{animation-delay:.8s}.ph2{animation-delay:1.6s}
+@keyframes phMove{0%{transform:translateX(-30px);opacity:0}15%{opacity:1}75%{opacity:1}100%{transform:translateX(60px);opacity:0}}
+.hel{animation:elFly 2.4s ease-out infinite;opacity:0}
+.he1{animation-delay:.6s}.he2{animation-delay:1.2s}.he3{animation-delay:1.8s}
+@keyframes elFly{0%{transform:translate(0,0);opacity:0}10%{opacity:1}100%{transform:translate(85px,-10px);opacity:0}}
+@media (prefers-reduced-motion: reduce){.hel{opacity:1}}
+
+
+/* füzet: adatok bevitele a füzetből */
+.paper{border-left:6px solid var(--blue)}
+.paper summary{gap:8px;flex-wrap:wrap}
+.paper summary::after{content:"▾";margin-left:auto;color:var(--muted)}
+.paper[open] summary::after{content:"▴"}
+.tbl.ptbl,.tbl.ctbl{min-width:0}
+.tbl.ptbl th,.tbl.ptbl td,.tbl.ctbl th,.tbl.ctbl td{padding:4px 3px}
+.tbl.ptbl input{min-width:52px;width:64px;min-height:40px;padding:4px 3px}
+.tbl.ptbl .pc{background:var(--blue-soft)}
+.tbl.ptbl .sq{width:34px;min-width:34px;height:40px;font-size:16px}
+@media(min-width:520px){.tbl.ptbl input{width:88px}.tbl.ptbl th,.tbl.ptbl td,.tbl.ctbl th,.tbl.ctbl td{padding:5px 7px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Ugrás a tartalomra</a>
+<header class="topbar">
+  <div class="tb-row">
+    <div class="brand" id="brand"></div>
+    <button class="iconbtn" id="btnAbout" type="button">A modellről</button>
+    <button class="iconbtn" id="btnHelp" type="button" aria-pressed="false" aria-label="Súgó (tanároknak)" title="Súgó (tanároknak)">Súgó</button>
+  </div>
+  <div class="lesson-ind"><span class="li-t" id="liT" aria-live="polite"></span><div class="segs" id="segs" role="img"></div></div>
+</header>
+<div class="layout">
+  <nav class="side" id="side" aria-label="Nézetek óránként"></nav>
+  <main id="main" tabindex="-1"></main>
+</div>
+<nav class="tabbar" id="tabbar" aria-label="Nézetek óránként"></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="mbox"><h2 id="mTitle"></h2><div id="mBody"></div><div class="btnrow" id="mActs" style="margin-top:16px"></div></div></div>
+<script>
+(function(){
+'use strict';
+/* =====================================================================
+   MAG — közös mind a három laborban
+   (állapot, órák, navigáció, csúszkák, grafikonok, feldolgozás, következtetés)
+   ===================================================================== */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const SUPM={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+const sup=n=>String(n).split('').map(c=>SUPM[c]||c).join('');
+function fmt(x,d){ if(x==null||!isFinite(x)) return '—'; d=d==null?2:d; let s=Number(x).toFixed(d); if(/^-0(\.0*)?$/.test(s)) s=s.slice(1); return s.replace('.',',').replace('-','−'); }
+function fmtIn(x,d){ return fmt(x,d).replace('−','-'); }
+function parseNum(s){ if(s==null) return NaN; s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(',','.'); if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN; return parseFloat(s); }
+function decOf(s){ s=String(s==null?'':s).trim().replace(',','.'); const i=s.indexOf('.'); return i<0?0:s.length-i-1; }
+function sigOf(s){ s=String(s==null?'':s).trim().replace(/[-+−]/g,'').replace(',','.').replace('.','').replace(/^0+/,''); return s.length; }
+const within=(a,t,abs,rel)=>isFinite(a)&&isFinite(t)&&Math.abs(a-t)<=abs+Math.abs(t)*rel;
+const FR=(n,d)=>`<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function today(){ const d=new Date(); return `${d.getFullYear()}. ${String(d.getMonth()+1).padStart(2,'0')}. ${String(d.getDate()).padStart(2,'0')}.`; }
+function randn(){ let u=0,v=0; while(!u) u=Math.random(); while(!v) v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function poisson(l){ if(!(l>0)) return 0; if(l<30){ const L=Math.exp(-l); let k=0,p=1; do{ k++; p*=Math.random(); }while(p>L&&k<200); return k-1; } return Math.max(0,Math.round(l+Math.sqrt(l)*randn())); }
+const softplus=x=>x>30?x:Math.log1p(Math.exp(x));
+const RM=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function roundUnc(d){ if(!(d>0)) return {d:0,dec:0}; const e=Math.floor(Math.log10(d)); const lead=d/Math.pow(10,e); const sig=lead<2.95?2:1; const dec=Math.max(0,sig-1-e); return {d:+d.toFixed(dec),dec}; }
+
+/* ---------- toast és modális ablak ---------- */
+function toast(msg,kind){ const box=$('#toast'); if(!box) return; const el=document.createElement('div'); el.className='tst'+(kind?' '+kind:''); el.textContent=msg; box.appendChild(el); while(box.children.length>3) box.removeChild(box.firstChild); setTimeout(()=>el.remove(),4300); }
+let lastFocus=null;
+function modal(o){
+  lastFocus=document.activeElement;
+  $('#mTitle').innerHTML=o.title||''; $('#mBody').innerHTML=o.html||'';
+  const a=$('#mActs'); a.innerHTML='';
+  (o.actions&&o.actions.length?o.actions:[{label:'Bezár'}]).forEach((b,i)=>{ const el=document.createElement('button'); el.type='button'; el.className='btn '+(b.cls||(i?'ghost':'')); el.innerHTML=b.label; el.addEventListener('click',()=>{ closeModal(); if(b.fn) b.fn(); }); a.appendChild(el); });
+  $('#modal').classList.add('open');
+  setTimeout(()=>{ const f=a.querySelector('button'); if(f) f.focus(); },40);
+}
+function closeModal(){ $('#modal').classList.remove('open'); if(lastFocus&&document.contains(lastFocus)){ try{ lastFocus.focus({preventScroll:true}); }catch(e){} } }
+
+/* ---------- állapot és tartós tárolás ---------- */
+let S=null;
+const ANS={};
+const plain=o=>!!o&&typeof o==='object'&&!Array.isArray(o);
+function merge(d,o){
+  if(!plain(o)) return d;
+  Object.keys(d).forEach(k=>{
+    if(!(k in o)) return; const a=d[k], b=o[k];
+    if(plain(a)){ if(plain(b)) d[k]=Object.keys(a).length?merge(a,b):b; }
+    else if(Array.isArray(a)){ if(Array.isArray(b)) d[k]=b; }
+    else if(a===null||typeof a===typeof b){ if(typeof b!=='number'||isFinite(b)) d[k]=b; }
+  });
+  return d;
+}
+function DEF(){ return Object.assign({ver:1,student:{name:'',group:'',date:today()},view:'priprema',done:{'1':false,'2':false,'3':false},started:false,help:false,speed:1,records:[],proc:{},concl:'',scan:{key:'',pts:[]},paper:false,devs:{}},LAB.defState()); }
+function sanitize(){
+  if(!LAB.views.some(v=>v.id===S.view)) S.view='priprema';
+  if(S.speed!==2) S.speed=1;
+  S.records=S.records.filter(r=>plain(r)&&r.id&&(!LAB.validRecord||LAB.validRecord(r)));
+  if(!plain(S.scan)||!Array.isArray(S.scan.pts)) S.scan={key:'',pts:[]};
+  S.scan.pts=S.scan.pts.filter(p=>plain(p)&&isFinite(p.x)&&isFinite(p.y)).slice(-80);
+  Object.values(ANS).forEach(a=>a.sanitize());
+  if(LAB.sanitize) LAB.sanitize();
+}
+function load(){ let had=false; S=DEF(); try{ const raw=localStorage.getItem(LAB.key); if(raw){ S=merge(DEF(),JSON.parse(raw)); had=true; } }catch(e){ S=DEF(); } sanitize(); return had; }
+let saveT=0;
+function save(now){ clearTimeout(saveT); const f=()=>{ try{ localStorage.setItem(LAB.key,JSON.stringify(S)); }catch(e){} }; if(now) f(); else saveT=setTimeout(f,350); }
+
+/* ---------- órák és navigáció ---------- */
+const viewDef=id=>LAB.views.find(v=>v.id===id)||LAB.views[0];
+const firstView=n=>LAB.views.find(v=>v.lesson===n).id;
+const lastViewOf=n=>{ const a=LAB.views.filter(v=>v.lesson===n); return a[a.length-1].id; };
+const lessonOf=id=>viewDef(id).lesson;
+function evalChecks(n){ return LAB.lessons[n-1].checks.map(c=>{ let ok=false; try{ ok=!!c.ok(); }catch(e){ ok=false; } return {label:c.label,ok}; }); }
+function renderNav(){
+  let h='';
+  LAB.lessons.forEach(L=>{
+    h+=`<div class="navgrp"><div class="navh${S.done[L.n]?' done':''}">ÓRA ${L.n}${S.done[L.n]?' ✓':''}<span>${L.title}</span></div>`;
+    LAB.views.filter(v=>v.lesson===L.n).forEach(v=>{ h+=`<button type="button" data-go="${v.id}"${S.view===v.id?' aria-current="page"':''}>${v.label}</button>`; });
+    h+='</div>';
+  });
+  $('#side').innerHTML=h;
+  $('#tabbar').innerHTML=LAB.views.map(v=>`<button type="button" data-go="${v.id}" class="${S.done[v.lesson]?'done':''}"${S.view===v.id?' aria-current="page"':''}><small>ÓRA ${v.lesson}</small><span>${v.label}</span></button>`).join('');
+}
+function renderInd(){
+  const v=viewDef(S.view), L=LAB.lessons[v.lesson-1];
+  $('#liT').textContent=`${L.n}. óra / 3 · ${L.title}`;
+  $('#segs').innerHTML=[1,2,3].map(n=>`<i class="${S.done[n]?'done':''}${n===L.n?' cur':''}"></i>`).join('');
+  $('#segs').setAttribute('aria-label',`Haladás: ${[1,2,3].filter(n=>S.done[n]).length} / 3 óra befejezve`);
+}
+function renderGoals(){
+  $$('[data-goal]').forEach(el=>{
+    const n=+el.dataset.goal, L=LAB.lessons[n-1], cs=evalChecks(n), k=cs.filter(c=>c.ok).length;
+    el.innerHTML=`<div class="gh"><h3>${n}. óra célja — ${L.title}</h3><span class="pill ${k===cs.length?'ok':'acc'}">${k} / ${cs.length}</span></div><p class="small" style="margin:0">${L.goal}</p><ul>${cs.map(c=>`<li class="${c.ok?'ok':''}"><span class="bx" aria-hidden="true">${c.ok?'✓':''}</span><span class="t">${c.label}</span><span class="sr">${c.ok?' — kész':' — még nincs kész'}</span></li>`).join('')}</ul><p class="time">Becsült idő: ${L.time}</p>`;
+  });
+  $$('[data-end]').forEach(b=>{ const n=+b.dataset.end; b.textContent=S.done[n]?`${n}. óra befejezve ✓ — befejezés újra`:(n<3?`${n}. óra befejezése`:'A 3. óra és a gyakorlat befejezése'); });
+}
+function renderLock(id){
+  const slot=$(`#v-${id} .lockslot`); if(!slot) return;
+  const m=LAB.needs&&LAB.needs[id]?LAB.needs[id]():null;
+  slot.innerHTML=m?`<div class="banner warn" role="note"><b>Figyelem:</b> ${m.text}<div class="btnrow" style="margin-top:8px"><button type="button" class="btn ghost sm" data-go="${m.back}">← ${m.backLabel}</button></div></div>`:'';
+}
+function go(id){
+  if(!LAB.views.some(v=>v.id===id)) id=LAB.views[0].id;
+  S.view=id;
+  $$('.view').forEach(s=>s.classList.toggle('active',s.id==='v-'+id));
+  renderNav(); renderInd(); renderLock(id);
+  const v=viewDef(id);
+  if(v.kind==='proc') mountProc(v);
+  if(v.kind==='concl') renderConcl();
+  if(LAB.onView) LAB.onView(id);
+  refresh(); save();
+  window.scrollTo(0,0);
+}
+function refresh(){ renderGoals(); syncSteppers(); if(LAB.refresh) LAB.refresh(); }
+function endLesson(n){
+  const L=LAB.lessons[n-1], miss=evalChecks(n).filter(c=>!c.ok);
+  S.done[n]=true; save(true);
+  let html=`<div class="banner ok">${LAB.lessonSummary(n)}</div>`;
+  if(n<3) html+=copyHTML(n);
+  if(miss.length) html+=`<p class="small"><b>Még nincs kész:</b> ${miss.map(c=>c.label).join('; ')}. Visszatérhetsz és befejezheted.</p>`;
+  html+=`<p><b>Az adatok ezen az eszközön el vannak mentve.</b> ${n<3?`Következő óra: <b>${LAB.lessons[n].title}</b>.`:'A gyakorlat kész — az eredményeket és a következtetést másold át a füzetedbe.'}</p>`;
+  modal({title:`${n}. óra befejezve`,html,actions:n<3?[{label:`Tovább a ${n+1}. órára →`,fn:()=>go(firstView(n+1))},{label:'Maradok itt'}]:[{label:'Rendben'}]});
+  renderNav(); renderInd(); renderGoals();
+}
+function resume(){
+  const v=viewDef(S.view), L=LAB.lessons[v.lesson-1];
+  modal({title:'A gyakorlat folytatása',html:`<p>${S.student.name?`Szia, <b>${esc(S.student.name)}</b>! `:''}Folytatod: <b>${L.n}. óra — ${L.title}</b> („${v.label}” nézet).</p><p class="small muted">Rögzített mérések: ${S.records.length}. Minden adat csak ezen az eszközön van elmentve.</p>`,actions:[{label:'Folytatás →',fn:()=>go(S.view)},{label:'Újrakezdés',fn:wipe}]});
+}
+function wipe(){
+  if(!confirm('Törlöd a gyakorlat összes adatát ezen az eszközön? Ez nem vonható vissza.')) return;
+  try{ localStorage.removeItem(LAB.key); }catch(e){}
+  S=DEF(); sanitize(); if(LAB.reset) LAB.reset();
+  $$('[data-stu]').forEach(i=>{ i.value=S.student[i.dataset.stu]||''; });
+  go('priprema'); toast('Minden adat törölve.');
+}
+
+/* ---------- − / + csúszka (paraméter az intervallumban) ---------- */
+const STEPPERS=[];
+function mountStepper(host,p,get,set){
+  const id='p-'+p.id+'-'+STEPPERS.length;
+  host.innerHTML=`<div class="stp"><div class="stp-h"><label for="${id}">${p.label}</label><output for="${id}"></output></div><div class="stp-row"><button type="button" class="btn ghost sq" data-s="-1" aria-label="Csökkentés: ${p.label}">−</button><input type="range" class="slider" id="${id}" min="${p.min}" max="${p.max}" step="${p.step}"><button type="button" class="btn ghost sq" data-s="1" aria-label="Növelés: ${p.label}">+</button></div><div class="stp-lim"><span>${fmt(p.min,p.dec)}${p.unit==='°'?'':' '}${p.unit}</span><span>${fmt(p.max,p.dec)}${p.unit==='°'?'':' '}${p.unit}</span></div>${p.hint?`<p class="small muted" style="margin:4px 0 0">${p.hint}</p>`:''}</div>`;
+  const sl=host.querySelector('input'), out=host.querySelector('output');
+  const upd=()=>{ const v=get(); if(document.activeElement!==sl) sl.value=v; const sp=p.unit==='°'?'':' '; out.textContent=`${fmt(v,p.dec)}${sp}${p.unit}`; sl.setAttribute('aria-valuetext',`${fmt(v,p.dec)}${sp}${p.unit}`); };
+  const apply=v=>{ v=p.min+Math.round((clamp(v,p.min,p.max)-p.min)/p.step)*p.step; v=+clamp(v,p.min,p.max).toFixed(6); if(v!==get()) set(v); syncSteppers(); };
+  sl.addEventListener('input',()=>apply(+sl.value));
+  sl.addEventListener('change',()=>{ sl.value=get(); });
+  host.querySelectorAll('[data-s]').forEach(b=>{
+    let t=null,t2=null; const stop=()=>{ clearTimeout(t); clearInterval(t2); };
+    b.addEventListener('click',e=>{ if(e.detail===0) apply(get()+(+b.dataset.s)*p.step); });
+    b.addEventListener('pointerdown',e=>{ e.preventDefault(); apply(get()+(+b.dataset.s)*p.step); t=setTimeout(()=>{ t2=setInterval(()=>apply(get()+(+b.dataset.s)*p.step),70); },420); });
+    ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));
+  });
+  STEPPERS.push(upd); upd();
+}
+function syncSteppers(){ STEPPERS.forEach(f=>f()); }
+function speedChips(){ return `<div class="btnrow"><span class="small muted">Szimuláció sebessége:</span><div class="chips" role="group" aria-label="Szimuláció sebessége"><button type="button" class="chip" data-speed="1">×1</button><button type="button" class="chip" data-speed="2">×2</button></div></div>`; }
+function paintSpeed(){ $$('[data-speed]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.speed===S.speed))); }
+
+/* ---------- grafikonok (canvas, könyvtárak nélkül) ---------- */
+function setupCanvas(cv){
+  const dpr=Math.min(3,window.devicePixelRatio||1);
+  const w=Math.max(240,Math.round(cv.clientWidth||(cv.parentNode&&cv.parentNode.clientWidth)||300));
+  const h=Math.round(clamp(w*(+cv.dataset.ratio||0.66),190,+cv.dataset.max||420));
+  cv.style.height=h+'px'; cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  const c=cv.getContext&&cv.getContext('2d'); if(c) c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+function niceStep(range,target){ const raw=range/(target||6); const p=Math.pow(10,Math.floor(Math.log10(raw))); const m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+function ticksArr(min,max,target){ const st=niceStep(max-min,target); const a=[]; for(let v=Math.ceil(min/st-1e-9)*st,i=0;v<=max+st*1e-9&&i<60;v+=st,i++) a.push(+v.toFixed(12)); return {ticks:a,step:st}; }
+function niceRange(min,max){ if(!(isFinite(min)&&isFinite(max))) return [0,1]; if(max-min<1e-12){ const d=Math.abs(min)*0.1||1; min-=d; max+=d; } const pad=(max-min)*0.04; min-=pad; max+=pad; const st=niceStep(max-min,6); return [Math.floor(min/st)*st,Math.ceil(max/st)*st]; }
+function plot(cv,o){
+  const {c,w,h}=setupCanvas(cv); if(!c) return;
+  const dark=!!o.dark;
+  const col={bg:dark?'#1b222d':'#fffdf9',grid:dark?'#2c3646':'#eee7dc',axis:dark?'#7f8da1':'#8d8576',txt:dark?'#c3cdda':'#59606c',pt:dark?'#8cc0f5':'#2c69ab',ex:'#9a9a9a'};
+  c.fillStyle=col.bg; c.fillRect(0,0,w,h);
+  const pad={l:o.padL||(w<380?50:58),r:12,t:12,b:42};
+  let xs=[],ys=[];
+  (o.pts||[]).forEach(p=>{ if(!isFinite(p.x)||!isFinite(p.y)) return; xs.push(p.x); ys.push(p.y-(p.ey||0),p.y+(p.ey||0)); });
+  if(o.xr) xs.push(...o.xr); if(o.yr) ys.push(...o.yr);
+  if(o.zeroX) xs.push(0); if(o.zeroY) ys.push(0);
+  if(!xs.length){ xs=[0,1]; } if(!ys.length){ ys=[0,1]; }
+  const [x0,x1]=o.xfix||niceRange(Math.min(...xs),Math.max(...xs));
+  const [y0,y1]=o.yfix||niceRange(Math.min(...ys),Math.max(...ys));
+  const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+  const X=x=>pad.l+(x-x0)/(x1-x0)*pw, Y=y=>pad.t+ph-(y-y0)/(y1-y0)*ph;
+  const tx=ticksArr(x0,x1,w<420?4:7), ty=ticksArr(y0,y1,h<260?4:6);
+  const dx=Math.max(0,-Math.floor(Math.log10(tx.step)+1e-9)), dy=Math.max(0,-Math.floor(Math.log10(ty.step)+1e-9));
+  c.lineWidth=1; c.strokeStyle=col.grid;
+  tx.ticks.forEach(t=>{ c.beginPath(); c.moveTo(Math.round(X(t))+.5,pad.t); c.lineTo(Math.round(X(t))+.5,pad.t+ph); c.stroke(); });
+  ty.ticks.forEach(t=>{ c.beginPath(); c.moveTo(pad.l,Math.round(Y(t))+.5); c.lineTo(pad.l+pw,Math.round(Y(t))+.5); c.stroke(); });
+  c.strokeStyle=col.axis; c.lineWidth=1.3; c.beginPath(); c.moveTo(pad.l,pad.t); c.lineTo(pad.l,pad.t+ph); c.lineTo(pad.l+pw,pad.t+ph); c.stroke();
+  if(x0<0&&x1>0){ c.beginPath(); c.moveTo(X(0),pad.t); c.lineTo(X(0),pad.t+ph); c.stroke(); }
+  if(y0<0&&y1>0){ c.beginPath(); c.moveTo(pad.l,Y(0)); c.lineTo(pad.l+pw,Y(0)); c.stroke(); }
+  c.font='12px system-ui,-apple-system,"Segoe UI",sans-serif'; c.fillStyle=col.txt;
+  c.textAlign='center'; c.textBaseline='top'; tx.ticks.forEach(t=>c.fillText(fmt(t,dx),X(t),pad.t+ph+5));
+  c.textAlign='right'; c.textBaseline='middle'; ty.ticks.forEach(t=>c.fillText(fmt(t,dy),pad.l-6,Y(t)));
+  c.font='600 12.5px system-ui,-apple-system,"Segoe UI",sans-serif';
+  c.textAlign='center'; c.textBaseline='bottom'; c.fillText(o.xl||'',pad.l+pw/2,h-3);
+  c.save(); c.translate(12,pad.t+ph/2); c.rotate(-Math.PI/2); c.textBaseline='middle'; c.fillText(o.yl||'',0,0); c.restore();
+  c.save(); c.beginPath(); c.rect(pad.l,pad.t,pw,ph); c.clip();
+  (o.curves||[]).forEach(cu=>{ c.strokeStyle=cu.color; c.lineWidth=cu.w||2; c.setLineDash(cu.dash||[]); c.beginPath(); let st=false; const N=220; for(let i=0;i<=N;i++){ const x=x0+(x1-x0)*i/N, y=cu.f(x); if(!isFinite(y)){ st=false; continue; } if(!st){ c.moveTo(X(x),Y(y)); st=true; } else c.lineTo(X(x),Y(y)); } c.stroke(); });
+  (o.lines||[]).forEach(L=>{ if(!isFinite(L.a)||!isFinite(L.b)) return; c.strokeStyle=L.color; c.lineWidth=L.w||2; c.setLineDash(L.dash||[]); c.beginPath(); c.moveTo(X(x0),Y(L.a+L.b*x0)); c.lineTo(X(x1),Y(L.a+L.b*x1)); c.stroke(); });
+  if(o.poly&&o.poly.length>1){ c.strokeStyle=o.polyColor||col.pt; c.lineWidth=1.5; c.setLineDash([]); c.globalAlpha=.55; c.beginPath(); o.poly.forEach((p,i)=>{ if(i) c.lineTo(X(p.x),Y(p.y)); else c.moveTo(X(p.x),Y(p.y)); }); c.stroke(); c.globalAlpha=1; }
+  c.setLineDash([]);
+  (o.pts||[]).forEach(p=>{
+    if(p.cls==='hidden'||!isFinite(p.x)||!isFinite(p.y)) return;
+    const x=X(p.x), y=Y(p.y), color=p.cls==='excl'?col.ex:(p.color||col.pt);
+    if(p.ey){ c.strokeStyle=color; c.lineWidth=1.3; const a=Y(p.y-p.ey), b=Y(p.y+p.ey); c.beginPath(); c.moveTo(x,a); c.lineTo(x,b); c.moveTo(x-4,a); c.lineTo(x+4,a); c.moveTo(x-4,b); c.lineTo(x+4,b); c.stroke(); }
+    c.beginPath(); c.arc(x,y,p.r||4.5,0,Math.PI*2);
+    if(p.cls==='excl'||p.hollow){ c.fillStyle=col.bg; c.fill(); c.strokeStyle=color; c.lineWidth=1.8; c.stroke(); } else { c.fillStyle=color; c.fill(); }
+  });
+  (o.marks||[]).forEach(m=>{ if(!isFinite(m.x)||!isFinite(m.y)) return; const x=X(m.x), y=Y(m.y); c.fillStyle='#c95b26'; c.strokeStyle=col.bg; c.lineWidth=2; c.beginPath(); c.moveTo(x,y-7); c.lineTo(x+7,y); c.lineTo(x,y+7); c.lineTo(x-7,y); c.closePath(); c.fill(); c.stroke(); c.font='700 13px system-ui,sans-serif'; c.textAlign='left'; c.textBaseline='bottom'; c.fillStyle='#8a3a12'; c.fillText(m.label,x+8,y-4); });
+  c.restore();
+  cv._m={inv:(px,py)=>({x:x0+(px-pad.l)/pw*(x1-x0),y:y0+(pad.t+ph-py)/ph*(y1-y0)}),x0,x1,y0,y1};
+}
+function legendHTML(items){ return items.map(it=>`<span><i class="${it.dash?'dash':''}${it.dot?'dot':''}" style="${it.dot?'background':'border-top-color'}:${it.color}"></i>${it.label}</span>`).join(''); }
+function linfit(P){
+  const n=P.length; if(n<2) return null;
+  let sx=0,sy=0,sxx=0,sxy=0; P.forEach(p=>{ sx+=p.x; sy+=p.y; sxx+=p.x*p.x; sxy+=p.x*p.y; });
+  const D=n*sxx-sx*sx; if(Math.abs(D)<1e-14) return null;
+  const b=(n*sxy-sx*sy)/D, a=(sy-b*sx)/n, ym=sy/n; let ssr=0,sst=0;
+  P.forEach(p=>{ const r=p.y-(a+b*p.x); ssr+=r*r; sst+=(p.y-ym)*(p.y-ym); });
+  return {a,b,R2:sst>0?1-ssr/sst:1,xm:sx/n,ym,rms:Math.sqrt(ssr/n),xmin:Math.min(...P.map(p=>p.x)),xmax:Math.max(...P.map(p=>p.x)),ymin:Math.min(...P.map(p=>p.y)),ymax:Math.max(...P.map(p=>p.y))};
+}
+/* határegyenesek: az első és az utolsó pont (x szerint) hibaintervallumának végpontjain át; a meredekségeket a tanuló számolja */
+function limitLines(P){
+  if(P.length<2) return null;
+  const s=P.slice().sort((p,q)=>p.x-q.x), p1=s[0], p2=s[s.length-1], dx=p2.x-p1.x; if(Math.abs(dx)<1e-12) return null;
+  const e1=p1.ey||0, e2=p2.ey||0, ka=((p2.y+e2)-(p1.y-e1))/dx, kb=((p2.y-e2)-(p1.y+e1))/dx;
+  return {kmax:ka,kmin:kb,amax:(p1.y-e1)-ka*p1.x,amin:(p1.y+e1)-kb*p1.x,p1,p2};
+}
+
+/* ---------- FELDOLGOZÁS: táblázat → grafikonok → meredekség → konstans → bizonytalanság → eredmény ---------- */
+function makeAnalysis(cfg){
+  const A={id:cfg.id,cfg}; let pick=null;
+  const D0=()=>({tbl:{},A:{x:'',y:''},B:{x:'',y:''},k:'',n:'',ex:{},cmax:'',cmin:'',d:'',rc:'',rd:'',auto:false,e1:'',e2:'',kx:'',kn:''});
+  A.sanitize=()=>{ const s=S.proc[cfg.id]; S.proc[cfg.id]=plain(s)?merge(D0(),s):D0(); };
+  const st=()=>S.proc[cfg.id];
+  const inCols=cfg.cols.filter(c=>c.input), colBy=k=>cfg.cols.find(c=>c.key===k);
+  const rows=()=>cfg.rows(), valid=r=>cfg.valid?cfg.valid(r):true;
+  const q0=cfg.consts[0];
+  function exG(r){ const m={}; const g=k=>{ if(k in m) return m[k]; const c=colBy(k); return (m[k]=c.input?c.exact(r,g):c.val(r)); }; return g; }
+  function stG(r){ const T=st().tbl[r.key]||{}, e=exG(r); return k=>{ const c=colBy(k); if(!c.input) return c.val(r); const v=parseNum(T[k]); return isFinite(v)?v:e(k); }; }
+  function cell(r,c){ const raw=(st().tbl[r.key]||{})[c.key]; if(raw==null||String(raw).trim()==='') return 'empty'; const v=parseNum(raw); if(!isFinite(v)) return 'bad'; const t1=exG(r)(c.key), t2=c.exact(r,stG(r)); return (within(v,t1,c.tol.abs,c.tol.rel)||within(v,t2,c.tol.abs,c.tol.rel))?'ok':'bad'; }
+  const rowOk=r=>inCols.every(c=>cell(r,c)==='ok');
+  A.stats=()=>{ let ok=0,tot=0,n=0; rows().forEach(r=>{ if(!valid(r)) return; n++; inCols.forEach(c=>{ tot++; if(cell(r,c)==='ok') ok++; }); }); return {ok,tot,n}; };
+  A.tableDone=()=>{ const s=A.stats(); return s.n>=cfg.minRows&&s.ok===s.tot; };
+  function pts(){ return rows().map(r=>{ const g=exG(r), v=valid(r); return {x:cfg.X(g,r),y:cfg.Y(g,r),ey:cfg.ey(r),valid:v,shown:v&&rowOk(r)}; }); }
+  A.fitShown=()=>{ const P=pts().filter(p=>p.shown); return P.length>=2?linfit(P):null; };
+  A.lims=()=>{ const P=pts().filter(p=>p.shown), f=P.length>=2?linfit(P):null, L=limitLines(P); if(!L) return null; const r=v=>+v.toFixed(cfg.kDec); return {kmax:r(L.kmax),kmin:r(L.kmin),L}; };
+  const kS=()=>parseNum(st().k), nS=()=>parseNum(st().n);
+
+  /* --- a meredekség ellenőrzése --- */
+  A.slopeEval=()=>{
+    const s=st(), xa=parseNum(s.A.x), ya=parseNum(s.A.y), xb=parseNum(s.B.x), yb=parseNum(s.B.y), k=kS(), n=nS();
+    const r={okAB:false,okK:false,okN:!cfg.intercept,msgs:[],warn:[]};
+    if(![xa,ya,xb,yb].every(isFinite)){ r.msgs.push('Írd be az A és B pont mindkét koordinátáját.'); return r; }
+    if(Math.abs(xb-xa)<1e-12){ r.msgs.push('Az A és B pontnak különböző x-koordinátájúnak kell lennie.'); return r; }
+    r.okAB=true;
+    const kab=(yb-ya)/(xb-xa), f=A.fitShown();
+    if(f){ const sx=f.xmax-f.xmin, sy=Math.max(f.ymax-f.ymin,1e-9);
+      if(Math.abs(xb-xa)<0.45*sx) r.warn.push('Az A és B túl közel van egymáshoz — válaszd őket minél távolabb egymástól.');
+      if(Math.abs(ya-(f.a+f.b*xa))>0.04*sy) r.warn.push('Az A pont nem a kék egyenesen van.');
+      if(Math.abs(yb-(f.a+f.b*xb))>0.04*sy) r.warn.push('A B pont nem a kék egyenesen van.'); }
+    if(isFinite(k)&&within(k,kab,cfg.kTol.abs,cfg.kTol.rel)) r.okK=true;
+    else r.msgs.push(isFinite(k)?`A meredekség nem felel meg a pontjaidnak: k = (y_B − y_A) : (x_B − x_A). Figyelj az előjelre és a sorrendre.`:'Számítsd ki és írd be a k meredekséget.');
+    if(cfg.intercept){ const nn=ya-(r.okK?k:kab)*xa; if(isFinite(n)&&within(n,nn,cfg.nTol.abs,cfg.nTol.rel)) r.okN=true; else r.msgs.push(isFinite(n)?'A tengelymetszet nem egyezik: n = y_A − k · x_A (figyelj a szorzat előjelére).':'Számítsd ki és írd be az n tengelymetszetet.'); }
+    if(r.okK&&f&&Math.abs(k-f.b)>0.12*Math.abs(f.b)) r.warn.push('A meredekség jelentősen eltér a kék egyenes meredekségétől — ellenőrizd, hogy az A és B pont valóban az egyenesen van-e.');
+    return r;
+  };
+  A.slopeDone=()=>{ const r=A.slopeEval(); return r.okAB&&r.okK&&r.okN; };
+  A.qEval=key=>{ const q=cfg.consts.find(z=>z.key===key), v=parseNum(st().ex[key]); if(!isFinite(v)) return String(st().ex[key]||'').trim()?'bad':'empty'; const t=q.f(kS(),nS()); return within(v,t,q.tol.abs,q.tol.rel)?'ok':'bad'; };
+  A.constDone=()=>cfg.consts.every(q=>A.qEval(q.key)==='ok');
+  A.mainDone=()=>A.qEval(q0.key)==='ok';
+  A.eyEval=()=>{
+    const L=A.lims(); if(!L) return {ready:false,ok:false};
+    const p1=L.L.p1, p2=L.L.p2;
+    if(!cfg.eyAsk) return {ready:true,ok:true,o1:true,o2:true,e1:p1.ey||0,e2:p2.ey||0};
+    const s=st(), e1=parseNum(s.e1), e2=parseNum(s.e2), ta=cfg.eyTol||0;
+    const o1=e1>0&&within(e1,p1.ey,ta,0.06), o2=e2>0&&within(e2,p2.ey,ta,0.06);
+    return {ready:true,ok:o1&&o2,o1,o2,e1:o1?e1:p1.ey,e2:o2?e2:p2.ey};
+  };
+  A.kEval=()=>{
+    const L=A.lims(); if(!L) return {ready:false,ok:false};
+    const E=A.eyEval(), p1=L.L.p1, p2=L.L.p2, dx=p2.x-p1.x, s=st();
+    const kx=((p2.y+E.e2)-(p1.y-E.e1))/dx, kn=((p2.y-E.e2)-(p1.y+E.e1))/dx;
+    const tol=0.12*Math.abs(L.L.kmax-L.L.kmin)+0.5*Math.pow(10,-cfg.kDec);
+    const a=parseNum(s.kx), b=parseNum(s.kn);
+    const okx=within(a,kx,tol,0)||within(a,L.L.kmax,tol,0), okn=within(b,kn,tol,0)||within(b,L.L.kmin,tol,0);
+    const swap=!okx&&!okn&&(within(a,kn,tol,0)||within(a,L.L.kmin,tol,0))&&(within(b,kx,tol,0)||within(b,L.L.kmax,tol,0));
+    return {ready:true,ok:E.ok&&okx&&okn,okx,okn,swap,E};
+  };
+  A.uEval=()=>{
+    const L=A.lims(), s=st(); if(!L) return {ready:false,ok:false};
+    const K=A.kEval(), ka=K.okx?parseNum(s.kx):L.kmax, kb=K.okn?parseNum(s.kn):L.kmin;
+    const tmax=q0.f(ka,nS()), tmin=q0.f(kb,nS()), tmax2=q0.f(L.kmax,nS()), tmin2=q0.f(L.kmin,nS());
+    const cmax=parseNum(s.cmax), cmin=parseNum(s.cmin), d=parseNum(s.d);
+    const okMax=within(cmax,tmax,q0.tol.abs,q0.tol.rel)||within(cmax,tmax2,q0.tol.abs,q0.tol.rel);
+    const okMin=within(cmin,tmin,q0.tol.abs,q0.tol.rel)||within(cmin,tmin2,q0.tol.abs,q0.tol.rel);
+    const t1=Math.abs(tmax-tmin)/2, t2=(isFinite(cmax)&&isFinite(cmin))?Math.abs(cmax-cmin)/2:t1;
+    const okD=d>0&&(within(d,t1,q0.tol.abs,0.03)||within(d,t2,q0.tol.abs,0.03));
+    return {ready:true,ok:K.ok&&okMax&&okMin&&okD,okMax,okMin,okD,K,L};
+  };
+  A.rEval=()=>{
+    const s=st(), c=parseNum(s.rc), d=parseNum(s.rd), C=parseNum(s.ex[q0.key]); let D=parseNum(s.d);
+    const r={ok:false,msgs:[]};
+    if(!isFinite(c)||!isFinite(d)){ r.msgs.push('Írd be az értéket és a bizonytalanságot is.'); return r; }
+    if(!(d>0)){ r.msgs.push('A bizonytalanságnak pozitívnak kell lennie.'); return r; }
+    if(!isFinite(D)){ const u=A.uEval(); D=u.ready?Math.abs(q0.f(u.L.kmax,nS())-q0.f(u.L.kmin,nS()))/2:NaN; }
+    if(sigOf(s.rd)>2) r.msgs.push('A bizonytalanságot egy vagy két értékes jegyre kerekítsd.');
+    else if(isFinite(D)&&!within(d,D,Math.pow(10,-decOf(s.rd)),0.35)) r.msgs.push('A bizonytalanság nem egyezik az előző lépésbelivel (csak kerekítsd).');
+    if(decOf(s.rc)!==decOf(s.rd)) r.msgs.push('Az értéket ugyanarra a tizedesjegyre kerekítsd, mint a bizonytalanságot.');
+    if(isFinite(C)&&!within(c,C,0.6*Math.pow(10,-decOf(s.rc)),0.003)) r.msgs.push(`Az érték nem egyezik a 4. lépésben kapott ${q0.sym} értékkel (csak kerekítsd).`);
+    r.ok=!r.msgs.length; return r;
+  };
+  A.resultDone=()=>A.rEval().ok;
+  A.summary=()=>{ const s=st(), r=A.rEval(); return {ok:r.ok,rc:s.rc,rd:s.rd,c:parseNum(s.rc),d:parseNum(s.rd),C:parseNum(s.ex[q0.key]),auto:s.auto}; };
+
+  /* --- automatikus kitöltés (súgó) --- */
+  function autoTable(){ rows().filter(valid).forEach(r=>{ const g=exG(r), T=st().tbl[r.key]||(st().tbl[r.key]={}); inCols.forEach(c=>{ T[c.key]=fmt(g(c.key),c.dec); }); }); st().auto=true; }
+  A.autoAll=()=>{
+    autoTable(); const f=A.fitShown(); if(!f) return;
+    const s=st(), sx=f.xmax-f.xmin, xa=+(f.xmin+0.08*sx).toFixed(cfg.pickDec[0]), xb=+(f.xmax-0.08*sx).toFixed(cfg.pickDec[0]);
+    const ya=+(f.a+f.b*xa).toFixed(cfg.pickDec[1]), yb=+(f.a+f.b*xb).toFixed(cfg.pickDec[1]);
+    s.A={x:fmt(xa,cfg.pickDec[0]),y:fmt(ya,cfg.pickDec[1])}; s.B={x:fmt(xb,cfg.pickDec[0]),y:fmt(yb,cfg.pickDec[1])};
+    const k=+((yb-ya)/(xb-xa)).toFixed(cfg.kDec); s.k=fmt(k,cfg.kDec);
+    const n=+(ya-k*xa).toFixed(cfg.nDec||3); if(cfg.intercept) s.n=fmt(n,cfg.nDec||3);
+    cfg.consts.forEach(q=>{ s.ex[q.key]=fmt(q.f(k,n),q.dec); });
+    const L=A.lims(); if(L){ s.e1=fmt(L.L.p1.ey,cfg.eyDec||3); s.e2=fmt(L.L.p2.ey,cfg.eyDec||3); s.kx=fmt(L.kmax,cfg.kDec); s.kn=fmt(L.kmin,cfg.kDec); const a=+q0.f(L.kmax,n).toFixed(q0.dec), b=+q0.f(L.kmin,n).toFixed(q0.dec); s.cmax=fmt(a,q0.dec); s.cmin=fmt(b,q0.dec); const d=Math.abs(a-b)/2; s.d=fmt(d,q0.dec+1); const ru=roundUnc(d); s.rd=fmt(ru.d,ru.dec); s.rc=fmt(parseNum(s.ex[q0.key]),ru.dec); }
+    s.auto=true;
+  };
+
+  /* --- mindkét grafikon rajzolása (a feldolgozás összes canvasa) --- */
+  A.draw=()=>{
+    const P=pts(), shown=P.filter(p=>p.shown), f=shown.length>=2?linfit(shown):null, Lr=limitLines(shown), s=st();
+    const xa=parseNum(s.A.x), ya=parseNum(s.A.y), xb=parseNum(s.B.x), yb=parseNum(s.B.y);
+    $$(`canvas[data-an="${cfg.id}"][data-raw]`).forEach(cv=>{ if(!cv.offsetParent) return;
+      plot(cv,{xl:cfg.raw.xl,yl:cfg.raw.yl,zeroY:cfg.raw.zeroY,zeroX:cfg.raw.zeroX,pts:rows().map(r=>({x:cfg.raw.x(r),y:cfg.raw.y(r),cls:valid(r)?'':'excl'}))}); });
+    $$(`canvas[data-an="${cfg.id}"][data-lin]`).forEach(cv=>{ if(!cv.offsetParent) return;
+      const lines=[], leg=[{label:'mérési pontok',color:'#2c69ab',dot:true}];
+      if(f&&shown.length>=3){ lines.push({a:f.a,b:f.b,color:'#2c69ab',w:2.2}); leg.push({label:'legjobban illeszkedő egyenes',color:'#2c69ab'}); }
+      if(Lr&&cv.dataset.lim==='1'){ lines.push({a:Lr.amax,b:Lr.kmax,color:'#c98a1e',dash:[7,5],w:1.6},{a:Lr.amin,b:Lr.kmin,color:'#c98a1e',dash:[7,5],w:1.6}); leg.push({label:'határegyenesek',color:'#c98a1e',dash:true}); }
+      const marks=[]; if(isFinite(xa)&&isFinite(ya)) marks.push({x:xa,y:ya,label:'A'}); if(isFinite(xb)&&isFinite(yb)) marks.push({x:xb,y:yb,label:'B'});
+      if(marks.length===2&&Math.abs(xb-xa)>1e-12){ const k=(yb-ya)/(xb-xa); lines.push({a:ya-k*xa,b:k,color:'#c95b26',dash:[2,4],w:1.5}); leg.push({label:'az A és B ponton átmenő egyenesed',color:'#c95b26',dash:true}); }
+      if(P.some(p=>!p.valid)) leg.push({label:'kizárt pont',color:'#9a9a9a',dot:true});
+      plot(cv,{xl:cfg.xl,yl:cfg.yl,zeroX:cfg.zeroX,zeroY:cfg.zeroY,lines,marks,pts:P.map(p=>({x:p.x,y:p.y,ey:p.ey,cls:!p.valid?'excl':(p.shown?'':'hidden')}))});
+      const lg=cv.parentNode.querySelector('.legend'); if(lg) lg.innerHTML=legendHTML(leg);
+      cv.classList.toggle('picking',!!pick);
+    });
+  };
+
+  /* --- a nézetek részei --- */
+  const back=`<button type="button" class="btn ghost" data-go="${cfg.backView}">← ${cfg.backLabel}</button>`;
+  const R={};
+  R.table=el=>{
+    const RR=rows();
+    if(!RR.length){ el.innerHTML=`<div class="card empty"><p>Ehhez a feldolgozáshoz még nincs mért adat.</p>${back}</div>`; return; }
+    let h=`<div class="card"><h3><span class="stepnum">1</span>${cfg.tableTitle}</h3><p class="small">${cfg.tableHelp}</p><div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">#</th>${cfg.cols.map(c=>`<th scope="col">${c.label}</th>`).join('')}</tr></thead><tbody>`;
+    RR.forEach((r,i)=>{ const v=valid(r);
+      h+=`<tr class="${v?'':'excl'}" data-row="${r.key}"><td class="ix">${i+1}</td>`+cfg.cols.map(c=>{ if(!c.input) return `<td class="num">${c.show?c.show(r):fmt(c.val(r),c.dec)}</td>`; const val=(st().tbl[r.key]||{})[c.key]||''; return `<td><input inputmode="decimal" autocomplete="off" spellcheck="false" data-col="${c.key}" value="${esc(val)}" aria-label="${c.aria}, ${i+1}. sor"${v?'':' disabled'}></td>`; }).join('')+`</tr>`;
+      if(!v) h+=`<tr class="exclnote"><td colspan="${cfg.cols.length+1}">↑ ${cfg.invalidNote(r)}</td></tr>`; });
+    h+=`</tbody></table></div><div class="btnrow" style="margin-top:10px;justify-content:space-between"><span class="pill" data-cnt></span><button type="button" class="btn ghost sm helponly" data-auto>Automatikus kitöltés (súgó tanároknak)</button></div><div class="fb" data-tfb aria-live="polite"></div></div>`;
+    el.innerHTML=h;
+    el.querySelectorAll('input[data-col]').forEach(inp=>{ const key=inp.closest('tr').dataset.row, ck=inp.dataset.col;
+      const upd=()=>{ (st().tbl[key]||(st().tbl[key]={}))[ck]=inp.value; save(); };
+      inp.addEventListener('input',()=>{ upd(); inp.classList.remove('ok','bad'); });
+      inp.addEventListener('change',()=>{ upd(); paintTable(el,ck,key); A.draw(); refresh(); const u=el.parentNode&&el.parentNode.querySelector(':scope > [data-part="unc"]'); if(u&&!u.querySelector('[data-u]')&&A.lims()) R.unc(u); }); });
+    el.querySelector('[data-auto]').addEventListener('click',()=>{ autoTable(); save(); R.table(el); A.draw(); refresh(); toast('A táblázat automatikusan ki lett töltve — ez az eredményed mellett is látszani fog.','warn'); });
+    paintTable(el);
+  };
+  function paintTable(el,lastCol,lastKey){
+    let firstBad=null;
+    rows().forEach(r=>{ const tr=el.querySelector(`tr[data-row="${r.key}"]`); if(!tr) return; inCols.forEach(c=>{ const inp=tr.querySelector(`input[data-col="${c.key}"]`); if(!inp) return; const s=cell(r,c); inp.classList.toggle('ok',s==='ok'); inp.classList.toggle('bad',s==='bad'); if(s==='bad'&&(!firstBad||(r.key===lastKey&&c.key===lastCol))) firstBad=c; }); });
+    const s=A.stats(), cnt=el.querySelector('[data-cnt]'), fb=el.querySelector('[data-tfb]');
+    if(cnt){ cnt.textContent=`Helyes: ${s.ok} / ${s.tot}`; cnt.className='pill '+(s.tot&&s.ok===s.tot?'ok':'acc'); }
+    if(fb){ if(firstBad){ fb.className='fb bad'; fb.innerHTML=`Ellenőrizd a piros mezőt (${firstBad.aria}): ${firstBad.hint}`; } else if(s.tot&&s.ok===s.tot){ fb.className='fb ok'; fb.textContent='✓ Minden helyes — minden pont fel van rajzolva a grafikonra.'; } else { fb.className='fb'; fb.textContent=''; } }
+  }
+  R.graphs=el=>{
+    el.innerHTML=`<div class="card"><h3><span class="stepnum">2</span>Grafikonok</h3><p class="small">${cfg.graphHelp}</p><div class="grid2"><figure class="gr"><figcaption>${cfg.raw.title}</figcaption><canvas class="plot" data-an="${cfg.id}" data-raw data-ratio="0.72" role="img" aria-label="${cfg.raw.title}"></canvas></figure><figure class="gr"><figcaption>${cfg.linTitle}</figcaption><canvas class="plot" data-an="${cfg.id}" data-lin data-pick data-ratio="0.72" role="img" aria-label="${cfg.linTitle}"></canvas><div class="legend"></div></figure></div></div>`;
+    const cv=el.querySelector('canvas[data-pick]');
+    cv.addEventListener('pointerdown',e=>{
+      if(!pick||!cv._m) return;
+      const rc=cv.getBoundingClientRect(), p=cv._m.inv(e.clientX-rc.left,e.clientY-rc.top), f=A.fitShown();
+      const x=+p.x.toFixed(cfg.pickDec[0]), y=f?+(f.a+f.b*x).toFixed(cfg.pickDec[1]):+p.y.toFixed(cfg.pickDec[1]);
+      st()[pick]={x:fmt(x,cfg.pickDec[0]),y:fmt(y,cfg.pickDec[1])}; save();
+      $$(`[data-an-ab="${cfg.id}"] [data-ab="${pick}x"]`).forEach(i=>i.value=st()[pick].x);
+      $$(`[data-an-ab="${cfg.id}"] [data-ab="${pick}y"]`).forEach(i=>i.value=st()[pick].y);
+      toast(`${pick} pont az egyenesre került: x = ${st()[pick].x}, y = ${st()[pick].y}`);
+      pick=pick==='A'?'B':null; paintPick(); A.draw();
+    });
+  };
+  function paintPick(){ $$(`[data-an-ab="${cfg.id}"] [data-pick]`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pick===pick))); }
+  R.slope=el=>{
+    const s=st();
+    el.innerHTML=`<div class="card" data-an-ab="${cfg.id}"><h3><span class="stepnum">3</span>Az egyenes meredeksége két pontból</h3>
+      <p class="small">Válassz két pontot <b>a kék (legjobban illeszkedő) egyenesen</b>, minél távolabb egymástól — nem a mérési pontokat! Írd be a koordinátáikat, vagy válaszd az A vagy a B pontot, és érintsd meg a linearizált grafikont (a pont az egyenesre kerül).</p>
+      <div class="btnrow" style="margin-bottom:6px"><span class="small muted">Választás érintéssel:</span><div class="chips" role="group" aria-label="A grafikon érintésével kijelölt pont"><button type="button" class="chip" data-pick="A">A pont</button><button type="button" class="chip" data-pick="B">B pont</button></div></div>
+      <div class="ab">${['A','B'].map(P=>`<div class="abrow"><b>${P}</b><span class="abc"><label class="lbl" for="ab-${cfg.id}-${P}x">x =</label><input class="in" id="ab-${cfg.id}-${P}x" data-ab="${P}x" inputmode="decimal" autocomplete="off" value="${esc(s[P].x)}"><span class="unit">${cfg.xu}</span></span><span class="abc"><label class="lbl" for="ab-${cfg.id}-${P}y">y =</label><input class="in" id="ab-${cfg.id}-${P}y" data-ab="${P}y" inputmode="decimal" autocomplete="off" value="${esc(s[P].y)}"><span class="unit">${cfg.yu}</span></span></div>`).join('')}</div>
+      <div class="formula"><label for="k-${cfg.id}">k =</label> ${FR('y<sub>B</sub> − y<sub>A</sub>','x<sub>B</sub> − x<sub>A</sub>')} = <input class="in" id="k-${cfg.id}" data-k inputmode="decimal" autocomplete="off" value="${esc(s.k)}"> <span class="unit">${cfg.ku}</span></div>
+      ${cfg.intercept?`<div class="formula"><label for="n-${cfg.id}">n = y<sub>A</sub> − k · x<sub>A</sub> =</label> <input class="in" id="n-${cfg.id}" data-n inputmode="decimal" autocomplete="off" value="${esc(s.n)}"> <span class="unit">${cfg.yu}</span></div><p class="small muted" style="text-align:center;margin-top:-6px">${cfg.interceptHelp||''}</p>`:''}
+      <button type="button" class="btn" data-chk>Meredekség ellenőrzése</button><div class="fb" data-sfb aria-live="polite"></div></div>`;
+    el.querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',()=>{ pick=pick===b.dataset.pick?null:b.dataset.pick; paintPick(); A.draw(); if(pick) toast(`Érintsd meg a(z) „${cfg.linTitle}” grafikont a ${pick} pont helyén.`); }));
+    el.querySelectorAll('[data-ab]').forEach(i=>i.addEventListener('input',()=>{ const P=i.dataset.ab[0], c=i.dataset.ab[1]; st()[P][c]=i.value; save(); A.draw(); }));
+    const ki=el.querySelector('[data-k]'); ki.addEventListener('input',()=>{ st().k=ki.value; ki.classList.remove('ok','bad'); save(); });
+    const ni=el.querySelector('[data-n]'); if(ni) ni.addEventListener('input',()=>{ st().n=ni.value; ni.classList.remove('ok','bad'); save(); });
+    el.querySelector('[data-chk]').addEventListener('click',()=>{ showSlope(el,true); refresh(); });
+    paintPick(); if(st().k) showSlope(el,false);
+  };
+  function showSlope(el,loud){
+    const r=A.slopeEval(), fb=el.querySelector('[data-sfb]'), ki=el.querySelector('[data-k]'), ni=el.querySelector('[data-n]');
+    ki.classList.toggle('ok',r.okK); ki.classList.toggle('bad',r.okAB&&!r.okK&&!!st().k);
+    if(ni){ ni.classList.toggle('ok',r.okN); ni.classList.toggle('bad',r.okAB&&!r.okN&&!!st().n); }
+    const w=r.warn.length?`<span class="w">⚠ ${r.warn.join(' ')}</span>`:'';
+    if(r.okAB&&r.okK&&r.okN){ fb.className='fb ok'; fb.innerHTML='✓ Helyesen kiszámítva.'+w; if(loud) toast('A meredekség helyes.','ok'); }
+    else { fb.className='fb bad'; fb.innerHTML=r.msgs.join(' ')+w; }
+  }
+  R.remind=el=>{
+    const s=st(), done=A.slopeDone();
+    const inp=(k,lab,val,u)=>`<span class="abc"><label class="lbl" for="pv-${cfg.id}-${k}">${lab}</label><input class="in" id="pv-${cfg.id}-${k}" data-pv="${k}" inputmode="decimal" autocomplete="off" value="${esc(val)}"><span class="unit">${u}</span></span>`;
+    el.innerHTML=`<div class="card remind"><h3>Emlékeztető az előző óráról</h3>`+(done?`<dl class="kv"><dt>A pont</dt><dd>(${esc(s.A.x||'—')} ${cfg.xu}; ${esc(s.A.y||'—')} ${cfg.yu})</dd><dt>B pont</dt><dd>(${esc(s.B.x||'—')} ${cfg.xu}; ${esc(s.B.y||'—')} ${cfg.yu})</dd><dt>k meredekség</dt><dd>${esc(s.k||'—')} ${cfg.ku} <span class="pill ok">helyes</span></dd>${cfg.intercept?`<dt>n tengelymetszet</dt><dd>${esc(s.n||'—')} ${cfg.yu}</dd>`:''}</dl>`:
+      `<p class="small">Írd be a füzetedből az előző órán az egyenesen választott A és B pontot és a k meredekséget${cfg.intercept?' és az n tengelymetszetet':''}:</p>
+      <div class="ab"><div class="abrow"><b>A</b>${inp('Ax','x =',s.A.x,cfg.xu)}${inp('Ay','y =',s.A.y,cfg.yu)}</div><div class="abrow"><b>B</b>${inp('Bx','x =',s.B.x,cfg.xu)}${inp('By','y =',s.B.y,cfg.yu)}</div></div>
+      <div class="formula">${inp('k','k =',s.k,cfg.ku)}${cfg.intercept?inp('n','n =',s.n,cfg.yu):''}</div>
+      <button type="button" class="btn" data-pvchk>Betöltés a füzetből</button><div class="fb" data-pvfb aria-live="polite"></div>`)+
+    `<figure class="gr"><figcaption>${cfg.linTitle} — határegyenesekkel</figcaption><canvas class="plot" data-an="${cfg.id}" data-lin data-lim="1" data-ratio="0.62" data-max="360" role="img" aria-label="${cfg.linTitle} a legjobban illeszkedő egyenessel és a határegyenesekkel"></canvas><div class="legend"></div></figure>
+    ${done?'':`<div class="btnrow" style="margin-top:8px"><button type="button" class="btn ghost sm" data-go="${cfg.slopeView}">← Vagy határozd meg újra a meredekséget</button></div>`}</div>`;
+    el.querySelectorAll('[data-pv]').forEach(i=>i.addEventListener('input',()=>{ const k=i.dataset.pv; if(k==='k'||k==='n') st()[k]=i.value; else st()[k[0]][k[1]]=i.value; i.classList.remove('ok','bad'); save(); }));
+    const b=el.querySelector('[data-pvchk]');
+    if(b) b.addEventListener('click',()=>{ const r=A.slopeEval(), fb=el.querySelector('[data-pvfb]');
+      if(r.okAB&&r.okK&&r.okN){ toast('Az előző órai értékek betöltve.','ok'); go(S.view); }
+      else { fb.className='fb bad'; fb.innerHTML=r.msgs.join(' ')+(r.warn.length?`<span class="w">⚠ ${r.warn.join(' ')}</span>`:''); } });
+  };
+  R.prevres=el=>{
+    if(A.resultDone()){ el.innerHTML=''; return; }
+    const s=st(), sym=q0.sym;
+    const ii=(k,val,lab)=>`<input class="in" data-pr="${k}" inputmode="decimal" autocomplete="off" aria-label="${lab}" value="${esc(val)}">`;
+    el.innerHTML=`<div class="card remind"><h3>${cfg.name?cfg.name+': ':''}az előző órai eredmény</h3><p class="small">Ez az eredmény nincs elmentve ezen az eszközön. Másold át a füzetedből:</p>
+      <div class="formula">${sym} = ${ii('q',s.ex[q0.key]||'',sym)} <span class="unit">${q0.unit}</span></div>
+      <div class="formula">Δ${sym} = ${ii('d',s.d,'bizonytalanság')} <span class="unit">${q0.unit}</span></div>
+      <div class="formula"><span>${sym} = (</span>${ii('rc',s.rc,'kerekített érték')}<span>±</span>${ii('rd',s.rd,'kerekített bizonytalanság')}<span>) ${q0.unit}</span></div>
+      <button type="button" class="btn" data-prchk>Betöltés a füzetből</button><div class="fb" data-prfb aria-live="polite"></div></div>`;
+    el.querySelectorAll('[data-pr]').forEach(i=>i.addEventListener('input',()=>{ const k=i.dataset.pr; if(k==='q') st().ex[q0.key]=i.value; else st()[k]=i.value; save(); }));
+    el.querySelector('[data-prchk]').addEventListener('click',()=>{
+      const fb=el.querySelector('[data-prfb]'), r=A.rEval(), f=A.fitShown(), q=parseNum(st().ex[q0.key]);
+      if(!isFinite(q)){ fb.className='fb bad'; fb.textContent=`Írd be a füzetedből: ${q0.sym.replace(/<[^>]+>/g,'')}.`; return; }
+      if(f&&!within(q,q0.f(f.b,f.a),0,0.08)){ fb.className='fb bad'; fb.textContent='Ez az érték nem egyezik a méréseiddel. Ellenőrizd, hogy pontosan másoltad-e át a méréseket és az eredményt.'; return; }
+      if(r.ok){ toast('Az előző órai eredmény betöltve.','ok'); go(S.view); } else { fb.className='fb bad'; fb.innerHTML=r.msgs.join(' '); }
+    });
+  };
+  R.const=el=>{
+    const s=st();
+    el.innerHTML=`<div class="card"><h3><span class="stepnum">4</span>${cfg.constTitle}</h3><p class="small">${cfg.constHelp}</p>`+
+      cfg.consts.map(q=>`<div class="qrow">${q.name?`<div class="qname">${q.name}</div>`:''}<div class="formula">${q.formula} <label class="sr" for="q-${cfg.id}-${q.key}">${q.sym}</label><input class="in" id="q-${cfg.id}-${q.key}" data-q="${q.key}" inputmode="decimal" autocomplete="off" value="${esc(s.ex[q.key]||'')}"> <span class="unit">${q.unit}</span></div></div>`).join('')+
+      `<button type="button" class="btn" data-qchk>Ellenőrzés</button><div class="fb" data-qfb aria-live="polite"></div></div>`;
+    el.querySelectorAll('[data-q]').forEach(i=>i.addEventListener('input',()=>{ st().ex[i.dataset.q]=i.value; i.classList.remove('ok','bad'); save(); }));
+    el.querySelector('[data-qchk]').addEventListener('click',()=>{ showConst(el,true); refresh(); });
+    if(Object.keys(s.ex).length) showConst(el,false);
+  };
+  function showConst(el,loud){
+    const bad=[]; let all=true;
+    cfg.consts.forEach(q=>{ const r=A.qEval(q.key), i=el.querySelector(`[data-q="${q.key}"]`); i.classList.toggle('ok',r==='ok'); i.classList.toggle('bad',r==='bad'); if(r!=='ok'){ all=false; if(r==='bad') bad.push(q); } });
+    const fb=el.querySelector('[data-qfb]');
+    if(!isFinite(kS())){ fb.className='fb bad'; fb.textContent='Először írd be a k meredekséget (3. lépés).'; return; }
+    if(all){ fb.className='fb ok'; fb.textContent='✓ Helyes — a konstans a meredekségből adódott, vagyis az összes pontból együtt.'; if(loud) toast('Helyes!','ok'); }
+    else if(bad.length){ fb.className='fb bad'; fb.innerHTML=bad.map(q=>`${q.sym}: ${q.hint}`).join('<br>'); }
+    else { fb.className='fb'; fb.textContent='Töltsd ki az összes mezőt, majd kattints az „Ellenőrzés” gombra.'; }
+  }
+  R.unc=el=>{
+    const L=A.lims(), s=st();
+    if(!L){ el.innerHTML=`<div class="card"><h3><span class="stepnum">5</span>Bizonytalanság</h3><p>A határegyenesekhez legalább 2 pont kell a grafikonon — először töltsd ki a táblázatot.</p><button type="button" class="btn ghost" data-go="${cfg.slopeView}">← A táblázathoz</button></div>`; return; }
+    const sym=q0.sym, y=i=>`y<sub>${i}</sub>`, x=i=>`x<sub>${i}</sub>`, dy=i=>`Δy<sub>${i}</sub>`;
+    const iu=(k,lab,u)=>`<div class="formula"><label for="u-${cfg.id}-${k}">${lab}</label><input class="in" id="u-${cfg.id}-${k}" data-u="${k}" inputmode="decimal" autocomplete="off" value="${esc(s[k])}"> <span class="unit">${u}</span></div>`;
+    el.innerHTML=`<div class="card"><h3><span class="stepnum">5</span>Bizonytalanság — a határegyenesek módszere</h3>
+      <p class="small">A határegyenesek (narancssárga, szaggatott) a grafikon <b>első</b> és <b>utolsó</b> pontjának hibaintervallum-végpontjain mennek át: az 1. pontnak a legkisebb, a 2. pontnak a legnagyobb az x-e (a kizárt pontokat nem számítjuk). Itt x = ${cfg.xName}, y = ${cfg.yName}; az értékeket a saját táblázatodból vedd.</p>
+      ${cfg.eyHTML||''}
+      ${cfg.eyAsk?iu('e1',`${dy(1)} =`,cfg.yu)+iu('e2',`${dy(2)} =`,cfg.yu)+`<button type="button" class="btn" data-echk>Ellenőrzés</button><div class="fb" data-efb aria-live="polite"></div>`:''}
+      ${cfg.uncGraph?`<figure class="gr"><canvas class="plot" data-an="${cfg.id}" data-lin data-lim="1" data-ratio="0.6" data-max="340" role="img" aria-label="${cfg.linTitle} a határegyenesekkel"></canvas><div class="legend"></div></figure>`:''}
+      <p class="small">Számítsd ki a határegyenesek meredekségét:</p>
+      <div class="formula"><label for="u-${cfg.id}-kx">k<sub>max</sub> =</label> ${FR(`(${y(2)} + ${dy(2)}) − (${y(1)} − ${dy(1)})`,`${x(2)} − ${x(1)}`)} = <input class="in" id="u-${cfg.id}-kx" data-u="kx" inputmode="decimal" autocomplete="off" value="${esc(s.kx)}"> <span class="unit">${cfg.ku}</span></div>
+      <div class="formula"><label for="u-${cfg.id}-kn">k<sub>min</sub> =</label> ${FR(`(${y(2)} − ${dy(2)}) − (${y(1)} + ${dy(1)})`,`${x(2)} − ${x(1)}`)} = <input class="in" id="u-${cfg.id}-kn" data-u="kn" inputmode="decimal" autocomplete="off" value="${esc(s.kn)}"> <span class="unit">${cfg.ku}</span></div>
+      <button type="button" class="btn" data-kchk>Meredekségek ellenőrzése</button><div class="fb" data-kfb aria-live="polite"></div>
+      <p class="small">Számítsd ki mindkét meredekségből a ${sym} értékét (ugyanúgy, mint a 4. lépésben), majd a bizonytalanságot:</p>
+      <div class="formula"><label for="cmax-${cfg.id}">${sym}<sub>max</sub> =</label><input class="in" id="cmax-${cfg.id}" data-u="cmax" inputmode="decimal" autocomplete="off" value="${esc(s.cmax)}"> <span class="unit">${q0.unit}</span></div>
+      <div class="formula"><label for="cmin-${cfg.id}">${sym}<sub>min</sub> =</label><input class="in" id="cmin-${cfg.id}" data-u="cmin" inputmode="decimal" autocomplete="off" value="${esc(s.cmin)}"> <span class="unit">${q0.unit}</span></div>
+      <div class="formula"><label for="d-${cfg.id}">Δ${sym} =</label> ${FR(`${sym}<sub>max</sub> − ${sym}<sub>min</sub>`,'2')} = <input class="in" id="d-${cfg.id}" data-u="d" inputmode="decimal" autocomplete="off" value="${esc(s.d)}"> <span class="unit">${q0.unit}</span></div>
+      <button type="button" class="btn" data-uchk>Bizonytalanság ellenőrzése</button><div class="fb" data-ufb aria-live="polite"></div></div>`;
+    el.querySelectorAll('[data-u]').forEach(i=>i.addEventListener('input',()=>{ st()[i.dataset.u]=i.value; i.classList.remove('ok','bad'); save(); }));
+    const be=el.querySelector('[data-echk]'); if(be) be.addEventListener('click',()=>{ showEy(el,true); refresh(); });
+    el.querySelector('[data-kchk]').addEventListener('click',()=>{ showK(el,true); refresh(); });
+    el.querySelector('[data-uchk]').addEventListener('click',()=>{ showUnc(el,true); refresh(); });
+    if(cfg.eyAsk&&(s.e1||s.e2)) showEy(el,false);
+    if(s.kx||s.kn) showK(el,false);
+    if(s.cmax||s.d) showUnc(el,false);
+  };
+  const mark=(el,k,ok)=>{ const i=el.querySelector(`[data-u="${k}"]`); if(i){ i.classList.toggle('ok',ok); i.classList.toggle('bad',!ok&&!!st()[k]); } };
+  function showEy(el,loud){
+    const E=A.eyEval(), fb=el.querySelector('[data-efb]'); if(!fb||!E.ready) return;
+    mark(el,'e1',E.o1); mark(el,'e2',E.o2);
+    if(E.ok){ fb.className='fb ok'; fb.textContent='✓ Helyes. Most számítsd ki a határegyenesek meredekségét.'; if(loud) toast('Helyes!','ok'); }
+    else { fb.className='fb bad'; fb.innerHTML=`Ellenőrizd: ${!E.o1&&!E.o2?'mindkét értéket':!E.o1?'Δy<sub>1</sub>':'Δy<sub>2</sub>'}. ${cfg.eyTip||''}`; }
+  }
+  function showK(el,loud){
+    const K=A.kEval(), fb=el.querySelector('[data-kfb]'); if(!K.ready) return;
+    if(cfg.eyAsk&&!K.E.ok){ fb.className='fb bad'; fb.innerHTML='Először számítsd ki és ellenőrizd Δy<sub>1</sub> és Δy<sub>2</sub> értékét.'; return; }
+    mark(el,'kx',K.okx); mark(el,'kn',K.okn);
+    if(K.ok){ fb.className='fb ok'; fb.innerHTML='✓ Helyes: k<sub>max</sub> a meredekebb, k<sub>min</sub> a laposabb határegyenes meredeksége.'; if(loud) toast('A meredekségek helyesek.','ok'); }
+    else if(K.swap){ fb.className='fb bad'; fb.innerHTML='Felcserélted őket: k<sub>max</sub> a nagyobb meredekség.'; }
+    else { fb.className='fb bad'; fb.innerHTML=`Ellenőrizd: ${!K.okx&&!K.okn?'mindkét meredekséget':!K.okx?'k<sub>max</sub>':'k<sub>min</sub>'}. A k<sub>max</sub> számlálójában a nagyobb különbség áll (a hibaintervallum „külső” végpontjai), a k<sub>min</sub>-ében a kisebb („belső” végpontok).`; }
+  }
+  function showUnc(el,loud){
+    const u=A.uEval(), fb=el.querySelector('[data-ufb]'); if(!u.ready) return;
+    if(!u.K.ok){ fb.className='fb bad'; fb.innerHTML='Először számítsd ki és ellenőrizd a k<sub>max</sub> és k<sub>min</sub> értékét.'; return; }
+    [['cmax',u.okMax],['cmin',u.okMin],['d',u.okD]].forEach(([k,ok])=>mark(el,k,ok));
+    if(u.ok){ fb.className='fb ok'; fb.textContent='✓ Helyes.'; if(loud) toast('A bizonytalanság helyes.','ok'); }
+    else { fb.className='fb bad'; const m=[]; if(!u.okMax||!u.okMin) m.push(`A ${q0.sym}<sub>max</sub> és ${q0.sym}<sub>min</sub> értékét ugyanazzal a képlettel számolod, mint a 4. lépésben, csak k<sub>max</sub>-szal és k<sub>min</sub>-nel.`); if(!u.okD) m.push(`Δ${q0.sym} a ${q0.sym}<sub>max</sub> és ${q0.sym}<sub>min</sub> különbségének fele (mindig pozitív).`); fb.innerHTML=m.join(' '); }
+  }
+  R.result=el=>{
+    const s=st(), f=A.fitShown();
+    el.innerHTML=`<div class="card"><h3><span class="stepnum">6</span>Végeredmény</h3>
+      <p class="small">A bizonytalanságot kerekítsd <b>egy értékes jegyre</b> (kettőre, ha 1-gyel vagy 2-vel kezdődik), az értéket pedig <b>ugyanarra a tizedesjegyre</b>.</p>
+      <div class="formula"><span>${q0.sym} = (</span><label class="sr" for="rc-${cfg.id}">érték</label><input class="in" id="rc-${cfg.id}" data-r="rc" inputmode="decimal" autocomplete="off" value="${esc(s.rc)}"><span>±</span><label class="sr" for="rd-${cfg.id}">bizonytalanság</label><input class="in" id="rd-${cfg.id}" data-r="rd" inputmode="decimal" autocomplete="off" value="${esc(s.rd)}"><span>) ${q0.unit}</span></div>
+      <button type="button" class="btn" data-rchk>Eredmény ellenőrzése</button><div class="fb" data-rfb aria-live="polite"></div>
+      ${s.auto?'<p class="small muted" style="margin-top:8px">⚑ A feldolgozás egy része automatikusan ki lett töltve.</p>':''}
+      <details class="helponly"><summary>Lineáris regresszió (súgó tanároknak)</summary><p class="small">${f?`A számítógép a legkisebb négyzetek módszerével egyenest illesztett a pontjaidra: meredekség k = ${fmt(f.b,cfg.kDec+1)} ${cfg.ku}, ami ${q0.sym} ≈ ${fmt(q0.f(f.b,f.a),q0.dec)} ${q0.unit}. Determinációs együttható: R² = ${fmt(f.R2,4)} (minél közelebb van 1-hez, annál jobban illeszkednek a pontok az egyenesre).`:'Először töltsd ki a táblázatot.'}</p></details>
+      <div class="helponly teach"><b>Tanároknak:</b> <button type="button" class="btn ghost sm" data-allauto>Teljes feldolgozás kitöltése</button></div></div>`;
+    el.querySelectorAll('[data-r]').forEach(i=>i.addEventListener('input',()=>{ st()[i.dataset.r]=i.value; i.classList.remove('ok','bad'); save(); }));
+    el.querySelector('[data-rchk]').addEventListener('click',()=>{ showRes(el,true); refresh(); });
+    el.querySelector('[data-allauto]').addEventListener('click',()=>{ A.autoAll(); save(); const v=viewDef(S.view); if(v.kind==='proc') mountProc(v); refresh(); toast('A feldolgozás automatikusan ki lett töltve.','warn'); });
+    if(s.rc||s.rd) showRes(el,false);
+  };
+  function showRes(el,loud){
+    const r=A.rEval(), fb=el.querySelector('[data-rfb]');
+    el.querySelectorAll('[data-r]').forEach(i=>{ i.classList.toggle('ok',r.ok); i.classList.toggle('bad',!r.ok&&!!st()[i.dataset.r]); });
+    if(r.ok){ fb.className='fb ok'; fb.innerHTML=`✓ Az eredmény helyesen van felírva: ${q0.sym} = (${esc(st().rc)} ± ${esc(st().rd)}) ${q0.unitTxt||''}`; if(loud) toast('Az eredmény helyes!','ok'); }
+    else { fb.className='fb bad'; fb.innerHTML=r.msgs.join(' '); }
+  }
+  A.mount=(host,parts)=>{ host.innerHTML=parts.map(p=>`<div data-part="${p}"></div>`).join(''); parts.forEach(p=>R[p](host.querySelector(`[data-part="${p}"]`))); pick=null; };
+  ANS[cfg.id]=A;
+  return A;
+}
+
+/* ---------- adatok a füzetből (újrabevitel a 2. és 3. órán) ---------- */
+const PCOLS=()=>Object.values(ANS).flatMap(a=>a.cfg.cols.filter(c=>c.input).map(c=>({an:a.id,c})));
+const pRows=()=>S.records.slice().sort(LAB.paper.order||(()=>0));
+const tblOf=(an,id)=>(S.proc[an]&&S.proc[an].tbl[id])||{};
+function pdRow(i,r){
+  const F=LAB.paper.fields, PC=PCOLS();
+  return `<tr><td class="ix">${i+1}</td>${F.map((f,j)=>`<td><input inputmode="decimal" autocomplete="off" data-pf="${f.key}" aria-label="${f.acc}, ${i+1}. sor" value="${esc(r.f[j]||'')}"></td>`).join('')}${PC.map((p,j)=>`<td class="pc"><input inputmode="decimal" autocomplete="off" data-pc="${p.an}|${p.c.key}" aria-label="${p.c.aria} (kiszámítva), ${i+1}. sor" value="${esc(r.c[j]||'')}"></td>`).join('')}<td><button class="btn ghost sq" type="button" data-pdrm aria-label="${i+1}. sor eltávolítása">✕</button></td></tr>`;
+}
+function paperCard(open,intro){
+  const F=LAB.paper.fields, PC=PCOLS();
+  const rows=pRows().map(r=>({f:F.map(f=>fmt(r[f.key],f.dec)),c:PC.map(p=>tblOf(p.an,r.id)[p.c.key]||'')}));
+  while(rows.length<6) rows.push({f:[],c:[]});
+  return `<details class="card paper" id="pd"${open?' open':''}><summary>✎ Adatok a füzetből ${S.records.length?`<span class="pill">${S.records.length} mérés</span>`:''}${S.paper?'<span class="pill ok">füzetből betöltve</span>':''}</summary>
+  ${intro?`<div class="banner warn" style="margin-top:10px">${intro}</div>`:''}
+  <p class="small muted">Ha másik eszközön mértél, vagy eltűntek az adatok, másold át ide a füzetedből, és kattints az „Adatok betöltése a füzetből” gombra. A <b>kék oszlopok</b> azok az értékek, amelyeket az előző órán számológéppel számoltál ki — írd be őket, ha megvannak (különben üresen maradnak).</p>
+  <div class="tblwrap"><table class="tbl ptbl"><thead><tr><th>#</th>${F.map(f=>`<th>${f.label}</th>`).join('')}${PC.map(p=>`<th class="pc">${p.c.label}</th>`).join('')}<th><span class="sr">Sor eltávolítása</span></th></tr></thead><tbody id="pdBody">${rows.map((r,i)=>pdRow(i,r)).join('')}</tbody></table></div>
+  <div class="btnrow" style="margin-top:10px"><button class="btn ghost sm" type="button" id="pdAdd">+ Sor hozzáadása</button><button class="btn" type="button" id="pdLoad">Adatok betöltése a füzetből</button></div>
+  <div class="fb" id="pdMsg" aria-live="polite"></div></details>`;
+}
+function pdAdd(){ const tb=$('#pdBody'); if(!tb) return; const n=tb.rows.length; tb.insertAdjacentHTML('beforeend',pdRow(n,{f:[],c:[]})); const i=tb.rows[n].querySelector('input'); if(i) i.focus(); }
+function pdRm(btn){
+  const tb=$('#pdBody'), tr=btn.closest('tr'); if(!tb||!tr) return;
+  if(tb.rows.length<=1){ tr.querySelectorAll('input').forEach(x=>x.value=''); return; }
+  tr.remove();
+  Array.from(tb.rows).forEach((r,i)=>{ r.cells[0].textContent=i+1; r.querySelectorAll('[aria-label]').forEach(x=>x.setAttribute('aria-label',x.getAttribute('aria-label').replace(/\d+$/,String(i+1)))); });
+}
+function pdLoad(){
+  const P=LAB.paper, F=P.fields, m=$('#pdMsg'), rows=[]; let bad='';
+  const fail=t=>{ m.className='fb bad'; m.textContent=t; };
+  $$('#pdBody tr').forEach((tr,i)=>{
+    if(bad) return;
+    const fv={}, cv={}; let any=false;
+    F.forEach(f=>{ const v=tr.querySelector(`[data-pf="${f.key}"]`).value.trim(); if(v) any=true; fv[f.key]=v; });
+    tr.querySelectorAll('[data-pc]').forEach(x=>{ const v=x.value.trim(); if(v){ any=true; cv[x.dataset.pc]=v.slice(0,24); } });
+    if(!any) return;
+    const rec={};
+    for(const f of F){ const v=parseNum(fv[f.key]); if(!isFinite(v)){ bad=`${i+1}. sor: írd be ${f.acc}.`; return; } if(v<f.min||v>f.max){ bad=`${i+1}. sor: ${f.nom} értéke ${fmt(f.min,f.dec)} és ${fmt(f.max,f.dec)} között legyen.`; return; } rec[f.key]=+v.toFixed(f.dec); }
+    for(const k in cv){ if(!isFinite(parseNum(cv[k]))){ bad=`${i+1}. sor: a kiszámított érték nem szám.`; return; } }
+    rows.push({rec,cv});
+  });
+  if(bad) return fail(bad);
+  if(rows.length<2) return fail('Írj be legalább 2 mérést (a feldolgozáshoz legalább 6 kell).');
+  const sig=r=>F.map(f=>fmt(r[f.key],f.dec)).join('|');
+  const same=S.records.map(sig).sort().join(';')===rows.map(x=>sig(x.rec)).sort().join(';');
+  if(!same){
+    if(S.records.length&&!confirm(`Lecseréled a meglévő ${S.records.length} mérést a füzetből származó adatokra?`)) return;
+    S.records=rows.map(x=>Object.assign({id:uid()},P.make(x.rec)));
+    Object.keys(ANS).forEach(k=>{ S.proc[k].tbl={}; });
+    S.paper=true;
+  }
+  const used=new Set(); let nc=0;
+  rows.forEach(x=>{ const r=S.records.find(q=>!used.has(q.id)&&sig(q)===sig(x.rec)); if(!r) return; used.add(r.id);
+    Object.keys(x.cv).forEach(k=>{ const [an,ck]=k.split('|'); if(!S.proc[an]) return; const T=S.proc[an].tbl[r.id]||(S.proc[an].tbl[r.id]={}); if(T[ck]!==x.cv[k]){ T[ck]=x.cv[k]; nc++; } }); });
+  if(same&&!nc){ m.className='fb ok'; m.textContent='✓ Ezek az adatok már be vannak töltve.'; return; }
+  save(true); go(S.view);
+  toast(same?'A füzetből származó kiszámított értékek bekerültek a táblázatba.':`Betöltve a füzetből: ${rows.length} mérés.`+(nc?' A kiszámított értékek bekerültek a táblázatba.':''),'ok');
+}
+function copyHTML(n){
+  const F=LAB.paper.fields, rs=pRows(), PC=n>=2?PCOLS().filter(p=>rs.some(r=>String(tblOf(p.an,r.id)[p.c.key]||'').trim())):[];
+  let h=`<div class="card remind" style="margin:10px 0 0"><h3>✎ Ellenőrizd a füzetedet</h3><p class="small">Ennek le kell lennie írva a füzetedben. Ha az adatok elvesznek az eszközről (vagy legközelebb másik eszközön dolgozol), a feldolgozásnál újra betöltheted őket.</p>`;
+  h+=rs.length?`<div class="tblwrap"><table class="tbl ctbl"><thead><tr><th>#</th>${F.map(f=>`<th>${f.label}</th>`).join('')}${PC.map(p=>`<th>${p.c.label}</th>`).join('')}</tr></thead><tbody>${rs.map((r,i)=>`<tr><td class="ix">${i+1}</td>${F.map(f=>`<td>${fmt(r[f.key],f.dec)}</td>`).join('')}${PC.map(p=>`<td>${esc(tblOf(p.an,r.id)[p.c.key]||'—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:'<p class="small muted">Még nincs mérés.</p>';
+  if(n>=2) Object.values(ANS).forEach(a=>{ const s=S.proc[a.id], c=a.cfg, q=c.consts[0], it=[];
+    if(s.A.x||s.A.y) it.push(`A = (${esc(s.A.x)}; ${esc(s.A.y)})`); if(s.B.x||s.B.y) it.push(`B = (${esc(s.B.x)}; ${esc(s.B.y)})`);
+    if(s.k) it.push(`k = ${esc(s.k)} ${c.ku}`); if(c.intercept&&s.n) it.push(`n = ${esc(s.n)} ${c.yu}`);
+    c.consts.forEach(z=>{ if(s.ex[z.key]) it.push(`${z.sym} = ${esc(s.ex[z.key])} ${z.unit}`); });
+    if(s.d) it.push(`Δ${q.sym} = ${esc(s.d)} ${q.unit}`); if(s.rc&&s.rd) it.push(`<b>${q.sym} = (${esc(s.rc)} ± ${esc(s.rd)}) ${q.unit}</b>`);
+    if(it.length) h+=`<p class="small" style="margin:8px 0 0">${c.name?`<b>${c.name}:</b> `:''}${it.join(' · ')}</p>`; });
+  return h+'</div>';
+}
+const devOk=(r,v)=>isFinite(r.c)&&isFinite(r.e)&&within(Math.abs(parseNum(v)),Math.abs(r.c-r.e)/Math.abs(r.e)*100,0.15,0.05);
+function devsDone(){ try{ const R=LAB.results(); return R.some(r=>isFinite(r.c)&&isFinite(r.e))&&R.every((r,i)=>!(isFinite(r.c)&&isFinite(r.e))||devOk(r,S.devs[i])); }catch(e){ return false; } }
+
+/* ---------- nézetek ---------- */
+function endCard(n){ return `<div class="card endcard"><p class="small muted">${n<3?'Ha teljesítetted az óra célját, fejezd be az órát. Az adatok ezen az eszközön megmaradnak.':'Ha megírtad a következtetést, fejezd be a gyakorlatot.'}</p><button type="button" class="btn blue xl wide" data-end="${n}"></button></div>`; }
+function buildView(v){
+  const isLast=lastViewOf(v.lesson)===v.id, end=isLast?endCard(v.lesson):'';
+  const head=`<section class="view" id="v-${v.id}" aria-label="${v.label}"><div class="lockslot"></div>`;
+  if(v.kind==='prep') return head+`<div class="card hero"><div><span class="pill acc">${LAB.razred} · önálló munka · 3 óra</span><h2>${LAB.title}</h2><p>${LAB.aim}</p><div class="law">${LAB.lawHTML}</div></div><figure>${LAB.heroSVG}<figcaption>${LAB.heroCaption}</figcaption></figure></div>
+    <div class="card goal" data-goal="1"></div>
+    <div class="card"><h3>Adataid</h3><div class="grid3"><div class="field"><label for="stu-name">Név</label><input class="in" id="stu-name" data-stu="name" autocomplete="name"></div><div class="field"><label for="stu-group">Osztály / csoport</label><input class="in" id="stu-group" data-stu="group"></div><div class="field"><label for="stu-date">Dátum</label><input class="in" id="stu-date" data-stu="date"></div></div></div>
+    ${LAB.prepParams.length?`<div class="card"><h3>Eszközök</h3><p class="small">${LAB.prepNote}</p><div data-prep></div></div>`:`<div class="card"><h3>Eszközök</h3><p class="small" style="margin:0">${LAB.prepNote}</p></div>`}
+    <div class="banner"><b>Hogyan mérj.</b> ${LAB.howHTML}<br>✎ <b>Minden rögzített mérést azonnal írj be a füzetedbe is.</b> Ha az adatok elvesznek az eszközről, vagy a következő órán másik eszközön dolgozol, a feldolgozásnál egyszerűen újra betöltheted őket.</div>
+    <button type="button" class="btn xl wide" data-start>Mérés indítása →</button></section>`;
+  if(v.kind==='meas') return head+`<div class="card goal" data-goal="${v.lesson}"></div><div class="meas-grid"><div class="stage" id="stage">${LAB.stageHTML}</div><div class="ctl" id="ctl">${LAB.controlsHTML}</div></div><div class="banner" style="margin-top:12px">✎ Minden rögzített mérést azonnal írd be a füzetedbe is.</div>${end}</section>`;
+  if(v.kind==='proc') return head+`<h2 class="vh">${v.heading}</h2><div class="card goal" data-goal="${v.lesson}"></div><div data-items></div>${end}</section>`;
+  return head+`<h2 class="vh">Következtetés</h2><div class="card goal" data-goal="${v.lesson}"></div><div data-concl></div>${end}</section>`;
+}
+function mountProc(v){
+  const host=$(`#v-${v.id} [data-items]`); host.innerHTML='';
+  { const pc=document.createElement('div'); pc.innerHTML=paperCard(!S.records.length,!S.records.length?'Ezen az eszközön nincs mérés. Ha megvannak a füzetedben, másold át őket ide — a táblázat és a grafikonok ezekből készülnek.':''); host.appendChild(pc); }
+  v.items.forEach(it=>{ const d=document.createElement('div'); host.appendChild(d);
+    if(it[0]==='an') ANS[it[1]].mount(d,it[2]);
+    else if(it[0]==='html') d.innerHTML=typeof it[1]==='function'?it[1]():it[1]; });
+  requestAnimationFrame(()=>Object.values(ANS).forEach(a=>a.draw()));
+}
+function renderConcl(){
+  const el=$('#v-zakljucak [data-concl]'); const res=LAB.results();
+  let h=S.records.length?'':paperCard(true,'Ezen az eszközön nincs mérés. Másold át őket a füzetedből, majd a feldolgozásnál add meg az előző órák értékeit.');
+  h+=`<div class="card"><h3>Eredményeid</h3>`;
+  res.forEach((r,i)=>{
+    const can=isFinite(r.c)&&isFinite(r.e), v=S.devs[i]||'', ok=can&&devOk(r,v), show=!can||ok;
+    h+=`<div class="resbox"><div class="rbn">${r.name}</div><dl class="kv"><dt>Kaptad</dt><dd>${r.got}</dd><dt>Várt</dt><dd>${r.exp}</dd>${can?'':`<dt>Eltérés</dt><dd>${r.dev}</dd>`}</dl>
+    ${can?`<p class="small" style="margin:8px 0 0">Számítsd ki a relatív eltérést a várt értéktől:</p><div class="formula" style="font-size:16px;margin:6px 0">δ = ${FR('|kapott − várt|','várt')} · 100 % = <input class="in" data-dev="${i}" inputmode="decimal" autocomplete="off" aria-label="relatív eltérés százalékban" value="${esc(v)}"> % <button type="button" class="btn sm" data-devchk="${i}">Ellenőrzés</button></div><div class="fb ${ok?'ok':(v?'bad':'')}">${ok?'✓ Helyes.':(v?'A kapott és a várt érték különbségét (előjel nélkül) oszd el a várt értékkel, és szorozd meg 100-zal.':'')}</div>`:''}
+    ${show?`<p style="margin:8px 0 0"><span class="pill ${r.cls}">${r.verdict}</span></p>${r.note?`<p class="small muted" style="margin:6px 0 0">${r.note}</p>`:''}`:''}</div>`;
+  });
+  if(LAB.reveal&&devsDone()) h+=`<div class="banner" style="margin:6px 0 0">${LAB.reveal()}</div>`;
+  h+=`</div><div class="card"><h3>A következtetésed</h3><p class="small" style="margin-bottom:4px">Írj <b>3–5 mondatot</b>. Említsd meg:</p><ul class="small">${LAB.conclHints.map(x=>`<li>${x}</li>`).join('')}</ul><label class="sr" for="conclTa">Következtetés</label><textarea id="conclTa" class="in" rows="7" placeholder="Például: Azt kaptam, hogy …">${esc(S.concl)}</textarea><p class="small muted" data-cs style="margin:6px 0 10px">A szöveg automatikusan mentődik ezen az eszközön.</p><div class="btnrow"><button type="button" class="btn" data-csave>Következtetés mentése</button><button type="button" class="btn danger" data-wipe>Összes adat törlése</button></div></div>`;
+  el.innerHTML=h;
+  el.querySelectorAll('[data-dev]').forEach(i=>i.addEventListener('input',()=>{ S.devs[i.dataset.dev]=i.value.slice(0,24); save(); }));
+  el.querySelectorAll('[data-devchk]').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.devchk, ok=devOk(LAB.results()[k],S.devs[k]); renderConcl(); renderGoals(); toast(ok?'Az eltérés helyesen van kiszámítva.':'Ellenőrizd az eltérés számítását.',ok?'ok':'bad'); }));
+  const ta=$('#conclTa'); let t=0;
+  ta.addEventListener('input',()=>{ S.concl=ta.value; save(); clearTimeout(t); t=setTimeout(renderGoals,500); });
+}
+const conclDone=()=>String(S.concl||'').trim().length>=80;
+function verdictFor(c,d,e){
+  if(!isFinite(c)||!isFinite(e)) return {verdict:'Az eredmény még nincs beírva',cls:'',dev:'—',c:NaN,e};
+  const dev=fmt(Math.abs(c-e)/Math.abs(e)*100,1)+' %';
+  if(isFinite(d)&&Math.abs(c-e)<=d) return {verdict:'Egyezik a bizonytalanság határain belül',cls:'ok',dev,c,e};
+  if(isFinite(d)&&Math.abs(c-e)<=2*d) return {verdict:'Közel — a különbség Δ és 2Δ között van',cls:'warn',dev,c,e};
+  return {verdict:'Nem egyezik a bizonytalanság határain belül — keresd meg a fő hibaforrást',cls:'bad',dev,c,e};
+}
+
+/* ---------- indítás ---------- */
+let lastT=0;
+function loop(t){ const dt=Math.min(0.1,Math.max(0,(t-lastT)/1000)); lastT=t; if(!document.hidden&&LAB.tick){ try{ LAB.tick(dt*(S.speed||1),dt); }catch(e){ console.error(e); } } requestAnimationFrame(loop); }
+function init(){
+  document.title=LAB.short+' — virtuális labor';
+  $('#brand').innerHTML=`<span class="dot" aria-hidden="true"></span>${LAB.short}<small>Virtuális labor · ${LAB.razred}</small>`;
+  const had=load();
+  $('#main').innerHTML=LAB.views.map(buildView).join('');
+  $$('[data-stu]').forEach(i=>{ i.value=S.student[i.dataset.stu]||''; i.addEventListener('input',()=>{ S.student[i.dataset.stu]=i.value; save(); renderGoals(); }); });
+  const prep=$('[data-prep]'); if(prep) LAB.prepParams.forEach(p=>{ const d=document.createElement('div'); prep.appendChild(d); mountStepper(d,p,()=>S.p[p.id],v=>LAB.setParam(p.id,v)); });
+  LAB.init();
+  document.body.classList.toggle('help',!!S.help); $('#btnHelp').setAttribute('aria-pressed',String(!!S.help));
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#pdAdd')){ pdAdd(); return; }
+    if(e.target.closest('#pdLoad')){ pdLoad(); return; }
+    const rm=e.target.closest('[data-pdrm]'); if(rm){ pdRm(rm); return; }
+    const g=e.target.closest('[data-go]'); if(g){ go(g.dataset.go); return; }
+    const en=e.target.closest('[data-end]'); if(en){ endLesson(+en.dataset.end); return; }
+    if(e.target.closest('[data-start]')){ S.started=true; go(LAB.views[1].id); return; }
+    const sp=e.target.closest('[data-speed]'); if(sp){ S.speed=+sp.dataset.speed; paintSpeed(); save(); return; }
+    if(e.target.closest('[data-csave]')){ S.concl=($('#conclTa')||{}).value||S.concl; save(true); renderGoals(); toast(conclDone()?'A következtetés elmentve.':'Elmentve. A következtetés még rövid — írj 3–5 mondatot.',conclDone()?'ok':'warn'); return; }
+    if(e.target.closest('[data-wipe]')){ wipe(); return; }
+  });
+  $('#btnAbout').addEventListener('click',()=>modal({title:'A modellről',html:LAB.about}));
+  $('#btnHelp').addEventListener('click',()=>{ S.help=!S.help; document.body.classList.toggle('help',S.help); $('#btnHelp').setAttribute('aria-pressed',String(S.help)); save(); toast(S.help?'A tanári súgó be van kapcsolva.':'A tanári súgó ki van kapcsolva.'); refresh(); });
+  $('#modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('#modal').classList.contains('open')) closeModal(); });
+  window.addEventListener('beforeunload',()=>save(true));
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) save(true); });
+  let rt=0; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ Object.values(ANS).forEach(a=>a.draw()); if(LAB.redraw) LAB.redraw(); },150); });
+  paintSpeed();
+  if(/test/.test(location.hash)) window.__lab={get S(){return S;},LAB,refresh,save,go};
+  go(S.view);
+  if(had&&(S.started||S.records.length)) resume();
+  requestAnimationFrame(loop);
+}
+
+/* =====================================================================
+   GYAKORLAT: FÉNYELEKTROMOS HATÁS — A PLANCK-ÁLLANDÓ MEGHATÁROZÁSA
+   ===================================================================== */
+const HC=1239.84;          /* h·c u eV·nm */
+const AI=2.00;             /* a katód kilépési munkája (cézium), eV — a következtetésig rejtve */
+const UC=0.06;             /* anód–katód kontaktpotenciál, V (másodrendű hatás) */
+const WT=0.012;            /* az elektronenergiák hőkiszélesedése, eV */
+const P1={
+  lam:{id:'lam',label:'Hullámhossz λ (monokromátor)',unit:'nm',min:250,max:700,step:1,dec:0},
+  inten:{id:'inten',label:'A lámpa fényerőssége',unit:'%',min:10,max:100,step:5,dec:0,hint:'Az intenzitás a másodpercenkénti fotonszámot változtatja, nem az energiájukat.'},
+  U:{id:'U',label:'Fékezőfeszültség U',unit:'V',min:0,max:3,step:0.01,dec:2}
+};
+const nuOf=l=>2998/l;                                   /* ν u 10¹⁴ Hz */
+const f1Y=l=>clamp(WT*softplus((HC/l-AI)/WT)/0.10,0,1); /* emissziós hozam (küszöb: hν = Ai) */
+const f1Ke=l=>HC/l-AI-UC;                               /* a legnagyobb energia, amelyet az áramkör „lát”, eV */
+const f1Isat=(l,i)=>30*(i/100)*f1Y(l)*(l/450);          /* telítési áram, nA */
+const f1I=(l,i,U)=>f1Isat(l,i)*Math.min(1,WT*softplus((f1Ke(l)-U)/WT));
+function f1Zero(l,i){ if(f1I(l,i,0)<0.005) return 0; let lo=0,hi=3.5; for(let k=0;k<60;k++){ const m=(lo+hi)/2; if(f1I(l,i,m)>0.005) lo=m; else hi=m; } return (lo+hi)/2; }
+function wlRGB(nm){
+  if(nm<380) return [150,90,255];
+  let r=0,g=0,b=0;
+  if(nm<440){ r=-(nm-440)/60; b=1; } else if(nm<490){ g=(nm-440)/50; b=1; } else if(nm<510){ g=1; b=-(nm-510)/20; }
+  else if(nm<580){ r=(nm-510)/70; g=1; } else if(nm<645){ r=1; g=-(nm-645)/65; } else r=1;
+  const f=nm<420?0.35+0.65*(nm-380)/40:nm>680?0.3+0.7*(700-nm)/20:1;
+  return [r,g,b].map(x=>Math.round(255*Math.pow(clamp(x*f,0,1),0.8)));
+}
+function cov1(){ const L=[]; S.records.forEach(r=>{ if(r.Uz>0.02&&!L.some(x=>Math.abs(x-r.lam)<5)) L.push(r.lam); }); const nu=L.map(nuOf); return {n:L.length,span:nu.length?Math.max(...nu)-Math.min(...nu):0}; }
+const R1={I:0,Idisp:0,tRead:0,el:[],spawn:0,needle:-55};
+
+makeAnalysis({
+  id:'A',backView:'merenje',backLabel:'A méréshez',slopeView:'obrada1',minRows:6,
+  rows:()=>S.records.slice().sort((a,b)=>b.lam-a.lam).map(r=>({key:r.id,lam:r.lam,Uz:r.Uz})),
+  valid:r=>r.Uz>0.02,
+  invalidNote:()=>'Nincs fényelektromos hatás (U<sub>z</sub> = 0) — ez a pont nem kerül be a linearizálásba.',
+  cols:[
+    {key:'lam',label:'λ (nm)',val:r=>r.lam,dec:0},
+    {key:'Uz',label:'U<sub>z</sub> (V)',val:r=>r.Uz,dec:2},
+    {key:'nu',input:true,label:'ν (10¹⁴ Hz)',aria:'ν frekvencia',dec:2,tol:{abs:0.011,rel:0.003},exact:r=>nuOf(r.lam),
+     hint:'ν = c : λ, ahol c = 3 · 10⁸ m/s, λ pedig méterben van (1 nm = 10⁻⁹ m). Az eredményt 10¹⁴ Hz-ben add meg.'}
+  ],
+  X:g=>g('nu'),Y:(g,r)=>r.Uz,ey:()=>0.03,xName:'ν (10¹⁴ Hz-ben)',yName:'U<sub>z</sub> (V-ban)',eyAsk:false,eyHTML:'<p class="small">A zárófeszültség bizonytalansága minden pontra azonos: Δy<sub>1</sub> = Δy<sub>2</sub> = ΔU<sub>z</sub> = 0,03 V.</p>',
+  xl:'ν (10¹⁴ Hz)',yl:'Uz (V)',xu:'· 10¹⁴ Hz',yu:'V',ku:'V/10¹⁴ Hz',kDec:3,nDec:2,pickDec:[2,2],
+  kTol:{abs:0.002,rel:0.01},intercept:true,nTol:{abs:0.02,rel:0.01},
+  interceptHelp:'Az n tengelymetszet az egyenes értéke ν = 0-nál (az egyenes balra meghosszabbítva); negatív.',
+  raw:{title:'Nyers adatok: U<sub>z</sub> a λ függvényében'.replace(/<[^>]+>/g,''),xl:'λ (nm)',yl:'Uz (V)',x:r=>r.lam,y:r=>r.Uz,zeroY:true},
+  linTitle:'Linearizálás: Uz a ν függvényében',
+  tableTitle:'Táblázat: a fény frekvenciája',
+  tableHelp:`Minden sorra számítsd ki a ν = ${FR('c','λ')} frekvenciát, és add meg 10¹⁴ Hz egységben. A mező zöld lesz, ha helyes, és a pont ekkor felkerül a grafikonra.`,
+  graphHelp:`Balra a nyers adataid vannak. Jobbra U<sub>z</sub> látható ν függvényében. Einstein egyenletéből, e · U<sub>z</sub> = h · ν − W<sub>ki</sub>, következik: U<sub>z</sub> = ${FR('h','e')} · ν − ${FR('W<sub>ki</sub>','e')} — olyan egyenes, amelynek meredeksége ${FR('h','e')}.`,
+  constTitle:'Planck-állandó, kilépési munka és határfrekvencia',
+  constHelp:`Az egyenes meredeksége k = ${FR('h','e')}, ezért <b>h = e · k</b>. Mivel k voltban van 10¹⁴ Hz-enként: h = 1,6 · 10⁻¹⁹ C · k · 10⁻¹⁴ V·s, azaz h = 16 · k · 10⁻³⁴ J·s. A tengelymetszet n = −${FR('W<sub>ki</sub>','e')}, ezért a kilépési munka elektronvoltban W<sub>ki</sub> = −n. A konstans a meredekségből adódik, vagyis <b>az összes</b> pontból együtt.`,
+  consts:[
+    {key:'h',sym:'h',name:'Planck-állandó',formula:'h = e · k · 10⁻¹⁴ =',unit:'· 10⁻³⁴ J·s',unitTxt:'· 10⁻³⁴ J·s',dec:2,tol:{abs:0.02,rel:0.012},f:k=>16.02*k,hint:'h = e · k: szorozd meg 1,6 · 10⁻¹⁹-t k-val és 10⁻¹⁴-nel, majd fejezd ki 10⁻³⁴ J·s-ban (röviden: 16 · k).'},
+    {key:'Ai',sym:'W<sub>ki</sub>',name:'A katód kilépési munkája',formula:'W<sub>ki</sub> = −e · n, eV-ban: W<sub>ki</sub> =',unit:'eV',dec:2,tol:{abs:0.02,rel:0.005},f:(k,n)=>-n,hint:'elektronvoltban W_ki számszerűen egyenlő −n-nel (csak váltsd az előjelét a tengelymetszetnek).'},
+    {key:'nu0',sym:'ν<sub>0</sub>',name:'Határfrekvencia',formula:`ν<sub>0</sub> = ${FR('W<sub>ki</sub>','h')} = −${FR('n','k')} =`,unit:'· 10¹⁴ Hz',dec:2,tol:{abs:0.02,rel:0.01},f:(k,n)=>-n/k,hint:'ν₀ ott van, ahol az egyenes metszi a ν-tengelyt: ν₀ = −n : k.'},
+    {key:'lam0',sym:'λ<sub>0</sub>',name:'',formula:`λ<sub>0</sub> = ${FR('c','ν<sub>0</sub>')} =`,unit:'nm',dec:0,tol:{abs:2,rel:0.01},f:(k,n)=>2998/(-n/k),hint:'λ₀ = c : ν₀; ha ν₀ 10¹⁴ Hz-ben van, ez 3000 : ν₀ (nm-ben).'}
+  ]
+});
+
+const LAB={
+  key:'fenyelektromos-hatas-lab-hu-v1',
+  paper:{fields:[{key:'lam',label:'λ (nm)',acc:'a λ hullámhosszt',nom:'A λ hullámhossz',dec:0,min:250,max:700},{key:'Uz',label:'U<sub>z</sub> (V)',acc:'az U_z zárófeszültséget',nom:'Az U_z zárófeszültség',dec:2,min:0,max:3.2}],make:v=>({lam:v.lam,Uz:v.Uz,inten:S.p.inten,lamp:true}),order:(a,b)=>b.lam-a.lam},
+  short:'Fényelektromos hatás: Planck-állandó',
+  title:'A Planck-állandó meghatározása a fényelektromos hatással',
+  razred:'4. évfolyam',
+  aim:'A fotocella katódját az általad választott fénnyel világítod meg, és megméred azt a fékezőfeszültséget, amelynél a fotoáram megszűnik. Az U<sub>z</sub>(ν) egyenes meredekségéből megkapod a Planck-állandót, a tengelymetszetből pedig a katódfém kilépési munkáját.',
+  lawHTML:`h · ν = W<sub>ki</sub> + ${FR('1','2')} m v² &nbsp;⇒&nbsp; e · U<sub>z</sub> = h · ν − W<sub>ki</sub><small>Einstein fényelektromos egyenlete; U<sub>z</sub> — a záró (fékező) feszültség, amelynél az áram nullára esik.</small>`,
+  heroSVG:`<svg viewBox="0 0 320 170" role="img" aria-label="A fotonok fémlemezre esnek, és elektronokat lökenek ki">
+    <rect x="200" y="30" width="16" height="110" rx="3" fill="#c9b26b"/><text x="208" y="158" fill="#97a4b6" font-size="11" text-anchor="middle">katód</text>
+    ${[0,1,2].map(i=>`<g class="ph ph${i}"><path d="M20 ${55+i*28} q8 -8 16 0 t16 0 t16 0 t16 0 t16 0 t16 0" fill="none" stroke="#9b7bff" stroke-width="2.5"/><path d="M118 ${50+i*28} l10 5 l-10 5z" fill="#9b7bff"/></g>`).join('')}
+    ${[0,1,2,3].map(i=>`<circle class="hel he${i}" cx="222" cy="${48+i*26}" r="5" fill="#6fd0ff"/>`).join('')}
+    <text x="80" y="24" fill="#c3b3ff" font-size="12" text-anchor="middle">fotonok E = h · ν</text>
+    <text x="275" y="24" fill="#8fdcff" font-size="12" text-anchor="middle">elektronok</text>
+  </svg>`,
+  heroCaption:'Minden foton teljes h · ν energiáját átadja egyetlen elektronnak. Az elektron csak akkor lép ki, ha h · ν nagyobb a kilépési munkánál (W<sub>ki</sub>).',
+  prepNote:'Vákuum-fotocella kvarcablakkal (az UV fényt is átengedi). A katód alkálifém vékony rétege — a fajtáját nem ismered, a kilépési munkáját te fogod meghatározni. A monokromátoros lámpa az általad választott, 250 nm és 700 nm közötti hullámhosszú fényt adja. Az anód és a katód között fékezőfeszültség van: az anód alacsonyabb potenciálon van, és visszatéríti az elektronokat.',
+  howHTML:'Válaszd ki a hullámhosszt, kapcsold be a lámpát, és növeld a fékezőfeszültséget (U, 0–3 V, 0,01 V-os lépés), amíg a mikroampermérő <b>0,00 nA</b>-t nem mutat. A legkisebb ilyen feszültség a zárófeszültség, U<sub>z</sub> — olvasd le a voltmérőről, és írd be. <b>Feltétel:</b> legalább 6 különböző hullámhossz, amelynél van fényelektromos hatás, legalább 3 · 10¹⁴ Hz frekvenciatartománnyal (pl. az ibolya/UV-tól a zöldig és sárgáig).',
+  prepParams:[P1.inten],
+  views:[
+    {id:'priprema',label:'Előkészítés',lesson:1,kind:'prep'},
+    {id:'merenje',label:'Mérés',lesson:1,kind:'meas'},
+    {id:'obrada1',label:'I. feldolgozás',lesson:2,kind:'proc',heading:'I. feldolgozás — táblázat, grafikonok, meredekség',items:[['an','A',['table','graphs','slope']]]},
+    {id:'obrada2',label:'II. feldolgozás',lesson:3,kind:'proc',heading:'II. feldolgozás — h, W<sub>ki</sub> és bizonytalanság',items:[['an','A',['remind','const','unc','result']]]},
+    {id:'zakljucak',label:'Konklúzió',lesson:3,kind:'concl'}
+  ],
+  lessons:[
+    {n:1,title:'Előkészítés és mérés',goal:'Ismerd meg a fotocellát, és mérd meg az U<sub>z</sub> zárófeszültséget legalább 6 olyan hullámhosszra, amelynél van fényelektromos hatás.',time:'10 perc előkészítés + 30–35 perc mérés',
+     checks:[{label:'Beírtad az adataidat',ok:()=>S.student.name.trim().length>1},{label:'Legalább 6 hullámhossz fényelektromos hatással',ok:()=>cov1().n>=6},{label:'A frekvenciatartomány legalább 3 · 10¹⁴ Hz',ok:()=>cov1().span>=3}]},
+    {n:2,title:'I. feldolgozás: táblázat, grafikonok, meredekség',goal:'Számítsd ki a frekvenciákat, vizsgáld meg az U<sub>z</sub>(ν) grafikont, és határozd meg az egyenes meredekségét és tengelymetszetét.',time:'≈ 35 perc',
+     checks:[{label:'Táblázat: ν helyes minden sorban',ok:()=>ANS.A.tableDone()},{label:'Az A és B pont az egyenesen',ok:()=>ANS.A.slopeEval().okAB},{label:'k meredekség és n tengelymetszet',ok:()=>ANS.A.slopeDone()}]},
+    {n:3,title:'II. feldolgozás és következtetés',goal:'A meredekségből számítsd ki h-t, a tengelymetszetből W<sub>ki</sub>-t és a határfrekvenciát, határozd meg Δh-t, és írd meg a következtetést.',time:'≈ 25 perc feldolgozás + 15–20 perc következtetés',
+     checks:[{label:'h a meredekségből',ok:()=>ANS.A.mainDone()},{label:'W<sub>ki</sub>, ν<sub>0</sub> és λ<sub>0</sub>',ok:()=>ANS.A.constDone()},{label:'Δh bizonytalanság',ok:()=>ANS.A.uEval().ok},{label:'Végeredmény: h ± Δh',ok:()=>ANS.A.resultDone()},{label:'δ eltérés a várt értéktől',ok:devsDone},{label:'Következtetés (3–5 mondat)',ok:conclDone}]}
+  ],
+  needs:{
+    obrada1:()=>cov1().n<6?{text:'Kevesebb mint 6 hullámhosszad van fényelektromos hatással. Elkezdheted a feldolgozást, de egészítsd ki a mérést.',back:'merenje',backLabel:'A méréshez'}:null,
+    obrada2:()=>!ANS.A.slopeDone()?{text:'Az előző órai meredekség és tengelymetszet még nincs betöltve — h a meredekségből számolódik. Ha megvannak a füzetedben, írd be őket az alábbi emlékeztetőben.',back:'obrada1',backLabel:'Az I. feldolgozáshoz'}:null,
+    zakljucak:()=>!ANS.A.resultDone()?{text:'A feldolgozás végeredménye még nincs ellenőrizve.',back:'obrada2',backLabel:'A II. feldolgozáshoz'}:null
+  },
+  defState:()=>({p:{lam:436,inten:60,U:0},lamp:false}),
+  validRecord:r=>isFinite(r.lam)&&isFinite(r.Uz),
+  sanitize(){ Object.keys(P1).forEach(k=>{ const p=P1[k]; if(!isFinite(S.p[k])) S.p[k]=p.min; S.p[k]=clamp(S.p[k],p.min,p.max); }); },
+  setParam(id,v){ S.p[id]=v; save(); refresh(); },
+  stageHTML:`<svg id="st1" viewBox="0 0 400 236" role="img" aria-label="Fotocella: a monokromátorból érkező fény a katódra esik, az elektronok az anód felé mennek; voltmérő és mikroampermérő a körben">
+    <defs><radialGradient id="bulbG" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#2f3b4e"/><stop offset="1" stop-color="#1f2835"/></radialGradient></defs>
+    <rect x="6" y="84" width="84" height="58" rx="9" fill="#323d4f" stroke="#55657d"/>
+    <text x="48" y="103" fill="#c3cdda" font-size="10.5" text-anchor="middle">lámpa +</text><text x="48" y="116" fill="#c3cdda" font-size="10.5" text-anchor="middle">monokromátor</text>
+    <circle id="lampLed" cx="18" cy="132" r="4.5" fill="#4a5568"/><text id="lamTxt" x="56" y="135" fill="#ffd79a" font-size="11" text-anchor="middle" font-weight="700">436 nm</text>
+    <polygon id="beam" points="90,104 146,92 146,138 90,126" fill="#8a7bff" opacity="0"/>
+    <ellipse cx="200" cy="114" rx="82" ry="64" fill="url(#bulbG)" stroke="#8fa3bf" stroke-opacity=".55" stroke-width="2"/>
+    <text x="200" y="64" fill="#7f8da1" font-size="10" text-anchor="middle">vákuum · kvarcablak</text>
+    <path d="M152 80 Q140 114 152 148" stroke="#c9b26b" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <text x="134" y="166" fill="#c9b26b" font-size="11" font-weight="700">K</text>
+    <line x1="254" y1="88" x2="254" y2="140" stroke="#aeb9c8" stroke-width="6" stroke-linecap="round"/>
+    <text x="262" y="92" fill="#aeb9c8" font-size="11" font-weight="700">A</text>
+    <g id="elec"></g>
+    <path d="M150 148 L150 205 L118 205" fill="none" stroke="#7f8da1" stroke-width="2"/>
+    <path d="M254 140 L254 205 L286 205" fill="none" stroke="#7f8da1" stroke-width="2"/>
+    <path d="M150 205 L176 205 M224 205 L254 205" fill="none" stroke="#7f8da1" stroke-width="2"/>
+    <rect x="176" y="194" width="48" height="22" rx="4" fill="#323d4f" stroke="#7f8da1"/><path d="M182 212 L218 198" stroke="#ffd79a" stroke-width="2"/><path d="M214 197 l5 0 l-1 5" fill="none" stroke="#ffd79a" stroke-width="2"/>
+    <text x="200" y="230" fill="#97a4b6" font-size="10" text-anchor="middle">fékezőfeszültség-forrás</text>
+    <text x="164" y="200" fill="#ff9a8a" font-size="13" font-weight="800">+</text><text x="230" y="200" fill="#8cc0f5" font-size="15" font-weight="800">−</text>
+    <circle cx="100" cy="205" r="18" fill="#262f3d" stroke="#9aa7b8" stroke-width="2"/><text x="100" y="210" fill="#e7edf5" font-size="14" font-weight="800" text-anchor="middle">V</text>
+    <path d="M100 160 L100 187" stroke="#7f8da1" stroke-width="2" stroke-dasharray="3 3"/><path d="M100 160 L150 160" stroke="#7f8da1" stroke-width="2" stroke-dasharray="3 3"/>
+    <circle cx="306" cy="205" r="22" fill="#262f3d" stroke="#9aa7b8" stroke-width="2"/>
+    <path d="M290 199 A18 18 0 0 1 322 199" fill="none" stroke="#55657d" stroke-width="2"/>
+    <line id="needle" x1="306" y1="212" x2="306" y2="191" stroke="#ffd79a" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="306" y="222" fill="#c3cdda" font-size="9" text-anchor="middle">μA</text>
+    <text x="306" y="176" fill="#97a4b6" font-size="10" text-anchor="middle">mikroampermérő</text>
+  </svg>
+  <div class="readouts"><div class="readout"><small>Voltmérő U</small><b id="roU">0,00 V</b></div><div class="readout big"><small>Mikroampermérő I</small><b id="roI" aria-live="off">0,00 nA</b></div><div class="readout"><small>Monokromátor skála</small><b id="roL">436 nm</b></div></div>
+  <p class="cap">Amikor az áram 0,00 nA-ra esik, a leggyorsabb elektronok sem érnek el az anódig: ekkor e · U<sub>z</sub> egyenlő a legnagyobb mozgási energiájukkal.</p>`,
+  controlsHTML:`<div class="card"><h3><span class="badge">1</span>Fény</h3><div data-stp="lam"></div><div data-stp="inten"></div><button type="button" class="btn wide" id="lampBtn">Lámpa bekapcsolása</button></div>
+  <div class="card"><h3><span class="badge">2</span>Fékezőfeszültség</h3><p class="small">Növeld a feszültséget, és figyeld a mikroampermérőt. Keresd a <b>legkisebb</b> feszültséget, amelynél az áram éppen 0,00 nA-ra esik. Finoman állítsd a − / + gombokkal (0,01 V-os lépés).</p><div data-stp="U"></div></div>
+  <div class="card"><h3><span class="badge">3</span>Feljegyzés</h3><div class="banner" id="next1" aria-live="polite"></div>
+    <div class="inrow"><label for="uzIn">U<sub>z</sub> =</label><input class="in" id="uzIn" inputmode="decimal" autocomplete="off" placeholder="pl. 0,85"><span class="unit">V</span><button type="button" class="btn blue" id="recBtn">Rögzítés</button></div>
+    <p class="small muted" style="margin-top:6px">A hullámhossz magától bekerül a monokromátor skálájáról (λ = <b id="recLam">436</b> nm).</p>
+    <h4>Rögzített pontok</h4><div class="recs" id="recs"></div><div class="cov" id="cov"></div>
+    <div class="helponly teach" id="help1"></div></div>`,
+  init(){
+    ['lam','inten','U'].forEach(id=>{ const h=$(`[data-stp="${id}"]`); if(h) mountStepper(h,P1[id],()=>S.p[id],v=>LAB.setParam(id,v)); });
+    $('#lampBtn').addEventListener('click',()=>{ S.lamp=!S.lamp; save(); toast(S.lamp?'A lámpa be van kapcsolva.':'A lámpa ki van kapcsolva.'); refresh(); });
+    $('#recBtn').addEventListener('click',record);
+    $('#uzIn').addEventListener('keydown',e=>{ if(e.key==='Enter') record(); });
+    $('#recs').addEventListener('click',e=>{ const b=e.target.closest('[data-del]'); if(!b) return; const r=S.records.find(x=>x.id===b.dataset.del); if(r&&confirm(`Törlöd a λ = ${r.lam} nm, Uz = ${fmt(r.Uz,2)} V pontot?`)){ S.records=S.records.filter(x=>x!==r); save(); refresh(); } });
+  },
+  reset(){ R1.el=[]; },
+  refresh(){
+    const l=S.p.lam, rgb=wlRGB(l);
+    $('#lampBtn').textContent=S.lamp?'Lámpa kikapcsolása':'Lámpa bekapcsolása'; $('#lampBtn').className='btn wide '+(S.lamp?'ghost':'');
+    $('#lampLed').setAttribute('fill',S.lamp?'#7dff9a':'#4a5568');
+    $('#lamTxt').textContent=l+' nm'; $('#roL').textContent=l+' nm'; $('#recLam').textContent=l;
+    $('#roU').textContent=fmt(S.p.U,2)+' V';
+    const bm=$('#beam'); bm.setAttribute('fill',`rgb(${rgb.join(',')})`); bm.setAttribute('opacity',S.lamp?(0.18+0.5*S.p.inten/100).toFixed(2):'0');
+    /* feljegyzés */
+    $('#recs').innerHTML=S.records.length?S.records.map(r=>`<span class="rec${r.Uz>0.02?'':' warnrec'}">${r.lam} nm · ${fmt(r.Uz,2)} V<button type="button" data-del="${r.id}" aria-label="${r.lam} nm pont törlése">×</button></span>`).join(''):'<span class="small muted">Még nincs rögzített pont.</span>';
+    const c=cov1();
+    $('#cov').innerHTML=`<div class="covbar ${c.n>=6?'ok':''}"><span class="t">λ fényelektromos hatással: <b>${c.n} / 6</b></span><span class="bar"><i style="width:${Math.min(100,c.n/6*100)}%"></i></span></div><div class="covbar ${c.span>=3?'ok':''}"><span class="t">ν tartomány: <b>${fmt(c.span,2)} / 3,00</b> · 10¹⁴ Hz</span><span class="bar"><i style="width:${Math.min(100,c.span/3*100)}%"></i></span></div>`;
+    nextBanner();
+    $('#help1').innerHTML=`<b>Tanároknak:</b> a modell szerint az áram 0,005 nA alá csökken, ha U ≈ ${fmt(f1Zero(l,S.p.inten),2)} V; a fényelektromos hatás küszöbe (h · ν = W<sub>ki</sub>) λ ≈ ${Math.round(HC/AI)} nm.`;
+  },
+  tick(dt,rdt){
+    const l=S.p.lam, i=S.p.inten, U=S.p.U;
+    R1.I=S.lamp?f1I(l,i,U):0;
+    R1.tRead+=rdt;
+    if(R1.tRead>0.25){ R1.tRead=0; const n=R1.I+(0.002+0.01*R1.I)*randn(); R1.Idisp=Math.round(n*100)/100; const ro=$('#roI'); if(ro) ro.textContent=fmt(R1.Idisp,2)+' nA'; if(S.view==='merenje') nextBanner(); }
+    const tgt=-55+110*clamp(R1.I/30,0,1); R1.needle+=(tgt-R1.needle)*Math.min(1,rdt*6);
+    const nd=$('#needle'); if(nd) nd.setAttribute('transform',`rotate(${R1.needle.toFixed(1)} 306 212)`);
+    if(S.view!=='merenje') return;
+    /* az elektronok animációja (vizuális; x = K : (U + Uc) helyen megállnak) */
+    const g=$('#elec'); if(!g) return;
+    if(RM){ g.innerHTML=''; return; }
+    const Kph=Math.max(0,HC/l-AI);
+    if(S.lamp&&Kph>0){ R1.spawn+=rdt*Math.min(45,2+f1Isat(l,i)*1.6); while(R1.spawn>1&&R1.el.length<70){ R1.spawn-=1; const K=Kph*Math.sqrt(Math.random()); R1.el.push({x:0,v:2.2*Math.sqrt(K)+0.05,y:(Math.random()*2-1)*26}); } }
+    else R1.spawn=0;
+    const a=2.42*(U+UC);
+    R1.el.forEach(e=>{ e.v-=a*rdt; e.x+=e.v*rdt; });
+    R1.el=R1.el.filter(e=>e.x>=0&&e.x<=1);
+    g.innerHTML=R1.el.map(e=>`<circle cx="${(156+e.x*94).toFixed(1)}" cy="${(114+e.y*(1-0.5*e.x)).toFixed(1)}" r="2.6" fill="#6fd0ff"/>`).join('');
+  },
+  lessonSummary(n){
+    if(n===1){ const c=cov1(); return `Rögzített pontok: <b>${S.records.length}</b> (fényelektromos hatással: ${c.n}); frekvenciatartomány: ${fmt(c.span,2)} · 10¹⁴ Hz.`; }
+    const s=S.proc.A;
+    if(n===2) return `k meredekség = <b>${esc(s.k||'—')}</b> V/10¹⁴ Hz, n tengelymetszet = <b>${esc(s.n||'—')}</b> V.`;
+    return `Eredmény: h = <b>(${esc(s.rc||'—')} ± ${esc(s.rd||'—')}) · 10⁻³⁴ J·s</b>; W<sub>ki</sub> = ${esc(s.ex.Ai||'—')} eV.`;
+  },
+  results(){
+    const s=ANS.A.summary(), v=verdictFor(s.ok?s.c:NaN,s.d,6.626), st=S.proc.A;
+    const L=S.records.filter(r=>r.Uz>0.02), P=L.map(r=>({x:nuOf(r.lam),y:Math.round(f1Zero(r.lam,r.inten||60)*100)/100}));
+    const f=P.length>=2?linfit(P):null;
+    const Ai=parseNum(st.ex.Ai), lam0=parseNum(st.ex.lam0);
+    const okAi=isFinite(Ai)&&Math.abs(Ai-AI)<=0.1;
+    return [
+      Object.assign({name:'Planck-állandó, h',got:s.ok?`(${esc(s.rc)} ± ${esc(s.rd)}) · 10⁻³⁴ J·s`:'— (fejezd be a 6. lépést a II. feldolgozásban)',exp:'6,63 · 10⁻³⁴ J·s (táblázati érték, jegyzet: 6,626 · 10⁻³⁴ J·s)',
+        note:(f?`A hullámhosszaidra a berendezés modellje (kontaktpotenciállal és az elektronenergiák eloszlásával) h ≈ ${fmt(16.02*f.b,2)} · 10⁻³⁴ J·s értéket ad. `:'')+(s.auto?'⚑ A feldolgozás egy része automatikusan ki lett töltve.':'')},v),
+      {name:'A katód kilépési munkája, W<sub>ki</sub>',got:isFinite(Ai)?`${fmt(Ai,2)} eV${isFinite(lam0)?` (határhullámhossz λ<sub>0</sub> ≈ ${fmt(lam0,0)} nm)`:''}`:'—',exp:'2,0 eV, λ<sub>0</sub> ≈ 620 nm (cézium)',dev:isFinite(Ai)?fmt(Math.abs(Ai-AI)/AI*100,1)+' %':'—',c:isFinite(Ai)?Ai:NaN,e:AI,verdict:isFinite(Ai)?(okAi?'Jó egyezés (0,1 eV-on belül)':'Több mint 0,1 eV-tal tér el'):'Még nincs kiszámítva',cls:isFinite(Ai)?(okAi?'ok':'warn'):''}
+    ];
+  },
+  reveal:()=>'A katód <b>céziumból</b> volt (W<sub>ki</sub> ≈ 2,0 eV, a határhullámhossz kb. 620 nm), mint a jegyzet példájában. A ≈ 620 nm-nél nagyobb hullámhosszú fény nem lökött ki elektronokat, bármilyen erős volt is.',
+  conclHints:['mekkora h értéket kaptál (bizonytalansággal), és egyezik-e a 6,63 · 10⁻³⁴ J·s-mal','a pontok egyenesen vannak-e, vagyis érvényes-e Einstein egyenlete','mekkora a katód kilépési munkája, és hol van a határfrekvencia','a fő hibaforrás (pl. nehéz pontosan észrevenni, mikor esik nullára az áram)'],
+  about:`<p><b>Egyenlet.</b> Minden hullámhosszra a leggyorsabb elektronok energiája h · ν − W<sub>ki</sub>. A fotocellán átfolyó áram csökken az U fékezőfeszültséggel, és megszűnik, ha e · U nagyobb ennél az energiánál. Modell: I = I<sub>z</sub> · min(1, K<sub>ef</sub> − e · U), ahol I<sub>z</sub> ∝ fényerősség · a fényelektromos hatás hozama · λ (a fotonok száma azonos teljesítménynél).</p>
+  <p><b>Másodrendű hatások.</b> Az anód és a katód közötti kontaktpotenciál (0,06 V) minden U<sub>z</sub>-t ugyanannyival eltol — ez nem változtatja a meredekséget, de változtatja a tengelymetszetet. Az elektronok hőmozgása (≈ 0,012 eV) kis „farkat” ad az áramnak, ezért az a pillanat, amikor az áram nullára esik, nem teljesen éles. A mikroampermérő zaja ≈ 0,002 nA + 1 %, felbontása 0,01 nA; a voltmérőé 0,01 V.</p>
+  <p><b>Feltevések</b> (a jegyzet nem ad gyakorlati protokollt): cézium katód, W<sub>ki</sub> = 2,0 eV; monokromátor 250–700 nm; az U<sub>z</sub> bizonytalansága ≈ ±0,03 V (becslés arra a pillanatra, amikor az áram nullára esik), ezek a grafikon hibaintervallumai; a hullámhossz bizonytalansága (±2 nm) elhanyagolt. A határegyenesek az első és az utolsó pont hibaintervallumának végpontjain mennek át a grafikonon; ezek meredekségét a tanuló maga számolja ki számológéppel.</p>
+  <p><b>Az adatok</b> csak ebben a böngészőben, ezen az eszközön tárolódnak. Az alkalmazás semmit sem küld a hálózatra.</p>`
+};
+
+function nextBanner(){
+  const b=$('#next1'); if(!b) return;
+  const c=cov1(); let t;
+  if(!S.lamp) t='Kapcsold be a lámpát (1. kártya).';
+  else if(f1Isat(S.p.lam,S.p.inten)<0.01||(S.p.U<0.005&&R1.Idisp<=0.0)) t='A mikroampermérő U = 0-nál is nullát mutat: ez a fény nem lök ki elektronokat. Rá U<sub>z</sub> = 0 — válassz rövidebb hullámhosszt.';
+  else if(R1.Idisp>0) t='Folyik az áram. Növeld az U fékezőfeszültséget, amíg az áram <b>0,00 nA</b>-ra nem esik.';
+  else t='Az áram nullára esett. Csökkentsd a feszültséget 0,01 V-tal, és ellenőrizd, hogy újra folyik-e áram — így tudod, hogy ez a <b>legkisebb</b> ilyen feszültség. Ezután írd be az U<sub>z</sub> értékét a voltmérőről, és kattints a „Rögzítés” gombra.';
+  if(c.n>=6&&c.span>=3) t+=' <br><b>A lefedettségi feltétel teljesült</b> — hozzáadhatsz még pontokat, vagy befejezheted az 1. órát.';
+  if(b.innerHTML!==t) b.innerHTML=t;
+}
+function record(){
+  const inp=$('#uzIn'), Uz=parseNum(inp.value), l=S.p.lam, i=S.p.inten;
+  if(!isFinite(Uz)){ toast('Írd be a voltmérőről leolvasott zárófeszültséget (pl. 0,85).','bad'); inp.focus(); return; }
+  const z=Math.round(f1Zero(l,i)*100)/100;
+  S.records.push({id:uid(),lam:l,inten:i,Uz:Math.round(Uz*100)/100,lamp:S.lamp});
+  inp.value=''; save(); refresh();
+  if(Uz<0||Uz>3.2) toast('A feszültségnek 0 és 3 V között kell lennie — ellenőrizd a voltmérő leolvasását. A pont úgy lett rögzítve, ahogy beírtad.','warn');
+  else if(!S.lamp) toast('A lámpa ki volt kapcsolva! Kapcsold be, és ismételd meg a mérést erre a hullámhosszra.','warn');
+  else if(z===0&&Uz>0.05) toast('Ennél a hullámhossznál U = 0-nál sincs áram, tehát U_z = 0. Ellenőrizd, és ismételd meg.','warn');
+  else if(Math.abs(Uz-z)>0.15) toast('Ez az érték jelentősen eltér — keresd a legkisebb feszültséget, amelynél az áram éppen 0,00 nA-ra esik, és ismételd meg a mérést.','warn');
+  else if(Math.abs(Uz-S.p.U)>0.06&&Uz>0) toast(`Rögzítve: λ = ${l} nm, Uz = ${fmt(Uz,2)} V (a voltmérő feszültsége most ${fmt(S.p.U,2)} V — ellenőrizd, jól másoltad-e át).`,'warn');
+  else toast(`Rögzítve: λ = ${l} nm, Uz = ${fmt(Uz,2)} V`,'ok');
+}
+
+init();
+})();
+</script>
+</body>
+</html>

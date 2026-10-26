@@ -1,0 +1,1181 @@
+<!doctype html>
+<!--
+  PLAN ČASOVA (2 × 45 min) · Bojl–Mariotov zakon · samostalan rad, učenik sam meri
+
+  | Čas | Pogledi              | Koraci                                                                  | Procena  | Čeklista (LESSONS.checks)                                 |
+  |-----|----------------------|-------------------------------------------------------------------------|----------|-----------------------------------------------------------|
+  | 1.  | Priprema, Merenje    | podaci; očitavanje t i p0; podešavanje V0, zatvaranje ventila;          | ~35 min  | ime; t, p0 provereni; ventil zatvoren + V0; bar 7         |
+  |     |                      | 7–9 merenja (V sa skale, p sa manometra, ručni upis)                    |          | merenja, Vmax:Vmin >= 2; podaci u svesci (ručno štikliranje)|
+  | 2.  | Obrada, Zaključak    | tabela (V^-1, pV); grafici; tačke A i B; a; T; n; srednja vrednost pV,  | ~45 min  | tabela tačna; A, B; a, T, n; pV sr., Δ(pV), Δn;           |
+  |     |                      | Δ(pV), Δn; konačan rezultat; zaključak (3–5 rečenica)                   |          | konačan rezultat; zaključak >= 3 rečenice                 |
+
+  Kako sam procenio trajanje:
+  - Priprema ~10 min (uvod, podaci, očitavanje termometra i barometra).
+  - Merenje: 8 tačaka × (pomeranje klipa + ~10 s čekanja pri ×1 + očitavanje i upis ~1,5 min) ≈ 15 min,
+    + ventil, V0 ~3 min, + prepisivanje u svesku ~5 min → 1. čas oko 35 min (preostalo vreme ide na sporije prvo snalaženje).
+  - Obrada: tabela 2 kolone × 8 redova ≈ 10 min, tačke A–B 4 min, nagib 3 min, T i n 5 min,
+    nesigurnost (srednja vrednost, Δ, Δn) 7 min, konačan rezultat 3 min; zaključak ~12 min → oko 44 min.
+  - Granica časova je na prirodnom prelomu: 1. čas se završava krajem merenja, 2. čas počinje podsetnikom
+    (svi podaci mogu da se unesu iz sveske ako učenik nastavlja na drugom računaru).
+
+  Pretpostavke (skripta je teorijska, ne daje protokol merenja):
+  - Špric od 60 mL sa podelom 1 mL; klip 10–60 mL, korak 0,5 mL; početna zapremina 30–60 mL (bira učenik).
+  - Mrtva zapremina 0,5 mL (vrh + senzor), delimično adijabatsko zagrevanje pri sabijanju (izjednačavanje ~3,5 s),
+    vrlo malo curenje, manometar rezolucije 0,1 kPa, šum ~0,05 kPa, gornja granica 300 kPa.
+  - k = 1,38·10^-23 J/K (skripta). Očekivana vrednost: n0 = p0·V0 / (k·T) iz početnog stanja (jednačina stanja, 11. poglavlje skripte).
+  - Nesigurnost: polovina rasipanja kolone pV podeljena srednjom vrednošću (relativna) → Δn.
+  - Sobna temperatura 19,5–24,5 °C i atmosferski pritisak 99,6–102,4 kPa, slučajno, pri svakom novom početku.
+
+-->
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f1ea">
+<title>Bojl–Mariotov zakon – virtuelna laboratorija</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f1ea; --surface:#fffdf8; --surface2:#f7f3eb; --ink:#232a33; --muted:#66707c; --line:#e1dace; --line2:#cfc6b6;
+  --accent:#c4553a; --accent-ink:#fff8f2; --accent-soft:#f6e1d8;
+  --blue:#2f6aa8; --blue-soft:#e1ecf7;
+  --ok:#2e8b57; --ok-soft:#e2f2e8; --bad:#c0392b; --bad-soft:#f8e1de; --warn:#b7791f; --warn-soft:#fbf0d9;
+  --stage:#1b2330; --stage2:#243042; --stage-ink:#e9eef5; --stage-muted:#9fb0c5; --stage-line:#3a4a60;
+  --r:14px; --r-sm:10px; --shadow:0 1px 2px rgba(35,42,51,.06),0 4px 14px rgba(35,42,51,.06);
+  --font: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --safe-b: env(safe-area-inset-bottom,0px); --safe-t: env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+h1{font-size:1.45rem} h2{font-size:1.15rem} h3{font-size:1rem}
+p{margin:0 0 .7em}
+small,.muted{color:var(--muted)}
+.num,table,.read,.mono{font-variant-numeric:tabular-nums}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.25;margin:0 .22em}
+.frac>span{padding:0 .3em}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding-bottom:.08em}
+.frac>span:last-child{padding-top:.08em}
+sub,sup{line-height:0}
+
+/* ---------- top bar & lesson indicator ---------- */
+.top{position:sticky;top:0;z-index:30;background:rgba(244,241,234,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:calc(8px + var(--safe-t)) 16px 8px}
+.top-in{display:flex;align-items:center;gap:12px;max-width:1280px;margin:0 auto}
+.brand{font-weight:700;font-size:.98rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font-weight:500;font-size:.78rem}
+.lesson-ind{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:150px}
+.lesson-ind b{font-size:.86rem;white-space:nowrap}
+.lesson-ind span{font-size:.76rem;color:var(--muted);white-space:nowrap;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.segs{display:flex;gap:4px;width:100%}
+.segs i{flex:1;height:6px;border-radius:4px;background:var(--line)}
+.segs i.cur{background:var(--accent)} .segs i.done{background:var(--ok)}
+.icon-btn{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--surface);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* ---------- layout ---------- */
+.shell{max-width:1280px;margin:0 auto;padding:14px 16px calc(96px + var(--safe-b))}
+.side{display:none}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);display:flex;padding:4px 4px calc(4px + var(--safe-b))}
+.tab{flex:1;min-height:56px;border:0;background:none;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;color:var(--muted);padding:4px 2px}
+.tab .tl{font-size:.64rem;letter-spacing:.04em;text-transform:uppercase}
+.tab .tn{font-size:.8rem;font-weight:600}
+.tab[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+.view{display:none} .view.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (min-width:1000px){
+  .layout{display:grid;grid-template-columns:230px 1fr;gap:20px;align-items:start}
+  .side{display:block;position:sticky;top:84px}
+  .tabs{display:none}
+  .shell{padding-bottom:40px}
+  .side .grp{margin-bottom:14px}
+  .side .gl{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;padding:0 10px 4px;display:flex;justify-content:space-between}
+  .side button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;border:0;background:none;border-radius:10px;padding:8px 10px;cursor:pointer;text-align:left;font-weight:600;color:var(--ink)}
+  .side button:hover{background:var(--surface2)}
+  .side button[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+  .side .tools{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+  .side .tools button{font-weight:500;color:var(--muted)}
+}
+
+/* ---------- cards & components ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{display:flex;align-items:center;gap:8px}
+.step-no{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.82rem;font-weight:700;flex:none}
+.hero{display:grid;gap:16px;background:linear-gradient(135deg,var(--surface),var(--accent-soft));}
+.hero figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px}
+.hero figcaption{font-size:.85rem;color:var(--muted);margin-top:6px}
+.law{border:2px solid var(--accent);border-radius:12px;padding:10px 14px;background:var(--surface);display:inline-block;font-size:1.08rem;margin:4px 0 10px}
+.law .eq{font-weight:600;font-style:italic;font-family:Georgia,"Times New Roman",serif;font-size:1.15rem}
+@media (min-width:720px){.hero{grid-template-columns:1.1fr 1fr;align-items:center}}
+.btn{min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--surface);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:transform .08s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#f4f8fc}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.xl{min-height:56px;font-size:1.06rem;padding:12px 22px}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.end{justify-content:flex-end}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:600;background:var(--surface2);border:1px solid var(--line)}
+.pill.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.pill.blue{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+.banner{border-radius:12px;padding:10px 14px;background:var(--blue-soft);color:#1d4370;margin:10px 0;font-size:.94rem}
+.banner.warn{background:var(--warn-soft);color:#6b4710}
+.banner.ok{background:var(--ok-soft);color:#1d5a38}
+.banner b{font-weight:700}
+label.f{display:block;font-size:.86rem;color:var(--muted);margin-bottom:4px;font-weight:600}
+.inp{min-height:44px;border:1.5px solid var(--line2);border-radius:10px;padding:8px 10px;background:#fff;width:100%;font-variant-numeric:tabular-nums}
+.inp:focus{border-color:var(--blue)}
+.inp.ok{border-color:var(--ok);background:var(--ok-soft)}
+.inp.bad{border-color:var(--bad);background:var(--bad-soft)}
+.form-grid{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:560px){.form-grid.c3{grid-template-columns:2fr 1fr 1fr}.form-grid.c2{grid-template-columns:1fr 1fr}}
+textarea.inp{min-height:150px;resize:vertical;line-height:1.5}
+
+/* checklist goal card */
+.goal{border-left:5px solid var(--accent)}
+.goal .gh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.goal .gh h2{margin:0}
+.goal ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.goal li{display:flex;align-items:center;gap:10px;min-height:32px;font-size:.94rem}
+.goal li .bx{width:24px;height:24px;border-radius:7px;border:2px solid var(--line2);flex:none;display:flex;align-items:center;justify-content:center;background:#fff}
+.goal li.on .bx{background:var(--ok);border-color:var(--ok)}
+.goal li.on .bx::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.goal li.on{color:var(--muted)}
+.goal li button{all:unset;display:flex;align-items:center;gap:10px;cursor:pointer;min-height:40px}
+.goal li button:focus-visible{outline:3px solid var(--blue);border-radius:6px}
+.remind{border-left:5px solid var(--blue)}
+
+/* stepper control */
+.stp{margin:8px 0 14px}
+.stp .sh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.stp .sh b{font-size:.95rem}
+.stp .sh .v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--blue);font-size:1.05rem}
+.stp .sh .v.hint{color:var(--muted);font-weight:500;font-size:.85rem}
+.stp .sr{display:flex;align-items:center;gap:10px}
+.stp .sr button{width:48px;height:48px;flex:none;border-radius:12px;border:1px solid var(--line2);background:var(--surface);font-size:1.4rem;font-weight:700;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.stp .sr button:active{background:var(--blue-soft)}
+.stp .bounds{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:2px;padding:0 58px}
+.slider{-webkit-appearance:none;appearance:none;flex:1;height:44px;background:transparent;cursor:pointer;min-width:0}
+.slider::-webkit-slider-runnable-track{height:8px;border-radius:6px;background:linear-gradient(90deg,var(--blue) var(--p,50%),var(--line) var(--p,50%))}
+.slider::-moz-range-track{height:8px;border-radius:6px;background:var(--line)}
+.slider::-moz-range-progress{height:8px;border-radius:6px;background:var(--blue)}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--blue);margin-top:-10px;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.slider::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
+
+/* chips segmented */
+.chips{display:inline-flex;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--surface)}
+.chips button{min-height:44px;min-width:56px;padding:6px 14px;border:0;background:none;cursor:pointer;font-weight:600}
+.chips button+button{border-left:1px solid var(--line2)}
+.chips button[aria-pressed="true"]{background:var(--blue);color:#fff}
+.reclist{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.rec{display:inline-flex;align-items:center;gap:4px;background:var(--blue-soft);color:#1d4370;border-radius:999px;padding:2px 2px 2px 12px;font-size:.86rem;font-variant-numeric:tabular-nums}
+.rec button{width:36px;height:36px;border:0;background:none;border-radius:50%;cursor:pointer;color:#1d4370;font-size:1.1rem}
+.rec button:hover{background:rgba(47,106,168,.15)}
+
+/* stage */
+.stage{background:var(--stage);color:var(--stage-ink);border-radius:var(--r);padding:12px;margin-bottom:14px;border:1px solid #121821}
+.stage svg{display:block;width:100%;height:auto}
+.reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.readbox{background:var(--stage2);border:1px solid var(--stage-line);border-radius:10px;padding:8px 10px}
+.readbox .rl{font-size:.74rem;color:var(--stage-muted);text-transform:uppercase;letter-spacing:.06em}
+.readbox .read{font-size:1.75rem;font-weight:700;line-height:1.15;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+.readbox .read small{font-size:.9rem;color:var(--stage-muted);font-family:var(--font);font-weight:500;margin-left:4px}
+.readbox.help{border-style:dashed;opacity:.9}
+.loupes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.loupe{background:#f3efe4;border-radius:10px;padding:4px 6px 6px;color:#222}
+.loupe .ll{font-size:.72rem;font-weight:700;color:#55606d;text-transform:uppercase;letter-spacing:.05em}
+.loupe svg{width:100%;height:auto;display:block}
+.loupe.one{grid-column:1/-1}
+.loupe.one svg{max-width:460px;margin:0 auto}
+@media (min-width:1000px){
+  .meas-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start}
+  .meas-grid .stage{position:sticky;top:84px}
+}
+
+/* fields (processing steps) */
+.fld{display:grid;gap:6px;padding:10px 0;border-top:1px dashed var(--line)}
+.fld:first-of-type{border-top:0}
+.fld .fl{font-size:.95rem}
+.fld .fr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fld .fr .inp{flex:1;min-width:120px;max-width:240px}
+.fld .unit{color:var(--muted);font-size:.92rem;min-width:40px}
+.fb{font-size:.88rem;min-height:1.2em}
+.fb.ok{color:var(--ok);font-weight:600} .fb.bad{color:var(--bad)} .fb.warn{color:var(--warn)}
+.expv{font-size:.8rem;color:var(--warn);border:1px dashed var(--warn);border-radius:6px;padding:1px 6px}
+.formula{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0;font-family:Georgia,"Times New Roman",serif;font-size:1.06rem;overflow-x:auto;white-space:nowrap}
+.formula i{font-style:italic}
+
+/* table */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px -4px;padding:0 4px}
+table.dt{border-collapse:collapse;width:100%;min-width:340px;font-size:.9rem}
+table.dt th{background:var(--surface2);font-weight:700;text-align:center;padding:8px 3px;font-size:.84rem;border-bottom:2px solid var(--line2);white-space:nowrap}
+table.dt th.calc{color:var(--accent)}
+table.dt td{padding:3px 2px;border-bottom:1px solid var(--line);text-align:center}
+table.dt td.idx{color:var(--muted);width:22px;font-size:.8rem}
+table.dt td input{width:100%;min-width:60px;min-height:40px;border:1.5px solid var(--line2);border-radius:8px;padding:4px 6px;text-align:center;background:#fff;font-variant-numeric:tabular-nums}
+table.dt td.calc input{border-style:dashed;border-color:var(--accent)}
+table.dt td input.ok{border-style:solid;border-color:var(--ok);background:var(--ok-soft)}
+table.dt td input.bad{border-style:solid;border-color:var(--bad);background:var(--bad-soft)}
+table.dt td.del button{width:36px;height:40px;border:0;background:none;border-radius:8px;cursor:pointer;color:var(--muted);font-size:1.1rem}
+table.dt td.del button:hover{background:var(--bad-soft);color:var(--bad)}
+table.dt tr.off td{opacity:.55}
+
+/* graphs */
+.gwrap{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;margin:8px 0}
+.gwrap canvas{display:block;width:100%;height:300px;touch-action:manipulation}
+.gwrap.tall canvas{height:340px}
+.gcap{font-size:.84rem;color:var(--muted);margin:2px 4px 6px}
+@media (min-width:1000px){.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+
+/* result & summary */
+.result{font-size:1.3rem;font-weight:700;text-align:center;padding:14px;border-radius:12px;background:var(--surface2);border:1px solid var(--line);font-variant-numeric:tabular-nums;margin:8px 0}
+.sumgrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:8px 0 12px}
+.sum{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.sum .sl{font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.sum .sv{font-size:1.15rem;font-weight:700;font-variant-numeric:tabular-nums}
+.sum.ok{background:var(--ok-soft);border-color:transparent}
+.sum.warn{background:var(--warn-soft);border-color:transparent}
+.empty{text-align:center;padding:24px 10px;color:var(--muted)}
+
+/* modal & toast */
+.modal-bg{position:fixed;inset:0;background:rgba(20,25,32,.45);z-index:80;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px 18px calc(18px + var(--safe-b));box-shadow:0 -4px 30px rgba(0,0,0,.2);animation:up .22s ease}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+@media (min-width:720px){.modal-bg{align-items:center}.modal{border-radius:18px}}
+.modal h2{margin-bottom:10px}
+.modal .row{margin-top:14px}
+.modal ul{padding-left:20px;margin:6px 0 10px}
+#toast{position:fixed;left:50%;bottom:calc(84px + var(--safe-b));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fbf8f2;padding:10px 16px;border-radius:12px;font-size:.92rem;z-index:90;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:min(92vw,520px);text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.ok{background:#1f6b43} #toast.bad{background:#9b2c20} #toast.warn{background:#8a5a12}
+@media (min-width:1000px){#toast{bottom:28px}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.foot-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:10px}
+
+/* animations */
+.anim-float{animation:flt 3s ease-in-out infinite}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand">Bojl–Mariotov zakon<small class="muted">Virtuelna laboratorija · 2 časa</small></div>
+  <div class="lesson-ind" aria-live="polite"><b id="liB">Čas 1 / 2</b><span id="liS"></span><div class="segs" id="liSegs" aria-hidden="true"></div></div>
+</div></header>
+<div class="shell"><div class="layout">
+  <nav class="side" id="side" aria-label="Pogledi po časovima"></nav>
+  <main id="main">
+<section class="view" id="v-prep" aria-label="Priprema">
+  <div class="card hero">
+    <div>
+      <span class="pill blue">Gasni zakoni · virtuelna vežba za 2 časa</span>
+      <h1 style="margin-top:8px">Bojl–Mariotov zakon</h1>
+      <p>Meriš pritisak vazduha zatvorenog u špricu pri različitim zapreminama, na stalnoj temperaturi. Iz merenja izračunavaš koliko molekula ima u špricu.</p>
+      <div class="law"><span class="eq">p · V = const.</span> &nbsp;(T = const.)</div>
+      <p class="muted" style="font-size:.93rem">Iz jednačine stanja sledi <i>p</i> = <i>n·k·T</i> · <span class="frac"><span>1</span><span><i>V</i></span></span>, pa je grafik <i>p</i>–V⁻¹ prava čiji je nagib <i>a</i> = <i>n·k·T</i>.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 280 130" role="img" aria-label="Animirana slika: kada se klip utiskuje, pritisak raste">
+        <style>
+          .hp{animation:hp 4.5s ease-in-out infinite}
+          .hg{transform-box:view-box;transform-origin:52px 80px;animation:hg 4.5s ease-in-out infinite}
+          .hn{transform-box:view-box;transform-origin:58px 32px;animation:hn 4.5s ease-in-out infinite}
+          @keyframes hp{0%,100%{transform:translateX(0)}50%{transform:translateX(-70px)}}
+          @keyframes hg{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.5)}}
+          @keyframes hn{0%,100%{transform:rotate(-50deg)}50%{transform:rotate(55deg)}}
+        </style>
+        <circle cx="58" cy="32" r="24" fill="#fff" stroke="#3b4a5f" stroke-width="2.5"/>
+        <path d="M40 40 A22 22 0 0 1 76 40" fill="none" stroke="#c4553a" stroke-width="2" stroke-dasharray="2 3"/>
+        <g class="hn"><line x1="58" y1="32" x2="58" y2="14" stroke="#c4553a" stroke-width="3" stroke-linecap="round"/></g>
+        <circle cx="58" cy="32" r="3" fill="#3b4a5f"/>
+        <path d="M58 56 V68 H50" stroke="#8795a5" stroke-width="4" fill="none"/>
+        <rect x="36" y="74" width="16" height="12" fill="#8795a5"/>
+        <rect x="50" y="64" width="192" height="32" rx="4" fill="#eef4fa" stroke="#3b4a5f" stroke-width="2"/>
+        <rect class="hg" x="52" y="66" width="140" height="28" fill="#cfe2f7"/>
+        <g class="hp"><rect x="190" y="66" width="7" height="28" fill="#22262b"/><rect x="197" y="76" width="64" height="8" fill="#b9c3ce"/><rect x="259" y="62" width="7" height="36" rx="2" fill="#3b4a5f"/></g>
+        <text x="150" y="122" font-size="11" text-anchor="middle" fill="#66707c">manja zapremina → veći pritisak</text>
+      </svg>
+      <figcaption>Kada utisneš klip, zatvoreni vazduh se sabija u manji prostor i molekuli češće udaraju u zidove – pritisak raste. Kada izvlačiš klip, pritisak opada.</figcaption>
+    </figure>
+  </div>
+  <div data-goal="1"></div>
+  <div class="card">
+    <h2><span class="step-no">1</span>Tvoji podaci</h2>
+    <div class="form-grid c3">
+      <div><label class="f" for="stName">Ime i prezime</label><input id="stName" class="inp" data-bind="student.name" autocomplete="name"></div>
+      <div><label class="f" for="stGrp">Razred / grupa</label><input id="stGrp" class="inp" data-bind="student.group"></div>
+      <div><label class="f" for="stDate">Datum</label><input id="stDate" class="inp" type="date" data-bind="student.date"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">2</span>Uslovi u laboratoriji</h2>
+    <p>Očitaj sobni termometar i barometar, upiši vrednosti, proveri ih i zapiši u svesku.</p>
+    <div class="stage" style="margin-bottom:6px"><div class="reads" style="margin-top:0">
+      <div class="readbox"><div class="rl">Sobni termometar</div><div class="read" id="envT">–</div></div>
+      <div class="readbox"><div class="rl">Barometar</div><div class="read" id="envP">–</div></div>
+    </div></div>
+    <div data-f="t"></div>
+    <div data-f="p0"></div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">3</span>Kako meriš?</h2>
+    <ol style="padding-left:20px;margin:0 0 8px">
+      <li>Pri otvorenom ventilu postavi klip na početnu zapreminu – nju biraš sam, <b>između 30 i 60 mL</b>.</li>
+      <li>Zatvori ventil. Od tog trenutka je količina vazduha u špricu stalna. Očitaj i zabeleži <i>V</i><sub>0</sub>.</li>
+      <li>Pomeri klip (10–60 mL) i <b>sačekaj oko 10 sekundi</b> da se pokazivanje manometra umiri.</li>
+      <li>Zapreminu očitaj u lupi, sa skale (kod ivice gumenog čepa), a pritisak sa manometra. Obe vrednosti upisuješ sam.</li>
+    </ol>
+    <div class="banner">Uslov: bar <b>7 različitih zapremina</b>, a najveća zapremina mora biti bar <b>dva puta</b> veća od najmanje (V<sub>max</sub> : V<sub>min</sub> ≥ 2). Smeš i da sabijaš i da izvlačiš klip.</div>
+    <button type="button" class="btn primary xl wide" data-go="meas">Počni merenje →</button>
+  </div>
+</section>
+
+<section class="view" id="v-meas" aria-label="Merenje">
+  <div data-goal="1"></div>
+  <div class="meas-grid">
+    <div class="stage" aria-label="Eksperimentalna postavka">
+      <div id="scene"></div>
+      <div class="reads">
+        <div class="readbox"><div class="rl">Manometar</div><div class="read" id="rdP">–<small>kPa</small></div></div>
+        <div class="readbox help" id="helpBox" hidden><div class="rl">Pomoć (za nastavnika)</div><div id="helpTxt" style="font-size:.86rem;line-height:1.45"></div></div>
+      </div>
+      <div class="loupes"><div class="loupe one"><div class="ll">Lupa – skala šprica (mL) kod gumenog čepa</div><div id="loupe"></div></div></div>
+    </div>
+    <div>
+      <div class="card">
+        <h2><span class="step-no">1</span>Klip i ventil</h2>
+        <div id="stpPiston"></div>
+        <button type="button" class="btn wide" id="valveBtn" data-act="valve">Ventil</button>
+        <div data-f="V0" style="margin-top:6px"></div>
+      </div>
+      <div class="card">
+        <h2><span class="step-no">2</span>Merenje: očitavanje V i p</h2>
+        <div class="banner" id="nextBanner"></div>
+        <div class="form-grid c2">
+          <div><label class="f" for="recV">V (mL) – sa skale</label><input id="recV" class="inp" type="text" inputmode="decimal" autocomplete="off"></div>
+          <div><label class="f" for="recP">p (kPa) – sa manometra</label><input id="recP" class="inp" type="text" inputmode="decimal" autocomplete="off"></div>
+        </div>
+        <button type="button" class="btn primary wide" style="margin-top:10px" data-act="rec">Zabeleži</button>
+        <p class="muted" id="coverTxt" style="margin:10px 0 0;font-size:.9rem"></p>
+        <div class="reclist" id="recList"></div>
+        <div class="row" style="margin-top:14px;justify-content:space-between">
+          <div class="row"><span class="muted" style="font-size:.88rem">Brzina:</span><div class="chips" role="group" aria-label="Brzina simulacije"><button type="button" data-act="speed" data-v="1">×1</button><button type="button" data-act="speed" data-v="2">×2</button></div></div>
+          <button type="button" class="btn ghost" data-act="help" aria-pressed="false">Pomoć (za nastavnika)</button>
+        </div>
+      </div>
+      <div data-finish="1"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-proc" aria-label="Obrada">
+  <div data-goal="2"></div>
+  <div class="card remind">
+    <h2>Podsetnik sa 1. časa</h2>
+    <p class="muted" style="font-size:.92rem">Proveri podatke. Ako radiš na drugom računaru ili su se podaci izgubili, unesi ih iz sveske.</p>
+    <div class="form-grid c3">
+      <div><label class="f" for="rT">Sobna temperatura t (°C)</label><input id="rT" class="inp" data-bind="f.t" inputmode="decimal" autocomplete="off"></div>
+      <div><label class="f" for="rP">Atmosferski pritisak p₀ (kPa)</label><input id="rP" class="inp" data-bind="f.p0" inputmode="decimal" autocomplete="off"></div>
+      <div><label class="f" for="rV">Početna zapremina V₀ (mL)</label><input id="rV" class="inp" data-bind="f.V0" inputmode="decimal" autocomplete="off"></div>
+    </div>
+    <p id="remRows" style="margin:10px 0 0;font-size:.92rem"></p>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">1</span>Tabela</h2>
+    <p>Digitronom izračunaj za svaki red: <b>V⁻¹</b> = <span class="frac"><span>1</span><span><i>V</i></span></span> (na 4 decimale) i proizvod <b>p·V</b> (zaokružen na ceo broj). Upiši ih u isprekidana polja – program ih proverava.</p>
+    <div id="tbl"></div>
+    <div class="row" style="justify-content:space-between">
+      <div class="row"><button type="button" class="btn" data-act="addRow">+ Dodaj red</button><button type="button" class="btn blue" data-act="chkTable">Proveri tabelu</button></div>
+      <span class="pill" id="tblCount">Tačno: 0 / 0</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">2</span>Grafici</h2>
+    <p class="muted" style="font-size:.92rem">Grafike crta program na osnovu kolona V i p iz tabele.</p>
+    <div class="g2">
+      <div><div class="gwrap"><canvas id="g1" aria-label="Pritisak u zavisnosti od zapremine"></canvas></div><p class="gcap">Grafik p–V: hiperbola (izoterma).</p></div>
+      <div><div class="gwrap"><canvas id="g2" aria-label="Pritisak u zavisnosti od recipročne vrednosti zapremine – dodirni da označiš tačke A i B"></canvas></div><p class="gcap">Grafik p–V⁻¹: prava. <b>Ovde dodirni</b> za tačke A i B.</p></div>
+    </div>
+    <p class="muted" id="r2" style="font-size:.85rem;margin:4px 0 0"></p>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">3</span>Nagib prave</h2>
+    <div id="abCard"></div>
+    <div data-f="a"></div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">4</span>Broj molekula</h2>
+    <p style="font-size:.94rem">Nagib koristi sve tačke, pa je tačniji nego računanje iz samo jednog reda.</p>
+    <div data-f="T"></div>
+    <div data-f="n"></div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">5</span>Nesigurnost</h2>
+    <p style="font-size:.94rem">Kada bi zakon važio savršeno, <i>p·V</i> bi u svakom redu bio isti. Njegovo rasipanje pokazuje koliko možemo da verujemo rezultatu.</p>
+    <div data-f="pVm"></div>
+    <div data-f="dpV"></div>
+    <div data-f="dn"></div>
+  </div>
+  <div class="card">
+    <h2><span class="step-no">6</span>Konačan rezultat</h2>
+    <p style="font-size:.94rem">Zaokruži Δn na 1–2 značajne cifre, a n na isto mesto. Upiši u eksponencijalnom obliku (npr. 1,09·10^21).</p>
+    <div class="form-grid c2">
+      <div><label class="f" for="nr">n (zaokruženo)</label><input id="nr" class="inp" data-bind="f.nr" autocomplete="off" spellcheck="false" placeholder="npr. 1,09·10^21"></div>
+      <div><label class="f" for="dnr">Δn (zaokruženo)</label><input id="dnr" class="inp" data-bind="f.dnr" autocomplete="off" spellcheck="false" placeholder="npr. 0,03·10^21"></div>
+    </div>
+    <div class="row" style="margin-top:10px"><button type="button" class="btn blue" data-act="chkRes">Proveri konačan rezultat</button><span class="expv" id="resHelp" hidden></span></div>
+    <div class="fb" id="resFb" aria-live="polite" style="margin-top:6px"></div>
+    <div class="result" id="resLine" hidden></div>
+    <div class="foot-actions"><button type="button" class="btn ghost" data-act="help" aria-pressed="false">Pomoć (za nastavnika)</button><button type="button" class="btn primary" data-go="concl">Dalje na zaključak →</button></div>
+  </div>
+</section>
+
+<section class="view" id="v-concl" aria-label="Zaključak">
+  <div data-goal="2"></div>
+  <div class="card">
+    <h2>Rezultat tvog merenja</h2>
+    <div id="summary"></div>
+  </div>
+  <div class="card">
+    <h2>Zaključak</h2>
+    <p>Napiši <b>3–5 rečenica</b>. Osvrni se na sledeće:</p>
+    <ul style="margin:0 0 10px;padding-left:20px">
+      <li>Koliku vrednost n si dobio (zajedno sa nesigurnošću)?</li>
+      <li>Da li se slaže sa vrednošću n₀ izračunatom iz početnog stanja? Da li tvoje merenje potvrđuje Bojl–Mariotov zakon (da li je grafik p–V⁻¹ prava, koliko je p·V stalno)?</li>
+      <li>Šta je mogao biti glavni izvor greške?</li>
+    </ul>
+    <label class="f" for="concl">Tvoj zaključak</label>
+    <textarea id="concl" class="inp" placeholder="Prema mom merenju, u špricu …"></textarea>
+    <div class="row" style="justify-content:space-between;margin-top:10px"><span class="pill" id="sentCnt">Rečenica: 0</span><button type="button" class="btn blue" data-act="saveConcl">Sačuvaj</button></div>
+  </div>
+  <div data-finish="2"></div>
+  <div class="row" style="justify-content:center;margin-top:16px"><button type="button" class="btn danger" data-act="reset">Obriši sve podatke</button></div>
+</section>
+
+  </main>
+</div></div>
+<nav class="tabs" id="tabs" aria-label="Pogledi"></nav>
+<div class="modal-bg" id="modalBg"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><h2 id="modalTitle"></h2><div id="modalBody"></div><div class="row end" id="modalBtns"></div></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+/* ===================== ZAJEDNIČKI OKVIR (isti za sve vežbe) ===================== */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const FR=(n,d)=>`<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const kB=1.38e-23;
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','+':''};
+const UNSUP={'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-','⁺':'+'};
+const C_PT='#2f6aa8',C_BEST='#c4553a',C_BND='#6f7d8c',C_MY='#2e8b57';
+const ICON={
+  prep:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM8.5 12h7M8.5 16h5"/></svg>',
+  meas:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 13l4-4M12 3v2"/></svg>',
+  proc:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/></svg>',
+  concl:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>',
+  info:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  trash:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  flag:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>'
+};
+
+/* ---------- brojevi ---------- */
+function parseNum(v){
+  if(v==null) return NaN;
+  let s=String(v).trim(); if(!s) return NaN;
+  s=s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g,m=>'^'+m.split('').map(c=>UNSUP[c]).join(''));
+  s=s.replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'.');
+  s=s.replace(/^([+-]?[\d.]+)[·×*xX•⋅]10\^?\(?([+-]?\d+)\)?$/,'$1e$2');
+  s=s.replace(/^([+-]?)10\^\(?([+-]?\d+)\)?$/,'$11e$2');
+  if(!/^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(s)) return NaN;
+  const x=parseFloat(s); return isFinite(x)?x:NaN;
+}
+function fmt(x,d){ if(!isFinite(x)) return '–'; const s=(Math.abs(x)<Math.pow(10,-d)/2?0:x).toFixed(Math.max(0,Math.min(12,d))); return s.replace('.',',').replace('-','−'); }
+function fmtSig(x,sig){ if(!isFinite(x)) return '–'; if(x===0) return '0'; const d=sig-1-Math.floor(Math.log10(Math.abs(x))); return fmt(x,Math.max(0,d)); }
+function supNum(e){ return String(e).split('').map(c=>SUP[c]||c).join(''); }
+function fmtSci(x,sig){ if(!isFinite(x)) return '–'; if(x===0) return '0'; let e=Math.floor(Math.log10(Math.abs(x))); let ms=(x/Math.pow(10,e)).toFixed(sig-1); if(Math.abs(parseFloat(ms))>=10){ e++; ms=(x/Math.pow(10,e)).toFixed(sig-1); } return ms.replace('.',',').replace('-','−')+'·10'+supNum(e); }
+function roundTo(x,d){ const p=Math.pow(10,d); return Math.round(x*p)/p; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function gauss(){ let u=0,v=0; while(!u) u=Math.random(); while(!v) v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function sentences(t){ const m=String(t||'').trim().match(/[^.!?…]{3,}[.!?…]+/g); return m?m.length:0; }
+function sigDigits(str){ let s=String(str||'').trim().replace(/[−–]/g,'-').replace(/,/g,'.'); s=s.replace(/[eE].*$/,'').replace(/[·×*xX•⋅].*$/,'').replace(/^[+-]/,'').replace('.',''); s=s.replace(/^0+/,''); return Math.max(1,s.length); }
+function safe(f){ try{ return f(); }catch(e){ return false; } }
+function safeNum(f){ try{ const v=f(); return typeof v==='number'?v:NaN; }catch(e){ return NaN; } }
+function fit(xs,ys){ const n=xs.length; if(n<2) return null; let sx=0,sy=0; for(let i=0;i<n;i++){sx+=xs[i];sy+=ys[i];} const mx=sx/n,my=sy/n; let sxx=0,sxy=0,syy=0; for(let i=0;i<n;i++){const dx=xs[i]-mx,dy=ys[i]-my; sxx+=dx*dx; sxy+=dx*dy; syy+=dy*dy;} if(!(sxx>0)) return null; const a=sxy/sxx; return {a,b:my-a*mx,r2:syy>0?sxy*sxy/(sxx*syy):1}; }
+
+/* ---------- stanje i čuvanje ---------- */
+let S=null; const FB={};
+const KEY=()=>LAB.slug+'-lab-v1';
+function today(){ const d=new Date(); const z=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()); }
+function baseDEF(){ return Object.assign({student:{name:'',group:'',date:today()},view:'prep',done:{1:false,2:false},conclusion:'',help:false,speed:1,rows:[],f:{},ok:{},manual:{},pick:'A'},LAB.DEF()); }
+function mergeDeep(a,b){ for(const k in b){ const bv=b[k],av=a[k]; if(bv&&typeof bv==='object'&&!Array.isArray(bv)&&av&&typeof av==='object'&&!Array.isArray(av)) mergeDeep(av,bv); else if(bv!==undefined) a[k]=bv; } return a; }
+function load(){
+  let o=null; try{ o=JSON.parse(localStorage.getItem(KEY())||'null'); }catch(e){ o=null; }
+  S=baseDEF(); if(o&&typeof o==='object') mergeDeep(S,o);
+  if(!Array.isArray(S.rows)) S.rows=[];
+  S.rows=S.rows.filter(r=>r&&typeof r==='object').map(r=>{ const q={}; LAB.table.cols.forEach(c=>q[c.id]=typeof r[c.id]==='string'?r[c.id]:(r[c.id]==null?'':String(r[c.id]))); return q; });
+  ['f','ok','manual','done','student'].forEach(k=>{ if(!S[k]||typeof S[k]!=='object') S[k]=baseDEF()[k]; });
+  if(!LAB.views.some(v=>v.id===S.view)) S.view='prep';
+  if(S.speed!==2) S.speed=1; if(S.pick!=='B') S.pick='A';
+  if(typeof S.conclusion!=='string') S.conclusion='';
+  if(LAB.sanitize) LAB.sanitize();
+  return !!o;
+}
+let saveT=0;
+function save(){ clearTimeout(saveT); saveT=setTimeout(saveNow,350); }
+function saveNow(){ clearTimeout(saveT); try{ localStorage.setItem(KEY(),JSON.stringify(S)); }catch(e){} }
+let chgQ=false;
+function changed(){ save(); if(chgQ) return; chgQ=true; requestAnimationFrame(()=>{ chgQ=false; renderGoals(); if(LAB.onChange) LAB.onChange(); }); }
+function hasData(){ return S.rows.length>0||S.student.name.trim().length>0||Object.keys(S.f).length>0; }
+
+/* ---------- povratne informacije: toast i modal ---------- */
+let toastT=0;
+function toast(msg,kind){ const t=$('#toast'); t.textContent=msg; t.className='show '+(kind||''); clearTimeout(toastT); toastT=setTimeout(()=>{ t.className=''; },3600); }
+let lastFocus=null;
+function openModal(title,html,btns){
+  $('#modalTitle').innerHTML=title; $('#modalBody').innerHTML=html;
+  const row=$('#modalBtns'); row.innerHTML='';
+  (btns||[{t:'Zatvori',cls:'primary'}]).forEach(b=>{ const e=document.createElement('button'); e.type='button'; e.className='btn '+(b.cls||''); e.textContent=b.t; e.addEventListener('click',()=>{ closeModal(); if(b.fn) setTimeout(b.fn,30); }); row.appendChild(e); });
+  if(!$('#modalBg').classList.contains('open')) lastFocus=document.activeElement;
+  $('#modalBg').classList.add('open');
+  setTimeout(()=>{ const bs=row.querySelectorAll('button'); if(bs.length) bs[bs.length-1].focus(); },40);
+}
+function closeModal(){ $('#modalBg').classList.remove('open'); if(lastFocus&&lastFocus.focus) try{ lastFocus.focus(); }catch(e){} }
+
+/* ---------- navigacija i časovi ---------- */
+const art=n=>(n===1||n===5)?'Az':'A';
+function lessonOf(id){ const v=LAB.views.find(x=>x.id===id); return v?v.lesson:1; }
+function firstView(n){ return LAB.views.find(v=>v.lesson===n).id; }
+function buildNav(){
+  let h='';
+  LAB.lessons.forEach(L=>{
+    h+=`<div class="grp"><div class="gl"><span>Čas ${L.n}</span><span id="sgl${L.n}"></span></div>`;
+    LAB.views.filter(v=>v.lesson===L.n).forEach(v=>{ h+=`<button type="button" data-go="${v.id}">${ICON[v.icon]}<span>${v.label}</span></button>`; });
+    h+='</div>';
+  });
+  h+=`<div class="tools"><button type="button" data-act="about">${ICON.info}<span>O modelu</span></button><button type="button" data-act="reset">${ICON.trash}<span>Obriši sve podatke</span></button></div>`;
+  $('#side').innerHTML=h;
+  $('#tabs').innerHTML=LAB.views.map(v=>`<button type="button" class="tab" data-go="${v.id}"><span class="tl">Čas ${v.lesson}</span>${ICON[v.icon]}<span class="tn">${v.short||v.label}</span></button>`).join('');
+}
+function go(id,opt){
+  if(!LAB.views.some(v=>v.id===id)) id='prep';
+  S.view=id;
+  $$('.view').forEach(s=>s.classList.toggle('active',s.id==='v-'+id));
+  $$('[data-go]').forEach(b=>{ if(b.closest('#side')||b.closest('#tabs')){ if(b.dataset.go===id) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); } });
+  renderLessonInd(); renderGoals();
+  if(LAB.onView) LAB.onView(id);
+  save();
+  if(!(opt&&opt.noScroll)) window.scrollTo({top:0,behavior:RM?'auto':'smooth'});
+}
+function renderLessonInd(){
+  const n=lessonOf(S.view), L=LAB.lessons[n-1];
+  $('#liB').textContent=`Čas ${n} / ${LAB.lessons.length}`;
+  $('#liS').textContent=L.name;
+  $('#liSegs').innerHTML=LAB.lessons.map(x=>`<i class="${x.n===n?'cur':''} ${S.done[x.n]&&x.n!==n?'done':''}"></i>`).join('');
+}
+function checkItems(n){ return LAB.lessons[n-1].checks.map(c=>({t:c.t,manual:c.manual,on:c.manual?!!S.manual[c.manual]:!!safe(c.f)})); }
+function renderGoals(){
+  LAB.lessons.forEach(L=>{ const it=checkItems(L.n); const el=$('#sgl'+L.n); if(el) el.textContent=it.filter(i=>i.on).length+'/'+it.length; });
+  $$('[data-goal]').forEach(el=>{
+    const n=+el.dataset.goal, L=LAB.lessons[n-1], it=checkItems(n), k=it.filter(i=>i.on).length;
+    el.className='card goal';
+    el.innerHTML=`<div class="gh"><h2>Cilj ${n}. časa</h2><span class="pill">${L.time}</span></div><p>${L.goal}</p>
+      <ul>${it.map((i,j)=>i.manual?`<li class="${i.on?'on':''}"><button type="button" data-man="${i.manual}" role="checkbox" aria-checked="${i.on}"><span class="bx"></span><span>${i.t}</span></button></li>`:`<li class="${i.on?'on':''}"><span class="bx" aria-hidden="true"></span><span>${i.t}<span class="sr-only">${i.on?' – urađeno':' – još nije urađeno'}</span></span></li>`).join('')}</ul>
+      <p class="muted" style="margin:8px 0 0;font-size:.85rem">Urađeno: <b>${k} / ${it.length}</b></p>`;
+  });
+  $$('[data-man]').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.man; S.manual[k]=!S.manual[k]; changed(); }));
+}
+function renderFinish(){
+  $$('[data-finish]').forEach(el=>{
+    const n=+el.dataset.finish;
+    el.innerHTML=`<button type="button" class="btn primary xl wide">${ICON.flag}<span>Završi ${n}. čas</span></button>`;
+    el.querySelector('button').addEventListener('click',()=>finishLesson(n));
+  });
+}
+function finishLesson(n){
+  const miss=checkItems(n).filter(i=>!i.on);
+  const doIt=()=>{
+    S.done[n]=true; saveNow(); renderLessonInd(); renderGoals();
+    const next=LAB.lessons[n];
+    const html=`${LAB.lessonSummary(n)}<p class="banner ok"><b>Podaci su sačuvani na ovom uređaju.</b> ${next?`Sledeći čas: <b>${next.n}. čas – ${next.name}</b>.`:'Stigao si do kraja vežbe. Kod kuće sredi laboratorijski dnevnik u svesci.'}</p>${n===1?'<p><b>Važno:</b> sve izmerene podatke zapiši u svesku! Ako sledeći čas radiš na drugom računaru, iz sveske ih možeš ponovo uneti.</p>':''}`;
+    openModal(`${n}. čas je završen`,html,next?[{t:'Ostajem ovde',cls:'ghost'},{t:`Dalje: ${next.n}. čas`,cls:'primary',fn:()=>go(firstView(next.n))}]:[{t:'U redu',cls:'primary'}]);
+  };
+  if(miss.length) openModal('Nije sve urađeno',`<p>Još nedostaje:</p><ul>${miss.map(m=>`<li>${m.t}</li>`).join('')}</ul><p>Da li ipak završavaš čas?</p>`,[{t:'Nazad',cls:'ghost'},{t:'Da, završavam',cls:'primary',fn:doIt}]);
+  else doIt();
+}
+function resume(){
+  let n=lessonOf(S.view);
+  if(n===1&&S.done[1]){ S.view=firstView(2); n=2; }
+  const L=LAB.lessons[n-1];
+  openModal('Nastavljaš vežbu?',`<p><b>Nastavljaš ${n}. čas — ${L.name}.</b></p><p class="muted">Zabeleženih redova merenja do sada: ${S.rows.length}. Podaci su sačuvani samo na ovom uređaju.</p>`,
+    [{t:'Počni iznova (brisanje)',cls:'danger',fn:()=>resetAll(true)},{t:'Nastavljam',cls:'primary',fn:()=>go(S.view)}]);
+}
+function resetAll(ask){
+  if(ask&&!confirm('Da li sigurno brišeš sve podatke (merenja, proračune, zaključak)? Ovo se ne može poništiti.')) return;
+  try{ localStorage.removeItem(KEY()); }catch(e){}
+  S=baseDEF(); if(LAB.sanitize) LAB.sanitize(); if(LAB.resetRuntime) LAB.resetRuntime();
+  renderAll(); go('prep'); toast('Svi podaci su obrisani.','ok');
+}
+
+/* ---------- klizač sa dugmadima − / + ---------- */
+function holdRepeat(btn,fn){
+  let t1=0,t2=0; const stop=()=>{ clearTimeout(t1); clearInterval(t2); };
+  btn.addEventListener('pointerdown',e=>{ e.preventDefault(); fn(); t1=setTimeout(()=>{ t2=setInterval(fn,85); },420); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev,stop));
+  btn.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fn(); } });
+}
+function makeStp(host,o){
+  const id='s'+Math.random().toString(36).slice(2,8);
+  host.classList.add('stp');
+  host.innerHTML=`<div class="sh"><b id="${id}">${o.label}</b><span class="v ${o.hideValue?'hint':''}"></span></div>
+    <div class="sr"><button type="button" aria-label="${o.label}: smanji">−</button><input type="range" class="slider" min="${o.min}" max="${o.max}" step="${o.step}" aria-labelledby="${id}"><button type="button" aria-label="${o.label}: povećaj">+</button></div>
+    <div class="bounds"><span>${o.bl||o.fmt(o.min)}</span><span>${o.br||o.fmt(o.max)}</span></div>`;
+  const bs=host.querySelectorAll('button'), r=host.querySelector('input'), vEl=host.querySelector('.v');
+  const show=()=>{ const v=o.get(); r.value=v; r.style.setProperty('--p',((v-o.min)/(o.max-o.min)*100)+'%'); const t=o.hideValue?(o.hint||''):o.fmt(v); vEl.textContent=t; r.setAttribute('aria-valuetext',o.hideValue?(o.hint||''):t); };
+  const setV=v=>{ v=clamp(Math.round(v/o.step)*o.step,o.min,o.max); v=+v.toFixed(6); if(v!==o.get()) o.set(v); show(); };
+  r.addEventListener('input',()=>setV(parseFloat(r.value)));
+  holdRepeat(bs[0],()=>setV(o.get()-o.step)); holdRepeat(bs[1],()=>setV(o.get()+o.step));
+  show(); return {show};
+}
+
+/* ---------- vezana polja (data-bind) ---------- */
+function getPath(p){ return p.split('.').reduce((o,k)=>o==null?undefined:o[k],S); }
+function setPath(p,v){ const ks=p.split('.'); let o=S; for(let i=0;i<ks.length-1;i++){ if(o[ks[i]]==null) o[ks[i]]={}; o=o[ks[i]]; } o[ks[ks.length-1]]=v; }
+function renderBinds(){
+  $$('[data-bind]').forEach(inp=>{
+    const p=inp.dataset.bind; inp.value=getPath(p)||'';
+    if(inp._b) return; inp._b=true;
+    inp.addEventListener('input',()=>{ setPath(p,inp.value); if(p.startsWith('f.')){ const k=p.slice(2); delete S.ok[k]; delete FB[k]; syncField(k,inp); invalidateAfter(k); } changed(); });
+  });
+}
+function syncField(k,src){
+  $$(`[data-f="${k}"] input`).forEach(i=>{ if(i!==src) i.value=S.f[k]||''; });
+  $$(`[data-bind="f.${k}"]`).forEach(i=>{ if(i!==src) i.value=S.f[k]||''; });
+  $$(`[data-f="${k}"]`).forEach(markField);
+}
+
+/* ---------- koraci obrade (polja sa proverom) ---------- */
+function num(id){ return parseNum(S.f[id]); }
+function val(id,fb){ const v=num(id); return isFinite(v)?v:fb; }
+function invalidateAfter(id){
+  const ord=LAB.order||[]; const i=ord.indexOf(id); if(i<0) return;
+  ord.slice(i+1).forEach(k=>{ if(S.ok[k]!==undefined){ delete S.ok[k]; delete FB[k]; $$(`[data-f="${k}"]`).forEach(markField); } });
+  if(LAB.onInvalidate) LAB.onInvalidate();
+}
+function renderFields(){ $$('[data-f]').forEach(renderField); }
+function renderField(el){
+  const id=el.dataset.f, F=LAB.fields[id]; if(!F) return;
+  el.className='fld';
+  el.innerHTML=`<div class="fl">${F.label}</div>${F.formula?`<div class="formula">${F.formula}</div>`:''}
+    <div class="fr"><input class="inp" type="text" ${F.sci?'':'inputmode="decimal"'} autocomplete="off" spellcheck="false" aria-label="${esc(F.aria||id)}" placeholder="${esc(F.ph||'')}"><span class="unit">${F.unit||''}</span><button class="btn blue" type="button">Proveri</button><span class="expv" hidden></span></div>
+    <div class="fb" aria-live="polite"></div>`;
+  const inp=el.querySelector('input'); inp.value=S.f[id]||'';
+  inp.addEventListener('input',()=>{ S.f[id]=inp.value; delete S.ok[id]; delete FB[id]; syncField(id,inp); invalidateAfter(id); changed(); });
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); checkField(id); } });
+  el.querySelector('button').addEventListener('click',()=>checkField(id));
+  markField(el);
+}
+function markField(el){
+  const id=el.dataset.f, F=LAB.fields[id]; if(!F) return;
+  const inp=el.querySelector('input'), fb=el.querySelector('.fb'), ev=el.querySelector('.expv'); if(!inp) return;
+  inp.classList.toggle('ok',S.ok[id]===true); inp.classList.toggle('bad',S.ok[id]===false);
+  const m=FB[id]; fb.className='fb '+(m?m.k:''); fb.textContent=m?m.m:(S.ok[id]===true?'✓ Tačno.':'');
+  if(S.help){ const e=safeNum(F.exp); ev.hidden=!isFinite(e); ev.textContent='očekivano: '+(F.show?F.show(e):fmtSig(e,4)); } else ev.hidden=true;
+}
+function checkField(id){
+  const F=LAB.fields[id], v=num(id); let ok,msg;
+  if(!isFinite(v)){ ok=false; msg='Upiši broj'+(F.sci?' (npr. 1,24·10^21 ili 1,24e21).':' (može i sa decimalnim zarezom).'); }
+  else{
+    const e=safeNum(F.exp);
+    if(!isFinite(e)){ ok=null; msg=F.need||'Prvo uradi prethodne korake.'; }
+    else{ ok=Math.abs(v-e)<=F.tol[0]+Math.abs(e)*F.tol[1]; msg=ok?(F.okMsg||'Tačno!'):(typeof F.hint==='function'?F.hint(v,e):(F.hint||'Nije tačno. Izračunaj ponovo.')); }
+  }
+  if(ok===null){ delete S.ok[id]; FB[id]={k:'warn',m:msg}; }
+  else{ S.ok[id]=ok; FB[id]={k:ok?'ok':'bad',m:(ok?'✓ ':'')+msg}; }
+  $$(`[data-f="${id}"]`).forEach(markField);
+  if(LAB.onCheck) LAB.onCheck(id);
+  changed();
+}
+
+/* ---------- provera rezultata (vrednost ± nesigurnost) ---------- */
+function checkResult(vStr,dStr,v0,d0){
+  const v=parseNum(vStr),d=parseNum(dStr);
+  if(!isFinite(v)||!isFinite(d)||d<=0) return {ok:false,msg:'Upiši i vrednost i nesigurnost (nesigurnost je pozitivan broj).'};
+  if(!isFinite(v0)||!isFinite(d0)||d0<=0) return {ok:null,msg:'Prvo uradi prethodne korake (vrednost i nesigurnost).'};
+  const sd=sigDigits(dStr);
+  if(sd>2) return {ok:false,msg:'Nesigurnost zaokruži na 1 ili 2 značajne cifre.'};
+  if(d<d0*0.7||d>d0*1.8) return {ok:false,msg:'Nesigurnost se ne slaže sa izračunatim Δ. Zaokruži je na 1–2 značajne cifre (radije naviše).'};
+  const unit=Math.pow(10,Math.floor(Math.log10(d)+1e-9)-sd+1);
+  if(Math.abs(v-v0)>unit*0.55+Math.abs(v0)*1e-9) return {ok:false,msg:'Vrednost zaokruži na isto mesto na kom stoji poslednja cifra nesigurnosti.'};
+  return {ok:true,msg:'Konačan rezultat je tačan!'};
+}
+
+/* ---------- tabela ---------- */
+const COL=id=>LAB.table.cols.find(c=>c.id===id);
+function emptyRow(){ const r={}; LAB.table.cols.forEach(c=>r[c.id]=''); return r; }
+function rowValid(r){ return LAB.table.cols.filter(c=>!c.calc).every(c=>isFinite(parseNum(r[c.id]))); }
+function cellExp(r,c){ const C=COL(c); if(!C||!C.calc||!rowValid(r)) return NaN; return safeNum(()=>C.exp(r)); }
+function cellOk(r,c){ const C=COL(c),v=parseNum(r[c]),e=cellExp(r,c); if(!isFinite(v)||!isFinite(e)) return null; return Math.abs(v-e)<=C.tol[0]+Math.abs(e)*C.tol[1]; }
+function tableStats(){ let tot=0,good=0; S.rows.forEach(r=>{ if(!rowValid(r)) return; LAB.table.cols.filter(c=>c.calc).forEach(c=>{ tot++; if(cellOk(r,c.id)===true) good++; }); }); return {tot,good}; }
+function markRow(tr){
+  const i=+tr.dataset.i, r=S.rows[i]; if(!r) return;
+  tr.querySelectorAll('input').forEach(inp=>{
+    const c=inp.dataset.c, C=COL(c);
+    if(!C.calc){ inp.classList.toggle('bad',r[c]!==''&&!isFinite(parseNum(r[c]))); return; }
+    const ok=r[c]===''?null:cellOk(r,c);
+    inp.classList.toggle('ok',ok===true); inp.classList.toggle('bad',ok===false);
+    const e=cellExp(r,c); inp.title=S.help&&isFinite(e)?'očekivano: '+C.show(e):'';
+  });
+}
+function updTblCount(){ const el=$('#tblCount'); if(!el) return; const s=tableStats(); el.textContent=`Tačno: ${s.good} / ${s.tot}`; el.className='pill '+(s.tot&&s.good===s.tot?'ok':''); }
+function renderTable(){
+  const host=$('#tbl'); if(!host) return;
+  const cols=LAB.table.cols;
+  let h=`<div class="tbl-wrap"><table class="dt"><thead><tr><th scope="col">#</th>${cols.map(c=>`<th scope="col" class="${c.calc?'calc':''}">${c.head}</th>`).join('')}<th scope="col"><span class="sr-only">Brisanje</span></th></tr></thead><tbody>`;
+  S.rows.forEach((r,i)=>{ h+=`<tr data-i="${i}"><td class="idx">${i+1}</td>${cols.map(c=>`<td class="${c.calc?'calc':''}"><input data-c="${c.id}" type="text" inputmode="decimal" autocomplete="off" aria-label="red ${i+1}: ${esc(c.aria)}"></td>`).join('')}<td class="del"><button type="button" aria-label="Obriši red ${i+1}">✕</button></td></tr>`; });
+  if(!S.rows.length) h+=`<tr><td colspan="${cols.length+2}" class="empty">Još nema podataka. Izmeri ih na 1. času ili ih unesi iz sveske (+ Dodaj red).</td></tr>`;
+  h+='</tbody></table></div>';
+  host.innerHTML=h;
+  host.querySelectorAll('tbody tr[data-i]').forEach(tr=>{
+    const i=+tr.dataset.i;
+    tr.querySelectorAll('input').forEach(inp=>{
+      const c=inp.dataset.c; inp.value=S.rows[i][c]||'';
+      inp.addEventListener('input',()=>{ S.rows[i][c]=inp.value; inp.classList.remove('ok','bad'); tableChanged(!COL(c).calc); });
+      inp.addEventListener('blur',()=>{ markRow(tr); updTblCount(); });
+    });
+    tr.querySelector('.del button').addEventListener('click',()=>{ if(confirm(`Da li brišeš red ${i+1}?`)){ S.rows.splice(i,1); renderTable(); tableChanged(true); } });
+    markRow(tr);
+  });
+  updTblCount();
+}
+function checkTable(){
+  $$('#tbl tbody tr[data-i]').forEach(markRow); updTblCount();
+  const s=tableStats();
+  if(!s.tot) toast('U tabeli još nema popunjenih redova.','warn');
+  else if(s.good===s.tot) toast(`Sve izračunate vrednosti su tačne (${s.good} / ${s.tot}).`,'ok');
+  else toast(`Tačno: ${s.good} / ${s.tot}. ${LAB.table.hint}`,'bad');
+  changed();
+}
+function tableChanged(measured){
+  if(measured){ delete S.ok.AB; (LAB.order||[]).forEach(k=>{ delete S.ok[k]; delete FB[k]; }); renderFields(); renderAB(); }
+  else (LAB.tableDeps||[]).forEach(k=>{ if(S.ok[k]!==undefined){ delete S.ok[k]; delete FB[k]; $$(`[data-f="${k}"]`).forEach(markField);} });
+  if(LAB.onInvalidate) LAB.onInvalidate();
+  changed(); scheduleGraphs();
+}
+
+/* ---------- grafici (canvas, bez biblioteka) ---------- */
+function setupCanvas(cv){
+  const dpr=Math.min(3,window.devicePixelRatio||1), w=cv.clientWidth||320, h=cv.clientHeight||300;
+  const W=Math.round(w*dpr),H=Math.round(h*dpr); if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,w,h); return {c,w,h};
+}
+function niceStep(span,n){ if(!(span>0)) return 1; const raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+function ticksArr(a,b,n){ const st=niceStep(b-a,n),arr=[]; for(let v=Math.ceil(a/st-1e-9)*st,i=0;v<=b+st*1e-6&&i<60;v+=st,i++) arr.push(Math.abs(v)<st*1e-9?0:+v.toPrecision(12)); return {arr,st}; }
+function decOf(st){ return Math.max(0,-Math.floor(Math.log10(st)+1e-9)); }
+function niceRange(mn,mx,pad){ if(!(mx>mn)){ const d=Math.abs(mx)||1; mn-=d*0.1; mx+=d*0.1; } const p=(mx-mn)*(pad==null?0.08:pad); return [mn-p,mx+p]; }
+function plot(cv,o){
+  const {c,w,h}=setupCanvas(cv), m={l:60,r:14,t:14,b:44}, pw=w-m.l-m.r, ph=h-m.t-m.b;
+  const [x0,x1]=o.xr,[y0,y1]=o.yr;
+  const X=x=>m.l+(x-x0)/(x1-x0)*pw, Y=y=>m.t+ph-(y-y0)/(y1-y0)*ph;
+  c.fillStyle='#fff'; c.fillRect(0,0,w,h);
+  const tx=ticksArr(x0,x1,Math.max(4,Math.floor(pw/52))), ty=ticksArr(y0,y1,Math.max(4,Math.floor(ph/38)));
+  const dx=o.xdec!=null?o.xdec:decOf(tx.st), dy=o.ydec!=null?o.ydec:decOf(ty.st);
+  c.lineWidth=1; c.strokeStyle='#ece6da';
+  tx.arr.forEach(v=>{ c.beginPath(); c.moveTo(Math.round(X(v))+.5,m.t); c.lineTo(Math.round(X(v))+.5,m.t+ph); c.stroke(); });
+  ty.arr.forEach(v=>{ c.beginPath(); c.moveTo(m.l,Math.round(Y(v))+.5); c.lineTo(m.l+pw,Math.round(Y(v))+.5); c.stroke(); });
+  c.strokeStyle='#8f98a3';
+  if(x0<0&&x1>0){ c.beginPath(); c.moveTo(Math.round(X(0))+.5,m.t); c.lineTo(Math.round(X(0))+.5,m.t+ph); c.stroke(); }
+  if(y0<0&&y1>0){ c.beginPath(); c.moveTo(m.l,Math.round(Y(0))+.5); c.lineTo(m.l+pw,Math.round(Y(0))+.5); c.stroke(); }
+  c.strokeStyle='#5d6672'; c.strokeRect(m.l+.5,m.t+.5,pw,ph);
+  c.font='12px system-ui,-apple-system,sans-serif'; c.fillStyle='#4a535e';
+  c.textAlign='center'; c.textBaseline='top'; tx.arr.forEach(v=>c.fillText(fmt(v,dx),X(v),m.t+ph+5));
+  c.textAlign='right'; c.textBaseline='middle'; ty.arr.forEach(v=>c.fillText(fmt(v,dy),m.l-6,Y(v)));
+  c.font='600 12.5px system-ui,-apple-system,sans-serif'; c.fillStyle='#232a33'; c.textAlign='center'; c.textBaseline='alphabetic';
+  c.fillText(o.xl,m.l+pw/2,h-6);
+  c.save(); c.translate(14,m.t+ph/2); c.rotate(-Math.PI/2); c.fillText(o.yl,0,0); c.restore();
+  c.save(); c.beginPath(); c.rect(m.l,m.t,pw,ph); c.clip();
+  (o.vlines||[]).forEach(v=>{ c.strokeStyle=v.color||'#999'; c.lineWidth=1.5; c.setLineDash([3,4]); c.beginPath(); c.moveTo(X(v.x),m.t); c.lineTo(X(v.x),m.t+ph); c.stroke(); c.setLineDash([]); if(v.label){ c.font='12px system-ui'; c.fillStyle=v.color||'#666'; c.textAlign='left'; c.textBaseline='top'; c.fillText(v.label,X(v.x)+4,m.t+4); } });
+  (o.curves||[]).forEach(cu=>{ c.strokeStyle=cu.color; c.lineWidth=cu.w||2; c.setLineDash(cu.dash||[]); c.beginPath(); let st=false; for(let i=0;i<=160;i++){ const x=cu.x1+(cu.x2-cu.x1)*i/160,y=cu.f(x); if(!isFinite(y)){ st=false; continue; } if(st) c.lineTo(X(x),Y(y)); else { c.moveTo(X(x),Y(y)); st=true; } } c.stroke(); c.setLineDash([]); });
+  (o.lines||[]).forEach(L=>{ const xa=L.x1!=null?L.x1:x0,xb=L.x2!=null?L.x2:x1; c.strokeStyle=L.color; c.lineWidth=L.w||2; c.setLineDash(L.dash||[]); c.beginPath(); c.moveTo(X(xa),Y(L.a*xa+L.b)); c.lineTo(X(xb),Y(L.a*xb+L.b)); c.stroke(); c.setLineDash([]); });
+  (o.pts||[]).forEach(p=>{
+    if(!isFinite(p.x)||!isFinite(p.y)) return;
+    c.strokeStyle=C_PT; c.lineWidth=1.3;
+    if(p.ey){ const a=Y(p.y-p.ey),b=Y(p.y+p.ey); c.beginPath(); c.moveTo(X(p.x),a); c.lineTo(X(p.x),b); c.moveTo(X(p.x)-4,a); c.lineTo(X(p.x)+4,a); c.moveTo(X(p.x)-4,b); c.lineTo(X(p.x)+4,b); c.stroke(); }
+    c.beginPath(); c.arc(X(p.x),Y(p.y),4.5,0,7); c.fillStyle=C_PT; c.fill();
+  });
+  (o.marks||[]).forEach(k=>{ if(!isFinite(k.x)||!isFinite(k.y)) return; c.beginPath(); c.arc(X(k.x),Y(k.y),6.5,0,7); c.fillStyle=k.color||C_MY; c.fill(); c.strokeStyle='#fff'; c.lineWidth=2; c.stroke(); c.font='bold 14px system-ui'; c.fillStyle=k.color||C_MY; c.textAlign='left'; c.textBaseline='bottom'; c.fillText(k.label,X(k.x)+8,Y(k.y)-5); });
+  c.restore();
+  if(o.legend&&o.legend.length){
+    c.font='12px system-ui,-apple-system,sans-serif';
+    const lh=18, lw=Math.max(...o.legend.map(l=>c.measureText(l.t).width))+42, H=o.legend.length*lh+8;
+    const lx=o.legendRight?m.l+pw-lw-6:m.l+6, ly=o.legendBottom?m.t+ph-H-6:m.t+6+(o.legendOffset||0);
+    c.fillStyle='rgba(255,255,255,.92)'; c.fillRect(lx,ly,lw,H); c.strokeStyle='#ddd'; c.lineWidth=1; c.strokeRect(lx+.5,ly+.5,lw,H);
+    o.legend.forEach((l,i)=>{ const yy=ly+4+i*lh+lh/2;
+      if(l.pt){ c.fillStyle=C_PT; c.beginPath(); c.arc(lx+16,yy,4.5,0,7); c.fill(); }
+      else if(l.mark){ c.fillStyle=C_MY; c.beginPath(); c.arc(lx+16,yy,5.5,0,7); c.fill(); }
+      else { c.strokeStyle=l.color; c.lineWidth=2; c.setLineDash(l.dash||[]); c.beginPath(); c.moveTo(lx+6,yy); c.lineTo(lx+28,yy); c.stroke(); c.setLineDash([]); }
+      c.fillStyle='#232a33'; c.textAlign='left'; c.textBaseline='middle'; c.fillText(l.t,lx+34,yy); });
+  }
+  cv._tf={ix:px=>x0+(px-m.l)/pw*(x1-x0), iy:py=>y0+(m.t+ph-py)/ph*(y1-y0), m,pw,ph};
+}
+let grQ=false;
+function scheduleGraphs(){ if(grQ) return; grQ=true; requestAnimationFrame(()=>{ grQ=false; if(S.view===LAB.graphView&&LAB.drawGraphs) LAB.drawGraphs(); }); }
+
+/* ---------- tačke A i B na pravoj ---------- */
+function renderAB(){
+  const host=$('#abCard'); if(!host) return; const A=LAB.ab;
+  host.innerHTML=`<p>Dodirni grafik (${A.where}) – tačka se postavlja na najbolju pravu. Izaberi dve tačke <b>daleko jednu od druge</b>, na dva kraja izmerenog opsega. Koordinate možeš i da upišeš ovde.</p>
+   <div class="row" style="margin-bottom:8px"><span class="muted" style="font-size:.88rem">Sledeći dodir:</span><div class="chips" role="group" aria-label="Koju tačku označavaš"><button type="button" data-pk="A" aria-pressed="${S.pick==='A'}">Tačka A</button><button type="button" data-pk="B" aria-pressed="${S.pick==='B'}">Tačka B</button></div></div>
+   <div class="form-grid c2">
+    <div><label class="f">Tačka A: ${A.xn}, ${A.yn}</label><div class="row" style="flex-wrap:nowrap"><input class="inp" data-bind="f.xA" inputmode="decimal" aria-label="tačka A ${A.xn}" placeholder="${A.xn}"><input class="inp" data-bind="f.yA" inputmode="decimal" aria-label="tačka A ${A.yn}" placeholder="${A.yn}"></div></div>
+    <div><label class="f">Tačka B: ${A.xn}, ${A.yn}</label><div class="row" style="flex-wrap:nowrap"><input class="inp" data-bind="f.xB" inputmode="decimal" aria-label="tačka B ${A.xn}" placeholder="${A.xn}"><input class="inp" data-bind="f.yB" inputmode="decimal" aria-label="tačka B ${A.yn}" placeholder="${A.yn}"></div></div>
+   </div>
+   <div class="row" style="margin-top:10px"><button type="button" class="btn blue" id="abChk">Proveri tačke</button><span class="fb ${S.ok.AB===true?'ok':S.ok.AB===false?'bad':''}" id="abFb" aria-live="polite">${FB.AB?FB.AB.m:(S.ok.AB?'✓ Dobre tačke.':'')}</span></div>`;
+  host.querySelectorAll('[data-pk]').forEach(b=>b.addEventListener('click',()=>{ S.pick=b.dataset.pk; renderAB(); save(); }));
+  host.querySelectorAll('[data-bind]').forEach(i=>{ i._b=false; });
+  renderBinds();
+  host.querySelectorAll('[data-bind]').forEach(i=>i.addEventListener('input',()=>{ delete S.ok.AB; delete FB.AB; invalidateAfter('yB'); scheduleGraphs(); const f=$('#abFb'); if(f){ f.textContent=''; f.className='fb'; } }));
+  $('#abChk').addEventListener('click',checkAB);
+}
+function checkAB(){
+  const L=LAB.bestLine(), A=LAB.ab, xa=num('xA'),ya=num('yA'),xb=num('xB'),yb=num('yB');
+  let ok=false,msg;
+  if(!L) msg='Prvo u tabeli moraju biti bar 2 ispravna reda merenja.';
+  else if(![xa,ya,xb,yb].every(isFinite)) msg='Unesi sve četiri koordinate (dodirom ili upisom).';
+  else{
+    const xr=LAB.xRange(), span=xr[1]-xr[0], tol=x=>1.5*Math.pow(10,-A.dy)+Math.abs(x)*0.003, inR=x=>x>=xr[0]-0.2*span&&x<=xr[1]+0.2*span;
+    if(!inR(xa)||!inR(xb)) msg='Tačke A i B treba da budu unutar opsega izmerenih tačaka (ne idi daleko izvan krajnjih tačaka merenja).';
+    else if(Math.abs(xb-xa)<0.45*span) msg='Tačke su previše blizu jedna drugoj. Izaberi ih na dva kraja izmerenog opsega.';
+    else if(Math.abs(ya-(L.a*xa+L.b))>tol(ya)) msg='Tačka A nije na pravoj. Očitaj je ponovo (ili dodirni pravu).';
+    else if(Math.abs(yb-(L.a*xb+L.b))>tol(yb)) msg='Tačka B nije na pravoj. Očitaj je ponovo (ili dodirni pravu).';
+    else { ok=true; msg='✓ Dobre tačke. Zapiši ih u svesku.'; }
+  }
+  S.ok.AB=ok; FB.AB={k:ok?'ok':'bad',m:msg};
+  const f=$('#abFb'); f.textContent=msg; f.className='fb '+(ok?'ok':'bad');
+  changed();
+}
+function setupABTap(){
+  const cv=$('#'+LAB.ab.cv); if(!cv) return;
+  cv.addEventListener('click',e=>{
+    const tf=cv._tf, L=LAB.bestLine();
+    if(!tf||!L){ toast('Prvo u tabeli moraju biti bar 2 ispravna reda merenja.','warn'); return; }
+    const r=cv.getBoundingClientRect(); const x=roundTo(tf.ix(e.clientX-r.left),LAB.ab.dx); const y=roundTo(L.a*x+L.b,LAB.ab.dy);
+    const P=S.pick; S.f['x'+P]=fmt(x,LAB.ab.dx); S.f['y'+P]=fmt(y,LAB.ab.dy);
+    delete S.ok.AB; delete FB.AB; invalidateAfter('yB');
+    S.pick=P==='A'?'B':'A'; renderAB(); changed(); scheduleGraphs();
+    toast(`Tačka ${P}: (${fmt(x,LAB.ab.dx)}; ${fmt(y,LAB.ab.dy)})`);
+  });
+}
+
+/* ---------- zaključak ---------- */
+function renderConcl(){
+  const s=$('#summary'); if(s) s.innerHTML=LAB.summary();
+  const ta=$('#concl'); if(ta&&document.activeElement!==ta) ta.value=S.conclusion;
+  updSent();
+}
+function updSent(){ const el=$('#sentCnt'); if(!el) return; const n=sentences(S.conclusion); el.textContent=`Rečenica: ${n} (najmanje 3)`; el.className='pill '+(n>=3?'ok':''); }
+
+/* ---------- pokretanje ---------- */
+function renderAll(){ renderBinds(); renderFields(); renderTable(); renderAB(); renderFinish(); if(LAB.renderStatic) LAB.renderStatic(); renderGoals(); renderLessonInd(); }
+let lastT=0,saveAcc=0;
+function loop(t){
+  const dt=lastT?Math.min(0.1,(t-lastT)/1000):0; lastT=t;
+  if(!document.hidden&&dt>0){ const sim=dt*S.speed, N=Math.max(1,Math.ceil(sim/0.02)); for(let i=0;i<N;i++) LAB.step(sim/N); LAB.render(dt); saveAcc+=dt; if(saveAcc>5){ saveAcc=0; save(); } }
+  requestAnimationFrame(loop);
+}
+function boot(){
+  const had=load();
+  document.title=LAB.title;
+  buildNav();
+  if(LAB.init) LAB.init();
+  renderAll();
+  setupABTap();
+  document.addEventListener('click',e=>{
+    const g=e.target.closest('[data-go]'); if(g){ go(g.dataset.go); return; }
+    const a=e.target.closest('[data-act]'); if(!a) return;
+    const act=a.dataset.act;
+    if(act==='about') openModal('O modelu',LAB.about);
+    else if(act==='reset') resetAll(true);
+    else if(act==='help'){ S.help=!S.help; renderFields(); $$('#tbl tbody tr[data-i]').forEach(markRow); $$('[data-act="help"]').forEach(b=>b.setAttribute('aria-pressed',S.help)); toast(S.help?'Pomoć za nastavnika je uključena.':'Pomoć za nastavnika je isključena.'); save(); if(LAB.onHelp) LAB.onHelp(); }
+    else if(act==='chkTable') checkTable();
+    else if(act==='addRow'){ S.rows.push(emptyRow()); renderTable(); changed(); const ins=$$('#tbl tbody tr[data-i]'); const last=ins[ins.length-1]; if(last) last.querySelector('input').focus(); }
+    else if(act==='saveConcl'){ saveNow(); toast('Zaključak je sačuvan.','ok'); }
+    else if(LAB.act) LAB.act(act,a);
+  });
+  $$('[data-act="help"]').forEach(b=>b.setAttribute('aria-pressed',S.help));
+  const ta=$('#concl'); if(ta) ta.addEventListener('input',()=>{ S.conclusion=ta.value; updSent(); changed(); });
+  $('#modalBg').addEventListener('click',e=>{ if(e.target.id==='modalBg') closeModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('#modalBg').classList.contains('open')) closeModal(); });
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) saveNow(); });
+  window.addEventListener('beforeunload',saveNow);
+  if(window.ResizeObserver){ const ro=new ResizeObserver(()=>scheduleGraphs()); $$('.gwrap canvas').forEach(c=>ro.observe(c)); }
+  else window.addEventListener('resize',scheduleGraphs);
+  go(S.view,{noScroll:true});
+  if(had&&hasData()) resume();
+  requestAnimationFrame(loop);
+}
+
+/* ===================== VEŽBA: BOJL–MARIOTOV ZAKON ===================== */
+const VD=0.5;          // mrtva zapremina (mL): vrh šprica + senzor pritiska (skala je ne pokazuje)
+const GAMMA=1.4, PHI=0.55, TAU_T=3.5;   // delimično adijabatsko zagrevanje, izjednačavanje temperature (s)
+const LEAK=4e-6;       // relativno curenje 1/s pri nadpritisku Δp = p₀
+const PMAX=290;        // kPa – iznad ovoga se ne može sabiti (opseg manometra 300 kPa)
+const SX0=86, SK=4.0;  // scena: položaj V=0 i px/mL
+const RT={Vt:50,Tg:295,pNoise:0,nT:0,dT:9,pShow:NaN,loupeV:NaN,mol:[],els:null};
+const room=()=>S.env.tC+273.15;
+const pTrue=()=>S.sim.open?S.env.p0:S.sim.n*kB*RT.Tg/((RT.Vt+VD)*1e-6)/1000;
+const pSS=V=>S.sim.open?S.env.p0:S.sim.n*kB*room()/((V+VD)*1e-6)/1000;
+function cover(){ const vs=[...new Set(S.rows.map(r=>parseNum(r.V)).filter(isFinite).map(v=>Math.round(v*2)/2))]; const cnt=vs.length; const ratio=cnt?Math.max(...vs)/Math.min(...vs):0; return {cnt,ratio,ok:cnt>=7&&ratio>=2}; }
+function dataRows(){ return S.rows.filter(rowValid).map(r=>({V:parseNum(r.V),p:parseNum(r.p),r})).filter(q=>q.V>0); }
+function pvList(){ return dataRows().map(q=>{ const s=parseNum(q.r.pV); return isFinite(s)?s:q.p*q.V; }); }
+
+const LAB={
+  slug:'boyle-mariotte-sr', title:'Bojl–Mariotov zakon – virtuelna laboratorija',
+  views:[{id:'prep',lesson:1,label:'Priprema',icon:'prep'},{id:'meas',lesson:1,label:'Merenje',icon:'meas'},{id:'proc',lesson:2,label:'Obrada',icon:'proc'},{id:'concl',lesson:2,label:'Zaključak',icon:'concl'}],
+  lessons:[
+    {n:1,name:'Priprema i merenje',time:'oko 35 min',goal:'Zatvaraš vazduh u špric, a zatim pri različitim zapreminama očitavaš njegov pritisak. Sve podatke zapisuješ u svesku.',checks:[
+      {t:'Upisao si ime',f:()=>S.student.name.trim().length>1},
+      {t:'Očitao si temperaturu i atmosferski pritisak',f:()=>S.ok.t&&S.ok.p0},
+      {t:'Zatvorio si ventil i zabeležio V₀',f:()=>!S.sim.open&&S.ok.V0},
+      {t:'Bar 7 merenja, V<sub>max</sub> : V<sub>min</sub> ≥ 2',f:()=>cover().ok},
+      {t:'Sve podatke si zapisao u svesku',manual:'nb1'}]},
+    {n:2,name:'Obrada i zaključak',time:'oko 45 min',goal:'Digitronom računaš kolone tabele, iz nagiba prave p–V⁻¹ određuješ broj molekula (n) i njegovu nesigurnost, a zatim pišeš zaključak.',checks:[
+      {t:'Izračunao si kolone tabele',f:()=>{ const s=tableStats(); return s.tot>0&&s.good===s.tot; }},
+      {t:'Izabrao si tačke A i B',f:()=>S.ok.AB},
+      {t:'Izračunao si nagib i n',f:()=>S.ok.a&&S.ok.T&&S.ok.n},
+      {t:'Izračunao si nesigurnost',f:()=>S.ok.pVm&&S.ok.dpV&&S.ok.dn},
+      {t:'Proverio si konačan rezultat',f:()=>S.ok.res},
+      {t:'Napisao si zaključak (bar 3 rečenice)',f:()=>sentences(S.conclusion)>=3}]}
+  ],
+  DEF:()=>({env:{tC:+(19.5+Math.random()*5).toFixed(1),p0:+(99.6+Math.random()*2.8).toFixed(1)},sim:{open:true,V:50,n:0,Vc:null}}),
+  sanitize(){
+    const e=S.env; if(!(e.tC>10&&e.tC<35)) e.tC=21; if(!(e.p0>90&&e.p0<110)) e.p0=101.3;
+    const s=S.sim; s.V=clamp(+s.V||50,10,60); s.V=Math.round(s.V*2)/2;
+    if(s.open!==false||!(s.n>0)){ s.open=true; s.n=0; s.Vc=null; }
+  },
+  resetRuntime(){ RT.Vt=S.sim.V; RT.Tg=room(); RT.pShow=NaN; RT.loupeV=NaN; },
+  table:{cols:[
+    {id:'V',head:'V (mL)',aria:'zapremina'},
+    {id:'p',head:'p (kPa)',aria:'pritisak'},
+    {id:'invV',head:`${FR('1','V')} (mL⁻¹)`,aria:'recipročna vrednost zapremine',calc:true,exp:r=>1/parseNum(r.V),tol:[0.00006,0.003],show:e=>fmt(e,4)},
+    {id:'pV',head:'p·V (kPa·mL)',aria:'proizvod pritiska i zapremine',calc:true,exp:r=>parseNum(r.p)*parseNum(r.V),tol:[0.6,0.002],show:e=>fmt(e,0)}],
+    hint:'Crvena polja: V⁻¹ = 1 ÷ V (na 4 decimale), p·V = p × V (zaokruženo na ceo broj).'},
+  order:['xA','yA','xB','yB','a','T','n','pVm','dpV','dn','res'],
+  tableDeps:['pVm','dpV','dn','res'],
+  graphView:'proc',
+  ab:{cv:'g2',where:'na grafiku p–V⁻¹',xn:'V⁻¹ (mL⁻¹)',yn:'p (kPa)',dx:4,dy:1},
+  bestLine(){ const d=dataRows(); return d.length>=2?fit(d.map(q=>1/q.V),d.map(q=>q.p)):null; },
+  xRange(){ const xs=dataRows().map(q=>1/q.V); return xs.length?[Math.min(...xs),Math.max(...xs)]:[0,0]; },
+  fields:{
+    t:{label:'Sobna temperatura: <i>t</i>',unit:'°C',aria:'sobna temperatura',exp:()=>S.env.tC,tol:[0.051,0],show:e=>fmt(e,1),hint:'Tačno očitaj displej sobnog termometra (na jednu decimalu).'},
+    p0:{label:'Atmosferski pritisak: <i>p</i><sub>0</sub> (u kPa!)',unit:'kPa',aria:'atmosferski pritisak',exp:()=>S.env.p0,tol:[0.051,0],show:e=>fmt(e,1),hint:(v,e)=>Math.abs(v-e*10)<1?'Barometar pokazuje u hPa. Pretvori: 1 hPa = 0,1 kPa.':'Ponovo očitaj barometar i pretvori: 1 hPa = 0,1 kPa.'},
+    V0:{label:'Početna zapremina pri zatvaranju ventila: <i>V</i><sub>0</sub>',unit:'mL',aria:'početna zapremina',exp:()=>S.sim.open?NaN:S.sim.Vc,tol:[0.3,0],show:e=>fmt(e,1),need:'Prvo zatvori ventil, pa očitaj zapreminu.',hint:'Pogledaj u lupi gde se na skali nalazi ivica gumenog čepa (crvena linija).'},
+    T:{label:'Apsolutna temperatura',formula:'<i>T</i> = <i>t</i> + 273,15',unit:'K',aria:'apsolutna temperatura',exp:()=>val('t',NaN)+273.15,tol:[0.06,0],show:e=>fmt(e,2),need:'Prvo upiši sobnu temperaturu (gore, u podsetniku).',hint:'T = t + 273,15 – t si očitao sa sobnog termometra.'},
+    a:{label:'Nagib prave',formula:`<i>a</i> = ${FR('<i>p</i><sub>B</sub> − <i>p</i><sub>A</sub>','(<i>V</i>⁻¹)<sub>B</sub> − (<i>V</i>⁻¹)<sub>A</sub>')}`,unit:'kPa·mL',aria:'nagib',exp:()=>(num('yB')-num('yA'))/(num('xB')-num('xA')),tol:[0.5,0.006],show:e=>fmt(e,0),need:'Prvo zadaj tačke A i B.',hint:'Izračunaj ponovo: razliku pritisaka podeli razlikom vrednosti V⁻¹ (u oba slučaja B minus A).'},
+    n:{label:'Broj zatvorenih molekula (nagib je <i>a</i> = <i>n·k·T</i>)',formula:`<i>n</i> = ${FR('<i>a</i> · 10⁻³','<i>k</i> · <i>T</i>')}, &nbsp; <i>k</i> = 1,38·10⁻²³ J/K, &nbsp; 1 kPa·mL = 10⁻³ J`,unit:'',sci:true,ph:'npr. 1,24·10^21',aria:'broj molekula',exp:()=>val('a',NaN)*1e-3/(kB*val('T',NaN)),tol:[0,0.012],show:e=>fmtSci(e,3),need:'Prvo izračunaj nagib i T.',hint:(v,e)=>{ const r=v/e; return (Math.abs(r-1000)<50||Math.abs(r-0.001)<0.0001)?'Pazi na 10⁻³: kPa·mL treba pretvoriti u J (1 kPa·mL = 10⁻³ J).':'Izračunaj ponovo: n = a · 10⁻³ ÷ (1,38·10⁻²³ · T). Upiši u eksponencijalnom obliku, npr. 1,24·10^21.'; }},
+    pVm:{label:'Srednja vrednost kolone <i>p·V</i>',formula:`(<i>pV</i>)<sub>sr</sub> = ${FR('(<i>pV</i>)<sub>1</sub> + (<i>pV</i>)<sub>2</sub> + … + (<i>pV</i>)<sub><i>N</i></sub>','<i>N</i>')}`,unit:'kPa·mL',aria:'srednja vrednost pV',exp:()=>{ const l=pvList(); return l.length?l.reduce((s,x)=>s+x,0)/l.length:NaN; },tol:[0.5,0.003],show:e=>fmt(e,1),need:'Prvo popuni kolonu p·V u tabeli.',hint:'Saberi sve vrednosti u koloni p·V i podeli ih brojem redova.'},
+    dpV:{label:'Rasipanje vrednosti <i>p·V</i>',formula:`Δ(<i>pV</i>) = ${FR('(<i>pV</i>)<sub>max</sub> − (<i>pV</i>)<sub>min</sub>','2')}`,unit:'kPa·mL',aria:'rasipanje pV',exp:()=>{ const l=pvList(); return l.length?(Math.max(...l)-Math.min(...l))/2:NaN; },tol:[0.6,0.03],show:e=>fmt(e,1),need:'Prvo popuni kolonu p·V u tabeli.',hint:'Nađi najveću i najmanju vrednost u koloni p·V; polovina njihove razlike je Δ(pV).'},
+    dn:{label:'Nesigurnost broja molekula',formula:`Δ<i>n</i> = <i>n</i> · ${FR('Δ(<i>pV</i>)','(<i>pV</i>)<sub>sr</sub>')}`,unit:'',sci:true,ph:'npr. 2,5·10^19',aria:'nesigurnost broja molekula',exp:()=>val('n',NaN)*val('dpV',NaN)/val('pVm',NaN),tol:[0,0.03],show:e=>fmtSci(e,2),need:'Prvo izračunaj n, Δ(pV) i srednju vrednost.',hint:'Δn = n · Δ(pV) ÷ (pV)sr. Upiši u eksponencijalnom obliku.'}
+  },
+
+  init(){
+    $('#scene').innerHTML=sceneSVG();
+    RT.els={pist:$('#pist'),gas:$('#gas'),lcd:$('#lcd'),vh:$('#vhand'),vtx:$('#vtxt'),mol:$$('#mols circle')};
+    RT.mol=RT.els.mol.map(()=>({u:Math.random(),w:Math.random(),vu:gauss(),vw:gauss()}));
+    LAB.resetRuntime();
+    makeStp($('#stpPiston'),{label:'Klip',min:10,max:60,step:0.5,hideValue:true,hint:'zapreminu očitaj sa skale',bl:'10 mL',br:'60 mL',fmt:v=>fmt(v,1)+' mL',get:()=>S.sim.V,
+      set:v=>{ if(!S.sim.open&&pSS(v)>PMAX){ toast('Više od ovoga ne možeš da sabiješ: gornja granica manometra je 300 kPa.','warn'); return; } S.sim.V=v; save(); }});
+    ['#recV','#recP'].forEach(s=>$(s).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); if(s==='#recV') $('#recP').focus(); else LAB.act('rec'); } }));
+    ['#nr','#dnr'].forEach(s=>$(s).addEventListener('input',()=>{ delete S.ok.res; delete FB.res; updRes(); }));
+  },
+  renderStatic(){
+    $('#envT').innerHTML=fmt(S.env.tC,1)+'<small>°C</small>';
+    $('#envP').innerHTML=Math.round(S.env.p0*10)+'<small>hPa</small>';
+    const vb=$('#valveBtn'); vb.textContent=S.sim.open?'Ventil: OTVOREN – zatvori ga':'Ventil: ZATVOREN – otvori ga'; vb.className='btn wide '+(S.sim.open?'primary':'');
+    const c=cover();
+    $('#coverTxt').innerHTML=`Merenja: <b>${c.cnt} / 7</b> različitih zapremina · V<sub>max</sub> : V<sub>min</sub> = <b>${c.cnt?fmt(c.ratio,2):'–'}</b> (bar 2) ${c.ok?'<span class="pill ok">ispunjeno</span>':''}`;
+    $('#recList').innerHTML=S.rows.map((r,i)=>`<span class="rec">${i+1}. ${esc(r.V)} mL; ${esc(r.p)} kPa<button type="button" data-act="delRec" data-i="${i}" aria-label="Obriši merenje ${i+1}">✕</button></span>`).join('');
+    const nb=$('#nextBanner');
+    if(S.sim.open) nb.innerHTML='<b>Sada:</b> pri otvorenom ventilu postavi klip na izabranu početnu zapreminu (između 30 i 60 mL), pa zatvori ventil.';
+    else if(!S.ok.V0) nb.innerHTML='<b>Sada:</b> očitaj u lupi početnu zapreminu (V₀), upiši je gore i proveri. Prvi red merenja može biti upravo početno stanje.';
+    else if(!c.ok) nb.innerHTML='<b>Sada:</b> pomeri klip na novu zapreminu, sačekaj oko 10 sekundi da se manometar umiri, pa zabeleži V i p.';
+    else nb.innerHTML='<b>Imaš dovoljno merenja.</b> Ako želiš, izmeri još nekoliko tačaka, zatim sve zapiši u svesku i završi čas.';
+    $$('[data-act="speed"]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===S.speed)));
+    const rr=$('#remRows'); if(rr) rr.innerHTML=`Zabeleženih redova merenja: <b>${S.rows.length}</b>. Izmerene vrednosti (V, p) možeš da ispraviš ili upišeš i dole, u tabeli.`;
+    updRes();
+  },
+  onChange(){ LAB.renderStatic(); if(S.view==='concl') renderConcl(); },
+  onInvalidate(){ updRes(); },
+  onHelp(){ const h=$('#helpBox'); if(h) h.hidden=!S.help; },
+  onView(id){
+    LAB.renderStatic(); LAB.onHelp();
+    if(id==='proc'){ renderTable(); renderAB(); renderFields(); scheduleGraphs(); }
+    if(id==='concl') renderConcl();
+    if(id==='meas') RT.loupeV=NaN;
+  },
+  act(a,el){
+    if(a==='valve') toggleValve();
+    else if(a==='speed'){ S.speed=+el.dataset.v===2?2:1; LAB.renderStatic(); save(); }
+    else if(a==='rec') record();
+    else if(a==='delRec'){ const i=+el.dataset.i; if(confirm(`Da li brišeš merenje ${i+1}?`)){ S.rows.splice(i,1); renderTable(); changed(); } }
+    else if(a==='chkRes'){ const r=checkResult(S.f.nr,S.f.dnr,val('n',NaN),val('dn',NaN)); if(r.ok===null){ delete S.ok.res; FB.res={k:'warn',m:r.msg}; } else { S.ok.res=r.ok; FB.res={k:r.ok?'ok':'bad',m:(r.ok?'✓ ':'')+r.msg}; } updRes(); changed(); }
+  },
+
+  step(dt){
+    const s=S.sim, prev=RT.Vt;
+    if(RM) RT.Vt=s.V; else { const sp=30*dt; RT.Vt=Math.abs(s.V-RT.Vt)<=sp?s.V:RT.Vt+Math.sign(s.V-RT.Vt)*sp; }
+    const dV=RT.Vt-prev;
+    if(s.open) RT.Tg=room();
+    else{
+      if(dV) RT.Tg+=-(GAMMA-1)*RT.Tg*dV/(prev+VD)*PHI;
+      RT.Tg+=(room()-RT.Tg)*(1-Math.exp(-dt/TAU_T));
+      s.n-=s.n*LEAK*(pTrue()-S.env.p0)/S.env.p0*dt;
+    }
+    RT.nT+=dt; if(RT.nT>0.2){ RT.nT=0; RT.pNoise=RT.pNoise*0.5+gauss()*0.045; }
+    if(!RM){ const len=Math.max(8,(RT.Vt)*SK), spd=55*Math.sqrt(RT.Tg/295);
+      RT.mol.forEach(m=>{ m.u+=m.vu*spd*dt/len; m.w+=m.vw*spd*dt/32; if(m.u<0){m.u=-m.u;m.vu=Math.abs(m.vu);} if(m.u>1){m.u=2-m.u;m.vu=-Math.abs(m.vu);} if(m.w<0){m.w=-m.w;m.vw=Math.abs(m.vw);} if(m.w>1){m.w=2-m.w;m.vw=-Math.abs(m.vw);} }); }
+  },
+  render(dt){
+    if(S.view!=='meas') return;
+    const E=RT.els, xP=SX0+RT.Vt*SK;
+    E.pist.setAttribute('transform',`translate(${xP.toFixed(2)},0)`);
+    E.gas.setAttribute('width',(xP-SX0).toFixed(2));
+    E.mol.forEach((c,i)=>{ const m=RT.mol[i]; c.setAttribute('cx',(SX0+2+m.u*(xP-SX0-4)).toFixed(1)); c.setAttribute('cy',(122+m.w*32).toFixed(1)); });
+    E.vh.setAttribute('transform',S.sim.open?'rotate(0 52 138)':'rotate(90 52 138)');
+    E.vtx.textContent=S.sim.open?'otvoren':'zatvoren';
+    RT.dT+=dt;
+    if(RT.dT>0.25){ RT.dT=0; RT.pShow=Math.round((pTrue()+(S.sim.open?RT.pNoise*0.3:RT.pNoise))*10)/10;
+      const t=fmt(RT.pShow,1); E.lcd.textContent=t; $('#rdP').innerHTML=t+'<small>kPa</small>';
+      if(S.help) $('#helpTxt').innerHTML=`V = ${fmt(RT.Vt,2)} mL (+${fmt(VD,1)} mL mrtve zapremine)<br>p<sub>stvarno</sub> = ${fmt(pTrue(),2)} kPa<br>T<sub>gasa</sub> = ${fmt(RT.Tg-273.15,2)} °C<br>n = ${S.sim.open?'–':fmtSci(S.sim.n,4)}`; }
+    if(!(Math.abs(RT.Vt-RT.loupeV)<=0.005)){ RT.loupeV=RT.Vt; $('#loupe').innerHTML=loupeSVG(RT.Vt); }
+  },
+
+  lessonSummary(n){
+    if(n===1){ const d=dataRows(); if(!d.length) return '<p>Još nema redova merenja.</p>';
+      const Vs=d.map(q=>q.V),ps=d.map(q=>q.p);
+      return `<p>Zabeležena merenja: <b>${d.length}</b><br>V: ${fmt(Math.min(...Vs),1)} … ${fmt(Math.max(...Vs),1)} mL · p: ${fmt(Math.min(...ps),1)} … ${fmt(Math.max(...ps),1)} kPa<br>Početno stanje: V₀ = ${esc(S.f.V0||'–')} mL, p₀ = ${esc(S.f.p0||'–')} kPa, t = ${esc(S.f.t||'–')} °C</p>`; }
+    return `<p>${S.ok.res?'Tvoj konačan rezultat: <b>'+resText()+'</b>':'Konačan rezultat još nije proveren.'}</p>`;
+  },
+  summary(){
+    const n=S.ok.res?parseNum(S.f.nr):val('n',NaN), dn=S.ok.res?parseNum(S.f.dnr):val('dn',NaN);
+    if(!isFinite(n)) return '<p class="empty">Prvo uradi obradu (potreban je n izračunat iz nagiba).</p>';
+    const T=val('t',NaN)+273.15, n0=val('p0',NaN)*val('V0',NaN)*1e-3/(kB*T), dev=(n-n0)/n0*100;
+    const spread=val('dpV',NaN)/val('pVm',NaN)*100, inside=isFinite(n0)&&isFinite(dn)&&Math.abs(n-n0)<=dn;
+    return `<div class="sumgrid">
+      <div class="sum"><div class="sl">Tvoje merenje (iz nagiba)</div><div class="sv">${S.ok.res?resText():'n ≈ '+fmtSci(n,3)}</div></div>
+      <div class="sum"><div class="sl">Iz početnog stanja: n₀ = ${FR('p₀·V₀','k·T')}</div><div class="sv">${isFinite(n0)?fmtSci(n0,3):'– (nedostaje p₀, V₀ ili t)'}</div></div>
+      <div class="sum ${isFinite(dev)?(Math.abs(dev)<=3?'ok':'warn'):''}"><div class="sl">Odstupanje</div><div class="sv">${isFinite(dev)?fmt(dev,1)+' %':'–'}</div></div>
+      <div class="sum"><div class="sl">Rasipanje p·V</div><div class="sv">${isFinite(spread)?'± '+fmt(spread,1)+' %':'–'}</div></div></div>
+      ${isFinite(n0)?`<p class="banner ${inside?'ok':'warn'}">${inside?'Dve vrednosti se slažu u okviru procenjene nesigurnosti.':'Odstupanje je veće od procenjene nesigurnosti – razmisli šta može da izazove sistematsku grešku (grešku koja uvek deluje u istom smeru).'}</p>`:''}`;
+  },
+  about:`<p>Za zatvoreni vazduh važi jednačina stanja idealnog gasa: <i>p</i>·(<i>V</i> + <i>V</i><sub>m</sub>) = <i>n·k·T</i><sub>gasa</sub>.</p>
+   <ul><li><b>Mrtva zapremina:</b> <i>V</i><sub>m</sub> = 0,5 mL (vrh šprica i unutrašnjost senzora pritiska). Skala je ne pokazuje, pa je grafik p–V⁻¹ vrlo malo zakrivljen, a n izračunat iz nagiba može biti nekoliko procenata manji od stvarnog.</li>
+   <li><b>Zagrevanje:</b> pri sabijanju se vazduh malo zagreje (delimično adijabatski proces), a zatim za oko 3–4 s preuzme sobnu temperaturu. Zato treba sačekati da se displej umiri.</li>
+   <li><b>Curenje:</b> vrlo malo; pri velikom nadpritisku za 10 minuta oko 0,2–0,3 %.</li>
+   <li><b>Manometar:</b> rezolucija 0,1 kPa, mali šum (oko ±0,05 kPa), gornja granica 300 kPa.</li>
+   <li><b>Špric:</b> 60 mL, podela 1 mL; klip se pomera u koracima od 0,5 mL (zapreminu očitavaš sa tačnošću ±0,5 mL).</li>
+   <li>Sobna temperatura i atmosferski pritisak su pri svakom novom početku malo drugačiji (realne, slučajne vrednosti).</li></ul>
+   <p><b>Nesigurnost:</b> kada bi zakon važio savršeno, proizvod p·V bi u svakom redu bio isti (= n·k·T). Polovina rasipanja vrednosti p·V, podeljena srednjom vrednošću, daje relativnu nesigurnost za n.</p>
+   <p class="muted">Podaci se čuvaju samo na ovom uređaju, u pregledaču; program ništa ne šalje na internet.</p>`
+};
+
+function toggleValve(){
+  const s=S.sim;
+  if(s.open){
+    if(Math.abs(RT.Vt-s.V)>0.01){ toast('Sačekaj da se klip zaustavi.','warn'); return; }
+    s.open=false; s.Vc=s.V; s.n=S.env.p0*1e3*(s.V+VD)*1e-6/(kB*room()); RT.Tg=room();
+    toast('Ventil je zatvoren. Očitaj početnu zapreminu (V₀) i upiši je!','ok');
+  } else {
+    if(S.rows.length&&!confirm('Ako otvoriš ventil, promeniće se količina zatvorenog vazduha, pa će se dosadašnji redovi merenja obrisati. Nastavljaš?')) return;
+    S.rows=[]; s.open=true; s.n=0; s.Vc=null; delete S.f.V0; delete S.ok.V0; delete FB.V0;
+    renderFields(); renderTable(); toast('Ventil je otvoren – u špricu je atmosferski pritisak.');
+  }
+  LAB.renderStatic(); changed();
+}
+function record(){
+  const vs=$('#recV').value.trim(), ps=$('#recP').value.trim(), V=parseNum(vs), p=parseNum(ps);
+  if(S.sim.open){ toast('Prvo zatvori ventil – pri otvorenom ventilu pritisak je uvek atmosferski.','warn'); return; }
+  if(!isFinite(V)||!isFinite(p)){ toast('Upiši i očitanu zapreminu i pritisak.','warn'); return; }
+  S.rows.push({V:vs,p:ps,invV:'',pV:''});
+  let warn='';
+  if(V<10||V>60) warn='Ova zapremina je van skale (10–60 mL). Pogledaj ponovo u lupi.';
+  else if(Math.abs(V-RT.Vt)>0.6) warn='Zapremina se ne slaže sa skalom – pogledaj ponovo u lupi (crvena linija) i, ako treba, obriši ovaj red.';
+  else if(Math.abs(p-pSS(RT.Vt))>1.5) warn='Pritisak odstupa od očekivanog. Sačekaj da se displej umiri, očitaj ponovo i, ako treba, obriši ovaj red.';
+  toast(warn||`Zabeleženo merenje ${S.rows.length}. Zapiši ga i u svesku!`,warn?'warn':'ok');
+  $('#recV').value=''; $('#recP').value=''; $('#recV').focus();
+  renderTable(); LAB.renderStatic(); changed();
+}
+function resText(){
+  const v=parseNum(S.f.nr), d=parseNum(S.f.dnr); if(!isFinite(v)||!isFinite(d)) return '–';
+  const e=Math.floor(Math.log10(Math.abs(v))), sd=sigDigits(S.f.dnr), unit=Math.pow(10,Math.floor(Math.log10(d)+1e-9)-sd+1), dec=Math.max(0,e-Math.round(Math.log10(unit)));
+  return `n = (${fmt(v/Math.pow(10,e),dec)} ± ${fmt(d/Math.pow(10,e),dec)})·10${supNum(e)}`;
+}
+function updRes(){
+  const fb=$('#resFb'), ln=$('#resLine'); if(!fb) return;
+  const m=FB.res; fb.className='fb '+(m?m.k:(S.ok.res?'ok':'')); fb.textContent=m?m.m:(S.ok.res?'✓ Konačan rezultat je tačan!':'');
+  ln.hidden=!S.ok.res; if(S.ok.res) ln.textContent=resText();
+  if(S.help){ const n=val('n',NaN),dn=val('dn',NaN); $('#resHelp').hidden=!(isFinite(n)&&isFinite(dn)); $('#resHelp').textContent='očekivano oko: '+fmtSci(n,3)+' ± '+fmtSci(dn,1); } else $('#resHelp').hidden=true;
+}
+LAB.drawGraphs=function(){
+  const d=dataRows(), L=LAB.bestLine();
+  const Vs=d.map(q=>q.V), ps=d.map(q=>q.p);
+  const pMax=ps.length?Math.max(...ps):200, VMax=Vs.length?Math.max(...Vs):60;
+  plot($('#g1'),{xr:[0,Math.max(65,VMax*1.08)],yr:[0,pMax*1.4],xl:'V (mL)',yl:'p (kPa)',pts:d.map(q=>({x:q.V,y:q.p})),
+    curves:L?[{f:V=>L.a/V+L.b,x1:Math.min(...Vs)*0.8,x2:VMax*1.06,color:C_BEST}]:[],legend:d.length?[{pt:1,t:'izmerene tačke'}].concat(L?[{color:C_BEST,t:'fitovana hiperbola'}]:[]):null,legendRight:true});
+  const xs=d.map(q=>1/q.V), xMax=xs.length?Math.max(...xs):0.1;
+  const mk=[]; if(isFinite(num('xA'))&&isFinite(num('yA'))) mk.push({x:num('xA'),y:num('yA'),label:'A'}); if(isFinite(num('xB'))&&isFinite(num('yB'))) mk.push({x:num('xB'),y:num('yB'),label:'B'});
+  plot($('#g2'),{xr:[0,xMax*1.12],yr:[0,pMax*1.15],xl:'V⁻¹ (mL⁻¹)',yl:'p (kPa)',xdec:3,pts:d.map(q=>({x:1/q.V,y:q.p})),
+    lines:L?[{a:L.a,b:L.b,x1:0,x2:xMax*1.12,color:C_BEST}]:[],marks:mk,legend:d.length?[{pt:1,t:'izmerene tačke'}].concat(L?[{color:C_BEST,t:'najbolja prava'}]:[]).concat(mk.length?[{mark:1,t:'tačke A i B'}]:[]):null});
+  const r2=$('#r2'); if(r2) r2.textContent=L?`Kao provera: koeficijent R² = ${fmt(L.r2,4)} (što je bliže 1, tačke bolje leže na pravoj).`:'';
+};
+
+function sceneSVG(){
+  let ticks='';
+  for(let v=0;v<=60;v++){ const x=SX0+v*SK, l=v%10===0?10:v%5===0?7:4; ticks+=`<line x1="${x}" y1="118" x2="${x}" y2="${118-l}" stroke="#dfe6ee" stroke-width="${v%5===0?1.2:.7}"/>`; if(v%10===0) ticks+=`<text x="${x}" y="100" fill="#dfe6ee" font-size="10" text-anchor="middle">${v}</text>`; }
+  let mols=''; for(let i=0;i<40;i++) mols+=`<circle r="1.9" fill="#9fd0ff"/>`;
+  return `<svg viewBox="0 0 420 212" role="img" aria-label="Špric sa manometrom i ventilom">
+  <text x="214" y="86" fill="#9fb0c5" font-size="9.5" text-anchor="middle">mL</text>
+  <rect x="8" y="12" width="164" height="74" rx="10" fill="#2a3546" stroke="#4a5b73"/>
+  <rect x="18" y="21" width="144" height="42" rx="5" fill="#b8d4a4"/>
+  <text id="lcd" x="152" y="53" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="27" font-weight="700" text-anchor="end" fill="#1d2a1d">101,3</text>
+  <text x="90" y="78" fill="#9fb0c5" font-size="9.5" text-anchor="middle">manometar · kPa</text>
+  <path d="M52 86 V128" stroke="#cfd6de" stroke-width="5" fill="none"/>
+  <path d="M52 148 V176" stroke="#cfd6de" stroke-width="5" fill="none"/>
+  <text x="52" y="188" fill="#9fb0c5" font-size="9" text-anchor="middle">atmosfera</text>
+  <rect x="58" y="134" width="28" height="8" fill="#cfd6de"/>
+  <circle cx="52" cy="138" r="11" fill="#3b4a5f" stroke="#cfd6de" stroke-width="2"/>
+  <g id="vhand"><rect x="49" y="122" width="6" height="32" rx="3" fill="#e0a43a"/></g>
+  <text id="vtxt" x="52" y="204" fill="#e0a43a" font-size="10" font-weight="700" text-anchor="middle">otvoren</text>
+  <text x="18" y="142" fill="#9fb0c5" font-size="9" text-anchor="middle">ventil</text>
+  ${ticks}
+  <rect x="${SX0-4}" y="117" width="${60*SK+10}" height="42" rx="4" fill="rgba(220,235,250,.10)" stroke="#dfe6ee" stroke-width="1.6"/>
+  <rect id="gas" x="${SX0}" y="120" width="200" height="36" fill="rgba(130,185,255,.20)"/>
+  <g id="mols">${mols}</g>
+  <g id="pist"><rect x="-7" y="120" width="7" height="36" fill="#22262b"/><rect x="-7" y="125" width="7" height="2" fill="#555"/><rect x="-7" y="149" width="7" height="2" fill="#555"/><rect x="0" y="134" width="74" height="8" fill="#b9c3ce"/><rect x="74" y="116" width="7" height="44" rx="2" fill="#dfe6ee"/></g>
+  <rect x="${SX0+60*SK+6}" y="113" width="5" height="50" rx="2" fill="#dfe6ee"/>
+</svg>`;
+}
+function loupeSVG(V){
+  const K=24, c=160; let s=`<svg viewBox="0 0 320 70" aria-hidden="true"><rect x="0" y="0" width="320" height="70" fill="#eef3f7"/><rect x="0" y="40" width="${c}" height="30" fill="#cfe2f7"/><rect x="${c}" y="40" width="${320-c}" height="30" fill="#2a2d31"/>`;
+  for(let v=Math.floor(V-7);v<=Math.ceil(V+7);v++){ if(v<0||v>60) continue; const x=c+(v-V)*K; if(x<-5||x>325) continue; const L=v%5===0?24:15; s+=`<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${L}" stroke="#1f2933" stroke-width="${v%5===0?2:1.3}"/><text x="${x.toFixed(1)}" y="37" font-size="13" text-anchor="middle" fill="#1f2933" font-weight="${v%5===0?700:500}">${v}</text>`; }
+  s+=`<line x1="${c}" y1="0" x2="${c}" y2="22" stroke="#d6453a" stroke-width="2.2"/><line x1="${c}" y1="40" x2="${c}" y2="70" stroke="#d6453a" stroke-width="2.2"/><text x="${c+6}" y="62" font-size="11" fill="#f2d0cc">ivica gumenog čepa</text></svg>`;
+  return s;
+}
+
+boot();
+})();
+</script>
+</body>
+</html>
