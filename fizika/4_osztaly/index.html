@@ -137,7 +137,8 @@
             border-radius: 20px; margin-left: auto;
         }
 
-        /* ALMENÜ (a legördülő menün belül) */
+        /* ALMENÜ (a legördülő menün belül) - jobbra nyíló almenü */
+        .submenu { position: relative; }
         .submenu-btn {
             width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
             padding: 12px 14px; border: none; border-radius: 12px; background: transparent;
@@ -146,10 +147,31 @@
         }
         .submenu-btn:hover { background: rgba(148, 163, 184, 0.12); color: var(--primary-deep); }
         .submenu-btn i { font-style: normal; font-size: 0.65rem; transition: transform 0.3s ease; }
-        .submenu.open .submenu-btn i { transform: rotate(180deg); }
-        .submenu-content { display: none; padding: 4px 0 4px 14px; }
-        .submenu.open .submenu-content { display: block; }
-        .submenu-empty { padding: 8px 14px; font-size: 0.8rem; color: var(--text-light); font-style: italic; }
+        .submenu.open .submenu-btn i { transform: rotate(-90deg); }
+        .submenu-content {
+            position: absolute;
+            top: 0;
+            left: calc(100% + 8px);
+            min-width: 230px;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-soft);
+            padding: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-8px);
+            transition: var(--transition);
+            z-index: 600;
+        }
+        .submenu.open .submenu-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+        .submenu-empty { padding: 8px 14px; font-size: 0.8rem; color: var(--text-light); font-style: italic; white-space: nowrap; }
 
         /* TARTALMI SZEKCIÓK */
         .content-section {
@@ -183,6 +205,14 @@
 
         /* RESZPONZÍV */
         @media (max-width: 768px) {
+            .submenu-content {
+                position: static; display: none; min-width: 0; background: transparent;
+                backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; border: none;
+                padding: 4px 0 4px 14px; opacity: 1; visibility: visible; transform: none;
+            }
+            .submenu.open .submenu-content { display: block; }
+            .submenu.open .submenu-btn i { transform: rotate(180deg); }
+
             .content-section { grid-template-columns: 1fr; padding: 28px; gap: 28px; }
             .lang-switcher { position: static; margin: 16px auto 0; width: fit-content; }
             .physics-container { padding-top: 24px; }
