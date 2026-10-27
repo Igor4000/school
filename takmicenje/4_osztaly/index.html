@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Techscience – Verseny – 4. évfolyam</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctext y=%2726%27 font-size=%2728%27%3E%F0%9F%8F%86%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #EEF2F7; --panel: rgba(255,255,255,.7); --line: rgba(15,27,45,.12);
+  --ink: #0F1B2D; --steel: #52627A; --amber: #B7791F; --amber-deep: #8A560F;
+  --cobalt: #1F4FD8; --teal: #0E8F9A; --indigo: #4B44C9; --rose: #C2410C;
+  --gut: clamp(16px, 4.5vw, 32px);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Hanken Grotesk", system-ui, sans-serif; font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px; opacity: .5;
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 15%, #000 10%, transparent 75%); mask-image: radial-gradient(ellipse 70% 55% at 50% 15%, #000 10%, transparent 75%); }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: 12px; }
+.wrap { position: relative; width: min(1100px, 100% - 2 * var(--gut)); margin-inline: auto; }
+
+.nav { position: sticky; top: 10px; z-index: 10; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 8px 10px 8px 18px; border-radius: 999px; background: rgba(255,255,255,.7); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 12px 34px rgba(15,27,45,.09), inset 0 0 0 1px var(--line); }
+.back { font-weight: 600; font-size: 15px; display: inline-flex; gap: 8px; align-items: center; }
+.back svg { width: 16px; height: 16px; }
+.lang { display: flex; padding: 3px; border-radius: 999px; background: rgba(15,27,45,.07); }
+.lang button { border: 0; background: transparent; cursor: pointer; padding: 6px 14px; border-radius: 999px; font: 600 13px/1 "Hanken Grotesk", sans-serif; color: var(--steel); }
+.lang button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+.hero { text-align: center; padding: clamp(40px, 7vw, 86px) 0 clamp(32px, 5vw, 56px); }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(183,121,31,.14); color: var(--amber-deep); font: 500 13px/1 "JetBrains Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.hero h1 { font-family: "Sora", sans-serif; font-weight: 700; font-size: clamp(32px, 5.4vw, 60px); line-height: 1.06; letter-spacing: -0.04em; margin: 16px 0 14px; text-wrap: balance; }
+.hero p { max-width: 36em; margin: 0 auto; font-size: clamp(16px, 1vw + 8px, 19px); color: var(--steel); text-wrap: pretty; }
+
+.subject { padding-bottom: clamp(44px, 6vw, 72px); }
+.subject-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: clamp(18px, 2.5vw, 28px); }
+.subject-head .icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.subject-head h2 { font-family: "Sora", sans-serif; font-weight: 600; font-size: clamp(22px, 2vw + 8px, 32px); letter-spacing: -0.03em; margin: 0; }
+.subject-head p { margin: 2px 0 0; color: var(--steel); font-size: 15px; }
+.subject.fizika .icon { background: rgba(31,79,216,.14); color: var(--cobalt); }
+.subject.informatika .icon { background: rgba(14,143,154,.14); color: var(--teal); }
+
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 22px); }
+.subject.informatika .cards { grid-template-columns: 1fr; }
+.card { --c: var(--cobalt); position: relative; padding: 22px; border-radius: 22px; background: var(--panel);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px var(--line), 0 16px 36px rgba(15,27,45,.07); }
+.card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; border-radius: 22px 22px 0 0; background: var(--c); }
+.card.c-tasks { --c: var(--cobalt); }
+.card.c-projects { --c: var(--rose); }
+.card.c-info { --c: var(--teal); }
+.card h3 { font-family: "Sora", sans-serif; font-size: 18px; margin: 0 0 4px; letter-spacing: -0.01em; }
+.card .hint { margin: 0 0 14px; color: var(--steel); font-size: 14px; }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.list li a { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.65);
+  box-shadow: inset 0 0 0 1px var(--line); font-weight: 600; font-size: 15px; transition: transform .15s ease, box-shadow .15s ease; }
+.list li a:hover { transform: translateX(3px); box-shadow: inset 0 0 0 1px var(--c); }
+.list li a svg { width: 16px; height: 16px; color: var(--c); flex-shrink: 0; }
+.list .empty { display: flex; align-items: center; gap: 10px; padding: 14px; border-radius: 14px; border: 1.5px dashed var(--line); color: var(--steel); font-size: 14px; font-style: italic; }
+
+footer { padding: 24px 0 40px; color: var(--steel); font-size: 14px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); }
+
+@media (max-width: 700px) { .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav" aria-label="Main">
+    <a class="back" href="../index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      <span data-i18n="back">Verseny</span>
+    </a>
+    <div class="lang" role="group" aria-label="Nyelv / Jezik">
+      <button type="button" data-lang="hu" aria-pressed="true">HU</button>
+      <button type="button" data-lang="sr" aria-pressed="false">SR</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <span class="badge" data-i18n="badge">4. évfolyam</span>
+    <h1 data-i18n="hero.title">A végső kihívás</h1>
+    <p data-i18n="hero.sub">Fizika és informatika anyagok a 4. évfolyam versenyzőinek: verseny feladatok és önálló projekt kutatások.</p>
+  </header>
+
+  <!-- FIZIKA -->
+  <section class="subject fizika">
+    <div class="subject-head">
+      <span class="icon" aria-hidden="true">⚛️</span>
+      <div>
+        <h2 data-i18n="phys.title">Fizika</h2>
+        <p data-i18n="phys.sub">Verseny feladatok és projekt kutatások, külön csoportban.</p>
+      </div>
+    </div>
+    <div class="cards">
+
+      <!-- VERSENY FELADATOK (fizika)
+           Új feladat hozzáadása: másold az alábbi <li><a>...</a></li> blokkot a .list-be,
+           cseréld ki a href-et a feladat fájljára és a szöveget a feladat címére.
+           Ha üres a lista, hagyd meg a <li class="empty"> sort placeholdernek. -->
+      <div class="card c-tasks">
+        <h3 data-i18n="phys.tasks.title">Verseny feladatok</h3>
+        <p class="hint" data-i18n="phys.tasks.hint">Feladatlapok, amelyeket a versenyen kell megoldani.</p>
+        <ul class="list">
+          <li class="empty" data-i18n="soon">Hamarosan…</li>
+        </ul>
+      </div>
+
+      <!-- PROJEKT KUTATÁSOK (fizika) -->
+      <div class="card c-projects">
+        <h3 data-i18n="phys.projects.title">Projekt kutatások diákoknak</h3>
+        <p class="hint" data-i18n="phys.projects.hint">Önálló kutatási témák, hosszabb távú feldolgozásra.</p>
+        <ul class="list">
+          <li>
+            <a href="../optikai_csipesz.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2v6h6M14 2l6 6M8 14l-4 4v4h4l4-4M14 10l-6 6"/></svg>
+              <span data-i18n="phys.projects.item1">Optikai csipesz — virtuális kutatólaboratórium</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- INFORMATIKA -->
+  <section class="subject informatika">
+    <div class="subject-head">
+      <span class="icon" aria-hidden="true">💻</span>
+      <div>
+        <h2 data-i18n="info.title">Informatika</h2>
+        <p data-i18n="info.sub">Verseny feladatok a 4. évfolyamnak.</p>
+      </div>
+    </div>
+    <div class="cards">
+
+      <!-- VERSENY FELADATOK (informatika) -->
+      <div class="card c-info">
+        <h3 data-i18n="info.tasks.title">Verseny feladatok</h3>
+        <p class="hint" data-i18n="info.tasks.hint">Feladatlapok, amelyeket a versenyen kell megoldani.</p>
+        <ul class="list">
+          <li class="empty" data-i18n="soon">Hamarosan…</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Techscience</span>
+    <a href="../index.html" data-i18n="footer">← Vissza a Versenyhez</a>
+  </footer>
+</div>
+
+<script>
+var I18N = {
+  hu: {
+    title: 'Techscience – Verseny – 4. évfolyam', back: 'Verseny', badge: '4. évfolyam',
+    'hero.title': 'A végső kihívás',
+    'hero.sub': 'Fizika és informatika anyagok a 4. évfolyam versenyzőinek: verseny feladatok és önálló projekt kutatások.',
+    'phys.title': 'Fizika', 'phys.sub': 'Verseny feladatok és projekt kutatások, külön csoportban.',
+    'phys.tasks.title': 'Verseny feladatok', 'phys.tasks.hint': 'Feladatlapok, amelyeket a versenyen kell megoldani.',
+    'phys.projects.title': 'Projekt kutatások diákoknak', 'phys.projects.hint': 'Önálló kutatási témák, hosszabb távú feldolgozásra.',
+    'phys.projects.item1': 'Optikai csipesz — virtuális kutatólaboratórium',
+    'info.title': 'Informatika', 'info.sub': 'Verseny feladatok a 4. évfolyamnak.',
+    'info.tasks.title': 'Verseny feladatok', 'info.tasks.hint': 'Feladatlapok, amelyeket a versenyen kell megoldani.',
+    soon: 'Hamarosan…', footer: '← Vissza a Versenyhez'
+  },
+  sr: {
+    title: 'Techscience – Takmičenje – 4. razred', back: 'Takmičenje', badge: '4. razred',
+    'hero.title': 'Završni izazov',
+    'hero.sub': 'Materijali iz fizike i informatike za takmičare 4. razreda: takmičarski zadaci i samostalna projektna istraživanja.',
+    'phys.title': 'Fizika', 'phys.sub': 'Takmičarski zadaci i projektna istraživanja, u odvojenim grupama.',
+    'phys.tasks.title': 'Takmičarski zadaci', 'phys.tasks.hint': 'Zadaci koje treba rešiti na takmičenju.',
+    'phys.projects.title': 'Projektna istraživanja za učenike', 'phys.projects.hint': 'Samostalne istraživačke teme, za dugoročnu obradu.',
+    'phys.projects.item1': 'Optička pinceta — virtuelna istraživačka laboratorija',
+    'info.title': 'Informatika', 'info.sub': 'Takmičarski zadaci za 4. razred.',
+    'info.tasks.title': 'Takmičarski zadaci', 'info.tasks.hint': 'Zadaci koje treba rešiti na takmičenju.',
+    soon: 'Uskoro…', footer: '← Nazad na Takmičenje'
+  }
+};
+(function () {
+  var KEY = 'techscience-lang';
+  function set(lang) {
+    if (!I18N[lang]) lang = 'hu';
+    var d = I18N[lang];
+    document.documentElement.lang = lang === 'sr' ? 'sr-Latn' : 'hu';
+    document.title = d.title;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) { var v = d[el.dataset.i18n]; if (v !== undefined) el.textContent = v; });
+    document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+  }
+  document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.lang); }); });
+  var saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
+  set(saved || 'hu');
+})();
+</script>
+</body>
+</html>

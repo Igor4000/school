@@ -141,11 +141,11 @@ footer { padding: 24px 0 40px; color: var(--steel); font-size: 14px; display: fl
       <p data-i18n="c3.text">Mélyebb tudás: számolás, modellezés és programozás.</p>
       <span class="go"><span data-i18n="go">Hamarosan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
-    <a class="cat" href="#" data-grade="4">
+    <a class="cat" href="4_osztaly/index.html" data-grade="4">
       <span class="num">4.</span>
       <h3 data-i18n="c4.title">4. évfolyam</h3>
       <p data-i18n="c4.text">A végső kihívás: összetett feladatok a legrátermettebbeknek.</p>
-      <span class="go"><span data-i18n="go">Hamarosan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span class="go"><span data-i18n="go4">Tovább</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
   </div>
 
@@ -174,7 +174,7 @@ var I18N = {
     'c2.title': '2. évfolyam', 'c2.text': 'Összefüggések és logika: feladatok, amelyek gondolkodtatnak.',
     'c3.title': '3. évfolyam', 'c3.text': 'Mélyebb tudás: számolás, modellezés és programozás.',
     'c4.title': '4. évfolyam', 'c4.text': 'A végső kihívás: összetett feladatok a legrátermettebbeknek.',
-    go: 'Hamarosan',
+    go: 'Hamarosan', go4: 'Tovább',
     's1.title': 'Készülj fel', 's1.text': 'Nézd át a tananyagot és gyakorolj a szimulációkkal.',
     's2.title': 'Versenyezz', 's2.text': 'Oldd meg a feladatokat a saját évfolyamod kategóriájában.',
     's3.title': 'Fejlődj', 's3.text': 'Minden próbálkozás előrébb visz. Hibázni szabad, feladni nem.',
@@ -191,7 +191,7 @@ var I18N = {
     'c2.title': '2. razred', 'c2.text': 'Veze i logika: zadaci koji teraju na razmišljanje.',
     'c3.title': '3. razred', 'c3.text': 'Dublje znanje: računanje, modelovanje i programiranje.',
     'c4.title': '4. razred', 'c4.text': 'Završni izazov: složeni zadaci za najsposobnije.',
-    go: 'Uskoro',
+    go: 'Uskoro', go4: 'Dalje',
     's1.title': 'Pripremi se', 's1.text': 'Prođi gradivo i vežbaj uz simulacije.',
     's2.title': 'Takmiči se', 's2.text': 'Reši zadatke u kategoriji svog razreda.',
     's3.title': 'Napreduj', 's3.text': 'Svaki pokušaj vodi napred. Greška je dozvoljena, odustajanje nije.',
@@ -211,7 +211,7 @@ var I18N = {
     try { localStorage.setItem(KEY, lang); } catch (e) {}
   }
   document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.lang); }); });
-  document.querySelectorAll('.cat').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
+  document.querySelectorAll('.cat[data-grade="1"], .cat[data-grade="2"], .cat[data-grade="3"]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
   var saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
   set(saved || 'hu');
 })();
