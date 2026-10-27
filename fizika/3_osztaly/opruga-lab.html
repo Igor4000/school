@@ -16,7 +16,7 @@ Procena trajanja (učenik radi sam, brzina ×1):
 | 3   | Obrada II, Zaklj.  | podsetnik, k = 4π² : nagib, Δk, rezultat, zaključak        | ~45 min| k iz nagiba · Δk · zaključak napisan · sačuvan                 |
 
 Pretpostavke (skripta ne zadaje protokol): sve parametre učenik bira sam unutar intervala — prečnik žice opruge
-1,00–1,50 mm (k ∝ d⁴; d = 1,20 mm daje k ≈ 123 N/m kao u skripti), masa tega 0,10–1,50 kg, x₀ 1–5 cm, broj
+1,00–1,50 mm (k ∝ d⁴; d = 1,20 mm daje k ≈ 123 N/m kao u skripti), masa tega 0,10–1,50 kg, x₀ 10–20 cm, broj
 oscilacija N = 5–30 (preporuka 20, jer su oscilacije brze); ručna štoperica Δt ≈ 0,2 s; opruga ima masu 60 g, pa
 trećina te mase osciluje sa tegom (prava T²(m) ne prolazi tačno kroz nulu, nagib se ne menja); slab otpor vazduha.
 -->
@@ -183,6 +183,11 @@ main{padding:16px calc(16px + env(safe-area-inset-right)) calc(var(--tab-h) + 28
 .stage svg{display:block;width:100%;height:auto;max-height:58vh}
 #scene text{fill:var(--stage-muted);font:11px var(--font)}
 #scene .rl line{stroke:var(--stage-muted);stroke-width:1}
+#scene .ampline{stroke-width:1.3;opacity:.55;transition:opacity .15s,stroke-width .15s}
+#scene .ampline.hit{opacity:1;stroke-width:2.8}
+#scene .ampline-lbl{fill:#ffb454;font-size:10px;text-anchor:start;opacity:.7;transition:opacity .15s}
+#scene .ampline-lbl.hit{opacity:1;font-weight:700}
+#massR.atamp{stroke:#ffd166;stroke-width:3}
 .reads{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 .readout{background:rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;text-align:center}
 .readout span{display:block;font-size:.72rem;color:var(--stage-muted);text-transform:uppercase;letter-spacing:.05em}
@@ -366,10 +371,10 @@ textarea.in{min-height:170px;resize:vertical;line-height:1.55}
         <div class="lbl"><label for="sD">Prečnik žice opruge d</label><b id="dVal" class="num">1,20 mm</b></div>
         <div class="stp"><button class="btn ghost stpb" type="button" data-stp="sD" data-d="-1" aria-label="Smanji">−</button><input type="range" class="slider" id="sD" min="1" max="1.5" step="0.05"><button class="btn ghost stpb" type="button" data-stp="sD" data-d="1" aria-label="Povećaj">+</button></div>
         <div class="range-note"><span>1,00 mm (mekša)</span><span>1,50 mm (tvrđa)</span></div>
-        <div class="lbl"><label for="sAmp">Početno izvlačenje tega x₀</label><b id="ampVal" class="num">3,0 cm</b></div>
-        <div class="stp"><button class="btn ghost stpb" type="button" data-stp="sAmp" data-d="-1" aria-label="Smanji">−</button><input type="range" class="slider" id="sAmp" min="1" max="5" step="0.5" aria-describedby="ampNote"><button class="btn ghost stpb" type="button" data-stp="sAmp" data-d="1" aria-label="Povećaj">+</button></div>
-        <div class="range-note"><span>1 cm</span><span>5 cm</span></div>
-        <p id="ampNote" class="sm muted">Amplituda ne utiče na period. Uzmi 2–3 cm kako bi teg oscilovao mirno i pravo.</p>
+        <div class="lbl"><label for="sAmp">Početno izvlačenje tega x₀</label><b id="ampVal" class="num">15,0 cm</b></div>
+        <div class="stp"><button class="btn ghost stpb" type="button" data-stp="sAmp" data-d="-1" aria-label="Smanji">−</button><input type="range" class="slider" id="sAmp" min="10" max="20" step="1" aria-describedby="ampNote"><button class="btn ghost stpb" type="button" data-stp="sAmp" data-d="1" aria-label="Povećaj">+</button></div>
+        <div class="range-note"><span>10 cm</span><span>20 cm</span></div>
+        <p id="ampNote" class="sm muted">Amplituda ne utiče na period. Veća amplituda (10–20 cm) je namerna — tako se na sceni jasno vide obe krajnje tačke (najniža i najviša) kad teg osciluje.</p>
         <div class="banner">Kako meriš: mase tegova biraš sam, između <b>0,10 i 1,50 kg</b>. Izmeri bar <b>6 različitih masa</b>, raspoređenih po celom intervalu (raspon bar 0,5 kg). Za svaku masu štopericom izmeri vreme <b>t</b> za <b>N punih oscilacija</b>, a N biraš sam (5–30, preporuka 20). Rezolucija štoperice je 0,01 s.</div>
         <button class="btn primary xl wide" id="btnStart" type="button">Pokreni merenje →</button>
       </div>
@@ -382,7 +387,7 @@ textarea.in{min-height:170px;resize:vertical;line-height:1.55}
         <div>
           <div class="stage">
             <span class="t0flag" id="t0flag">Teg je pušten</span>
-            <svg id="scene" viewBox="0 0 400 420" role="img" aria-label="Teg na opruzi sa lenjirom">
+            <svg id="scene" viewBox="0 0 400 500" role="img" aria-label="Teg na opruzi sa lenjirom">
               <defs>
                 <linearGradient id="gMass" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0" stop-color="#ffffff" stop-opacity=".35"/>
@@ -392,11 +397,15 @@ textarea.in{min-height:170px;resize:vertical;line-height:1.55}
               <rect x="80" y="16" width="300" height="14" rx="3" fill="#6f7d78"/>
               <rect x="80" y="16" width="300" height="4" rx="2" fill="#8d9a95"/>
               <g class="rl">
-                <rect x="44" y="30" width="14" height="360" rx="2" fill="#d9c9a3" opacity=".9"/>
+                <rect x="44" y="30" width="14" height="420" rx="2" fill="#d9c9a3" opacity=".9"/>
                 <g id="rTicks"></g>
-                <text x="51" y="406" text-anchor="middle">cm</text>
+                <text x="51" y="466" text-anchor="middle">cm</text>
               </g>
               <line id="eqMark" x1="58" x2="300" stroke="#9fe0c8" stroke-dasharray="3 4" opacity=".7"/>
+              <line id="ampLoMark" class="ampline" x1="58" x2="300" stroke="#ffb454" stroke-dasharray="2 5"/>
+              <line id="ampHiMark" class="ampline" x1="58" x2="300" stroke="#ffb454" stroke-dasharray="2 5"/>
+              <text id="ampLoLbl" class="ampline-lbl" x="304">najviša tačka</text>
+              <text id="ampHiLbl" class="ampline-lbl" x="304">najniža tačka</text>
               <path id="spring" fill="none" stroke="#e8edf3" stroke-width="2" stroke-linejoin="round"/>
               <circle cx="230" cy="30" r="4" fill="#cfd8e3"/>
               <g id="massG">
@@ -623,17 +632,17 @@ const LESSONS={
 
 /* ---------- stanje ---------- */
 function DEF(){return{v:1,student:{ime:'',grupa:'',datum:new Date().toISOString().slice(0,10)},
-  d:1.20,N:NDEF,amp:3,M:0.50,speed:1,helper:false,records:[],
+  d:1.20,N:NDEF,amp:15,M:0.50,speed:1,helper:false,records:[],
   proc:{rows:{},A:{x:'',y:''},B:{x:'',y:''},k:'',kmin:'',kmax:'',dk:'',pick:'A',auto:false},
   concl:'',conclSaved:false,view:'priprema',done:{1:false,2:false,3:false},started:false};}
 function merge(a,b){Object.keys(a).forEach(k=>{if(b[k]===undefined||b[k]===null)return;
   if(a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k])&&typeof b[k]==='object'&&!Array.isArray(b[k]))merge(a[k],b[k]);
   else if(typeof a[k]===typeof b[k]&&Array.isArray(a[k])===Array.isArray(b[k]))a[k]=b[k];});return a;}
 function load(){const d=DEF();try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(o&&o.v===1){merge(d,o);if(o.proc&&o.proc.rows&&typeof o.proc.rows==='object')d.proc.rows=o.proc.rows;}}}catch(e){}
-  d.amp=clamp(Math.round((+d.amp||3)*2)/2,1,5);d.M=clamp(Math.round((+d.M||0.5)*100)/100,0.1,1.5);
+  d.amp=clamp(Math.round(+d.amp||15),10,20);d.M=clamp(Math.round((+d.M||0.5)*100)/100,0.1,1.5);
   if(!SPEEDS.includes(d.speed))d.speed=1;d.d=clamp(Math.round((+d.d||1.2)*100)/100,1,1.5);d.N=clamp(Math.round(+d.N)||NDEF,5,30);if(!(d.view in VIEWS))d.view='priprema';
   if(!['A','B'].includes(d.proc.pick))d.proc.pick='A';
-  d.records=(Array.isArray(d.records)?d.records:[]).filter(r=>r&&Number.isFinite(r.m)&&Number.isFinite(r.t)&&r.t>0&&r.m>0).map(r=>({id:String(r.id||('r'+Math.random().toString(36).slice(2))),m:r.m,t:r.t,N:clamp(Math.round(+r.N)||NDEF,1,100),amp:Number.isFinite(r.amp)?r.amp:3}));
+  d.records=(Array.isArray(d.records)?d.records:[]).filter(r=>r&&Number.isFinite(r.m)&&Number.isFinite(r.t)&&r.t>0&&r.m>0).map(r=>({id:String(r.id||('r'+Math.random().toString(36).slice(2))),m:r.m,t:r.t,N:clamp(Math.round(+r.N)||NDEF,1,100),amp:Number.isFinite(r.amp)?r.amp:15}));
   return d;}
 let S=load();
 let saveT=0;
@@ -760,7 +769,7 @@ $('#sD').addEventListener('input',e=>{const v=clamp(Math.round(+e.target.value*1
   if(S.records.length&&!confirm('Promena opruge briše već zabeležena merenja (sva merenja moraju biti sa istom oprugom). Nastaviti?')){e.target.value=S.d;return;}
   if(S.records.length){S.records=[];S.proc=DEF().proc;renderRecords();}
   S.d=v;updD();stopPend();drawStatic();drawScene();updCtl();renderGoals();save();});
-$('#sAmp').addEventListener('input',e=>{S.amp=clamp(+e.target.value,1,5);updAmp();if(sim.state==='held')holdPend();save();});
+$('#sAmp').addEventListener('input',e=>{S.amp=clamp(Math.round(+e.target.value),10,20);updAmp();drawStatic();if(sim.state==='held')holdPend();else drawScene();save();});
 $('#btnStart').addEventListener('click',()=>go('merenje'));
 
 /* ---------- SIMULACIJA ---------- */
@@ -808,12 +817,16 @@ function recordMain(){if(sw.run){toast('Prvo zaustavi štopericu.','warn');retur
 function setM(v){S.M=clamp(Math.round(v*100)/100,0.1,1.5);$('#sM').value=S.M;if(sim.state!=='rest')stopPend();drawStatic();drawScene();updCtl();save();}
 
 /* ---------- SVG scena ---------- */
-function buildRuler(){let s='';for(let c=0;c<=60;c++){const y=TOP+c/100*PXM;const big=c%5===0;
+function buildRuler(){let s='';for(let c=0;c<=70;c++){const y=TOP+c/100*PXM;const big=c%5===0;
   s+=`<line x1="58" y1="${y}" x2="${big?44:51}" y2="${y}"/>`;if(big&&c>0)s+=`<text x="40" y="${y+4}" text-anchor="end">${c}</text>`;}
   $('#rTicks').innerHTML=s;}
 function massH(m){return Math.round(18+20*Math.min(m,1.5));}
 function eqLen(m){return L0+m*GACC/kTrue();}
-function drawStatic(){const y=TOP+eqLen(S.M)*PXM;$('#eqMark').setAttribute('y1',y);$('#eqMark').setAttribute('y2',y);}
+function drawStatic(){const y=TOP+eqLen(S.M)*PXM;$('#eqMark').setAttribute('y1',y);$('#eqMark').setAttribute('y2',y);
+  const yLo=TOP+(eqLen(S.M)-S.amp/100)*PXM,yHi=TOP+(eqLen(S.M)+S.amp/100)*PXM;
+  $('#ampLoMark').setAttribute('y1',yLo);$('#ampLoMark').setAttribute('y2',yLo);
+  $('#ampHiMark').setAttribute('y1',yHi);$('#ampHiMark').setAttribute('y2',yHi);
+  $('#ampLoLbl').setAttribute('y',yLo+3.5);$('#ampHiLbl').setAttribute('y',yHi+3.5);}
 function springPath(y1){const y0=TOP;const coils=14;const lead=10;const len=y1-y0-2*lead;let d=`M ${CX} ${y0} L ${CX} ${y0+lead}`;
   for(let i=1;i<=coils*2;i++){const yy=y0+lead+len*i/(coils*2);const xx=i===coils*2?CX:CX+(i%2?11:-11);d+=` L ${xx.toFixed(1)} ${yy.toFixed(1)}`;}
   return d+` L ${CX} ${y1}`;}
@@ -821,7 +834,11 @@ function drawScene(){const m=sim.state==='rest'?S.M:sim.Mrun;const yb=TOP+(eqLen
   $('#spring').setAttribute('d',springPath(yb-8));$('#spring').setAttribute('stroke-width',(1.3+(S.d-1)*3).toFixed(2));
   const h=massH(m);$('#massR').setAttribute('height',h);$('#massS').setAttribute('height',h);$('#massT').setAttribute('y',String(h/2+4));
   $('#massT').textContent=fmt(m,2)+' kg';
-  $('#massG').setAttribute('transform',`translate(${CX} ${yb.toFixed(2)})`);}
+  $('#massG').setAttribute('transform',`translate(${CX} ${yb.toFixed(2)})`);
+  const amp0=S.amp/100,atLo=sim.state!=='rest'&&sim.x<=-amp0*0.97,atHi=sim.state!=='rest'&&sim.x>=amp0*0.97;
+  $('#massR').classList.toggle('atamp',atLo||atHi);
+  $('#ampLoMark').classList.toggle('hit',atLo);$('#ampLoLbl').classList.toggle('hit',atLo);
+  $('#ampHiMark').classList.toggle('hit',atHi);$('#ampHiLbl').classList.toggle('hit',atHi);}
 function updReadouts(){
   $('#roT').textContent=fmtTime(swNow());
   $('#roM').textContent=fmt(curM(),2)+' kg';
