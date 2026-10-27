@@ -451,6 +451,8 @@ textarea.in{min-height:170px;resize:vertical;line-height:1.55}
             <div class="lbl"><label for="sM">Masa tega m</label><b id="Mval" class="num">0,50 kg</b></div>
             <div class="stp"><button class="btn ghost stpb" type="button" data-stp="sM" data-d="-1" aria-label="Smanji">−</button><input type="range" class="slider" id="sM" min="0.1" max="1.5" step="0.05"><button class="btn ghost stpb" type="button" data-stp="sM" data-d="1" aria-label="Povećaj">+</button></div>
             <div class="range-note"><span>0,10 kg</span><span>1,50 kg</span></div>
+            <div class="lbl" style="margin-top:8px"><span class="muted sm">Napredak merenja (1. čas)</span><b id="covPct" class="num">0%</b></div>
+            <div class="prog" id="covProg" role="progressbar" aria-label="Napredak merenja" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i style="width:0%"></i></div>
             <p class="muted sm" id="covNote"></p>
             <h3 style="margin-top:10px">Zabeležena merenja <span class="muted sm" id="recCnt"></span></h3>
             <div class="recs" id="recs"></div>
@@ -871,7 +873,9 @@ function updCtl(){const ph=$('#phase');
   const nb=$('#nextB');nb.textContent=nextHint();nb.className='banner'+(sw.val>0&&!sw.run?' warn':'');
   $('#Mval').textContent=fmt(S.M,2)+' kg';
   $('#Nval').textContent=String(S.N);$('#sN').value=S.N;$('#sN').disabled=sw.run;
-  const ci=covInfo();$('#covNote').textContent='Broj različitih masa: '+ci.n+', raspon: '+fmt(ci.span,2)+' kg (cilj: bar 6 masa i raspon od bar 0,5 kg).'+(S.records.some(r=>Math.abs(r.m-S.M)<0.001)?' Za ovu masu već postoji merenje — novo će ga zameniti.':'');
+  const ci=covInfo();const covPct=Math.round(100*(Math.min(1,ci.n/6)+Math.min(1,ci.span/0.5))/2);
+  $('#covProg i').style.width=covPct+'%';$('#covProg').setAttribute('aria-valuenow',covPct);$('#covPct').textContent=covPct+'%';
+  $('#covNote').textContent='Broj različitih masa: '+ci.n+'/6 · raspon: '+fmt(ci.span,2)+'/0,50 kg'+(S.records.some(r=>Math.abs(r.m-S.M)<0.001)?' — za ovu masu već postoji merenje, novo će ga zameniti.':'.');
   $('#speeds').innerHTML=SPEEDS.map(s=>`<button type="button" class="chip" data-sp="${s}" aria-pressed="${S.speed===s}">×${s}</button>`).join('');
   $('#helper').checked=!!S.helper;
   updReadouts();}

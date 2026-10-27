@@ -421,6 +421,8 @@ textarea.in{min-height:170px;resize:vertical;line-height:1.55}
             <div class="lbl"><label for="sL">Dužina niti l</label><b id="Lval" class="num">0,30 m</b></div>
             <div class="stp"><button class="btn ghost stpb" type="button" data-stp="sL" data-d="-1" aria-label="Smanji">−</button><input type="range" class="slider" id="sL" min="0.2" max="1.2" step="0.01"><button class="btn ghost stpb" type="button" data-stp="sL" data-d="1" aria-label="Povećaj">+</button></div>
             <div class="range-note"><span>0,20 m</span><span>1,20 m</span></div>
+            <div class="lbl" style="margin-top:8px"><span class="muted sm">Napredak merenja (1. čas)</span><b id="covPct" class="num">0%</b></div>
+            <div class="prog" id="covProg" role="progressbar" aria-label="Napredak merenja" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i style="width:0%"></i></div>
             <p class="muted sm" id="covNote"></p>
             <h3 style="margin-top:10px">Zabeležena merenja <span class="muted sm" id="recCnt"></span></h3>
             <div class="recs" id="recs"></div>
@@ -838,7 +840,9 @@ function updCtl(){const ph=$('#phase');
   const nb=$('#nextB');nb.textContent=nextHint();nb.className='banner'+(sw.val>0&&!sw.run?' warn':'');
   $('#Lval').textContent=fmt(S.L,2)+' m';
   $('#Nval').textContent=String(S.N);$('#sN').value=S.N;$('#sN').disabled=sw.run;
-  const li=lenInfo();$('#covNote').textContent='Broj različitih dužina: '+li.n+', raspon: '+fmt(li.span,2)+' m (cilj: bar 6 dužina i raspon od bar 0,5 m).'+(S.records.some(r=>Math.abs(r.L-S.L)<0.001)?' Za ovu dužinu već postoji merenje — novo će ga zameniti.':'');
+  const li=lenInfo();const covPct=Math.round(100*(Math.min(1,li.n/6)+Math.min(1,li.span/0.5))/2);
+  $('#covProg i').style.width=covPct+'%';$('#covProg').setAttribute('aria-valuenow',covPct);$('#covPct').textContent=covPct+'%';
+  $('#covNote').textContent='Broj različitih dužina: '+li.n+'/6 · raspon: '+fmt(li.span,2)+'/0,50 m'+(S.records.some(r=>Math.abs(r.L-S.L)<0.001)?' — za ovu dužinu već postoji merenje, novo će ga zameniti.':'.');
   $('#speeds').innerHTML=SPEEDS.map(s=>`<button type="button" class="chip" data-sp="${s}" aria-pressed="${S.speed===s}">×${s}</button>`).join('');
   $('#helper').checked=!!S.helper;
   updReadouts();}
