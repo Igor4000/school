@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hálózatépítő labor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eaf1f6; --paper:#ffffff; --paper2:#f4f8fb; --ink:#0e2232; --muted:#526b7e; --line:#d3e0ea;
+  --accent:#0b6fae; --accent-ink:#095a8e; --accent-soft:#e0effa; --on-accent:#ffffff;
+  --sig:#0ea5a0; --sig-soft:#dcf5f3; --pk:#f59e0b;
+  --ok:#15803d; --ok-soft:#e4f5e9; --bad:#c2261d; --bad-soft:#fdecea;
+  --easy:#15803d; --easy-soft:#e4f5e9; --mid:#a65a06; --mid-soft:#fdf0db;
+  --board:#f5f9fc; --dot:rgba(11,111,174,.14); --cable:#33495c; --node:#ffffff; --node-line:#9db4c6; --netdev:#0b6fae;
+  --shadow:0 1px 2px rgba(14,34,50,.05),0 10px 28px rgba(14,34,50,.08);
+  --head:"Space Grotesk",ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#07121b; --paper:#0e1c28; --paper2:#0b1721; --ink:#e3edf4; --muted:#8fa7b9; --line:#1e3343;
+    --accent:#3ba7f0; --accent-ink:#7cc4f6; --accent-soft:#0f2a3f; --on-accent:#04131f;
+    --sig:#2dd4bf; --sig-soft:#0d2d2b; --pk:#fbbf24;
+    --ok:#4ade80; --ok-soft:#0f2618; --bad:#f87171; --bad-soft:#2b1414;
+    --easy:#4ade80; --easy-soft:#0f2618; --mid:#fbbf24; --mid-soft:#2a2110;
+    --board:#0a1823; --dot:rgba(59,167,240,.14); --cable:#9fb7c9; --node:#12263a; --node-line:#35536b; --netdev:#2f8fd4;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#07121b; --paper:#0e1c28; --paper2:#0b1721; --ink:#e3edf4; --muted:#8fa7b9; --line:#1e3343;
+  --accent:#3ba7f0; --accent-ink:#7cc4f6; --accent-soft:#0f2a3f; --on-accent:#04131f;
+  --sig:#2dd4bf; --sig-soft:#0d2d2b; --pk:#fbbf24;
+  --ok:#4ade80; --ok-soft:#0f2618; --bad:#f87171; --bad-soft:#2b1414;
+  --easy:#4ade80; --easy-soft:#0f2618; --mid:#fbbf24; --mid-soft:#2a2110;
+  --board:#0a1823; --dot:rgba(59,167,240,.14); --cable:#9fb7c9; --node:#12263a; --node-line:#35536b; --netdev:#2f8fd4;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; font-size:16px; line-height:1.55;
+  background-image:radial-gradient(var(--dot) 1px, transparent 1.2px); background-size:22px 22px}
+.wrap{max-width:1000px; margin:0 auto; padding:14px 16px 70px}
+h1,h2,h3{font-family:var(--head); letter-spacing:-.015em; line-height:1.2}
+code,.mono{font-family:var(--mono); font-size:.86em}
+code{background:var(--accent-soft); color:var(--accent-ink); padding:.05em .35em; border-radius:5px}
+button,input,select{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--sig); outline-offset:2px}
+.hide{display:none !important}
+
+.top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--head); font-weight:700}
+.brand .logo{width:38px; height:38px; border-radius:11px; background:var(--accent); display:grid; place-items:center}
+.brand small{display:block; font-weight:500; font-size:.74rem; color:var(--muted)}
+.icon-btn{width:40px; height:40px; border-radius:12px; border:1px solid var(--line); background:var(--paper); cursor:pointer; font-size:16px}
+
+.hero{background:linear-gradient(135deg,#0b3a5c,#0b6fae 55%,#0ea5a0); color:#fff; border-radius:22px; padding:22px; box-shadow:var(--shadow); display:grid; grid-template-columns:1.15fr 1fr; gap:16px; align-items:center; overflow:hidden}
+.hero h1{font-size:clamp(1.6rem,5vw,2.4rem); margin:0 0 .5rem}
+.hero p{margin:.3rem 0; color:#e3f1fb; max-width:560px}
+.hero .meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+.hero .meta span{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:.18rem .65rem; font-size:.82rem; font-family:var(--mono)}
+.hero svg{width:100%; height:auto; display:block}
+@media (max-width:760px){ .hero{grid-template-columns:1fr} }
+
+.nav{display:grid; grid-template-columns:1fr 1fr .8fr; gap:10px; margin:16px 0}
+.nav button{text-align:left; background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:10px 12px; cursor:pointer; box-shadow:var(--shadow); min-width:0}
+.nav .n{font-family:var(--mono); font-size:.72rem; color:var(--muted)}
+.nav .t{display:block; font-family:var(--head); font-weight:600; line-height:1.2; margin:.1rem 0}
+.nav .st{font-size:.76rem; color:var(--muted)}
+.nav .bar{height:4px; border-radius:3px; background:var(--line); margin-top:6px; overflow:hidden}
+.nav .bar i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--sig))}
+.nav button[aria-current="true"]{outline:2px solid var(--accent); border-color:var(--accent)}
+.nav button.lock{opacity:.55}
+.nav button.ok .st{color:var(--ok); font-weight:700}
+@media (max-width:640px){ .nav{grid-template-columns:1fr 1fr} .nav button:last-child{grid-column:1/-1} }
+
+.lesson-h{background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:14px 18px; margin-bottom:12px; box-shadow:var(--shadow)}
+.lesson-h h2{margin:0 0 .3rem; font-size:1.45rem}
+.lesson-h p{margin:.2rem 0; color:var(--muted)}
+.chip{display:inline-block; font-family:var(--mono); font-size:.72rem; font-weight:700; padding:.12rem .55rem; border-radius:999px; white-space:nowrap}
+.chip.time{background:var(--accent-soft); color:var(--accent-ink)}
+.chip.easy{background:var(--easy-soft); color:var(--easy)}
+.chip.mid{background:var(--mid-soft); color:var(--mid)}
+
+.task{background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow)}
+.task.ok{border-color:var(--ok)}
+.task.locked{opacity:.6; box-shadow:none}
+.task-h{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.task-h .num{font-family:var(--mono); font-weight:700; font-size:.82rem; background:var(--ink); color:var(--paper); border-radius:8px; padding:.18rem .5rem}
+.task.ok .task-h .num{background:var(--ok)}
+.task-h h3{margin:0; font-size:1.1rem; flex:1; min-width:170px}
+.theory{background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:4px 12px 12px 4px; padding:10px 14px; margin:10px 0; font-size:.94rem}
+.theory .tt{font-family:var(--head); font-weight:700; color:var(--accent-ink); font-size:.82rem; text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px}
+.theory p{margin:.3rem 0}
+.term{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:5px 10px; margin:.35rem 0; font-size:.9rem}
+.term b{color:var(--accent-ink)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .15em; line-height:1.15; font-family:var(--mono); font-size:.9em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor; padding:0 .2em}
+.steps{padding-left:1.25rem; margin:.4rem 0 .7rem}
+.steps li{margin:.2rem 0}
+.mini-t{border-collapse:collapse; width:100%; font-size:.85rem; margin:.4rem 0; background:var(--paper); border-radius:10px; overflow:hidden}
+.mini-t th,.mini-t td{border-bottom:1px solid var(--line); padding:5px 8px; text-align:left}
+.mini-t th{font-size:.74rem; color:var(--muted)}
+
+/* board */
+.board{border:1px solid var(--line); border-radius:16px; background:var(--paper2); padding:10px; margin:.6rem 0}
+.tools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px}
+.seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--line); border-radius:11px; overflow:hidden; background:var(--paper)}
+.seg button{border:0; background:transparent; padding:.38rem .7rem; cursor:pointer; font-size:.82rem; font-weight:700; color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--on-accent)}
+.pal{display:flex; gap:6px; flex-wrap:wrap}
+.btn{border:1px solid var(--accent); background:var(--accent); color:var(--on-accent); border-radius:10px; padding:.42rem .8rem; font-weight:700; cursor:pointer; font-size:.86rem; white-space:nowrap}
+.btn.ghost{background:var(--paper); color:var(--accent-ink); border-color:var(--line)}
+.btn.sm{padding:.28rem .6rem; font-size:.8rem}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.svgwrap{background:var(--board); border:1px solid var(--line); border-radius:12px; overflow:hidden; background-image:radial-gradient(var(--dot) 1px, transparent 1.3px); background-size:20px 20px}
+.svgwrap svg{display:block; width:100%; height:auto; touch-action:none; user-select:none; -webkit-user-select:none}
+.lk{stroke:var(--cable); stroke-width:3; stroke-linecap:round}
+.lk.wifi{stroke:var(--sig); stroke-dasharray:6 6}
+.lk.bb{stroke-width:6}
+.lk.broken{stroke:var(--bad); stroke-dasharray:3 7}
+.lk.on{stroke:var(--pk)}
+.lkhit{stroke:transparent; stroke-width:18; cursor:pointer}
+.nd{cursor:pointer}
+.nd .bx{fill:var(--node); stroke:var(--node-line); stroke-width:2}
+.nd.net .bx{fill:var(--netdev); stroke:var(--netdev)}
+.nd.cloud .bx{fill:var(--sig-soft); stroke:var(--sig)}
+.nd .ic{color:var(--ink)}
+.nd.net .ic{color:#fff}
+.nd.cloud .ic{color:var(--sig)}
+.nd.sel .bx{stroke:var(--pk); stroke-width:3.5}
+.nd.pend .bx{stroke:var(--sig); stroke-width:4}
+.nd.failed{opacity:.45}
+.nd .lb{font-family:var(--head); font-weight:700; font-size:13px; fill:var(--ink); text-anchor:middle}
+.nd .ip{font-family:var(--mono); font-size:10.5px; fill:var(--muted); text-anchor:middle}
+.nd.tap .bx{fill:var(--cable); stroke:var(--cable)}
+.zone rect{fill:var(--accent-soft); stroke:var(--line); stroke-width:1.5; stroke-dasharray:6 5}
+.zone text{font-family:var(--head); font-weight:700; font-size:13px; fill:var(--accent-ink)}
+.cutmark{font-size:15px; text-anchor:middle; dominant-baseline:central}
+.pk{fill:var(--pk); stroke:#fff; stroke-width:2}
+.pingbar{display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end; margin-top:8px}
+.fld{display:flex; flex-direction:column; gap:2px; font-size:.74rem; color:var(--muted)}
+.fld select,.fld input{background:var(--paper); border:1px solid var(--line); border-radius:9px; padding:.36rem .5rem; font-size:.9rem; color:var(--ink); min-width:0}
+.fld input{width:150px; font-family:var(--mono)}
+.bmsg{margin-top:8px; background:var(--paper); border:1px dashed var(--line); border-radius:10px; padding:7px 11px; font-size:.88rem; min-height:38px}
+.bmsg.ok{border-style:solid; border-color:var(--ok); color:var(--ok)}
+.bmsg.bad{border-style:solid; border-color:var(--bad); color:var(--bad)}
+.props{margin-top:8px; background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:8px 11px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; font-size:.88rem}
+.props b{font-family:var(--head)}
+.small{font-size:.8rem; color:var(--muted)}
+
+/* questions */
+.qs{display:grid; gap:10px; margin-top:10px}
+.q{background:var(--paper2); border:1px solid var(--line); border-radius:12px; padding:10px 12px}
+.q p{margin:0 0 .45rem; font-size:.94rem}
+.q p b.qn{font-family:var(--mono); color:var(--accent-ink); margin-right:.3rem}
+.opts{display:grid; gap:6px}
+.opts label{display:flex; gap:8px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:9px; padding:6px 10px; cursor:pointer; font-size:.92rem}
+.opts input{margin-top:.3rem; flex:none}
+.q input[type=text]{width:130px; background:var(--paper); border:1px solid var(--line); border-radius:9px; padding:.35rem .55rem; font-family:var(--mono)}
+.q select{background:var(--paper); border:1px solid var(--line); border-radius:9px; padding:.38rem .5rem; max-width:100%}
+.tiles{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px}
+.tile{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:8px 10px; display:flex; flex-direction:column; gap:6px}
+.tile .tn{display:flex; align-items:center; gap:8px; font-weight:700; font-size:.92rem}
+.tile .tn svg{width:26px; height:26px; flex:none}
+.tile .seg button{font-size:.76rem; padding:.3rem .55rem}
+.diag{background:var(--board); border:1px solid var(--line); border-radius:10px; margin-bottom:6px}
+.diag svg{display:block; width:100%; height:auto}
+.dgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:10px}
+.check-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:12px}
+.res{font-size:.9rem; border-radius:10px; padding:7px 11px; margin-top:8px}
+.res.ok{background:var(--ok-soft); color:var(--ok); font-weight:700}
+.res.bad{background:var(--bad-soft); color:var(--bad)}
+.notes{background:var(--paper); border:2px solid var(--accent); border-radius:18px; padding:14px 18px; margin:6px 0 14px; box-shadow:var(--shadow)}
+.notes h3{margin:0 0 .4rem}
+.notes dl{margin:0; display:grid; grid-template-columns:minmax(130px,200px) 1fr; gap:4px 14px; font-size:.92rem}
+.notes dt{font-weight:700; color:var(--accent-ink)}
+.notes dd{margin:0}
+@media (max-width:560px){ .notes dl{grid-template-columns:1fr} .notes dd{margin-bottom:6px} }
+.done-banner{background:var(--ok-soft); border:1px solid var(--ok); border-radius:14px; padding:12px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:12px}
+.done-banner b{font-family:var(--head); color:var(--ok)}
+.locked-box{background:var(--paper); border:1px dashed var(--line); border-radius:18px; padding:30px 18px; text-align:center}
+.sum-sec{background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:14px 18px; margin-bottom:12px; box-shadow:var(--shadow)}
+.sum-sec h3{margin:0 0 .4rem; display:flex; gap:10px; align-items:center}
+.sum-sec h3 i{font-style:normal; width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:var(--accent); color:var(--on-accent); font-size:.9rem; flex:none}
+.sum-sec ul{margin:.3rem 0; padding-left:1.2rem}
+.sum-sec li{margin:.25rem 0}
+.stat{display:flex; flex-wrap:wrap; gap:10px}
+.stat div{background:var(--paper2); border:1px solid var(--line); border-radius:12px; padding:8px 14px}
+.stat b{display:block; font-family:var(--mono); font-size:1.3rem}
+.teacher{background:var(--mid-soft); border:1px solid var(--line); border-radius:12px; padding:8px 12px; font-size:.86rem; margin-bottom:12px}
+.pdfbar{background:linear-gradient(135deg,var(--accent-soft),var(--sig-soft)); border:1px solid var(--line); border-radius:16px; padding:12px 16px; margin-bottom:12px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+.pdf-head{display:none}
+.pdfmode{--bg:#ffffff; --paper:#ffffff; --paper2:#f4f8fb; --ink:#0e2232; --muted:#526b7e; --line:#d3e0ea; --accent:#0b6fae; --accent-ink:#095a8e; --accent-soft:#e0effa; --on-accent:#ffffff; --sig-soft:#dcf5f3; --ok:#15803d; --shadow:none;
+  background:#fff; color:#0e2232; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.5; padding:4px}
+.pdfmode .pdf-head{display:flex; justify-content:space-between; border-bottom:3px solid #0b6fae; padding-bottom:6px; margin-bottom:12px; font-size:12px; color:#526b7e}
+.pdfmode .pdf-head b{color:#0b6fae; font-size:14px}
+.pdfmode .lesson-h,.pdfmode .sum-sec{box-shadow:none; break-inside:avoid; page-break-inside:avoid; border-radius:10px; margin-bottom:10px}
+.pdfmode .sum-sec.long{break-inside:auto; page-break-inside:auto}
+.pdfmode h2,.pdfmode h3{font-family:Arial,Helvetica,sans-serif}
+.pdfmode .mini-t tr{page-break-inside:avoid}
+@media print{
+  body{background:#fff !important}
+  .top,.hero,.nav,#teacherBox,footer,.pdfbar,#pdfMsg{display:none !important}
+  .wrap{max-width:none; padding:0}
+  .pdf-head{display:flex; justify-content:space-between; border-bottom:3px solid #0b6fae; padding-bottom:6px; margin-bottom:12px; font-size:12px; color:#526b7e}
+  .sum-sec,.lesson-h{box-shadow:none; break-inside:avoid}
+}
+footer{margin-top:26px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; color:var(--muted); font-size:.82rem; align-items:center}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-pc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-laptop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="10" rx="1"/><path d="M2.5 19h19l-2-4h-15z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="1.5"/><path d="M7 14h10v7H7z"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.01M8 17.5h.01"/></symbol>
+    <symbol id="i-switch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10.5h11l-2-2M18 13.5H7l2 2"/></symbol>
+    <symbol id="i-router" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 4.5v5M10 7l2-2.5L14 7M12 19.5v-5M10 17l2 2.5 2-2.5M4.5 12h5M7 10l-2.5 2L7 14M19.5 12h-5M17 10l2.5 2-2.5 2"/></symbol>
+    <symbol id="i-ap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-7"/><circle cx="12" cy="12" r="1.6"/><path d="M8.5 8.5a5 5 0 0 1 7 0M5.8 5.8a8.8 8.8 0 0 1 12.4 0"/><path d="M8 21h8"/></symbol>
+    <symbol id="i-internet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18.5a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 11a3.75 3.75 0 0 1-.5 7.5z"/></symbol>
+  </defs>
+</svg>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M7 7l3.8 9M17 7l-3.8 9M7.2 6h9.6"/></svg></div><div>Hálózatépítő labor<small>Informatika · virtuális laboratórium</small></div></div>
+  <button class="icon-btn" id="themeBtn" type="button" aria-label="Téma váltása" title="Téma váltása">🌙</button>
+</header>
+
+<section class="hero">
+  <div>
+    <h1>Építs hálózatot!</h1>
+    <p>Két órán át hálózati technikus leszel. Megtanulod, miből áll egy számítógépes hálózat, milyen szerkezetekben lehet felépíteni, és hogyan kötjük össze a csomópontjait.</p>
+    <p>Minden feladat előtt rövid elméletet olvasol, aztán a szimulátorban kipróbálod: eszközöket kötsz össze, és pinggel ellenőrzöd, hogy célba ér-e az adat.</p>
+    <div class="meta"><span>2 óra · 2 × 35 perc</span><span>16 feladat</span><span>automatikus ellenőrzés</span></div>
+  </div>
+  <svg viewBox="0 0 320 200" aria-hidden="true" id="heroNet"></svg>
+</section>
+
+<nav class="nav" id="nav" aria-label="A labor részei"></nav>
+<div id="teacherBox"></div>
+<main id="main"></main>
+
+<footer>
+  <span>Hálózatépítő labor · a feladatok egymás után nyílnak meg · a haladásod ebben a böngészőben mentődik</span>
+  <button class="btn ghost" id="resetBtn" type="button">Minden adat törlése</button>
+</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var KEY='halozat_hu_v1';
+var S={tab:1, done:{}, ans:{}, boards:{}, pings:{}, finishedAt:null};
+try{ var raw=localStorage.getItem(KEY); if(raw){ var o=JSON.parse(raw); if(o&&typeof o==='object') for(var k in o) if(Object.prototype.hasOwnProperty.call(S,k)) S[k]=o[k]; } }catch(e){}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+var TEACHER=/[?&]tanar\b/.test(location.search);
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function Art(n){ return (n===1||n===5)?'Az':'A'; }
+var FR='<span class="fr"><span>n·(n − 1)</span><span>2</span></span>';
+var SVGNS='http://www.w3.org/2000/svg';
+
+/* ---------- theme ---------- */
+(function(){
+  var t=null; try{ t=localStorage.getItem('halozat_theme'); }catch(e){}
+  if(t==='dark'||t==='light') document.documentElement.setAttribute('data-theme',t);
+  function cur(){ var c=document.documentElement.getAttribute('data-theme'); if(!c) c=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'; return c; }
+  function icon(){ $('themeBtn').textContent=cur()==='dark'?'☀️':'🌙'; }
+  $('themeBtn').addEventListener('click',function(){ var n=cur()==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',n); try{ localStorage.setItem('halozat_theme',n); }catch(e){} icon(); });
+  icon();
+})();
+
+/* ---------- hero animation ---------- */
+(function(){
+  var svg=$('heroNet');
+  var N=[[60,40],[160,25],[265,50],[40,130],[150,100],[250,140],[110,175],[210,185]];
+  var L=[[0,1],[1,2],[0,4],[1,4],[2,5],[3,4],[4,5],[3,6],[4,6],[5,7],[6,7],[4,7]];
+  var h='';
+  L.forEach(function(l){ h+='<line x1="'+N[l[0]][0]+'" y1="'+N[l[0]][1]+'" x2="'+N[l[1]][0]+'" y2="'+N[l[1]][1]+'" stroke="rgba(255,255,255,.45)" stroke-width="2"/>'; });
+  N.forEach(function(n,i){ h+='<circle cx="'+n[0]+'" cy="'+n[1]+'" r="'+(i===4?13:9)+'" fill="'+(i===4?'#fbbf24':'#fff')+'" stroke="rgba(255,255,255,.6)" stroke-width="4" stroke-opacity=".35"/>'; });
+  h+='<circle id="hp1" r="5" fill="#fbbf24"/><circle id="hp2" r="5" fill="#5eead4"/>';
+  svg.innerHTML=h;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var p1=svg.querySelector('#hp1'), p2=svg.querySelector('#hp2'), t0=performance.now();
+  var R1=[0,4,5,7], R2=[2,1,4,6,3];
+  function pos(route,t){ var seg=route.length-1, x=(((t%1)+1)%1)*seg, i=Math.floor(x), f=x-i, a=N[route[i]], b=N[route[Math.min(i+1,seg)]]; return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f]; }
+  function tick(now){ var t=(now-t0)/4200; var a=pos(R1,t), b=pos(R2,t*0.8+0.3); p1.setAttribute('cx',a[0]); p1.setAttribute('cy',a[1]); p2.setAttribute('cx',b[0]); p2.setAttribute('cy',b[1]); if(!reduce) requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+})();
+
+/* ---------- device types ---------- */
+var TYPES={pc:{n:'Számítógép',ic:'i-pc',end:true}, laptop:{n:'Laptop',ic:'i-laptop',end:true}, phone:{n:'Okostelefon',ic:'i-phone',end:true,wireless:true}, printer:{n:'Nyomtató',ic:'i-printer',end:true}, server:{n:'Szerver',ic:'i-server',end:true},
+  'switch':{n:'Switch',ic:'i-switch',net:true}, router:{n:'Router',ic:'i-router',net:true}, ap:{n:'Wifi-hozzáférési pont',ic:'i-ap',net:true}, internet:{n:'Internet',ic:'i-internet',cloud:true}, tap:{n:'Csatlakozópont',tap:true}};
+function isEnd(n){ return !!(TYPES[n.type]&&TYPES[n.type].end); }
+
+/* ---------- IP helpers ---------- */
+function ipOk(ip){ var m=String(ip||'').trim().match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/); if(!m) return false; for(var i=1;i<=4;i++) if(+m[i]>255) return false; return +m[4]>=1 && +m[4]<=254; }
+function net(ip){ return String(ip).trim().split('.').slice(0,3).join('.'); }
+
+/* ---------- board configs ---------- */
+function N_(id,type,label,x,y,extra){ var n={id:id,type:type,label:label,x:x,y:y,fixed:true}; if(extra) for(var k in extra) n[k]=extra[k]; return n; }
+function L_(a,b,extra){ var l={id:a+'-'+b,a:a,b:b,media:'cable',broken:false,fixed:false}; if(extra) for(var k in extra) l[k]=extra[k]; return l; }
+function ring(n,cx,cy,r,prefix){ var out=[]; for(var i=0;i<n;i++){ var a=-Math.PI/2+i*2*Math.PI/n; out.push(N_('pc'+(i+1),'pc',(prefix||'PC-')+(i+1),Math.round(cx+r*Math.cos(a)),Math.round(cy+r*Math.sin(a)))); } return out; }
+var CFG={
+ '1.1':{mode:'topo', pcForward:true, modes:['move','link','del'], init:function(){ return {nodes:[N_('pc1','pc','PC-1',230,210),N_('pc2','pc','PC-2',570,210)], links:[]}; }},
+ '1.3':{mode:'topo', bus:true, modes:['move','link','cut','del'], cut:true, term:[[90,320],[710,320]], init:function(){ var n=[],l=[]; for(var i=1;i<=4;i++){ n.push(N_('t'+i,'tap',i+'.',80+i*160,320)); n.push(N_('pc'+i,'pc','PC-'+i,80+i*160,140)); } for(i=1;i<4;i++) l.push(L_('t'+i,'t'+(i+1),{fixed:true,bb:true})); return {nodes:n,links:l}; }},
+ '1.4':{mode:'topo', modes:['move','link','cut','del'], cut:true, fail:true, init:function(){ return {nodes:[N_('sw','switch','Switch',400,215),N_('pc1','pc','PC-1',400,65),N_('pc2','pc','PC-2',650,215),N_('pc3','pc','PC-3',400,370),N_('pc4','pc','PC-4',150,215)], links:[]}; }},
+ '1.5':{mode:'topo', pcForward:true, modes:['move','link','cut','del'], cut:true, init:function(){ return {nodes:ring(6,400,215,160), links:[]}; }},
+ '1.6':{mode:'topo', pcForward:true, modes:['move','link','del'], init:function(){ return {nodes:ring(5,400,220,165), links:[]}; }},
+ '2.3':{mode:'ip', modes:['move'], edit:{ip:true}, init:function(){ var p=[['g1','Gép-1',150,90,'192.168.1.10'],['g2','Gép-2',400,60,''],['g3','Gép-3',650,90,'192.168.1.12'],['g4','Gép-4',650,345,'192.168.1.12'],['g5','Gép-5',400,375,''],['g6','Gép-6',150,345,'192.168.2.15']]; var n=[N_('sw','switch','Switch',400,215)], l=[]; p.forEach(function(x){ n.push(N_(x[0],'pc',x[1],x[2],x[3],{ip:x[4]})); l.push(L_(x[0],'sw',{fixed:true})); }); return {nodes:n,links:l}; }},
+ '2.4':{mode:'ip', modes:['move','link','del'], edit:{gw:true}, palette:[{type:'router',max:1,label:'Router',ifaces:['192.168.1.1','192.168.2.1']},{type:'switch',max:1,label:'Switch'}], spawn:[400,330],
+   init:function(){ var n=[N_('swa','switch','SW-Tanári',215,215),N_('swb','switch','SW-Diák',585,215)], l=[];
+     [['t1','Tanár-1',70,90,'192.168.1.11'],['t2','Tanár-2',215,60,'192.168.1.12'],['t3','Tanár-3',70,340,'192.168.1.13']].forEach(function(x){ n.push(N_(x[0],'pc',x[1],x[2],x[3],{ip:x[4],gw:''})); l.push(L_(x[0],'swa',{fixed:true})); });
+     [['d1','Diák-1',730,90,'192.168.2.11'],['d2','Diák-2',585,60,'192.168.2.12'],['d3','Diák-3',730,340,'192.168.2.13']].forEach(function(x){ n.push(N_(x[0],'pc',x[1],x[2],x[3],{ip:x[4],gw:''})); l.push(L_(x[0],'swb',{fixed:true})); });
+     return {nodes:n,links:l}; }},
+ '2.5':{mode:'ip', modes:['move','link','del'], init:function(){ return {nodes:[N_('net','internet','Internet',690,70),N_('r','router','Router',520,120,{ifaces:['192.168.1.1']}),N_('sw','switch','Switch',360,215),N_('p1','pc','PC-1',170,110,{ip:'192.168.1.21',gw:'192.168.1.1'}),N_('p2','pc','PC-2',170,330,{ip:'192.168.1.22',gw:'192.168.1.1'}),N_('ap','ap','Wifi AP',520,330),N_('ph','phone','Telefon',690,360,{ip:'192.168.1.30',gw:'192.168.1.1'})], links:[L_('r','sw',{fixed:true}),L_('p1','sw',{fixed:true}),L_('p2','sw',{fixed:true})]}; }},
+ '2.6':{mode:'ip', modes:['move','link','del'], edit:{ip:true,gw:true}, init:function(){ return {nodes:[
+     N_('net','internet','Internet',700,60),N_('r','router','Router',470,80,{ifaces:['192.168.1.1','192.168.2.1']}),N_('swa','switch','SW-Tanári',240,215),N_('swb','switch','SW-Diák',560,250),
+     N_('t1','pc','Tanár-1',80,120,{ip:'192.168.1.11',gw:'192.168.1.1'}),N_('t2','pc','Tanár-2',80,320,{ip:'192.168.1.12',gw:'192.168.1.254'}),N_('pr','printer','Nyomtató',250,380,{ip:'192.168.1.50',gw:'192.168.1.1'}),
+     N_('d1','pc','Diák-1',725,190,{ip:'192.168.2.11',gw:'192.168.2.1'}),N_('d2','pc','Diák-2',725,330,{ip:'192.168.3.12',gw:'192.168.2.1'}),N_('d3','pc','Diák-3',520,365,{ip:'192.168.2.13',gw:'192.168.2.1'})],
+   links:[L_('r','net',{media:'wan'}),L_('r','swa'),L_('r','swb'),L_('t1','swa'),L_('t2','swa'),L_('pr','swa'),L_('d1','swb'),L_('d2','swb'),L_('d3','swa')]}; }},
+ '2.7':{mode:'ip', modes:['move','link','del'], palette:[{type:'switch',max:4,label:'Switch'},{type:'router',max:1,label:'Router',ifaces:['192.168.1.1']},{type:'ap',max:2,label:'Wifi AP'}], spawn:[400,225],
+   zones:[[15,15,310,175,'A tanterem'],[475,15,310,175,'B tanterem'],[15,255,350,170,'Tanári']],
+   init:function(){ var n=[], g='192.168.1.1';
+     [['a1','A-1',70],['a2','A-2',170],['a3','A-3',270]].forEach(function(x,i){ n.push(N_(x[0],'pc',x[1],x[2],115,{ip:'192.168.1.'+(11+i),gw:g})); });
+     [['b1','B-1',530],['b2','B-2',630],['b3','B-3',730]].forEach(function(x,i){ n.push(N_(x[0],'pc',x[1],x[2],115,{ip:'192.168.1.'+(21+i),gw:g})); });
+     n.push(N_('tp','pc','Tanári gép',75,345,{ip:'192.168.1.31',gw:g})); n.push(N_('pr','printer','Nyomtató',190,345,{ip:'192.168.1.50',gw:g})); n.push(N_('ph','phone','Tanár telefonja',305,345,{ip:'192.168.1.60',gw:g}));
+     n.push(N_('net','internet','Internet',690,350));
+     return {nodes:n,links:[]}; }}
+};
+
+/* ---------- board state helpers ---------- */
+function getB(tid){ if(!S.boards[tid]) S.boards[tid]=CFG[tid].init(); return S.boards[tid]; }
+function nodeOf(B,id){ for(var i=0;i<B.nodes.length;i++) if(B.nodes[i].id===id) return B.nodes[i]; return null; }
+function hasLink(B,a,b){ return B.links.some(function(l){ return (l.a===a&&l.b===b)||(l.a===b&&l.b===a); }); }
+function linkOf(B,a,b){ for(var i=0;i<B.links.length;i++){ var l=B.links[i]; if((l.a===a&&l.b===b)||(l.a===b&&l.b===a)) return l; } return null; }
+function nbrs(B,id){ var r=[]; B.links.forEach(function(l){ if(l.broken) return; if(l.a===id) r.push([l.b,l]); else if(l.b===id) r.push([l.a,l]); }); return r; }
+function deg(B,id){ return B.links.filter(function(l){ return l.a===id||l.b===id; }).length; }
+
+/* ---------- ping: topology mode ---------- */
+function topoPing(B,cfg,s,d){
+  var A=nodeOf(B,s), D=nodeOf(B,d);
+  if(!A||!D) return {ok:false,msg:'Válassz két eszközt.'};
+  if(s===d) return {ok:false,msg:'Két különböző gépet válassz.'};
+  if(cfg.bus && B.links.some(function(l){ return l.bb && l.broken; })) return {ok:false,msg:'A gerinckábel megszakadt. A lezáratlan kábelvégeken visszaverődik a jel, ezért az egész busz leállt: egyik gép sem tud kommunikálni.'};
+  function fwd(n){ if(n.failed) return false; var t=TYPES[n.type]; if(t.net||t.tap) return true; return !!cfg.pcForward && (n.type==='pc'||n.type==='laptop'); }
+  var prev={}, q=[s], seen={}; seen[s]=1;
+  while(q.length){ var c=q.shift(); if(c===d) break; var cn=nodeOf(B,c); if(c!==s && !fwd(cn)) continue;
+    nbrs(B,c).forEach(function(x){ var id=x[0]; if(seen[id]) return; var nn=nodeOf(B,id); if(nn.failed) return; seen[id]=1; prev[id]=c; q.push(id); }); }
+  if(!seen[d]) return {ok:false,msg:'A csomag nem ért célba: nincs működő útvonal '+A.label+' és '+D.label+' között.', path:[s]};
+  var path=[d]; while(path[0]!==s) path.unshift(prev[path[0]]);
+  var hops=path.filter(function(id){ return nodeOf(B,id).type!=='tap'; }).length-1;
+  return {ok:true,path:path,hops:hops,msg:'A csomag célba ért. Útvonal: '+path.map(function(id){ return nodeOf(B,id).label; }).filter(function(x,i,arr){ return true; }).filter(function(x){ return !/^\d\.$/.test(x); }).join(' → ')+' ('+hops+' ugrás).'};
+}
+
+/* ---------- ping: IP mode ---------- */
+function l2reach(B,s){ var seen={}; seen[s]=1; var q=[s];
+  while(q.length){ var c=q.shift(); var cn=nodeOf(B,c); if(c!==s){ var t=TYPES[cn.type]; if(!(cn.type==='switch'||cn.type==='ap')||cn.failed) continue; }
+    nbrs(B,c).forEach(function(x){ if(!seen[x[0]]){ seen[x[0]]=1; q.push(x[0]); } }); }
+  return seen; }
+function l2path(B,s,d){ var prev={}, seen={}; seen[s]=1; var q=[s];
+  while(q.length){ var c=q.shift(); if(c===d) break; var cn=nodeOf(B,c); if(c!==s && !((cn.type==='switch'||cn.type==='ap')&&!cn.failed)) continue;
+    nbrs(B,c).forEach(function(x){ if(!seen[x[0]]){ seen[x[0]]=1; prev[x[0]]=c; q.push(x[0]); } }); }
+  if(!seen[d]) return null; var p=[d]; while(p[0]!==s) p.unshift(prev[p[0]]); return p; }
+/* which router interface sits behind a given router link: majority network of end devices in that segment */
+function segInfo(B,r,l){
+  var other=l.a===r.id?l.b:l.a, on=nodeOf(B,other), members={}, cnt={};
+  if(on.type==='internet') return {wan:true};
+  if(isEnd(on)) members[other]=1; else { var seen=l2reachFrom(B,other,r.id); for(var k in seen) members[k]=1; }
+  for(var id in members){ var n=nodeOf(B,id); if(n&&isEnd(n)&&ipOk(n.ip)){ var nt=net(n.ip); cnt[nt]=(cnt[nt]||0)+1; } }
+  var best=null,bc=0; (r.ifaces||[]).forEach(function(ip){ var c=cnt[net(ip)]||0; if(c>bc){ bc=c; best=ip; } });
+  return {iface:best, members:members};
+}
+function l2reachFrom(B,start,exclude){ var seen={}; seen[start]=1; var q=[start];
+  while(q.length){ var c=q.shift(); var cn=nodeOf(B,c); if(!((cn.type==='switch'||cn.type==='ap')&&!cn.failed)) continue;
+    nbrs(B,c).forEach(function(x){ if(x[0]===exclude) return; if(!seen[x[0]]){ seen[x[0]]=1; q.push(x[0]); } }); }
+  return seen; }
+function routerFor(B,src,gw){
+  /* find router + link through which src reaches the interface gw */
+  var reach=l2reach(B,src.id), found=null, any=false;
+  B.nodes.forEach(function(r){ if(r.type!=='router'||found) return;
+    B.links.forEach(function(l){ if(found||l.broken) return; if(l.a!==r.id&&l.b!==r.id) return; var other=l.a===r.id?l.b:l.a; if(!reach[other]) return; any=true;
+      var si=segInfo(B,r,l); if(si.iface===gw) found={r:r,l:l}; }); });
+  return found||(any?'mismatch':null);
+}
+function ipPing(B,s,d){
+  var A=nodeOf(B,s), D=nodeOf(B,d);
+  if(!A||!D) return {ok:false,msg:'Válassz feladót és címzettet.'};
+  if(s===d) return {ok:false,msg:'Két különböző eszközt válassz.'};
+  if(!ipOk(A.ip)) return {ok:false,msg:A.label+' IP-címe hiányzik vagy érvénytelen.',path:[s]};
+  var dups=B.nodes.filter(function(n){ return n.id!==s && isEnd(n) && String(n.ip).trim()===String(A.ip).trim(); });
+  if(dups.length) return {ok:false,msg:'Címütközés! '+A.label+' címét ('+A.ip+') '+dups.map(function(n){ return n.label; }).join(', ')+' is használja.',path:[s]};
+  var toNet=D.type==='internet';
+  if(!toNet){
+    if(!ipOk(D.ip)) return {ok:false,msg:D.label+' IP-címe hiányzik vagy érvénytelen.',path:[s]};
+    var same=B.nodes.filter(function(n){ return isEnd(n) && String(n.ip).trim()===String(D.ip).trim(); });
+    if(same.length>1) return {ok:false,msg:'Címütközés! A '+D.ip+' címet több eszköz is használja ('+same.map(function(n){ return n.label; }).join(', ')+'), ezért a csomag nem tudja, kihez menjen.',path:[s]};
+    if(net(A.ip)===net(D.ip)){
+      var p=l2path(B,s,d);
+      if(!p) return {ok:false,msg:A.label+' és '+D.label+' ugyanabban a hálózatban van, de nincs köztük fizikai kapcsolat (kábel, switch vagy wifi).',path:[s]};
+      return {ok:true,path:p,msg:'Válasz érkezett! Útvonal: '+p.map(function(id){ return nodeOf(B,id).label; }).join(' → ')};
+    }
+  }
+  var target=toNet?'az internetre':'egy másik hálózatba ('+net(D.ip)+'.…)';
+  if(!String(A.gw||'').trim()) return {ok:false,msg:A.label+' '+target+' küldene, de nincs beállítva átjárója.',path:[s]};
+  if(!ipOk(A.gw)||net(A.gw)!==net(A.ip)) return {ok:false,msg:A.label+' átjárója ('+A.gw+') nincs a saját hálózatában ('+net(A.ip)+'.…). Ellenőrizd a gép IP-címét és az átjárót.',path:[s]};
+  var rf=routerFor(B,A,String(A.gw).trim());
+  if(rf===null) return {ok:false,msg:A.label+' nem éri el a routert: nincs kábel- vagy switch-kapcsolat felé.',path:[s]};
+  if(rf==='mismatch') return {ok:false,msg:A.label+' átjárója ('+A.gw+') nem érhető el. Rossz az átjáró címe, vagy a gép rossz hálózatrészhez csatlakozik.',path:[s]};
+  var p1=l2path(B,s,rf.r.id)||[s,rf.r.id];
+  if(toNet){
+    var w=B.links.filter(function(l){ return !l.broken && (l.a===rf.r.id||l.b===rf.r.id) && nodeOf(B,l.a===rf.r.id?l.b:l.a).type==='internet'; })[0];
+    if(!w) return {ok:false,msg:'A csomag eljutott a routerig, de a router nincs összekötve az internettel.',path:p1};
+    return {ok:true,path:p1.concat([d]),msg:'Válasz érkezett az internetről! Útvonal: '+p1.concat([d]).map(function(id){ return nodeOf(B,id).label; }).join(' → ')};
+  }
+  var r=rf.r, outL=null;
+  B.links.forEach(function(l){ if(outL||l.broken) return; if(l.a!==r.id&&l.b!==r.id) return; var si=segInfo(B,r,l); if(si.wan) return; if(si.iface && net(si.iface)===net(D.ip) && si.members[d]) outL={l:l,iface:si.iface}; });
+  if(!outL){
+    var has=(r.ifaces||[]).some(function(ip){ return net(ip)===net(D.ip); });
+    return {ok:false,msg:has?('A csomag eljutott a routerig, de a router nem éri el '+D.label+' gépet.'):('A router nem kapcsolódik a '+net(D.ip)+'.… hálózathoz, ezért nem tudja továbbítani a csomagot.'),path:p1};
+  }
+  var p2=l2path(B,r.id,d)||[r.id,d], full=p1.concat(p2.slice(1));
+  if(String(D.gw||'').trim()!==outL.iface) return {ok:false,msg:'A csomag megérkezett '+D.label+' géphez, de a válasz nem jut vissza: '+D.label+' átjárója hibás vagy hiányzik.',path:full};
+  return {ok:true,path:full,msg:'Válasz érkezett! Útvonal: '+full.map(function(id){ return nodeOf(B,id).label; }).join(' → ')};
+}
+function ping(tid,s,d){ var c=CFG[tid], B=getB(tid); return c.mode==='ip'?ipPing(B,s,d):topoPing(B,c,s,d); }
+
+/* ---------- board widget ---------- */
+var MODE_L={move:'Mozgatás és kijelölés',link:'Összekötés',cut:'Elvágás / javítás',del:'Törlés'};
+function iconSVG(type,size){ var t=TYPES[type]; return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'"><use href="#'+t.ic+'"/></svg>'; }
+function makeBoard(host,tid,readonly){
+  var cfg=CFG[tid], st={mode:cfg.modes[0], sel:null, pend:null, anim:false};
+  var h='<div class="board">';
+  if(!readonly){
+    h+='<div class="tools"><div class="seg" data-r="modes">'+cfg.modes.map(function(m){ return '<button type="button" data-m="'+m+'" aria-pressed="'+(m===st.mode)+'">'+MODE_L[m]+'</button>'; }).join('')+'</div>';
+    if(cfg.palette) h+='<div class="pal" data-r="pal">'+cfg.palette.map(function(p,i){ return '<button type="button" class="btn ghost sm" data-p="'+i+'">+ '+p.label+'</button>'; }).join('')+'</div>';
+    h+='<span style="flex:1"></span><button type="button" class="btn ghost sm" data-r="reset">Tábla visszaállítása</button></div>';
+  }
+  h+='<div class="svgwrap"><svg viewBox="0 0 800 440" data-r="svg" role="img" aria-label="Hálózati tábla"></svg></div>';
+  if(!readonly){
+    h+='<div class="pingbar"><label class="fld"><span>Feladó</span><select data-r="from"></select></label><label class="fld"><span>Címzett</span><select data-r="to"></select></label><button type="button" class="btn" data-r="ping">▶ Ping</button></div>';
+    h+='<div class="props hide" data-r="props"></div><div class="bmsg" data-r="msg"></div>';
+  }
+  h+='</div>';
+  host.innerHTML=h;
+  function R(n){ return host.querySelector('[data-r="'+n+'"]'); }
+  var svg=R('svg');
+  function B(){ return getB(tid); }
+  function hint(){ var m={move:'Húzd az eszközöket. Kattints egy eszközre a tulajdonságaihoz.',link:'Kattints az egyik eszközre, majd a másikra: összekötöd őket.',cut:'Kattints egy kábelre az elvágáshoz vagy a javításhoz'+(cfg.fail?', a switch-re a kikapcsoláshoz.':'.'),del:'Kattints egy kábelre vagy egy általad hozzáadott eszközre a törléshez.'}; return m[st.mode]; }
+  function msg(t,cls){ var e=R('msg'); if(!e) return; e.className='bmsg'+(cls?' '+cls:''); e.textContent=t; }
+  function draw(){
+    var b=B(), out='';
+    (cfg.zones||[]).forEach(function(z){ out+='<g class="zone"><rect x="'+z[0]+'" y="'+z[1]+'" width="'+z[2]+'" height="'+z[3]+'" rx="14"/><text x="'+(z[0]+12)+'" y="'+(z[1]+20)+'">'+esc(z[4])+'</text></g>'; });
+    (cfg.term||[]).forEach(function(t,i){ out+='<rect x="'+(t[0]-8)+'" y="'+(t[1]-12)+'" width="16" height="24" rx="3" fill="var(--cable)"/>'; });
+    if(cfg.term) out+='<line class="lk bb" x1="'+cfg.term[0][0]+'" y1="'+cfg.term[0][1]+'" x2="'+nodeOf(b,'t1').x+'" y2="'+nodeOf(b,'t1').y+'"/><line class="lk bb" x1="'+nodeOf(b,'t4').x+'" y1="'+nodeOf(b,'t4').y+'" x2="'+cfg.term[1][0]+'" y2="'+cfg.term[1][1]+'"/>';
+    b.links.forEach(function(l){ var a=nodeOf(b,l.a), c=nodeOf(b,l.b); if(!a||!c) return;
+      var cls='lk'+(l.media==='wifi'?' wifi':'')+(l.bb?' bb':'')+(l.broken?' broken':'');
+      out+='<g data-link="'+l.id+'"><line class="'+cls+'" x1="'+a.x+'" y1="'+a.y+'" x2="'+c.x+'" y2="'+c.y+'"/><line class="lkhit" x1="'+a.x+'" y1="'+a.y+'" x2="'+c.x+'" y2="'+c.y+'"/>'+(l.broken?'<text class="cutmark" x="'+((a.x+c.x)/2)+'" y="'+((a.y+c.y)/2)+'">✂️</text>':'')+'</g>'; });
+    b.nodes.forEach(function(n){ var t=TYPES[n.type];
+      if(t.tap){ out+='<g class="nd tap" data-node="'+n.id+'"><circle class="bx" cx="'+n.x+'" cy="'+n.y+'" r="9"/><text class="ip" x="'+n.x+'" y="'+(n.y+26)+'">'+esc(n.label)+' pont</text></g>'; return; }
+      var cls='nd'+(t.net?' net':'')+(t.cloud?' cloud':'')+(st.sel===n.id?' sel':'')+(st.pend===n.id?' pend':'')+(n.failed?' failed':'');
+      var w=t.cloud?64:48, hh=t.cloud?44:48;
+      out+='<g class="'+cls+'" data-node="'+n.id+'"><rect class="bx" x="'+(n.x-w/2)+'" y="'+(n.y-hh/2)+'" width="'+w+'" height="'+hh+'" rx="'+(t.cloud?22:12)+'"/>'+
+        '<svg class="ic" x="'+(n.x-15)+'" y="'+(n.y-15)+'" width="30" height="30" viewBox="0 0 24 24"><use href="#'+t.ic+'"/></svg>'+
+        '<text class="lb" x="'+n.x+'" y="'+(n.y+hh/2+16)+'">'+esc(n.label)+'</text>'+
+        (cfg.mode==='ip'&&isEnd(n)?'<text class="ip" x="'+n.x+'" y="'+(n.y+hh/2+29)+'">'+esc(n.ip?n.ip:'nincs cím')+'</text>':'')+
+        (n.type==='router'&&n.ifaces?'<text class="ip" x="'+n.x+'" y="'+(n.y+hh/2+29)+'">'+esc(n.ifaces.join(' · '))+'</text>':'')+
+        (n.failed?'<text x="'+n.x+'" y="'+(n.y+6)+'" text-anchor="middle" font-size="30" fill="var(--bad)">✕</text>':'')+'</g>'; });
+    out+='<circle class="pk hide" data-r="pk" r="8" cx="0" cy="0"/>';
+    svg.innerHTML=out;
+    if(!readonly){ fillSelects(); props(); }
+  }
+  function fillSelects(){
+    var b=B(), f=R('from'), t=R('to'), fv=f.value, tv=t.value;
+    var ends=b.nodes.filter(function(n){ return isEnd(n); });
+    var tos=ends.concat(b.nodes.filter(function(n){ return n.type==='internet'; }));
+    f.innerHTML=ends.map(function(n){ return '<option value="'+n.id+'">'+esc(n.label)+'</option>'; }).join('');
+    t.innerHTML=tos.map(function(n){ return '<option value="'+n.id+'">'+esc(n.label)+'</option>'; }).join('');
+    if(fv&&nodeOf(b,fv)) f.value=fv; if(tv&&nodeOf(b,tv)) t.value=tv; else if(tos.length>1) t.selectedIndex=tos.length-1;
+  }
+  function props(){
+    var p=R('props'), b=B(), n=st.sel?nodeOf(b,st.sel):null;
+    if(!n||cfg.mode!=='ip'||n.type==='tap'){ p.classList.add('hide'); return; }
+    var t=TYPES[n.type], h='<div><span class="small">Kijelölve</span><br><b>'+esc(n.label)+'</b> <span class="small">('+t.n+')</span></div>';
+    if(isEnd(n)){
+      h+='<label class="fld"><span>IP-cím</span><input data-f="ip" value="'+esc(n.ip||'')+'" '+(cfg.edit&&cfg.edit.ip?'':'readonly')+' placeholder="pl. 192.168.1.20"></label>';
+      if(n.gw!==undefined) h+='<label class="fld"><span>Átjáró (router címe)</span><input data-f="gw" value="'+esc(n.gw||'')+'" '+(cfg.edit&&cfg.edit.gw?'':'readonly')+' placeholder="pl. 192.168.1.1"></label>';
+      if(!(cfg.edit&&(cfg.edit.ip||cfg.edit.gw))) h+='<span class="small">Ebben a feladatban a címek nem módosíthatók.</span>';
+    } else if(n.type==='router'){ h+='<div class="small">A router címei (portjai): <b class="mono">'+esc((n.ifaces||[]).join(', '))+'</b><br>Minden hálózat felé egy címe van. A gépek átjárójának a saját hálózatukba eső címet kell megadni.</div>'; }
+    else h+='<div class="small">'+(n.type==='switch'?'A switch-nek nincs szüksége IP-címre: a hálózaton belül továbbítja az adatot.':n.type==='ap'?'A hozzáférési pont a vezeték nélküli eszközöket kapcsolja a vezetékes hálózathoz.':'')+'</div>';
+    p.innerHTML=h; p.classList.remove('hide');
+    p.querySelectorAll('input[data-f]').forEach(function(inp){ if(inp.readOnly) return; inp.addEventListener('change',function(){ n[inp.getAttribute('data-f')]=inp.value.trim(); save(); var s=st.sel; draw(); st.sel=s; }); });
+  }
+  function tryLink(a,c){
+    var b=B(), A=nodeOf(b,a), C=nodeOf(b,c);
+    if(a===c) return;
+    if(hasLink(b,a,c)){ msg('Ez a két eszköz már össze van kötve.','bad'); return; }
+    var ta=A.type, tc=C.type;
+    function either(x){ return ta===x||tc===x; }
+    if(cfg.bus){
+      if(either('tap')&&either('pc')){ var pc=ta==='pc'?A:C; if(deg(b,pc.id)>0){ msg(pc.label+' már csatlakozik a buszhoz. Egy gépnek egy csatlakozókábele van.','bad'); return; } }
+      else { msg('Busz topológiában a gépeket a gerinckábel csatlakozópontjaihoz kötjük.','bad'); return; }
+    }
+    if(either('internet') && !either('router')){ msg('Az internethez mindig routeren keresztül csatlakozunk.','bad'); return; }
+    var media='cable';
+    if(either('phone')){ if(!either('ap')){ msg('A telefonnak nincs hálózati kábelcsatlakozója: wifi-hozzáférési ponthoz kapcsolódhat.','bad'); return; } media='wifi'; }
+    else if(either('laptop')&&either('ap')) media='wifi';
+    if(either('internet')) media='wan';
+    if(cfg.mode==='ip' && isEnd(A) && isEnd(C)){ msg('Két végpontot itt switch-csel köss össze.','bad'); return; }
+    if(either('ap') && either('ap')){ msg('Két hozzáférési pontot ne köss össze közvetlenül.','bad'); return; }
+    b.links.push({id:a+'-'+c+'-'+Date.now().toString(36),a:a,b:c,media:media,broken:false,fixed:false});
+    save(); draw(); msg((media==='wifi'?'Wifi-kapcsolat létrejött: ':'Összekötve: ')+A.label+' – '+C.label+'.','ok');
+  }
+  function clientPt(e){ var p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; var m=svg.getScreenCTM(); return m?p.matrixTransform(m.inverse()):{x:0,y:0}; }
+  var drag=null;
+  if(!readonly){
+    svg.addEventListener('pointerdown',function(e){
+      if(st.anim) return;
+      var ng=e.target.closest('[data-node]'), lg=e.target.closest('[data-link]'), b=B();
+      if(ng){ var id=ng.getAttribute('data-node'), n=nodeOf(b,id);
+        if(st.mode==='move'){ var pt=clientPt(e); drag={id:id,dx:n.x-pt.x,dy:n.y-pt.y,sx:e.clientX,sy:e.clientY,moved:false}; svg.setPointerCapture(e.pointerId); e.preventDefault(); return; }
+        if(st.mode==='link'){ if(n.type==='tap'&&!cfg.bus) return; if(!st.pend){ st.pend=id; draw(); msg('Most kattints arra az eszközre, amellyel össze akarod kötni: '+n.label+'.'); } else { var p=st.pend; st.pend=null; tryLink(p,id); draw(); } return; }
+        if(st.mode==='cut'){ if(cfg.fail&&n.type==='switch'){ n.failed=!n.failed; save(); draw(); msg(n.failed?'A switch meghibásodott (kikapcsolva). Kattints rá újra a javításhoz.':'A switch újra működik.',n.failed?'bad':'ok'); } return; }
+        if(st.mode==='del'){ if(n.fixed){ msg('Ez az eszköz a feladat része, nem törölhető.','bad'); return; } b.nodes=b.nodes.filter(function(x){ return x.id!==id; }); b.links=b.links.filter(function(l){ return l.a!==id&&l.b!==id; }); if(st.sel===id) st.sel=null; save(); draw(); msg('Eszköz törölve: '+n.label+'.'); return; }
+      } else if(lg){ var lid=lg.getAttribute('data-link'), l=b.links.filter(function(x){ return x.id===lid; })[0]; if(!l) return;
+        if(st.mode==='cut'&&cfg.cut){ l.broken=!l.broken; save(); draw(); msg(l.broken?'A kábel elvágva. Kattints rá újra a javításhoz.':'A kábel megjavítva.',l.broken?'bad':'ok'); return; }
+        if(st.mode==='del'){ if(l.fixed){ msg('Ez a kábel a feladat része, nem törölhető.','bad'); return; } b.links=b.links.filter(function(x){ return x!==l; }); save(); draw(); msg('Kábel törölve.'); return; }
+      } else { if(st.pend||st.sel){ st.pend=null; st.sel=null; draw(); } }
+    });
+    svg.addEventListener('pointermove',function(e){ if(!drag) return; var pt=clientPt(e), n=nodeOf(B(),drag.id); if(Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy)>4) drag.moved=true; if(!drag.moved) return; n.x=Math.max(34,Math.min(766,Math.round(pt.x+drag.dx))); n.y=Math.max(30,Math.min(378,Math.round(pt.y+drag.dy))); draw(); });
+    svg.addEventListener('pointerup',function(e){ if(!drag) return; var d=drag; drag=null; if(d.moved){ save(); } else { st.sel=d.id; draw(); } });
+    R('modes').addEventListener('click',function(e){ var b=e.target.closest('[data-m]'); if(!b) return; st.mode=b.getAttribute('data-m'); st.pend=null; R('modes').querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed',x===b); }); draw(); msg(hint()); });
+    if(R('pal')) R('pal').addEventListener('click',function(e){ var bt=e.target.closest('[data-p]'); if(!bt) return; var p=cfg.palette[+bt.getAttribute('data-p')], b=B();
+      var cnt=b.nodes.filter(function(n){ return n.type===p.type&&!n.fixed; }).length; if(cnt>=p.max){ msg('Ebből az eszközből legfeljebb '+p.max+' darab helyezhető el.','bad'); return; }
+      var sp=cfg.spawn||[400,220], x=sp[0]+((cnt%3)-1)*70, y=sp[1]+Math.floor(cnt/3)*60;
+      var id=p.type+'_'+Date.now().toString(36), lbl=p.label+(p.max>1?' '+(cnt+1):''), n={id:id,type:p.type,label:lbl,x:x,y:y,fixed:false}; if(p.ifaces) n.ifaces=p.ifaces.slice();
+      b.nodes.push(n); save(); draw(); msg('Új eszköz: '+lbl+'. Húzd a helyére, majd kösd be.','ok'); });
+    var armed=false;
+    R('reset').addEventListener('click',function(){ if(!armed){ armed=true; this.textContent='Biztosan? Kattints újra'; var t=this; setTimeout(function(){ armed=false; t.textContent='Tábla visszaállítása'; },3000); return; } armed=false; this.textContent='Tábla visszaállítása'; S.boards[tid]=CFG[tid].init(); st.sel=null; st.pend=null; save(); draw(); msg('A tábla visszaállt a kezdőállapotra.'); });
+    R('ping').addEventListener('click',function(){
+      if(st.anim) return; var s=R('from').value, d=R('to').value, r=ping(tid,s,d);
+      if(!S.pings[tid]) S.pings[tid]=[]; S.pings[tid].push({f:s,t:d,ok:r.ok}); if(S.pings[tid].length>30) S.pings[tid].shift(); save();
+      animate(r.path||[s], function(){ msg((r.ok?'✓ ':'✗ ')+r.msg, r.ok?'ok':'bad'); });
+    });
+  }
+  function animate(path,done){
+    var b=B(), pk=svg.querySelector('[data-r="pk"]'); if(!pk||path.length<2){ done(); return; }
+    var pts=path.map(function(id){ var n=nodeOf(b,id); return [n.x,n.y]; }), seg=pts.length-1, dur=Math.min(380,1800/seg)*seg, t0=null;
+    st.anim=true; pk.classList.remove('hide'); R('ping').disabled=true;
+    function step(ts){ if(t0===null) t0=ts; var t=Math.min(1,(ts-t0)/dur), x=t*seg, i=Math.min(seg-1,Math.floor(x)), f=x-i, a=pts[i], c=pts[i+1];
+      pk.setAttribute('cx',a[0]+(c[0]-a[0])*f); pk.setAttribute('cy',a[1]+(c[1]-a[1])*f);
+      if(t<1) requestAnimationFrame(step); else { st.anim=false; pk.classList.add('hide'); R('ping').disabled=false; done(); } }
+    requestAnimationFrame(step);
+  }
+  draw(); if(!readonly) msg(hint());
+  return {draw:draw};
+}
+/* static mini diagrams for 1.7 */
+function miniDiagram(kind){
+  var n=[],l=[],i;
+  if(kind==='ring'){ for(i=0;i<5;i++){ var a=-Math.PI/2+i*2*Math.PI/5; n.push([110+70*Math.cos(a),85+62*Math.sin(a),'pc']); } for(i=0;i<5;i++) l.push([i,(i+1)%5]); }
+  if(kind==='mesh'){ n=[[50,40,'pc'],[170,40,'pc'],[170,130,'pc'],[50,130,'pc']]; l=[[0,1],[1,2],[2,3],[3,0],[0,2],[1,3]]; }
+  if(kind==='tree'){ n=[[110,30,'switch'],[55,90,'switch'],[165,90,'switch'],[25,150,'pc'],[85,150,'pc'],[135,150,'pc'],[195,150,'pc']]; l=[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]]; }
+  if(kind==='bus'){ n=[[40,60,'pc'],[90,60,'pc'],[140,60,'pc'],[185,60,'pc']]; }
+  var h='<svg viewBox="0 0 220 175">';
+  if(kind==='bus'){ h+='<line x1="15" y1="125" x2="205" y2="125" stroke="var(--cable)" stroke-width="5"/><rect x="9" y="115" width="10" height="20" rx="2" fill="var(--cable)"/><rect x="201" y="115" width="10" height="20" rx="2" fill="var(--cable)"/>'; n.forEach(function(p){ h+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+p[0]+'" y2="125" stroke="var(--cable)" stroke-width="2.5"/><circle cx="'+p[0]+'" cy="125" r="4" fill="var(--cable)"/>'; }); }
+  l.forEach(function(x){ var a=n[x[0]], b=n[x[1]]; h+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="var(--cable)" stroke-width="2.5"/>'; });
+  n.forEach(function(p){ var net=p[2]==='switch'; h+='<rect x="'+(p[0]-14)+'" y="'+(p[1]-14)+'" width="28" height="28" rx="7" fill="'+(net?'var(--netdev)':'var(--node)')+'" stroke="'+(net?'var(--netdev)':'var(--node-line)')+'" stroke-width="1.5"/><svg x="'+(p[0]-10)+'" y="'+(p[1]-10)+'" width="20" height="20" viewBox="0 0 24 24" style="color:'+(net?'#fff':'var(--ink)')+'"><use href="#i-'+p[2]+'"/></svg>'; });
+  return h+'</svg>';
+}
+
+/* ---------- tasks ---------- */
+function term(t,d){ return [t,d]; }
+var TOPO_OPTS=['Busz','Csillag','Gyűrű','Teljes háló','Vegyes (fa)'];
+var TASKS=[
+/* ===== 1. óra ===== */
+{id:'1.1', L:1, title:'Az első hálózat', diff:'easy', time:'2 perc',
+ theory:'<p><b>Számítógépes hálózatnak</b> két vagy több összekapcsolt eszközt nevezünk, amelyek adatot cserélnek, és közösen használnak erőforrásokat (nyomtatót, fájlokat, internetkapcsolatot). A hálózat eszközei a <b>csomópontok</b>, a köztük lévő összeköttetések a <b>kapcsolatok</b>.</p><p>A <b>ping</b> egy kis próbaüzenet: megmutatja, eljut-e az adat egyik eszközről a másikra.</p>',
+ terms:[term('Számítógépes hálózat','Két vagy több összekapcsolt eszköz, amely adatot cserél és erőforrásokat oszt meg.'),term('Csomópont','A hálózat bármely eszköze, amely adatot küld, fogad vagy továbbít.'),term('Kapcsolat','Két csomópont közötti összeköttetés (kábel vagy rádiójel).'),term('Ping','Próbaüzenet, amellyel ellenőrizzük, hogy az adat célba ér-e.')],
+ steps:['Válaszd az <b>Összekötés</b> módot.','Kattints a PC-1-re, majd a PC-2-re.','Küldj pinget a PC-1-ről a PC-2-re.'], board:true,
+ check:function(B){ if(!hasLink(B,'pc1','pc2')) return 'A PC-1 és a PC-2 még nincs összekötve.'; if(!(S.pings['1.1']||[]).some(function(p){ return p.ok; })) return 'Küldj egy sikeres pinget az egyik gépről a másikra.'; return null; },
+ solve:function(B){ B.links=[L_('pc1','pc2')]; S.pings['1.1']=[{f:'pc1',t:'pc2',ok:true}]; }},
+{id:'1.2', L:1, title:'Végpontok és hálózati eszközök', diff:'easy', time:'3 perc',
+ theory:'<p>A <b>végpont</b> (végberendezés) az az eszköz, amelyet a felhasználó használ, vagy amely szolgáltatást nyújt: számítógép, laptop, telefon, nyomtató, szerver.</p><p>A <b>hálózati eszköz</b> feladata az adatok továbbítása a végpontok között. Ilyen a switch (kapcsoló), a router (útválasztó) és a wifi-hozzáférési pont.</p>',
+ terms:[term('Végpont','A felhasználó eszköze vagy szolgáltatást nyújtó gép: számítógép, laptop, telefon, nyomtató, szerver.'),term('Hálózati eszköz','Az adatot továbbító eszköz: switch, router, wifi-hozzáférési pont.')],
+ steps:['Minden eszköznél válaszd ki, hogy végpont vagy hálózati eszköz.'],
+ qs:[{k:'pc',t:'tile',dev:'pc',ans:'v'},{k:'laptop',t:'tile',dev:'laptop',ans:'v'},{k:'phone',t:'tile',dev:'phone',ans:'v'},{k:'printer',t:'tile',dev:'printer',ans:'v'},{k:'server',t:'tile',dev:'server',ans:'v'},{k:'switch',t:'tile',dev:'switch',ans:'h'},{k:'router',t:'tile',dev:'router',ans:'h'},{k:'ap',t:'tile',dev:'ap',ans:'h'}],
+ check:function(B,A){ var wrong=this.qs.filter(function(q){ return A[q.k]!==q.ans; }).length; return wrong?('Még '+wrong+' eszköz besorolása hiányzik vagy hibás.'):null; }},
+{id:'1.3', L:1, title:'Busz topológia', diff:'mid', time:'5 perc',
+ theory:'<p>A <b>topológia</b> a hálózat szerkezete: megmutatja, hogyan kapcsolódnak egymáshoz a csomópontok.</p><p><b>Busz topológiában</b> minden gép egyetlen közös kábelhez, a <b>gerinckábelhez</b> csatlakozik, amelynek két végén lezáró van. Kevés kábel kell hozzá, és olcsó. Ha azonban a gerinckábel bárhol megszakad, a lezáratlan végeken visszaverődik a jel, és <b>az egész hálózat leáll</b>. Ha csak egy gép saját csatlakozókábele sérül, csak az a gép esik ki.</p>',
+ terms:[term('Topológia','A hálózat szerkezete: hogyan kapcsolódnak egymáshoz a csomópontok.'),term('Busz topológia','Minden gép egy közös gerinckábelhez csatlakozik. Ha a gerinc megszakad, az egész hálózat leáll.')],
+ steps:['Kösd össze mindegyik gépet a közvetlenül alatta lévő csatlakozóponttal (PC-1 → 1. pont, PC-2 → 2. pont…).','Pinggel ellenőrizd, hogy a PC-1 eléri a PC-4-et.','<b>Előbb</b> válaszolj a két kérdésre, <b>aztán</b> az Elvágás / javítás móddal próbáld ki. A kísérlet után javítsd meg a kábeleket (kattints rájuk újra).'], board:true,
+ qs:[{k:'a',t:'chk',text:'Ha csak a <b>PC-2 saját csatlakozókábele</b> szakad el, mely gépeket éri el a PC-1?',opts:['PC-2','PC-3','PC-4'],ans:[1,2]},
+     {k:'b',t:'mc',text:'Ha a <b>gerinckábel</b> a 2. és a 3. pont között szakad el, mely gépeket éri el a PC-1?',opts:['Csak a PC-2-t','A PC-2-t, a PC-3-at és a PC-4-et','Egyiket sem'],ans:2}],
+ check:function(B,A){ for(var i=1;i<=4;i++){ if(!hasLink(B,'pc'+i,'t'+i)) return 'A PC-'+i+' még nincs '+(i===1?'az':'a')+' '+i+'. csatlakozóponthoz kötve.'; } if(B.links.some(function(l){ return l.broken; })) return 'Javítsd meg az elvágott kábeleket (Elvágás / javítás mód, kattints a kábelre).'; return qCheck(this,A); },
+ solve:function(B,A){ for(var i=1;i<=4;i++) B.links.push(L_('pc'+i,'t'+i)); A.a=[1,2]; A.b=2; }},
+{id:'1.4', L:1, title:'Csillag topológia', diff:'mid', time:'5 perc',
+ theory:'<p><b>Csillag topológiában</b> minden gép saját kábellel egy központi eszközhöz, általában <b>switch-hez</b> csatlakozik. A switch megjegyzi, melyik portján melyik gép van, és az adatot csak a címzettnek továbbítja.</p><p>Könnyen bővíthető, és egy kábel szakadása csak egy gépet érint. A gyenge pontja a központi eszköz: ha az romlik el, minden gép elveszíti a kapcsolatot.</p>',
+ terms:[term('Csillag topológia','Minden gép egy központi eszközhöz (switch) csatlakozik. A központi eszköz a gyenge pont.'),term('Switch (kapcsoló)','Hálózati eszköz, amely a helyi hálózat gépeit köti össze, és az adatot csak a címzettnek továbbítja.')],
+ steps:['Kösd össze mind a négy gépet a switch-csel.','Küldj pinget a PC-1-ről a PC-3-ra.','Kísérletezz az Elvágás / javítás móddal: vágd el a PC-3 kábelét, majd kattints a switch-re is (meghibásodik). Közben pingelj.','Válaszolj a kérdésekre, végül javíts meg mindent.'], board:true,
+ qs:[{k:'a',t:'num',text:'Ha a PC-3 kábele elszakad, hány <b>másik</b> gépet ér el a PC-1?',ans:2},
+     {k:'b',t:'mc',text:'Ha a switch romlik el, hány gépet ér el a PC-1?',opts:['Mindhármat','Csak egyet','Egyiket sem'],ans:2},
+     {k:'c',t:'mc',text:'Mi a csillag topológia gyenge pontja?',opts:['A gépek saját kábelei','A központi switch','A gépek száma'],ans:1}],
+ check:function(B,A){ for(var i=1;i<=4;i++) if(!hasLink(B,'pc'+i,'sw')) return 'A PC-'+i+' még nincs a switch-hez kötve.'; if(B.links.length!==4) return 'Csillag topológiában csak a gépek és a switch között van kábel. Töröld a gépeket közvetlenül összekötő kábeleket.'; if(B.links.some(function(l){ return l.broken; })||nodeOf(B,'sw').failed) return 'Javíts meg mindent: a kábeleket és a switch-et is.'; return qCheck(this,A); },
+ solve:function(B,A){ for(var i=1;i<=4;i++) B.links.push(L_('pc'+i,'sw')); A.a='2'; A.b=2; A.c=1; }},
+{id:'1.5', L:1, title:'Gyűrű topológia', diff:'mid', time:'4 perc',
+ theory:'<p><b>Gyűrű topológiában</b> minden gép pontosan két szomszédjához kapcsolódik, így a kábelek zárt kört alkotnak. Az adat gépről gépre halad, minden gép továbbadja a következőnek.</p><p>Az út hosszát <b>ugrásokban</b> mérjük: egy ugrás az egyik csomóponttól a szomszédjáig tart. Ha a kör egy helyen megszakad, az adat a másik irányban még célba érhet, de hosszabb úton.</p>',
+ terms:[term('Gyűrű topológia','Minden gép két szomszédjához kapcsolódik, a kábelek zárt kört alkotnak.'),term('Ugrás','Az adat útjának egy szakasza: egyik csomóponttól a szomszédjáig.')],
+ steps:['Kösd össze a szomszédos gépeket körbe: PC-1 – PC-2 – … – PC-6 – PC-1.','Pingelj a PC-1-ről a PC-3-ra. A program kiírja az ugrások számát (mindig a rövidebb utat választja).','Válaszolj a kérdésekre. A harmadikat próbáld ki: vágd el a PC-1 és a PC-2 közötti kábelt, és pingelj. A végén javítsd meg.'], board:true,
+ qs:[{k:'a',t:'num',text:'Hány ugrással jut el az adat a PC-1-ről a PC-3-ra a rövidebb úton?',ans:2},
+     {k:'b',t:'num',text:'És a másik irányban, a hosszabb úton?',ans:4},
+     {k:'c',t:'num',text:'Ha a PC-1 és a PC-2 közötti kábel elszakad, hány ugrással jut el az adat a PC-1-ről a PC-2-re?',ans:5}],
+ check:function(B,A){ if(B.links.length!==6) return 'A gyűrűhöz pontosan 6 kábel kell. Most '+B.links.length+' van.'; for(var i=1;i<=6;i++){ var j=i%6+1; if(!hasLink(B,'pc'+i,'pc'+j)) return 'Hiányzik a kapcsolat: PC-'+i+' – PC-'+j+'.'; } if(B.links.some(function(l){ return l.broken; })) return 'Javítsd meg az elvágott kábelt.'; return qCheck(this,A); },
+ solve:function(B,A){ for(var i=1;i<=6;i++) B.links.push(L_('pc'+i,'pc'+(i%6+1))); A.a='2'; A.b='4'; A.c='5'; }},
+{id:'1.6', L:1, title:'Teljes háló', diff:'mid', time:'6 perc',
+ theory:'<p><b>Teljes háló (mesh) topológiában</b> minden gép közvetlenül össze van kötve minden másik géppel. Ez a legmegbízhatóbb szerkezet: ha egy kábel elszakad, az adat más úton is célba ér. Hátránya, hogy nagyon sok kábel kell hozzá.</p><p>n gép esetén minden gépből n − 1 kábel indul, és minden kábelt két gép használ közösen, ezért a kábelek száma: '+FR+'.</p>',
+ terms:[term('Teljes háló','Minden gép minden géppel közvetlenül össze van kötve. Nagyon hibatűrő, de sok kábel kell: n·(n − 1) osztva 2-vel.')],
+ steps:['<b>Előbb</b> számold ki a képlettel, hány kábel kell 5 géphez, és válaszolj az első két kérdésre.','Aztán építsd meg: köss össze minden gépet minden géppel.','Végül számold ki 8 gépre is.'], board:true,
+ qs:[{k:'a',t:'num',text:'Hány kábel kell 5 gép teljes hálójához?',ans:10},
+     {k:'b',t:'num',text:'Hány kábel csatlakozik egy géphez?',ans:4},
+     {k:'c',t:'num',text:'Hány kábel kellene 8 gép teljes hálójához?',ans:28}],
+ check:function(B,A){ for(var i=1;i<=5;i++) for(var j=i+1;j<=5;j++) if(!hasLink(B,'pc'+i,'pc'+j)) return 'Még hiányzik kapcsolat, például: PC-'+i+' – PC-'+j+'.'; return qCheck(this,A); },
+ solve:function(B,A){ for(var i=1;i<=5;i++) for(var j=i+1;j<=5;j++) B.links.push(L_('pc'+i,'pc'+j)); A.a='10'; A.b='4'; A.c='28'; }},
+{id:'1.7', L:1, title:'Melyik topológia ez?', diff:'mid', time:'3 perc',
+ theory:'<p>A valódi hálózatok gyakran <b>vegyes topológiájúak</b>. Egy iskolában például minden teremnek saját switch-e van (csillag), és a termek switch-ei egy központi switch-hez csatlakoznak. Ezt a faszerű, összetett szerkezetet <b>fa vagy vegyes topológiának</b> nevezzük.</p>',
+ terms:[term('Vegyes (fa) topológia','Több topológia kombinációja, például egymáshoz kapcsolt csillagok. Így épülnek fel az iskolai és vállalati hálózatok.')],
+ steps:['Nézd meg a négy ábrát, és válaszd ki mindegyik topológiáját. A szürke dobozok gépek, a kékek switch-ek.'],
+ qs:[{k:'a',t:'sel',diag:'ring',text:'A ábra',opts:TOPO_OPTS,ans:2},{k:'b',t:'sel',diag:'tree',text:'B ábra',opts:TOPO_OPTS,ans:4},{k:'c',t:'sel',diag:'mesh',text:'C ábra',opts:TOPO_OPTS,ans:3},{k:'d',t:'sel',diag:'bus',text:'D ábra',opts:TOPO_OPTS,ans:0}],
+ check:function(B,A){ return qCheck(this,A); }},
+{id:'1.8', L:1, title:'Melyiket válasszuk?', diff:'mid', time:'4 perc',
+ theory:'<p>A topológia kiválasztása mindig kompromisszum. A fő szempontok: mennyi kábel kell (<b>költség</b>), mennyire könnyű <b>bővíteni</b>, és mi történik hiba esetén (<b>hibatűrés</b>).</p><table class="mini-t"><tr><th>Topológia</th><th>Kábel</th><th>Ha hiba van</th></tr><tr><td>Busz</td><td>nagyon kevés</td><td>gerincszakadásnál minden leáll</td></tr><tr><td>Csillag</td><td>gépenként egy</td><td>csak a központi eszköz kritikus</td></tr><tr><td>Gyűrű</td><td>gépenként egy</td><td>egy szakadást kibír</td></tr><tr><td>Teljes háló</td><td>nagyon sok</td><td>sok szakadást is kibír</td></tr></table>',
+ terms:[term('Hibatűrés','Mennyire működik tovább a hálózat, ha egy kábel vagy eszköz meghibásodik.')],
+ steps:['Olvasd el a három helyzetet, és mindegyikhez válaszd ki a legjobban illő topológiát a táblázat alapján.'],
+ qs:[{k:'a',t:'sel',text:'<b>Kis iroda</b> 6 géppel. Legyen olcsó és könnyen bővíthető, és ha egy gép kábele elromlik, a többiek dolgozhassanak tovább.',opts:TOPO_OPTS.slice(0,4),ans:1},
+     {k:'b',t:'sel',text:'<b>Bank szerverterme</b> 4 szerverrel. Semmilyen kábelszakadás nem okozhat kiesést, a költség nem számít.',opts:TOPO_OPTS.slice(0,4),ans:3},
+     {k:'c',t:'sel',text:'<b>Régi gyári gépsor</b>: 8 gép áll egy sorban, a lehető legkevesebb kábel a cél, és elfogadható, hogy hiba esetén az egész sor leáll.',opts:TOPO_OPTS.slice(0,4),ans:0}],
+ check:function(B,A){ return qCheck(this,A); }},
+{id:'1.9', L:1, title:'Kilépő kvíz', diff:'easy', time:'3 perc',
+ theory:'<p>Gondold át az óra legfontosabb fogalmait. A kvízt többször is megpróbálhatod. Ha elakadsz, görgess vissza az elméleti részekhez.</p>',
+ terms:[],
+ qs:[{k:'a',t:'mc',text:'Mit nevezünk csomópontnak?',opts:['A hálózat bármely eszközét, amely adatot küld, fogad vagy továbbít','Csak a kábelek találkozási pontját','Csak a szervert'],ans:0},
+     {k:'b',t:'mc',text:'Melyik eszköz NEM végpont?',opts:['Nyomtató','Switch','Laptop'],ans:1},
+     {k:'c',t:'mc',text:'Melyik topológiában csatlakozik minden gép egy központi eszközhöz?',opts:['Busz','Csillag','Gyűrű'],ans:1},
+     {k:'d',t:'mc',text:'Melyik topológiában áll le az egész hálózat, ha a közös kábel bárhol elszakad?',opts:['Busz','Csillag','Teljes háló'],ans:0},
+     {k:'e',t:'mc',text:'Hány szomszédja van egy gépnek gyűrű topológiában?',opts:['1','2','4'],ans:1}],
+ check:function(B,A){ return qCheck(this,A); }},
+
+/* ===== 2. óra ===== */
+{id:'2.1', L:2, title:'Kicsi és nagy hálózatok', diff:'easy', time:'3 perc',
+ theory:'<p>A hálózatokat kiterjedésük szerint is csoportosítjuk:</p><p><b>PAN</b> (személyes hálózat): néhány méteren belül, egy ember eszközei, például a telefon és a fülhallgató Bluetooth-on. <b>LAN</b> (helyi hálózat): egy lakás, iskola vagy épület hálózata. <b>MAN</b> (városi hálózat): egy város intézményeit köti össze. <b>WAN</b> (nagy kiterjedésű hálózat): országokat, kontinenseket köt össze. A legnagyobb WAN az internet.</p>',
+ terms:[term('PAN','Személyes hálózat néhány méteren belül (pl. Bluetooth).'),term('LAN','Helyi hálózat: lakás, iskola, épület.'),term('MAN','Városi hálózat.'),term('WAN','Nagy kiterjedésű hálózat országok és kontinensek között. A legnagyobb WAN az internet.')],
+ steps:['Sorold be a hat példát.'],
+ qs:[{k:'a',t:'sel',text:'A telefonod és a Bluetooth-fülhallgatód',opts:['PAN','LAN','MAN','WAN'],ans:0},
+     {k:'b',t:'sel',text:'Az iskola számítógépterme',opts:['PAN','LAN','MAN','WAN'],ans:1},
+     {k:'c',t:'sel',text:'Egy város összes iskoláját összekötő hálózat',opts:['PAN','LAN','MAN','WAN'],ans:2},
+     {k:'d',t:'sel',text:'Egy bank fiókjai három országban',opts:['PAN','LAN','MAN','WAN'],ans:3},
+     {k:'e',t:'sel',text:'Az otthoni wifi a lakásban',opts:['PAN','LAN','MAN','WAN'],ans:1},
+     {k:'f',t:'sel',text:'Az okosórád és a telefonod kapcsolata',opts:['PAN','LAN','MAN','WAN'],ans:0}],
+ check:function(B,A){ return qCheck(this,A); }},
+{id:'2.2', L:2, title:'Kábel vagy wifi?', diff:'mid', time:'4 perc',
+ theory:'<p>Az <b>átviteli közeg</b> az, amin az adat halad.</p><p><b>UTP-kábel</b> (sodrott érpár): olcsó, megbízható, legfeljebb kb. 100 m-ig használható. <b>Optikai kábel</b>: üvegszálban fényt továbbít, több kilométerre is elér, nagyon gyors, és az elektromos zavarok nem hatnak rá, de drágább. <b>Wifi</b>: rádióhullámokkal, kábel nélkül működik, az eszközök szabadon mozoghatnak, de lassabb és zavarérzékenyebb, a hatótávolsága pedig néhány tíz méter.</p>',
+ terms:[term('Átviteli közeg','Amin az adat halad: kábel vagy rádióhullám.'),term('UTP-kábel','Sodrott érpáras réz kábel, olcsó, kb. 100 m-ig.'),term('Optikai kábel','Fényt továbbító üvegszál: nagy távolság, nagy sebesség, nem zavarják az elektromos zajok.'),term('Wifi','Vezeték nélküli kapcsolat rádióhullámokkal, mozgó eszközökhöz.')],
+ steps:['Mindegyik helyzethez válaszd ki a legjobb átviteli közeget. Figyelj a távolságra, a sebességre és a zavarokra.'],
+ qs:[{k:'a',t:'sel',text:'A számítógépterem gépei a terem sarkában lévő switch-hez csatlakoznak (legfeljebb 15 m). Olcsó és stabil megoldás kell.',opts:['UTP-kábel','Optikai kábel','Wifi'],ans:0},
+     {k:'b',t:'sel',text:'Két iskolaépületet kell összekötni, a távolság 600 m.',opts:['UTP-kábel','Optikai kábel','Wifi'],ans:1},
+     {k:'c',t:'sel',text:'A könyvtárban a diákok laptopjai és telefonjai csatlakoznak, és közben helyet változtatnak.',opts:['UTP-kábel','Optikai kábel','Wifi'],ans:2},
+     {k:'d',t:'sel',text:'Gyárcsarnok: csak 80 m a távolság, de a nagy gépek erős elektromos zavart keltenek, és nagy sebesség kell.',opts:['UTP-kábel','Optikai kábel','Wifi'],ans:1},
+     {k:'e',t:'sel',text:'A tanári asztalon álló számítógép 8 m-re van a switch-től, és élő videóórát tartanak róla, ezért stabil kapcsolat kell.',opts:['UTP-kábel','Optikai kábel','Wifi'],ans:0}],
+ check:function(B,A){ return qCheck(this,A); }},
+{id:'2.3', L:2, title:'Címek a hálózatban', diff:'mid', time:'6 perc',
+ theory:'<p>Ahhoz, hogy az adat a megfelelő géphez jusson, minden eszköznek egyedi címe van: ez az <b>IP-cím</b>. Négy, pontokkal elválasztott számból áll, például <code>192.168.1.10</code>.</p><p>Egyszerűsítve: ugyanabban a helyi hálózatban az <b>első három szám megegyezik</b> (ez a hálózat azonosítója), a <b>negyedik szám</b> pedig gépenként különböző, 1 és 254 között. Ha két eszköznek ugyanaz a címe, <b>címütközés</b> lép fel, és az adat nem tudja, kihez menjen.</p>',
+ terms:[term('IP-cím','Az eszköz egyedi hálózati címe, négy számból áll (pl. 192.168.1.10).'),term('Hálózatazonosító','Egyszerűsítve az IP-cím első három száma: ez egyezik az azonos hálózat gépeinél.'),term('Címütközés','Két eszköz ugyanazt az IP-címet kapta, ezért az adat nem talál célba.')],
+ steps:['Kattints egy gépre (Mozgatás és kijelölés mód): a tábla alatt látod és módosíthatod a címét.','Adj címet a két cím nélküli gépnek.','Pingelj a Gép-1-ről a többiekre, és keresd meg a címütközést. Javítsd ki.','A Gép-6 nem éri el a többieket. Derítsd ki, miért, és javítsd. Végül válaszolj a kérdésre.'], board:true,
+ qs:[{k:'a',t:'mc',text:'Miért nem érte el eredetileg a Gép-6 a többi gépet?',opts:['Mert ki volt húzva a kábele','Mert egy másik hálózat címét kapta (192.168.2.…)','Mert a switch nem működött'],ans:1}],
+ check:function(B,A){ var seen={}, pcs=B.nodes.filter(isEnd); for(var i=0;i<pcs.length;i++){ var n=pcs[i]; if(!ipOk(n.ip)) return n.label+' IP-címe hiányzik vagy érvénytelen (a negyedik szám 1 és 254 között legyen).'; if(net(n.ip)!=='192.168.1') return n.label+' címe nem a 192.168.1.… hálózatban van.'; if(seen[n.ip]) return 'Címütközés: '+seen[n.ip]+' és '+n.label+' címe ugyanaz ('+n.ip+').'; seen[n.ip]=n.label; } return qCheck(this,A); },
+ solve:function(B,A){ var ips={g2:'192.168.1.11',g4:'192.168.1.14',g5:'192.168.1.15',g6:'192.168.1.16'}; B.nodes.forEach(function(n){ if(ips[n.id]) n.ip=ips[n.id]; }); A.a=1; }},
+{id:'2.4', L:2, title:'Két hálózat összekötése', diff:'mid', time:'6 perc',
+ theory:'<p>A switch csak egy hálózaton belül továbbítja az adatot. Két különböző hálózatot (például <code>192.168.1.…</code> és <code>192.168.2.…</code>) a <b>router</b> (útválasztó) köt össze. Mindkét hálózatban van egy címe, és az adatot a megfelelő hálózatba irányítja.</p><p>A gépeknek tudniuk kell, hova küldjék a más hálózatba szánt adatot. Ez az <b>átjáró</b>: a router címe a gép saját hálózatában.</p>',
+ terms:[term('Router (útválasztó)','Hálózati eszköz, amely különböző hálózatokat köt össze, és a csomagokat a megfelelő hálózatba irányítja.'),term('Átjáró','A router címe a gép saját hálózatában. Ide küldi a gép a más hálózatba szánt adatot.')],
+ steps:['Válaszolj az első kérdésre.','A tábla fölötti gombbal tegyél le egy eszközt, és kösd össze mindkét switch-csel.','Állítsd be mind a hat gép átjáróját: kattints a gépre, és a tábla alatt írd be. (A router címei a router alatt olvashatók.)','Ellenőrizd pinggel: Tanár-1 → Diák-3 és Diák-2 → Tanár-1.'], board:true,
+ qs:[{k:'a',t:'mc',text:'Mivel kötöd össze a két különböző hálózatot?',opts:['Egy harmadik switch-csel','Routerrel','Egy hosszabb kábellel'],ans:1}],
+ check:function(B,A){ var q=qCheck(this,A); if(q) return q; if(!B.nodes.some(function(n){ return n.type==='router'; })) return 'Még nincs router a táblán.'; var exp={t1:'192.168.1.1',t2:'192.168.1.1',t3:'192.168.1.1',d1:'192.168.2.1',d2:'192.168.2.1',d3:'192.168.2.1'}; for(var id in exp){ var n=nodeOf(B,id); if(String(n.gw||'').trim()!==exp[id]) return n.label+' átjárója még nincs jól beállítva.'; } var p1=ipPing(B,'t1','d3'); if(!p1.ok) return 'A Tanár-1 → Diák-3 ping még nem sikerül: '+p1.msg; var p2=ipPing(B,'d2','t1'); if(!p2.ok) return 'A Diák-2 → Tanár-1 ping még nem sikerül: '+p2.msg; return null; },
+ solve:function(B,A){ A.a=1; B.nodes.push({id:'router_x',type:'router',label:'Router',x:400,y:330,fixed:false,ifaces:['192.168.1.1','192.168.2.1']}); B.links.push(L_('router_x','swa')); B.links.push(L_('router_x','swb')); B.nodes.forEach(function(n){ if(/^t\d/.test(n.id)) n.gw='192.168.1.1'; if(/^d\d/.test(n.id)) n.gw='192.168.2.1'; }); }},
+{id:'2.5', L:2, title:'Irány az internet!', diff:'easy', time:'3 perc',
+ theory:'<p>Az otthoni és az iskolai hálózatot is a <b>router</b> köti az <b>internethez</b>: a helyi hálózat felé van egy belső címe, az internetszolgáltató felé pedig egy külső kapcsolata.</p><p>A vezeték nélküli eszközök a <b>wifi-hozzáférési ponthoz</b> (AP) csatlakoznak, amely kábellel kapcsolódik a switch-hez. Otthon a router, a switch és a hozzáférési pont gyakran egyetlen dobozban van.</p>',
+ terms:[term('Wifi-hozzáférési pont (AP)','A vezeték nélküli eszközöket kapcsolja a vezetékes hálózathoz.'),term('Internet','Hálózatok világméretű hálózata, a legnagyobb WAN. A routeren keresztül érjük el.')],
+ steps:['Kösd össze a routert az internettel.','Kösd a wifi-hozzáférési pontot a switch-hez.','Csatlakoztasd a telefont a hozzáférési ponthoz (wifin kapcsolódik).','Pingelj az internetre a PC-1-ről és a telefonról is.'], board:true,
+ check:function(B){ var ph=B.links.filter(function(l){ return (l.a==='ph'||l.b==='ph'); }); if(!ph.length||ph[0].media!=='wifi') return 'A telefon még nem csatlakozik wifin a hozzáférési ponthoz.'; var a=ipPing(B,'p1','net'); if(!a.ok) return 'A PC-1 még nem éri el az internetet: '+a.msg; var b=ipPing(B,'ph','net'); if(!b.ok) return 'A telefon még nem éri el az internetet: '+b.msg; return null; },
+ solve:function(B){ B.links.push(L_('r','net',{media:'wan'})); B.links.push(L_('ap','sw')); B.links.push(L_('ph','ap',{media:'wifi'})); }},
+{id:'2.6', L:2, title:'Hibakeresés', diff:'mid', time:'7 perc',
+ theory:'<p>A hálózati hibát lépésről lépésre keressük, a fizikai kapcsolattól felfelé:</p><p><b>1.</b> Megvan-e a kábel, és jó helyre van-e dugva? <b>2.</b> Jó-e a gép IP-címe (jó hálózat, egyedi szám)? <b>3.</b> Jó-e az átjáró címe? <b>4.</b> Eléri-e a router az internetet? A ping hibaüzenetei sokat elárulnak arról, melyik lépésnél van a gond.</p>',
+ terms:[term('Hibakeresés','Lépésenkénti ellenőrzés: kábel → IP-cím → átjáró → internet.')],
+ steps:['Ebben a hálózatban három gépnél van egy-egy hiba. Pingelj a gépekről az internetre és a nyomtatóra, és olvasd el a hibaüzeneteket.','Javítsd ki a hibákat: kábelt áthelyezhetsz (Törlés, majd Összekötés), a címeket a gépre kattintva módosíthatod.','A végén írd be, melyik gépnél mi volt a hiba.'], board:true,
+ qs:[{k:'a',t:'sel',text:'Mi volt a hiba a <b>Tanár-2</b> gépnél?',opts:['Rossz IP-cím','Rossz átjáró','Rossz switch-be dugott kábel'],ans:1},
+     {k:'b',t:'sel',text:'Mi volt a hiba a <b>Diák-2</b> gépnél?',opts:['Rossz IP-cím','Rossz átjáró','Rossz switch-be dugott kábel'],ans:0},
+     {k:'c',t:'sel',text:'Mi volt a hiba a <b>Diák-3</b> gépnél?',opts:['Rossz IP-cím','Rossz átjáró','Rossz switch-be dugott kábel'],ans:2}],
+ check:function(B,A){ var ids=['t1','t2','d1','d2','d3']; for(var i=0;i<ids.length;i++){ var a=ipPing(B,ids[i],'net'); if(!a.ok) return nodeOf(B,ids[i]).label+' még nem éri el az internetet.'; var b=ipPing(B,ids[i],'pr'); if(!b.ok) return nodeOf(B,ids[i]).label+' még nem éri el a nyomtatót.'; } return qCheck(this,A); },
+ solve:function(B,A){ nodeOf(B,'t2').gw='192.168.1.1'; nodeOf(B,'d2').ip='192.168.2.12'; B.links=B.links.filter(function(l){ return !(l.a==='d3'&&l.b==='swa'); }); B.links.push(L_('d3','swb')); A.a=1; A.b=0; A.c=2; }},
+{id:'2.7', L:2, title:'Tervezd meg az emelet hálózatát!', diff:'mid', time:'6 perc',
+ theory:'<p>Egy hálózat tervezésekor először összegyűjtjük a <b>követelményeket</b>: hány eszköz van, hol vannak, mit kell elérniük, és mennyi pénz van rá. Ezután választjuk ki az eszközöket és a topológiát.</p><p>A valódi iskolai hálózatok általában vegyes topológiájúak: termenként vagy emeletenként egy switch, ezeket összekötjük, a router pedig az egészet az internethez kapcsolja.</p>',
+ terms:[term('Hálózattervezés','Követelmények összegyűjtése, majd az eszközök és a topológia kiválasztása.')],
+ steps:['A tábla fölötti gombokkal helyezz el switch-et, routert és wifi-hozzáférési pontot, és kösd be őket. A címek már be vannak állítva.','<b>Követelmények:</b> (1) minden gép elérje a nyomtatót, (2) minden eszköz, a telefon is, elérje az internetet, (3) legfeljebb 2 switch-et használhatsz, (4) a telefon wifin csatlakozzon.','Pingeléssel próbáld ki, aztán kattints az Ellenőrzésre: a program végignézi az összes követelményt.'], board:true,
+ check:function(B){ var sw=B.nodes.filter(function(n){ return n.type==='switch'; }).length; if(sw>2) return 'Legfeljebb 2 switch-et használhatsz, most '+sw+' van a táblán.'; var ph=B.links.filter(function(l){ return l.a==='ph'||l.b==='ph'; }); if(!ph.length||ph[0].media!=='wifi') return 'A tanár telefonja még nem csatlakozik wifin.'; var ids=['a1','a2','a3','b1','b2','b3','tp','ph']; for(var i=0;i<ids.length;i++){ var lb=nodeOf(B,ids[i]).label; if(ids[i]!=='ph'){ var a=ipPing(B,ids[i],'pr'); if(!a.ok) return lb+' még nem éri el a nyomtatót.'; } var b=ipPing(B,ids[i],'net'); if(!b.ok) return lb+' még nem éri el az internetet.'; } return null; },
+ solve:function(B){ B.nodes.push({id:'s1',type:'switch',label:'Switch 1',x:170,y:215,fixed:false},{id:'s2',type:'switch',label:'Switch 2',x:630,y:215,fixed:false},{id:'rr',type:'router',label:'Router',x:470,y:300,fixed:false,ifaces:['192.168.1.1']},{id:'aa',type:'ap',label:'Wifi AP',x:400,y:390,fixed:false});
+   ['a1','a2','a3','tp','pr'].forEach(function(id){ B.links.push(L_(id,'s1')); }); ['b1','b2','b3'].forEach(function(id){ B.links.push(L_(id,'s2')); }); B.links.push(L_('s1','s2')); B.links.push(L_('rr','s2')); B.links.push(L_('rr','net',{media:'wan'})); B.links.push(L_('aa','s1')); B.links.push(L_('ph','aa',{media:'wifi'})); }}
+];
+function T(id){ return TASKS.filter(function(t){ return t.id===id; })[0]; }
+function lessonTasks(L){ return TASKS.filter(function(t){ return t.L===L; }); }
+function lessonDone(L){ return lessonTasks(L).every(function(t){ return S.done[t.id]; }); }
+function taskOpen(t){ if(TEACHER) return true; if(t.L===2 && !lessonDone(1)) return false; var ts=lessonTasks(t.L), i=ts.indexOf(t); return i===0 || !!S.done[ts[i-1].id]; }
+function qCheck(t,A){
+  var qs=t.qs||[];
+  for(var i=0;i<qs.length;i++){ var q=qs[i], v=A[q.k], ok;
+    if(q.t==='num'){ var x=parseFloat(String(v==null?'':v).replace(',','.')); ok=isFinite(x)&&Math.abs(x-q.ans)<1e-9; }
+    else if(q.t==='chk'){ var arr=(Array.isArray(v)?v:[]).map(Number).sort().join(','); ok=arr===q.ans.slice().sort().join(','); }
+    else if(q.t==='tile') ok=v===q.ans;
+    else ok=String(v)===String(q.ans);
+    if(!ok) return (v==null||v===''||(Array.isArray(v)&&!v.length)) ? (Art(i+1)+' '+(i+1)+'. kérdésre még nem válaszoltál.') : (Art(i+1)+' '+(i+1)+'. kérdésre adott válasz még nem jó. Nézd meg újra az elméletet vagy próbáld ki a szimulátorban.');
+  }
+  return null;
+}
+
+/* ---------- rendering ---------- */
+var LESSONS={1:{t:'A hálózat fogalma és szerkezete', s:'Mi a hálózat, milyen részekből áll, és milyen topológiákban építhető fel?'},2:{t:'A hálózat kialakítása és a csomópontok összekötése', s:'Hálózatméretek, átviteli közegek, címek, router, internet és hibakeresés.'}};
+function renderNav(){
+  var h='';
+  [1,2].forEach(function(L){ var ts=lessonTasks(L), n=ts.filter(function(t){ return S.done[t.id]; }).length, open=TEACHER||L===1||lessonDone(1), d=lessonDone(L);
+    h+='<button type="button" data-tab="'+L+'" class="'+(d?'ok':'')+(open?'':' lock')+'" aria-current="'+(S.tab===L)+'"><span class="n">'+L+'. óra · 35 perc</span><span class="t">'+LESSONS[L].t+'</span><span class="st">'+(d?'✓ kész':(open?n+' / '+ts.length+' feladat':'🔒 zárva'))+'</span><div class="bar"><i style="width:'+(100*n/ts.length)+'%"></i></div></button>'; });
+  var all=lessonDone(1)&&lessonDone(2);
+  h+='<button type="button" data-tab="3" class="'+(all?'ok':'')+((all||TEACHER)?'':' lock')+'" aria-current="'+(S.tab===3)+'"><span class="n">a végén</span><span class="t">Összefoglaló</span><span class="st">'+(all?'✓ elérhető':'🔒 a két óra után')+'</span></button>';
+  $('nav').innerHTML=h;
+}
+$('nav').addEventListener('click',function(e){ var b=e.target.closest('[data-tab]'); if(b) go(+b.getAttribute('data-tab')); });
+function qHTML(t){
+  var A=S.ans[t.id]||{}, qs=t.qs||[];
+  if(!qs.length) return '';
+  if(qs[0].t==='tile') return '<div class="tiles">'+qs.map(function(q){ var ty=TYPES[q.dev]; return '<div class="tile"><div class="tn">'+iconSVG(q.dev,26)+ty.n+'</div><div class="seg" data-tile="'+q.k+'"><button type="button" data-v="v" aria-pressed="'+(A[q.k]==='v')+'">Végpont</button><button type="button" data-v="h" aria-pressed="'+(A[q.k]==='h')+'">Hálózati eszköz</button></div></div>'; }).join('')+'</div>';
+  var diag=qs.some(function(q){ return q.diag; });
+  var h='<div class="'+(diag?'dgrid':'qs')+'">';
+  qs.forEach(function(q,i){
+    h+='<div class="q">'+(q.diag?'<div class="diag">'+miniDiagram(q.diag)+'</div>':'')+'<p><b class="qn">'+(i+1)+'.</b>'+q.text+'</p>';
+    if(q.t==='mc') h+='<div class="opts">'+q.opts.map(function(o,oi){ return '<label><input type="radio" name="'+t.id+q.k+'" data-q="'+q.k+'" value="'+oi+'"'+(String(A[q.k])===String(oi)?' checked':'')+'><span>'+o+'</span></label>'; }).join('')+'</div>';
+    if(q.t==='chk'){ var arr=Array.isArray(A[q.k])?A[q.k].map(Number):[]; h+='<div class="opts">'+q.opts.map(function(o,oi){ return '<label><input type="checkbox" data-q="'+q.k+'" data-chk="1" value="'+oi+'"'+(arr.indexOf(oi)>=0?' checked':'')+'><span>'+o+'</span></label>'; }).join('')+'</div><span class="small">Több válasz is jó lehet.</span>'; }
+    if(q.t==='num') h+='<input type="text" inputmode="numeric" data-q="'+q.k+'" value="'+esc(A[q.k]==null?'':A[q.k])+'" aria-label="Válasz">';
+    if(q.t==='sel') h+='<select data-q="'+q.k+'"><option value="">— válassz —</option>'+q.opts.map(function(o,oi){ return '<option value="'+oi+'"'+(String(A[q.k])===String(oi)?' selected':'')+'>'+o+'</option>'; }).join('')+'</select>';
+    h+='</div>';
+  });
+  return h+'</div>';
+}
+function bindQ(host,t){
+  if(!S.ans[t.id]) S.ans[t.id]={};
+  var A=S.ans[t.id];
+  host.addEventListener('click',function(e){ var b=e.target.closest('[data-tile] button'); if(!b) return; var seg=b.parentNode, k=seg.getAttribute('data-tile'); A[k]=b.getAttribute('data-v'); seg.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed',x===b); }); save(); });
+  host.addEventListener('change',function(e){ var el=e.target; if(!el.hasAttribute('data-q')) return; var k=el.getAttribute('data-q');
+    if(el.hasAttribute('data-chk')){ A[k]=Array.prototype.slice.call(host.querySelectorAll('input[data-q="'+k+'"]:checked')).map(function(x){ return +x.value; }); }
+    else A[k]=el.value; save(); });
+  host.addEventListener('input',function(e){ var el=e.target; if(el.type==='text'&&el.hasAttribute('data-q')){ A[el.getAttribute('data-q')]=el.value; save(); } });
+}
+function taskHTML(t,i){
+  var open=taskOpen(t), done=!!S.done[t.id];
+  var h='<article class="task'+(done?' ok':'')+(open?'':' locked')+'" id="task-'+t.id.replace('.','-')+'"><div class="task-h"><span class="num">'+t.id+'</span><h3>'+t.title+'</h3><span class="chip '+(t.diff==='easy'?'easy':'mid')+'">'+(t.diff==='easy'?'könnyű':'közepes')+'</span><span class="chip time">≈ '+t.time+'</span>'+(done?'<span class="chip easy">✓ kész</span>':'')+'</div>';
+  if(!open){ return h+'<p class="small" style="margin:.5rem 0 0">🔒 Az előző feladat teljesítése után nyílik meg.</p></article>'; }
+  h+='<div class="theory"><div class="tt">Elmélet</div>'+t.theory+(t.terms.length?t.terms.map(function(x){ return '<div class="term"><b>'+x[0]+':</b> '+x[1]+'</div>'; }).join(''):'')+'</div>';
+  if(t.steps) h+='<ol class="steps">'+t.steps.map(function(s){ return '<li>'+s+'</li>'; }).join('')+'</ol>';
+  if(t.board) h+='<div data-board="'+t.id+'"></div>';
+  h+='<div data-qs="'+t.id+'">'+qHTML(t)+'</div>';
+  h+='<div class="check-row"><button type="button" class="btn" data-check="'+t.id+'">Ellenőrzés</button>'+(TEACHER&&t.solve!==undefined||TEACHER&&t.qs?'<button type="button" class="btn ghost sm" data-solve="'+t.id+'">Mintamegoldás (tanár)</button>':'')+'</div><div data-res="'+t.id+'" class="'+(done?'res ok':'hide')+'">'+(done?'✓ Teljesítve.':'')+'</div></article>';
+  return h;
+}
+function notesHTML(L){
+  var terms=[]; lessonTasks(L).forEach(function(t){ terms=terms.concat(t.terms); });
+  return '<section class="notes"><h3>📒 Jegyzet a füzetbe · '+L+'. óra</h3><p class="small" style="margin:0 0 .6rem">Írd le ezeket a fogalmakat a füzetedbe. Ezekből készülsz a mini ellenőrzőre.</p><dl>'+terms.map(function(x){ return '<dt>'+x[0]+'</dt><dd>'+x[1]+'</dd>'; }).join('')+'</dl></section>';
+}
+function go(tab){
+  S.tab=tab; save(); renderNav();
+  var m=$('main');
+  if(tab===3){ renderSummary(); return; }
+  if(tab===2 && !TEACHER && !lessonDone(1)){ m.innerHTML='<div class="locked-box"><div style="font-size:2.2rem">🔒</div><h3>A 2. óra még zárva van</h3><p>Előbb teljesítsd az 1. óra összes feladatát.</p><button type="button" class="btn" id="backBtn">Vissza az 1. órához</button></div>'; $('backBtn').addEventListener('click',function(){ go(1); }); return; }
+  var L=tab, ts=lessonTasks(L);
+  var h='<div class="lesson-h"><h2>'+L+'. óra · '+LESSONS[L].t+'</h2><p>'+LESSONS[L].s+'</p><p class="small">'+ts.length+' feladat · '+ts.filter(function(t){ return t.diff==='easy'; }).length+' könnyű, '+ts.filter(function(t){ return t.diff==='mid'; }).length+' közepes · kb. 35 perc. A feladatok sorban nyílnak meg.</p></div>';
+  ts.forEach(function(t,i){ h+=taskHTML(t,i); });
+  if(lessonDone(L)){ h+='<div class="done-banner"><b>✓ '+Art(L)+' '+L+'. óra minden feladata kész!</b>'+(L===1?'<button type="button" class="btn" id="nextL">Tovább a 2. órára →</button>':'<button type="button" class="btn" id="nextL">Az összefoglaló megnyitása →</button>')+'</div>'+notesHTML(L); }
+  m.innerHTML=h;
+  var nl=$('nextL'); if(nl) nl.addEventListener('click',function(){ go(L===1?2:3); });
+  ts.forEach(function(t){ if(!taskOpen(t)) return;
+    var bh=m.querySelector('[data-board="'+t.id+'"]'); if(bh) makeBoard(bh,t.id,false);
+    var qh=m.querySelector('[data-qs="'+t.id+'"]'); if(qh) bindQ(qh,t); });
+  m.querySelectorAll('[data-check]').forEach(function(b){ b.addEventListener('click',function(){ runCheck(b.getAttribute('data-check')); }); });
+  m.querySelectorAll('[data-solve]').forEach(function(b){ b.addEventListener('click',function(){ var t=T(b.getAttribute('data-solve')); if(t.board) S.boards[t.id]=CFG[t.id].init(); if(!S.ans[t.id]) S.ans[t.id]={}; if(t.solve) t.solve(getB(t.id),S.ans[t.id]); else (t.qs||[]).forEach(function(q){ S.ans[t.id][q.k]=q.t==='num'?String(q.ans):q.ans; }); save(); go(S.tab); var el=document.getElementById('task-'+t.id.replace('.','-')); if(el) el.scrollIntoView({block:'start'}); }); });
+}
+function runCheck(id){
+  var t=T(id), B=t.board?getB(id):null, A=S.ans[id]||{}, msg;
+  try{ msg=t.check.call(t,B,A); }catch(e){ msg='Hiba az ellenőrzés közben: '+e.message; }
+  var res=document.querySelector('[data-res="'+id+'"]');
+  var wasDone=!!S.done[id];
+  if(msg===null){ S.done[id]=true; if(lessonDone(1)&&lessonDone(2)&&!S.finishedAt) S.finishedAt=new Date().toISOString(); save();
+    if(!wasDone){ var y=window.pageYOffset; go(S.tab); window.scrollTo(0,y); var nr=document.querySelector('[data-res="'+id+'"]'); if(nr){ nr.className='res ok'; nr.textContent='✓ Teljesítve. A következő feladat megnyílt.'; } return; }
+    res.className='res ok'; res.textContent='✓ Teljesítve.';
+  } else { res.className='res bad'; res.textContent='✗ '+msg; }
+  renderNav();
+}
+
+/* ---------- summary ---------- */
+function renderSummary(){
+  var m=$('main');
+  if(!TEACHER && !(lessonDone(1)&&lessonDone(2))){ m.innerHTML='<div class="locked-box"><div style="font-size:2.2rem">🔒</div><h3>Az összefoglaló a két óra után nyílik meg</h3><p>Teljesítsd mindkét óra összes feladatát.</p></div>'; return; }
+  var all=[]; TASKS.forEach(function(t){ all=all.concat(t.terms); });
+  var pick=['Számítógépes hálózat','Csomópont','Végpont','Hálózati eszköz','Topológia','Busz topológia','Csillag topológia','Gyűrű topológia','Teljes háló','Vegyes (fa) topológia','LAN','WAN','Átviteli közeg','IP-cím','Router (útválasztó)','Átjáró','Wifi-hozzáférési pont (AP)'];
+  var key=all.filter(function(x){ return pick.indexOf(x[0])>=0; });
+  var done=TASKS.filter(function(t){ return S.done[t.id]; }).length, d=S.finishedAt?new Date(S.finishedAt):null;
+  m.innerHTML='<div class="pdfbar"><div><b>Mentsd el az összefoglalót!</b><br><span class="small">A gombbal PDF-fájlként letöltöd a gépedre, és később is elolvashatod vagy kinyomtathatod.</span></div><button type="button" class="btn" id="pdfBtn">⬇ Letöltés PDF-ben</button></div><div id="sumDoc">'+
+  '<div class="pdf-head"><div><b>Hálózatépítő labor</b> · Informatika</div><div>'+(d?d.toLocaleDateString('hu-HU'):new Date().toLocaleDateString('hu-HU'))+'</div></div>'+
+  '<div class="lesson-h"><h2>Összefoglaló</h2><p>Mit tanultál a két órán, és mire használhatod?</p></div>'+
+  '<section class="sum-sec"><h3><i>1</i>Miről szólt a két óra?</h3><p>Az <b>első órán</b> megtanultad, mi a számítógépes hálózat, milyen részekből áll (végpontok, hálózati eszközök, kapcsolatok), és milyen szerkezetekben, topológiákban lehet felépíteni. Kipróbáltad a busz, a csillag, a gyűrű és a teljes háló működését és gyenge pontjait, és kiszámoltad, mennyi kábel kell hozzájuk.</p><p>A <b>második órán</b> a hálózat kialakításával foglalkoztál: besoroltad a hálózatokat méretük szerint, kiválasztottad a megfelelő átviteli közeget, IP-címeket osztottál ki, routerrel összekötöttél két hálózatot, csatlakoztál az internethez, hibát kerestél, végül megterveztél egy iskolai emelet hálózatát.</p></section>'+
+  '<section class="sum-sec long"><h3><i>2</i>A legfontosabb fogalmak</h3><table class="mini-t"><tr><th>Fogalom</th><th>Jelentés</th></tr>'+key.map(function(x){ return '<tr><td><b>'+x[0]+'</b></td><td>'+x[1]+'</td></tr>'; }).join('')+'</table></section>'+
+  '<section class="sum-sec"><h3><i>3</i>Mire használható ez a tudás?</h3><ul>'+
+   '<li><b>Otthon:</b> megérted, miért gyenge a wifi bizonyos szobákban, mikor jobb a kábel, mi a router feladata, és mit érdemes ellenőrizni, ha „nincs internet”.</li>'+
+   '<li><b>Az iskolában és a munkahelyen:</b> látod, hogyan épül fel egy iskolai vagy irodai hálózat, miért van közös nyomtató és szerver, és miért eshet ki egyszerre egy egész terem.</li>'+
+   '<li><b>Hibakeresés:</b> a lépésenkénti gondolkodás (kábel → IP-cím → átjáró → internet) bármilyen informatikai hibánál működik, nem csak a hálózatoknál.</li>'+
+   '<li><b>Döntések:</b> tudod mérlegelni, melyik eszközt, kábelt vagy topológiát érdemes választani, és mi a kompromisszum a költség és a megbízhatóság között.</li>'+
+   '<li><b>Szakmák:</b> erre a tudásra épül a rendszergazda, a hálózati mérnök és a kiberbiztonsági szakember munkája.</li></ul></section>'+
+  '<section class="sum-sec"><h3><i>4</i>Hova vezet tovább?</h3><p>Erre épül az internet működésének megértése (hogyan jut el egy weboldal hozzád), a <b>dolgok internete (IoT)</b>, ahol érzékelők és okoseszközök kommunikálnak a hálózaton, valamint a <b>hálózati biztonság</b>. Ugyanígy kapcsolódnak egymáshoz a programok is: egy webalkalmazás vagy egy adatbázis a hálózaton keresztül éri el a felhasználókat.</p></section>'+
+  '<section class="sum-sec"><h3><i>✓</i>Teljesítés</h3><div class="stat"><div><span class="small">Teljesített feladatok</span><b>'+done+' / '+TASKS.length+'</b></div><div><span class="small">1. óra</span><b>'+(lessonDone(1)?'kész':'folyamatban')+'</b></div><div><span class="small">2. óra</span><b>'+(lessonDone(2)?'kész':'folyamatban')+'</b></div>'+(d?'<div><span class="small">Befejezve</span><b style="font-size:1rem">'+d.toLocaleString('hu-HU')+'</b></div>':'')+'</div><p class="small" style="margin-top:.6rem">Ezt a képernyőt vagy a letöltött PDF-et mutasd meg a tanárnak.</p></section></div><p class="small hide" id="pdfMsg"></p>';
+  $('pdfBtn').addEventListener('click',exportPDF);
+}
+
+/* ---------- PDF export ---------- */
+var H2P='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+function loadH2P(){ return new Promise(function(res,rej){ if(window.html2pdf) return res(); var sc=document.createElement('script'); sc.src=H2P; sc.onload=function(){ window.html2pdf?res():rej(); }; sc.onerror=rej; document.head.appendChild(sc); setTimeout(function(){ if(!window.html2pdf) rej(); },15000); }); }
+function exportPDF(){
+  var btn=$('pdfBtn'), msg=$('pdfMsg'), src=$('sumDoc'); if(!src) return;
+  btn.disabled=true; btn.textContent='PDF készül…';
+  function done(){ btn.disabled=false; btn.textContent='⬇ Letöltés PDF-ben'; }
+  loadH2P().then(function(){
+    var holder=document.createElement('div'); holder.style.cssText='position:fixed;left:-10000px;top:0;width:760px';
+    var el=src.cloneNode(true); el.removeAttribute('id'); el.className='pdfmode'; holder.appendChild(el); document.body.appendChild(holder);
+    var name='Halozatepito_labor_osszefoglalo.pdf';
+    return window.html2pdf().set({margin:[12,12,14,12], filename:name, image:{type:'jpeg',quality:0.96}, html2canvas:{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}, pagebreak:{mode:['css','legacy'],avoid:['.sum-sec:not(.long)','.lesson-h','tr','.pdf-head']}}).from(el).save().then(function(){ holder.remove(); done(); msg.className='small'; msg.textContent='✓ A PDF letöltődött: '+name; },function(){ holder.remove(); throw new Error('pdf'); });
+  }).catch(function(){
+    done(); msg.className='small'; msg.textContent='A közvetlen letöltés most nem sikerült (talán nincs internetkapcsolat). Megnyílik a nyomtatás ablak: ott válaszd a „Mentés PDF-ként” lehetőséget.';
+    setTimeout(function(){ window.print(); },300);
+  });
+}
+
+/* ---------- teacher / reset ---------- */
+if(TEACHER) $('teacherBox').innerHTML='<div class="teacher"><b>Tanári nézet:</b> minden feladat és az összefoglaló is nyitva van. Minden feladatnál van „Mintamegoldás (tanár)” gomb, amely betölti a helyes megoldást.</div>';
+(function(){ var b=$('resetBtn'), armed=false, t=null;
+  b.addEventListener('click',function(){ if(!armed){ armed=true; b.textContent='Biztosan? Kattints újra'; t=setTimeout(function(){ armed=false; b.textContent='Minden adat törlése'; },4000); return; } clearTimeout(t); try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }); })();
+window.__net={TASKS:TASKS,S:S,CFG:CFG,getB:getB,ipPing:ipPing,topoPing:topoPing,runCheck:runCheck,go:go,T:T};
+go(S.tab===2||S.tab===3?S.tab:1);
+})();
+</script>
+</body>
+</html>

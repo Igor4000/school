@@ -137,6 +137,12 @@
             border-radius: 20px; margin-left: auto;
         }
 
+        .dropdown-content a.guide-link {
+            padding: 6px 14px 6px 30px; font-size: 0.78rem; font-weight: 500;
+            color: var(--text-light);
+        }
+        .dropdown-content a.guide-link:hover { color: var(--primary-deep); background: rgba(148, 163, 184, 0.12); }
+
         /* ALMENÜ (a legördülő menün belül) - jobbra nyíló almenü */
         .submenu { position: relative; }
         .submenu-btn {
@@ -297,11 +303,23 @@
                                    <span data-translate-key="link-vezbe1">Abszolút nulla fok – gázhőmérő, virtuális labor</span>
                                    <span class="lesson-badge"></span>
                                 </a>
+                                <a class="guide-link" href="Abszolut_nulla_gazhomero_utmutato.pdf"
+                                   data-href-hu="Abszolut_nulla_gazhomero_utmutato.pdf"
+                                   data-href-sr="uputstvo-apsolutna-nula-gasni-termometar.pdf"
+                                   target="_blank" rel="noopener">
+                                   <span data-translate-key="guide-label">📄 Útmutató (PDF)</span>
+                                </a>
                                 <a href="Boyle-Mariotte_virtualis_labor.html"
                                    data-href-hu="Boyle-Mariotte_virtualis_labor.html"
                                    data-href-sr="Bojl-Mariotov_zakon_virtuelna_laboratorija.html">
                                    <span data-translate-key="link-vezbe2">Boyle–Mariotte-törvény – virtuális labor</span>
                                    <span class="lesson-badge"></span>
+                                </a>
+                                <a class="guide-link" href="Boyle-Mariotte_utmutato.pdf"
+                                   data-href-hu="Boyle-Mariotte_utmutato.pdf"
+                                   data-href-sr="uputstvo-bojl-mariotov-zakon.pdf"
+                                   target="_blank" rel="noopener">
+                                   <span data-translate-key="guide-label">📄 Útmutató (PDF)</span>
                                 </a>
                             </div>
                         </div>
@@ -433,6 +451,7 @@
                 'sub-vezbe5': { hu: '5. gyakorlat', sr: '5. vežba' },
                 'sub-vezbe6': { hu: '6. gyakorlat', sr: '6. vežba' },
                 'sub-empty': { hu: 'Hamarosan...', sr: 'Uskoro...' },
+                'guide-label': { hu: '📄 Útmutató (PDF)', sr: '📄 Uputstvo (PDF)' },
                 'link-vezbe1': {
                     hu: 'Abszolút nulla fok – gázhőmérő, virtuális labor',
                     sr: 'Apsolutna nula – gasni termometar, virtuelna laboratorija'
