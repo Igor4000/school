@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Termodinamika — interaktivna animacija</title>
+<style>
+/* ===== Osnovni izgled (minimalistički, za projekciju u učionici) ===== */
+:root{
+  --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --ivica:#334155;
+  --tekst:#e2e8f0; --tekst-prig:#94a3b8; --akcenat:#38bdf8;
+  /* Boje fizičkih veličina — svaka zadržava svoju boju kroz celu animaciju */
+  --boja-U:#f59e0b; --boja-Q:#ef4444; --boja-A:#3b82f6;
+  --boja-T:#a855f7; --boja-p:#22c55e; --boja-V:#06b6d4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  background:var(--bg); color:var(--tekst);
+  font-family:"Segoe UI",system-ui,Arial,sans-serif;
+  display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+
+/* Zaglavlje */
+header{padding:14px 22px 10px;border-bottom:1px solid var(--ivica);position:relative;}
+header h1{margin:0;font-size:20px;font-weight:650;letter-spacing:.2px;padding-right:120px;}
+header p{margin:3px 0 0;font-size:13px;color:var(--tekst-prig);padding-right:120px;}
+
+/* Prekidač jezika (gore desno) */
+#jezik{position:absolute;top:14px;right:22px;display:flex;gap:4px;
+  background:var(--panel);border:1px solid var(--ivica);border-radius:999px;padding:3px;}
+.jez{background:transparent;border:none;color:var(--tekst-prig);
+  border-radius:999px;padding:5px 12px;font-size:13px;font-weight:650;cursor:pointer;
+  transition:all .15s ease;}
+.jez:hover{color:var(--tekst);}
+.jez.aktivan{background:var(--akcenat);color:#06283d;}
+
+/* Izbornik scena */
+#izbornik{display:flex;flex-wrap:wrap;gap:6px;padding:10px 22px;
+  border-bottom:1px solid var(--ivica);align-items:center;}
+#brojac{font-size:12px;color:var(--tekst-prig);margin-right:8px;white-space:nowrap;min-width:160px;}
+.tab{background:var(--panel);border:1px solid var(--ivica);color:var(--tekst-prig);
+  border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;
+  transition:all .18s ease;white-space:nowrap;}
+.tab:hover{color:var(--tekst);border-color:#475569;}
+.tab.aktivna{background:var(--akcenat);border-color:var(--akcenat);color:#06283d;font-weight:650;}
+
+/* Glavni raspored: platno + panel */
+main{flex:1;display:flex;gap:16px;padding:16px 22px;min-height:0;}
+#platno-okvir{flex:1 1 auto;min-width:0;position:relative;background:var(--panel);
+  border:1px solid var(--ivica);border-radius:14px;overflow:hidden;}
+canvas{display:block;width:100%;height:100%;}
+
+/* Bočni panel */
+#panel{flex:0 0 310px;max-width:38%;display:flex;flex-direction:column;gap:14px;min-height:0;}
+#info{background:var(--panel);border:1px solid var(--ivica);border-radius:14px;
+  padding:16px 18px;transition:opacity .35s ease;}
+#info h2{margin:0 0 8px;font-size:17px;color:var(--akcenat);}
+#info .opis{font-size:14px;line-height:1.5;color:var(--tekst);}
+#formula{margin-top:14px;padding:13px 14px;background:var(--panel2);
+  border:1px solid var(--ivica);border-radius:10px;font-size:19px;text-align:center;
+  line-height:1.6;min-height:30px;}
+
+/* Legenda boja */
+#legenda{background:var(--panel);border:1px solid var(--ivica);border-radius:14px;padding:13px 16px;}
+#legenda h3{margin:0 0 9px;font-size:12px;color:var(--tekst-prig);
+  text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
+#legenda-lista{display:flex;flex-wrap:wrap;gap:10px 16px;}
+.leg-stavka{display:flex;align-items:center;gap:7px;font-size:13px;}
+.leg-boja{width:14px;height:14px;border-radius:4px;flex:0 0 auto;}
+
+/* Traka kontrola */
+#kontrole{display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:12px 22px;border-top:1px solid var(--ivica);}
+button.kontrola{background:var(--panel);border:1px solid var(--ivica);color:var(--tekst);
+  border-radius:9px;padding:8px 14px;font-size:13.5px;cursor:pointer;transition:all .15s ease;}
+button.kontrola:hover{background:var(--panel2);border-color:#475569;}
+button.kontrola:active{transform:translateY(1px);}
+#rezim{min-width:150px;font-weight:600;}
+#rezim.auto{background:var(--boja-p);border-color:var(--boja-p);color:#052e16;}
+#rezim.rucni{background:var(--boja-A);border-color:var(--boja-A);color:#0b1b3a;}
+.razmak{flex:1;}
+.nagovestaj{font-size:12px;color:var(--tekst-prig);}
+
+/* Podnožje */
+footer{padding:10px 22px 16px;font-size:12px;color:var(--tekst-prig);
+  border-top:1px solid var(--ivica);line-height:1.5;}
+
+/* ===== Formule (čist HTML/CSS, bez biblioteka) ===== */
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;}
+.frac .num{border-bottom:1.5px solid currentColor;padding:0 4px;line-height:1.25;}
+.frac .den{padding:1px 4px;line-height:1.25;}
+/* Jednačine su jednobojne (bez boje veličina) — boje ostaju samo na platnu i u legendi */
+.cU,.cQ,.cA,.cT,.cp,.cV{color:var(--tekst);}
+sub,sup{font-size:.68em;}
+
+@media (max-width:860px){
+  main{flex-direction:column;}
+  #panel{flex:0 0 auto;max-width:none;flex-direction:row;flex-wrap:wrap;}
+  #info{flex:1 1 240px;} #legenda{flex:1 1 200px;}
+  #platno-okvir{min-height:300px;}
+  header h1,header p{padding-right:96px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="hdr-naslov"></h1>
+  <p id="hdr-podnaslov"></p>
+  <div id="jezik">
+    <button class="jez" data-l="sr">SR</button>
+    <button class="jez" data-l="hu">HU</button>
+  </div>
+</header>
+
+<!-- Izbornik scena + indikator napretka (gradi se automatski iz niza scena) -->
+<nav id="izbornik"><span id="brojac"></span></nav>
+
+<main>
+  <div id="platno-okvir"><canvas id="platno"></canvas></div>
+  <aside id="panel">
+    <div id="info">
+      <h2 id="naslov-scene"></h2>
+      <div class="opis" id="opis-scene"></div>
+      <div id="formula"></div>
+    </div>
+    <div id="legenda">
+      <h3 id="leg-naslov"></h3>
+      <div id="legenda-lista"></div>
+    </div>
+  </aside>
+</main>
+
+<div id="kontrole">
+  <button class="kontrola" id="dugme-prethodna"></button>
+  <button class="kontrola" id="dugme-sledeca"></button>
+  <button class="kontrola" id="dugme-pauza"></button>
+  <button class="kontrola" id="dugme-ponovi"></button>
+  <button class="kontrola" id="rezim"></button>
+  <span class="razmak"></span>
+  <span class="nagovestaj" id="nagovestaj"></span>
+</div>
+
+<footer id="podnozje"></footer>
+
+<script>
+"use strict";
+/* ============================================================
+   CONFIG — sve podesive vrednosti na jednom mestu
+   ============================================================ */
+const CONFIG = {
+  jezik:"sr",                // podrazumevani jezik: "sr" ili "hu"
+  autoPlay: true,            // podrazumevani režim: true=automatski, false=ručni
+  trajanjeScene: 10.0,       // trajanje jedne scene u automatskom režimu (s)
+  trajanjePrelaza: 0.45,     // trajanje fade prelaza između scena (s)
+  pocetnaScena: 0,           // indeks scene na startu (0 = prva)
+  ciljFPS: 60,               // ciljni broj slika u sekundi (koristi se delta-vreme)
+  boje: {
+    U:"#f59e0b", Q:"#ef4444", A:"#3b82f6", T:"#a855f7", p:"#22c55e", V:"#06b6d4",
+    osa:"#64748b", mreza:"#1f2b3e", tekst:"#e2e8f0", prig:"#94a3b8", okvir:"#334155", vatra:"#fb923c"
+  },
+  font: "600 15px 'Segoe UI',system-ui,sans-serif",
+  fontVeliki: "700 20px 'Segoe UI',system-ui,sans-serif"
+};
+
+/* ============================================================
+   I18N — svi tekstovi na dva jezika (sr/hu)
+   Formule su zajedničke (simboli), opisi i oznake prevedeni.
+   ============================================================ */
+// Zajedničke formule (HTML) — iste za oba jezika
+const F = {
+  s1:'U = <span class="frac"><span class="num">i</span><span class="den">2</span></span>·n·R·T',
+  s3:'Q = m·c·ΔT &nbsp;&nbsp; C = <span class="frac"><span class="num">Q</span><span class="den">ΔT</span></span>',
+  s4:'Q = ΔU + A',
+  s5:'A = p·ΔV',
+  s7:'C<sub>p</sub> − C<sub>V</sub> = R &nbsp;&nbsp; γ = <span class="frac"><span class="num">C<sub>p</sub></span><span class="den">C<sub>V</sub></span></span>',
+  s8:'η = <span class="frac"><span class="num">A</span><span class="den">Q<sub>1</sub></span></span> = <span class="frac"><span class="num">Q<sub>1</sub>−Q<sub>2</sub></span><span class="den">Q<sub>1</sub></span></span>',
+  s9:'η<sub>max</sub> = 1 − <span class="frac"><span class="num">T<sub>2</sub></span><span class="den">T<sub>1</sub></span></span>'
+};
+
+const I18N = {
+  sr:{
+    naslov:"Termodinamika — unutrašnja energija, toplota i rad",
+    podnaslov:"Od unutrašnje energije do Karnoovog ciklusa. Gledaj automatski ili izaberi bilo koju scenu ručno.",
+    brojac:(i,n,naz)=>"Scena "+i+"/"+n+" — "+naz,
+    legNaslov:"Legenda boja",
+    leg:["U — unutrašnja energija","Q — količina toplote","A — rad",
+         "T — temperatura","p — pritisak","V — zapremina"],
+    kontrole:{prethodna:"◀ Prethodna", sledeca:"Sledeća ▶",
+      pauza:"⏸ Pauza", nastavi:"▶ Nastavi", ponovi:"↺ Ponovi od početka",
+      auto:"● Automatski", rucni:"○ Ručni",
+      hint:"Tasteri: ◀ ▶ za kretanje, 1–9 za skok na scenu"},
+    podnozje:"Materijal se može gledati automatski (scene se smenjuju i ciklus se beskonačno ponavlja) ili se bilo koja scena može izabrati ručno — klikom na izbornik, dugmadima, strelicama ili brojevima. Ručni izbor pauzira automatsku smenu; dugme „Auto“ je ponovo uključuje.",
+    scenes:[
+      {naziv:"Unutrašnja energija",
+       opis:"Unutrašnja energija U je zbir kinetičke i potencijalne energije svih čestica tela. Kod idealnog gasa zavisi samo od temperature. Grej gas — čestice ubrzaju, U raste.",
+       formula:F.s1, lab:{gaz:"gas", uRaste:"U raste", uOpada:"U opada"}},
+      {naziv:"Toplota i rad — dve mere",
+       opis:"Q i A nisu „oblici energije“ koji se čuvaju u telu. To su dve mere energije koja prelazi granicu sistema: Q prenosom toplote, A vršenjem rada. U telu postoji samo U.",
+       formula:'Q &nbsp;i&nbsp; A &rarr; menjaju &nbsp;U',
+       lab:{sistem:"SISTEM", unutr:"unutrašnja energija", toplota:"toplota", rad:"rad",
+            granica:"Energija prelazi granicu — ne „ulazi kao Q“ i ne „ostaje kao A“."}},
+      {naziv:"Količina toplote i kalorimetrija",
+       opis:"Dovedena toplota podiže temperaturu tela. Koliko — zavisi od mase i specifične toplote c. Kapacitet C = m·c pokazuje koliko Q treba za porast od 1 K.",
+       formula:F.s3, lab:{telo:"telo (m, c)"}},
+      {naziv:"Prvi princip termodinamike",
+       opis:"Zakon održanja energije za toplotne procese. Dovedena toplota deli se na porast unutrašnje energije i na rad koji gas izvrši: Q = ΔU + A.",
+       formula:F.s4, lab:{porastU:"porast unutr. energije", gasRad:"gas vrši rad (širi se)"}},
+      {naziv:"Rad pri širenju gasa",
+       opis:"Kada se gas širi, gura klip i vrši rad nad okolinom. Pri stalnom pritisku rad je proizvod pritiska i promene zapremine — a na p–V dijagramu to je površina ispod krive.",
+       formula:F.s5, lab:{klip:"klip"}},
+      {naziv:"Izoprocesi — energijski bilans",
+       opis:"Svaki izoproces drugačije raspodeljuje energiju. Izohorski: sva toplota ide u ΔU (A=0). Izobarski: deo u ΔU, deo u rad. Izotermski: ΔU=0, sva toplota u rad. Adijabatski: Q=0, rad na račun ΔU.",
+       formula:'izohorski: A=0 &nbsp; izotermski: ΔU=0 &nbsp; adijabatski: Q=0',
+       lab:{faza:["Izohorski (V = const)","Izobarski (p = const)","Izotermski (T = const)","Adijabatski (Q = 0)"],
+            bilans:"energijski bilans"}},
+      {naziv:"Toplotni kapacitet gasova",
+       opis:"Isti gas ima dva kapaciteta. Pri stalnoj zapremini sva toplota ide u ΔU, pa je Cv manji. Pri stalnom pritisku gas još i vrši rad, pa treba više toplote — Cp je veći za R.",
+       formula:F.s7, lab:{vConst:"V = const", pConst:"p = const",
+            cv:"Cᵥ : sva Q → ΔU", cp:"Cₚ : Q → ΔU + A",
+            dole:"Ista dovedena toplota — desno se deo troši na rad, pa temperatura manje poraste."}},
+      {naziv:"Toplotni motori",
+       opis:"Motor uzima toplotu Q₁ sa toplijeg rezervoara, deo pretvara u rad A, a ostatak Q₂ predaje hladnijem. Nijedan motor ne pretvara svu toplotu u rad.",
+       formula:F.s8, lab:{topli:"Topli rezervoar  T₁", hladni:"Hladni rezervoar  T₂",
+            motor:"MOTOR", korisan:"A (koristan rad)"}},
+      {naziv:"Karnoov ciklus",
+       opis:"Idealni kružni proces: dve izoterme i dve adijabate. Ima najveći mogući stepen korisnosti između dve temperature — zavisi samo od T₁ i T₂, ne od radne materije.",
+       formula:F.s9, lab:{seg:["1→2: izotermsko širenje (T₁)","2→3: adijabatsko širenje",
+            "3→4: izotermska kompresija (T₂)","4→1: adijabatska kompresija"],
+            povrsina:"površina = koristan rad A"}}
+    ]
+  },
+  hu:{
+    naslov:"Termodinamika — belső energia, hő és munka",
+    podnaslov:"A belső energiától a Carnot-körfolyamatig. Nézd automatikusan, vagy válassz bármelyik jelenetet kézzel.",
+    brojac:(i,n,naz)=>"Jelenet "+i+"/"+n+" — "+naz,
+    legNaslov:"Színmagyarázat",
+    leg:["U — belső energia","Q — hőmennyiség","A — munka",
+         "T — hőmérséklet","p — nyomás","V — térfogat"],
+    kontrole:{prethodna:"◀ Előző", sledeca:"Következő ▶",
+      pauza:"⏸ Szünet", nastavi:"▶ Folytatás", ponovi:"↺ Újra az elejéről",
+      auto:"● Automatikus", rucni:"○ Kézi",
+      hint:"Billentyűk: ◀ ▶ léptetés, 1–9 ugrás jelenetre"},
+    podnozje:"Az anyag nézhető automatikusan (a jelenetek váltakoznak, a ciklus végtelenül ismétlődik), vagy bármelyik jelenet kézzel kiválasztható — a menüre kattintva, gombokkal, nyilakkal vagy számokkal. A kézi választás szünetelteti az automatikus váltást; az „Auto“ gomb újra bekapcsolja.",
+    scenes:[
+      {naziv:"Belső energia",
+       opis:"A belső energia U a test összes részecskéjének kinetikus és potenciális energiája. Ideális gáznál csak a hőmérséklettől függ. Melegítsd a gázt — a részecskék gyorsulnak, U nő.",
+       formula:F.s1, lab:{gaz:"gáz", uRaste:"U nő", uOpada:"U csökken"}},
+      {naziv:"Hő és munka — két mérték",
+       opis:"Q és A nem „energiafajták“, amelyek a testben tárolódnak. Ez két mértéke a rendszer határán átlépő energiának: Q hőátadással, A munkavégzéssel. A testben csak U van.",
+       formula:'Q &nbsp;és&nbsp; A &rarr; megváltoztatják &nbsp;U',
+       lab:{sistem:"RENDSZER", unutr:"belső energia", toplota:"hő", rad:"munka",
+            granica:"Az energia átlépi a határt — nem „Q-ként lép be“, és nem „A-ként marad“."}},
+      {naziv:"Hőmennyiség és kalorimetria",
+       opis:"A bevitt hő növeli a test hőmérsékletét. Mennyivel — az a tömegtől és a c fajhőtől függ. A C = m·c kapacitás megmutatja, mennyi Q kell 1 K emelkedéshez.",
+       formula:F.s3, lab:{telo:"test (m, c)"}},
+      {naziv:"A termodinamika első főtétele",
+       opis:"Az energiamegmaradás törvénye hőfolyamatokra. A bevitt hő a belső energia növelésére és a gáz által végzett munkára oszlik: Q = ΔU + A.",
+       formula:F.s4, lab:{porastU:"a belső energia nő", gasRad:"a gáz munkát végez (tágul)"}},
+      {naziv:"Munka a gáz tágulásakor",
+       opis:"Amikor a gáz tágul, tolja a dugattyút és munkát végez a környezeten. Állandó nyomáson a munka a nyomás és a térfogatváltozás szorzata — a p–V diagramon ez a görbe alatti terület.",
+       formula:F.s5, lab:{klip:"dugattyú"}},
+      {naziv:"Izofolyamatok — energiamérleg",
+       opis:"Minden izofolyamat másként osztja el az energiát. Izochor: minden hő ΔU-ba megy (A=0). Izobár: egy rész ΔU, egy rész munka. Izoterm: ΔU=0, minden hő munka. Adiabatikus: Q=0, a munka U rovására.",
+       formula:'izochor: A=0 &nbsp; izoterm: ΔU=0 &nbsp; adiabatikus: Q=0',
+       lab:{faza:["Izochor (V = áll.)","Izobár (p = áll.)","Izoterm (T = áll.)","Adiabatikus (Q = 0)"],
+            bilans:"energiamérleg"}},
+      {naziv:"A gázok hőkapacitása",
+       opis:"Ugyanannak a gáznak két hőkapacitása van. Állandó térfogaton minden hő ΔU-ba megy, ezért Cv kisebb. Állandó nyomáson a gáz munkát is végez, így több hő kell — Cp nagyobb R-rel.",
+       formula:F.s7, lab:{vConst:"V = áll.", pConst:"p = áll.",
+            cv:"Cᵥ : minden Q → ΔU", cp:"Cₚ : Q → ΔU + A",
+            dole:"Azonos bevitt hő — jobbra egy rész munkára fordítódik, így a hőmérséklet kevésbé nő."}},
+      {naziv:"Hőerőgépek",
+       opis:"A gép Q₁ hőt vesz fel a melegebb tartályból, egy részét A munkává alakítja, a maradék Q₂-t a hidegebbnek adja. Egyetlen gép sem alakítja át az összes hőt munkává.",
+       formula:F.s8, lab:{topli:"Meleg tartály  T₁", hladni:"Hideg tartály  T₂",
+            motor:"HŐERŐGÉP", korisan:"A (hasznos munka)"}},
+      {naziv:"Carnot-körfolyamat",
+       opis:"Ideális körfolyamat: két izoterma és két adiabata. Két hőmérséklet között a lehető legnagyobb hatásfokú — csak T₁-től és T₂-től függ, nem a munkaközegtől.",
+       formula:F.s9, lab:{seg:["1→2: izoterm tágulás (T₁)","2→3: adiabatikus tágulás",
+            "3→4: izoterm összenyomás (T₂)","4→1: adiabatikus összenyomás"],
+            povrsina:"a terület = hasznos munka A"}}
+    ]
+  }
+};
+
+const BROJ_SCENA = I18N.sr.scenes.length;
+
+/* ============================================================
+   Pomoćne funkcije za crtanje (zajedničke za sve scene)
+   ============================================================ */
+let ctx, W, H;
+const B = CONFIG.boje;
+let aktLab = {};   // oznake tekuće scene na tekućem jeziku (postavlja se pred crtanje)
+
+function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+function easeOut(t){ return 1-Math.pow(1-t,3); }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function trougao(t){ t=t%1; return t<0.5 ? t*2 : 2-t*2; }
+
+function tekst(s,x,y,boja,font,poravnanje){
+  ctx.fillStyle=boja||B.tekst; ctx.font=font||CONFIG.font;
+  ctx.textAlign=poravnanje||"center"; ctx.textBaseline="middle"; ctx.fillText(s,x,y);
+}
+function strelica(x1,y1,x2,y2,boja,debljina){
+  const dx=x2-x1, dy=y2-y1, duz=Math.hypot(dx,dy); if(duz<0.5) return;
+  const ux=dx/duz, uy=dy/duz, g=Math.min(13, duz*0.4);
+  ctx.strokeStyle=boja; ctx.fillStyle=boja; ctx.lineWidth=debljina||3; ctx.lineCap="round";
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*g*0.6,y2-uy*g*0.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-ux*g-uy*g*0.5, y2-uy*g+ux*g*0.5);
+  ctx.lineTo(x2-ux*g+uy*g*0.5, y2-uy*g-ux*g*0.5);
+  ctx.closePath(); ctx.fill();
+}
+function talasStrelica(x1,y1,x2,y2,boja,faza){
+  const dx=x2-x1, dy=y2-y1, duz=Math.hypot(dx,dy);
+  const ux=dx/duz, uy=dy/duz, nx=-uy, ny=ux;
+  ctx.strokeStyle=boja; ctx.lineWidth=3; ctx.lineCap="round"; ctx.beginPath();
+  const kor=22;
+  for(let s=0;s<=duz-14;s+=2){
+    const amp=5*Math.sin(s/kor*Math.PI*2 - faza*4);
+    const px=x1+ux*s+nx*amp, py=y1+uy*s+ny*amp;
+    if(s===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.fillStyle=boja; const g=12;
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-ux*g-nx*g*0.5, y2-uy*g-ny*g*0.5);
+  ctx.lineTo(x2-ux*g+nx*g*0.5, y2-uy*g+ny*g*0.5);
+  ctx.closePath(); ctx.fill();
+}
+function osePV(x0,y0,sir,vis){
+  ctx.strokeStyle=B.osa; ctx.lineWidth=2;
+  strelica(x0,y0, x0,y0-vis, B.osa,2);
+  strelica(x0,y0, x0+sir,y0, B.osa,2);
+  tekst("p",x0-16,y0-vis+4,B.p,CONFIG.font);
+  tekst("V",x0+sir, y0+18,B.V,CONFIG.font);
+  ctx.strokeStyle=B.mreza; ctx.lineWidth=1;
+  for(let i=1;i<=4;i++){
+    const yy=y0-vis*i/5; ctx.beginPath(); ctx.moveTo(x0,yy); ctx.lineTo(x0+sir,yy); ctx.stroke();
+    const xx=x0+sir*i/5; ctx.beginPath(); ctx.moveTo(xx,y0); ctx.lineTo(xx,y0-vis); ctx.stroke();
+  }
+}
+function plamen(cx,cy,sk,faza){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const o=(i-(n-1)/2)*7*sk; const h=(22+8*Math.sin(faza*6+i))*sk;
+    ctx.fillStyle = i%2 ? B.vatra : B.Q; ctx.globalAlpha=0.9;
+    ctx.beginPath(); ctx.moveTo(cx+o-5*sk, cy);
+    ctx.quadraticCurveTo(cx+o, cy-h, cx+o+5*sk, cy); ctx.closePath(); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+function nacrtajGas(x,y,w,h,brzina,gust,faza,cestice){
+  ctx.strokeStyle=B.okvir; ctx.lineWidth=2.5; ctx.fillStyle="rgba(56,189,248,0.05)";
+  ctx.beginPath(); ctx.rect(x,y,w,h); ctx.fill(); ctx.stroke();
+  for(let i=0;i<gust;i++){
+    const s1=Math.sin(i*12.9898)*43758.5453; const r1=s1-Math.floor(s1);
+    const s2=Math.sin(i*78.233)*43758.5453;  const r2=s2-Math.floor(s2);
+    const s3=Math.sin(i*39.421)*43758.5453;  const r3=s3-Math.floor(s3);
+    const vx=(r1-0.5)*brzina, vy=(r2-0.5)*brzina;
+    let px=((r3*w + faza*vx*60)%(w-16)+ (w-16))%(w-16);
+    let py=((r1*h + faza*vy*60)%(h-16)+ (h-16))%(h-16);
+    ctx.fillStyle=cestice||B.T;
+    ctx.beginPath(); ctx.arc(x+8+px, y+8+py, 3.4, 0, Math.PI*2); ctx.fill();
+  }
+}
+function termometar(x,y,vis,punj,labela){
+  const sir=14; ctx.strokeStyle=B.okvir; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.roundRect(x-sir/2,y-vis,sir,vis,7); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x,y+6,13,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle=B.T; ctx.beginPath(); ctx.arc(x,y+6,10,0,Math.PI*2); ctx.fill();
+  const hh=(vis-6)*Math.max(0,Math.min(1,punj));
+  ctx.fillStyle=B.T; ctx.beginPath(); ctx.roundRect(x-4,y-hh,8,hh+10,4); ctx.fill();
+  if(labela) tekst(labela, x, y-vis-14, B.T, CONFIG.font);
+}
+function stub(x,y,w,h,boja,labela){
+  ctx.fillStyle=boja; ctx.beginPath(); ctx.roundRect(x,y,w,h,4); ctx.fill();
+  if(labela){ ctx.fillStyle="#06283d"; tekst(labela, x+w/2, y+h/2, "#06283d", CONFIG.fontVeliki); }
+}
+
+/* ============================================================
+   FUNKCIJE CRTANJA SCENA — koriste aktLab za jezik-zavisne oznake
+   (sama fizika/animacija je ista; prevode se samo tekstovi)
+   ============================================================ */
+const CRTAJ = [
+
+/* Scena 1: Unutrašnja energija */
+function(t){
+  const g=aktLab;
+  const cx=W*0.42, cy=H*0.52, bw=Math.min(W*0.5,360), bh=Math.min(H*0.52,260);
+  const tt=trougao(t/CONFIG.trajanjeScene*0.9);
+  nacrtajGas(cx-bw/2, cy-bh/2, bw, bh, lerp(0.6,2.6,tt), 26, t, B.T);
+  tekst(g.gaz, cx, cy-bh/2-16, B.prig, CONFIG.font);
+  termometar(cx+bw/2+60, cy+bh/2-10, bh-20, tt, "T");
+  const ux=W*0.84;
+  tekst("U", ux, cy-bh/2-16, B.U, CONFIG.fontVeliki);
+  const uh=lerp(40, bh-20, tt);
+  stub(ux-20, cy+bh/2-10-uh, 40, uh, B.U);
+  tekst(tt<0.5?g.uOpada:g.uRaste, ux, cy+bh/2+18, B.prig, CONFIG.font);
+},
+
+/* Scena 2: Toplota i rad — dve mere */
+function(t){
+  const g=aktLab;
+  const cx=W*0.5, cy=H*0.5, bw=Math.min(W*0.32,220), bh=Math.min(H*0.44,210);
+  ctx.strokeStyle=B.okvir; ctx.lineWidth=3; ctx.fillStyle="rgba(245,158,11,0.08)";
+  ctx.beginPath(); ctx.roundRect(cx-bw/2,cy-bh/2,bw,bh,10); ctx.fill(); ctx.stroke();
+  tekst(g.sistem, cx, cy-bh/2+18, B.prig, CONFIG.font);
+  tekst("U", cx, cy, B.U, "700 40px 'Segoe UI',sans-serif");
+  tekst(g.unutr, cx, cy+34, B.prig, "500 12px sans-serif");
+  plamen(cx-bw/2-110, cy+36, 1.1, t);
+  talasStrelica(cx-bw/2-86, cy, cx-bw/2-4, cy, B.Q, t);
+  tekst("Q", cx-bw/2-50, cy-24, B.Q, CONFIG.fontVeliki);
+  tekst(g.toplota, cx-bw/2-50, cy+22, B.prig, "500 11px sans-serif");
+  const pom=8*Math.sin(t*3);
+  strelica(cx+bw/2+90+pom, cy, cx+bw/2+6, cy, B.A, 4);
+  ctx.fillStyle=B.A; ctx.fillRect(cx+bw/2+90+pom, cy-26, 16, 52);
+  tekst("A", cx+bw/2+54, cy-40, B.A, CONFIG.fontVeliki);
+  tekst(g.rad, cx+bw/2+54, cy+40, B.prig, "500 11px sans-serif");
+  tekst(g.granica, cx, cy+bh/2+54, B.prig, "500 13px sans-serif");
+},
+
+/* Scena 3: Kalorimetrija */
+function(t){
+  const g=aktLab;
+  const cx=W*0.42, cy=H*0.54, bw=Math.min(W*0.4,300), bh=Math.min(H*0.46,230);
+  const tt=easeInOut(trougao(t/CONFIG.trajanjeScene));
+  ctx.strokeStyle=B.okvir; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.roundRect(cx-bw/2,cy-bh/2,bw,bh,8); ctx.stroke();
+  const gr=ctx.createLinearGradient(0,cy-bh/2,0,cy+bh/2);
+  gr.addColorStop(0, "rgba(168,85,247,"+(0.25+0.4*tt)+")");
+  gr.addColorStop(1, "rgba(6,182,212,0.25)");
+  ctx.fillStyle=gr; ctx.fillRect(cx-bw/2+4, cy-bh/2+40, bw-8, bh-44);
+  nacrtajGas(cx-bw/2+4, cy-bh/2+40, bw-8, bh-44, lerp(0.5,2.0,tt), 16, t, B.T);
+  tekst(g.telo, cx, cy-bh/2+22, B.prig, CONFIG.font);
+  plamen(cx, cy+bh/2+22, 1.3, t);
+  talasStrelica(cx, cy+bh/2+40, cx, cy+bh/2+8, B.Q, t);
+  tekst("Q", cx+26, cy+bh/2+26, B.Q, CONFIG.fontVeliki);
+  termometar(cx+bw/2+60, cy+bh/2-10, bh-20, tt, "");
+  tekst("ΔT ≈ "+(tt*40).toFixed(0)+" K", cx+bw/2+60, cy-bh/2-26, B.T, CONFIG.font);
+},
+
+/* Scena 4: Prvi princip */
+function(t){
+  const g=aktLab; const cy=H*0.5;
+  const tt=easeInOut(trougao(t/CONFIG.trajanjeScene));
+  const x0=W*0.14, maxH=Math.min(H*0.5,230), Qh=maxH;
+  tekst("Q", x0+30, cy-Qh/2-28, B.Q, CONFIG.fontVeliki);
+  stub(x0, cy-Qh/2, 60, Qh, B.Q, "Q");
+  strelica(x0+70, cy, x0+140, cy, B.prig, 3);
+  const x1=W*0.5, udeoU=lerp(0.35,0.65,tt), hU=Qh*udeoU, hA=Qh*(1-udeoU);
+  stub(x1, cy-Qh/2, 70, hU, B.U, "ΔU");
+  stub(x1, cy-Qh/2+hU+6, 70, hA-6, B.A, "A");
+  tekst(g.porastU, x1+120, cy-Qh/2+hU/2, B.prig, "500 12px sans-serif","left");
+  tekst(g.gasRad, x1+120, cy-Qh/2+hU+hA/2, B.prig, "500 12px sans-serif","left");
+  const px=W*0.8, cbh=120, cbw=70;
+  ctx.strokeStyle=B.okvir; ctx.lineWidth=2.5; ctx.strokeRect(px-cbw/2, cy-cbh/2, cbw, cbh);
+  const klip=lerp(0,-40,tt);
+  nacrtajGas(px-cbw/2+2, cy-cbh/2+40+ -klip, cbw-4, cbh-44+klip, lerp(0.6,2,tt),10,t,B.T);
+  ctx.fillStyle=B.A; ctx.fillRect(px-cbw/2-2, cy-cbh/2+34-klip, cbw+4, 12);
+  strelica(px, cy-cbh/2+20-klip, px, cy-cbh/2-14-klip, B.A, 3);
+},
+
+/* Scena 5: Rad pri širenju gasa */
+function(t){
+  const g=aktLab;
+  const tt=easeInOut(trougao(t/CONFIG.trajanjeScene));
+  const cx=W*0.26, cy=H*0.5, cw=Math.min(W*0.2,150), chMax=Math.min(H*0.5,220);
+  ctx.strokeStyle=B.okvir; ctx.lineWidth=3;
+  const gasH=lerp(chMax*0.4, chMax, tt);
+  ctx.strokeRect(cx-cw/2, cy+chMax/2-gasH, cw, gasH);
+  nacrtajGas(cx-cw/2+2, cy+chMax/2-gasH+2, cw-4, gasH-4, 1.6, 16, t, B.T);
+  ctx.fillStyle=B.A; ctx.fillRect(cx-cw/2-4, cy+chMax/2-gasH-14, cw+8, 14);
+  strelica(cx, cy+chMax/2-gasH-20, cx, cy+chMax/2-gasH-52, B.A, 3);
+  tekst(g.klip, cx+cw/2+26, cy+chMax/2-gasH-6, B.A, CONFIG.font,"left");
+  tekst("p", cx, cy+chMax/2-gasH/2, B.p, CONFIG.fontVeliki);
+  const x0=W*0.56, y0=H*0.76, sir=Math.min(W*0.34,300), vis=Math.min(H*0.5,220);
+  osePV(x0,y0,sir,vis);
+  const pY=y0-vis*0.6, v1=x0+sir*0.18, v2=lerp(x0+sir*0.3, x0+sir*0.85, tt);
+  ctx.fillStyle="rgba(59,130,246,0.28)"; ctx.fillRect(v1, pY, v2-v1, y0-pY);
+  ctx.strokeStyle=B.p; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(v1,pY); ctx.lineTo(v2,pY); ctx.stroke();
+  ctx.fillStyle=B.V; ctx.beginPath(); ctx.arc(v2,pY,6,0,Math.PI*2); ctx.fill();
+  tekst("A = p·ΔV", (v1+v2)/2, pY+(y0-pY)/2, "#dbeafe", CONFIG.font);
+  tekst("V₁", v1, y0+16, B.V, CONFIG.font);
+  tekst("V₂", v2, y0+16, B.V, CONFIG.font);
+},
+
+/* Scena 6: Izoprocesi */
+function(t){
+  const g=aktLab;
+  const udeo=t/CONFIG.trajanjeScene;
+  const i=Math.min(3, Math.floor((udeo%1)*4));
+  const lokal=((udeo%1)*4)%1, tt=easeInOut(trougao(lokal));
+  const x0=W*0.14, y0=H*0.8, sir=Math.min(W*0.42,340), vis=Math.min(H*0.56,250);
+  osePV(x0,y0,sir,vis); ctx.lineWidth=3;
+  const vA=x0+sir*0.25, vB=x0+sir*0.78, pA=y0-vis*0.72, pB=y0-vis*0.25;
+  ctx.strokeStyle=B.p; ctx.beginPath(); let tx,ty;
+  if(i===0){ ctx.moveTo(vA,pB); ctx.lineTo(vA, lerp(pB,pA,tt)); tx=vA; ty=lerp(pB,pA,tt); }
+  else if(i===1){ ctx.moveTo(vA,pA); ctx.lineTo(lerp(vA,vB,tt),pA); tx=lerp(vA,vB,tt); ty=pA; }
+  else if(i===2){
+    for(let s=0;s<=tt;s+=0.02){ const vv=lerp(vA,vB,s); const pp=y0-(vis*0.72)*(vA-x0+30)/(vv-x0+30);
+      if(s===0) ctx.moveTo(vv,pp); else ctx.lineTo(vv,pp); }
+    const vv=lerp(vA,vB,tt); tx=vv; ty=y0-(vis*0.72)*(vA-x0+30)/(vv-x0+30);
+  } else {
+    for(let s=0;s<=tt;s+=0.02){ const vv=lerp(vA,vB,s); const pp=y0-(vis*0.72)*Math.pow((vA-x0+30)/(vv-x0+30),1.4);
+      if(s===0) ctx.moveTo(vv,pp); else ctx.lineTo(vv,pp); }
+    const vv=lerp(vA,vB,tt); tx=vv; ty=y0-(vis*0.72)*Math.pow((vA-x0+30)/(vv-x0+30),1.4);
+  }
+  ctx.stroke();
+  ctx.fillStyle=B.V; ctx.beginPath(); ctx.arc(tx,ty,6,0,Math.PI*2); ctx.fill();
+  tekst(g.faza[i], x0+sir/2, y0-vis-16, B.tekst, CONFIG.fontVeliki);
+  const bx=W*0.68, by=H*0.5;
+  const vred=[{Q:1,U:1,A:0},{Q:1,U:0.6,A:0.4},{Q:1,U:0,A:1},{Q:0,U:-1,A:1}][i];
+  function bil(x,v,boja,lab){
+    const h=Math.abs(v)*90;
+    if(v>=0) stub(x, by-h, 48, h, boja, lab);
+    else { stub(x, by, 48, h, boja); tekst(lab,x+24,by+h/2,"#06283d",CONFIG.fontVeliki); }
+  }
+  ctx.strokeStyle=B.mreza; ctx.beginPath(); ctx.moveTo(bx-20,by); ctx.lineTo(bx+200,by); ctx.stroke();
+  bil(bx, vred.Q, B.Q,"Q"); bil(bx+66, vred.U, B.U,"ΔU"); bil(bx+132, vred.A, B.A,"A");
+  tekst(g.bilans, bx+76, by-120, B.prig, "500 12px sans-serif");
+},
+
+/* Scena 7: Toplotni kapacitet gasova */
+function(t){
+  const g=aktLab;
+  const tt=easeInOut(trougao(t/CONFIG.trajanjeScene));
+  const cy=H*0.5, cbh=Math.min(H*0.4,190), cbw=Math.min(W*0.16,120);
+  const lx=W*0.28;
+  ctx.strokeStyle=B.okvir; ctx.lineWidth=3; ctx.strokeRect(lx-cbw/2, cy-cbh/2, cbw, cbh);
+  nacrtajGas(lx-cbw/2+2, cy-cbh/2+2, cbw-4, cbh-4, lerp(0.7,2.4,tt), 16, t, B.T);
+  ctx.fillStyle=B.osa; ctx.fillRect(lx-cbw/2-4, cy-cbh/2-14, cbw+8, 14);
+  for(let k=0;k<6;k++){ ctx.strokeStyle=B.prig; ctx.beginPath();
+    ctx.moveTo(lx-cbw/2+k*20, cy-cbh/2-14); ctx.lineTo(lx-cbw/2+k*20-8, cy-cbh/2-24); ctx.stroke(); }
+  plamen(lx, cy+cbh/2+22, 1.1, t); talasStrelica(lx,cy+cbh/2+40,lx,cy+cbh/2+6,B.Q,t);
+  tekst(g.vConst, lx, cy-cbh/2-38, B.V, CONFIG.font);
+  tekst(g.cv, lx, cy+cbh/2+58, B.prig, "500 12px sans-serif");
+  const rx=W*0.68; ctx.strokeStyle=B.okvir; ctx.lineWidth=3; const pom=lerp(0,36,tt);
+  ctx.strokeRect(rx-cbw/2, cy-cbh/2-pom, cbw, cbh+pom);
+  nacrtajGas(rx-cbw/2+2, cy-cbh/2-pom+2, cbw-4, cbh+pom-4, lerp(0.7,2.4,tt),16,t,B.T);
+  ctx.fillStyle=B.A; ctx.fillRect(rx-cbw/2-4, cy-cbh/2-pom-14, cbw+8, 14);
+  strelica(rx, cy-cbh/2-pom-18, rx, cy-cbh/2-pom-48, B.A, 3);
+  plamen(rx, cy+cbh/2+22, 1.1, t); talasStrelica(rx,cy+cbh/2+40,rx,cy+cbh/2+6,B.Q,t);
+  tekst(g.pConst, rx, cy-cbh/2-pom-58, B.p, CONFIG.font);
+  tekst(g.cp, rx, cy+cbh/2+58, B.prig, "500 12px sans-serif");
+  tekst(g.dole, W*0.5, H*0.92, B.prig, "500 13px sans-serif");
+},
+
+/* Scena 8: Toplotni motori */
+function(t){
+  const g=aktLab; const cx=W*0.5, faza=t;
+  const topY=H*0.16, hladY=H*0.84, rw=Math.min(W*0.5,360), rh=46;
+  ctx.fillStyle="rgba(239,68,68,0.18)"; ctx.strokeStyle=B.Q; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.roundRect(cx-rw/2, topY-rh/2, rw, rh, 8); ctx.fill(); ctx.stroke();
+  tekst(g.topli, cx, topY, B.Q, CONFIG.font);
+  ctx.fillStyle="rgba(6,182,212,0.18)"; ctx.strokeStyle=B.V;
+  ctx.beginPath(); ctx.roundRect(cx-rw/2, hladY-rh/2, rw, rh, 8); ctx.fill(); ctx.stroke();
+  tekst(g.hladni, cx, hladY, B.V, CONFIG.font);
+  const my=H*0.5, R=Math.min(W*0.08,56);
+  ctx.save(); ctx.translate(cx,my); ctx.rotate(faza*2);
+  ctx.strokeStyle=B.U; ctx.lineWidth=4; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.stroke();
+  for(let k=0;k<8;k++){ ctx.rotate(Math.PI/4); ctx.beginPath(); ctx.moveTo(0,R-4); ctx.lineTo(0,R+8); ctx.stroke(); }
+  ctx.restore();
+  tekst(g.motor, cx, my, B.U, CONFIG.font);
+  talasStrelica(cx-40, topY+rh/2, cx-40, my-R, B.Q, faza);
+  tekst("Q₁", cx-72, (topY+my)/2, B.Q, CONFIG.fontVeliki);
+  talasStrelica(cx+40, my+R, cx+40, hladY-rh/2, B.V, faza);
+  tekst("Q₂", cx+72, (my+hladY)/2, B.V, CONFIG.fontVeliki);
+  strelica(cx+R, my, cx+W*0.3, my, B.A, 4);
+  tekst(g.korisan, cx+W*0.3+10, my-16, B.A, CONFIG.font,"left");
+  tekst("η = A / Q₁ < 1", cx+W*0.3+10, my+14, B.prig, CONFIG.font,"left");
+},
+
+/* Scena 9: Karnoov ciklus */
+function(t){
+  const g=aktLab;
+  const x0=W*0.14, y0=H*0.82, sir=Math.min(W*0.5,380), vis=Math.min(H*0.6,270);
+  osePV(x0,y0,sir,vis);
+  const P1={v:x0+sir*0.22, p:y0-vis*0.80};
+  const P2={v:x0+sir*0.52, p:y0-vis*0.66};
+  const P3={v:x0+sir*0.74, p:y0-vis*0.40};
+  const P4={v:x0+sir*0.40, p:y0-vis*0.52};
+  function kriva(A,Bp,boja,alpha){
+    ctx.strokeStyle=boja; ctx.globalAlpha=alpha; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(A.v,A.p);
+    for(let s=0;s<=1;s+=0.04){ ctx.lineTo(lerp(A.v,Bp.v,s), lerp(A.p,Bp.p, easeInOut(s))); }
+    ctx.lineTo(Bp.v,Bp.p); ctx.stroke(); ctx.globalAlpha=1;
+  }
+  kriva(P1,P2,B.Q,0.5); kriva(P2,P3,B.A,0.5); kriva(P3,P4,B.V,0.5); kriva(P4,P1,B.A,0.5);
+  ctx.fillStyle="rgba(59,130,246,0.14)";
+  ctx.beginPath(); ctx.moveTo(P1.v,P1.p); ctx.lineTo(P2.v,P2.p);
+  ctx.lineTo(P3.v,P3.p); ctx.lineTo(P4.v,P4.p); ctx.closePath(); ctx.fill();
+  const odmak=[[0,-16],[14,-12],[14,4],[-16,-2]];
+  [P1,P2,P3,P4].forEach((P,i)=>{
+    ctx.fillStyle=B.prig; ctx.beginPath(); ctx.arc(P.v,P.p,5,0,Math.PI*2); ctx.fill();
+    tekst(String(i+1), P.v+odmak[i][0], P.p+odmak[i][1], B.tekst, CONFIG.font);
+  });
+  const krug=(t/CONFIG.trajanjeScene)%1, seg=Math.floor(krug*4), lok=easeInOut((krug*4)%1);
+  const segs=[[P1,P2],[P2,P3],[P3,P4],[P4,P1]];
+  const A=segs[seg][0], Bp=segs[seg][1];
+  const tx=lerp(A.v,Bp.v,lok), ty=lerp(A.p,Bp.p,easeInOut(lok));
+  ctx.fillStyle=B.U; ctx.beginPath(); ctx.arc(tx,ty,8,0,Math.PI*2); ctx.fill();
+  tekst(g.seg[seg], x0+sir*0.5, y0-vis-16, B.tekst, CONFIG.fontVeliki);
+  tekst(g.povrsina, x0+sir*0.5, y0-vis*0.60, "#bfdbfe","500 12px sans-serif");
+}
+
+];
+
+/* ============================================================
+   Stanje aplikacije i petlja animacije
+   ============================================================ */
+const platno = document.getElementById("platno");
+ctx = platno.getContext("2d");
+
+let LANG = CONFIG.jezik;
+try{ const sp=localStorage.getItem("termo-jezik"); if(sp==="sr"||sp==="hu") LANG=sp; }catch(e){}
+let trenutna = CONFIG.pocetnaScena;
+let auto = CONFIG.autoPlay;
+let pauza = false;
+let sceneVreme = 0;
+let autoTajmer = 0;
+let alfa = 1;
+let prelaz = null;
+
+function uskladiVelicinu(){
+  const okvir=document.getElementById("platno-okvir"); const r=okvir.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1; W=r.width; H=r.height;
+  platno.width=Math.round(W*dpr); platno.height=Math.round(H*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize", uskladiVelicinu);
+
+/* --- Izbornik scena (tekst se gradi iz I18N, zato se obnavlja pri promeni jezika) --- */
+const izbornik=document.getElementById("izbornik");
+let tabovi=[];
+function izgradiTabove(){
+  tabovi.forEach(t=>t.remove());
+  tabovi=[];
+  I18N[LANG].scenes.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.className="tab"; b.textContent=(i+1)+". "+s.naziv;
+    b.addEventListener("click",()=>idiNa(i,true));
+    izbornik.appendChild(b); tabovi.push(b);
+  });
+}
+
+/* --- Legenda (gradi se iz I18N) --- */
+const LEG_BOJE=["var(--boja-U)","var(--boja-Q)","var(--boja-A)","var(--boja-T)","var(--boja-p)","var(--boja-V)"];
+function izgradiLegendu(){
+  const lista=document.getElementById("legenda-lista"); lista.innerHTML="";
+  I18N[LANG].leg.forEach((txt,i)=>{
+    const d=document.createElement("span"); d.className="leg-stavka";
+    d.innerHTML='<span class="leg-boja" style="background:'+LEG_BOJE[i]+'"></span>'+txt;
+    lista.appendChild(d);
+  });
+}
+
+/* --- Ažuriranje panela (naslov, opis, formula) i izbornika --- */
+function osveziPanel(){
+  const s=I18N[LANG].scenes[trenutna];
+  document.getElementById("naslov-scene").textContent=s.naziv;
+  document.getElementById("opis-scene").textContent=s.opis;
+  document.getElementById("formula").innerHTML=s.formula;
+  document.getElementById("brojac").textContent=I18N[LANG].brojac(trenutna+1, BROJ_SCENA, s.naziv);
+  tabovi.forEach((t,i)=>t.classList.toggle("aktivna", i===trenutna));
+  document.getElementById("info").style.opacity=alfa;
+}
+
+/* --- Primeni ceo jezik na statične delove UI --- */
+function primeniJezik(){
+  const L=I18N[LANG];
+  document.documentElement.lang = (LANG==="hu"?"hu":"sr-Latn");
+  document.getElementById("hdr-naslov").textContent=L.naslov;
+  document.getElementById("hdr-podnaslov").textContent=L.podnaslov;
+  document.getElementById("leg-naslov").textContent=L.legNaslov;
+  document.getElementById("dugme-prethodna").textContent=L.kontrole.prethodna;
+  document.getElementById("dugme-sledeca").textContent=L.kontrole.sledeca;
+  document.getElementById("dugme-ponovi").textContent=L.kontrole.ponovi;
+  document.getElementById("nagovestaj").textContent=L.kontrole.hint;
+  document.getElementById("podnozje").textContent=L.podnozje;
+  document.querySelectorAll(".jez").forEach(b=>b.classList.toggle("aktivan", b.dataset.l===LANG));
+  izgradiTabove(); izgradiLegendu(); osveziRezim(); osveziPauzu(); osveziPanel();
+}
+
+/* --- Prelazak na scenu uz glatki fade --- */
+function idiNa(i, rucno){
+  i=((i%BROJ_SCENA)+BROJ_SCENA)%BROJ_SCENA;
+  if(rucno){ auto=false; osveziRezim(); }
+  if(i===trenutna && !prelaz){ return; }
+  prelaz={ka:i, faza:"izlaz"}; autoTajmer=0;
+}
+function sledeca(rucno){ idiNa(trenutna+1, rucno); }
+function prethodna(rucno){ idiNa(trenutna-1, rucno); }
+
+function osveziRezim(){
+  const d=document.getElementById("rezim"); const k=I18N[LANG].kontrole;
+  d.textContent = auto ? k.auto : k.rucni;
+  d.className = "kontrola "+(auto?"auto":"rucni");
+}
+function osveziPauzu(){
+  const k=I18N[LANG].kontrole;
+  document.getElementById("dugme-pauza").textContent = pauza ? k.nastavi : k.pauza;
+}
+
+/* --- Promena jezika --- */
+function postaviJezik(j){
+  if(j!==LANG){ LANG=j; try{ localStorage.setItem("termo-jezik", j); }catch(e){} primeniJezik(); }
+}
+
+/* ============================================================
+   Glavna petlja — requestAnimationFrame sa delta-vremenom
+   ============================================================ */
+let prosli=performance.now();
+function petlja(sada){
+  let dt=(sada-prosli)/1000; prosli=sada; if(dt>0.1) dt=0.1;
+  if(!pauza){
+    sceneVreme += dt;
+    if(auto && !prelaz){ autoTajmer += dt; if(autoTajmer>=CONFIG.trajanjeScene){ sledeca(false); } }
+    if(prelaz){
+      const korak=dt/CONFIG.trajanjePrelaza;
+      if(prelaz.faza==="izlaz"){
+        alfa-=korak;
+        if(alfa<=0){ alfa=0; trenutna=prelaz.ka; sceneVreme=0; autoTajmer=0;
+          prelaz.faza="ulaz"; osveziPanel(); azurirajHash(); }
+      } else { alfa+=korak; if(alfa>=1){ alfa=1; prelaz=null; } }
+      document.getElementById("info").style.opacity=alfa;
+    }
+  }
+  ctx.clearRect(0,0,W,H);
+  ctx.save(); ctx.globalAlpha=alfa;
+  aktLab = I18N[LANG].scenes[trenutna].lab;    // oznake tekuće scene na tekućem jeziku
+  try{ CRTAJ[trenutna](sceneVreme); }catch(e){}
+  ctx.restore();
+  requestAnimationFrame(petlja);
+}
+
+/* --- URL hash (npr. fajl#scena-3) — radi lokalno, bez servera --- */
+function azurirajHash(){ history.replaceState(null,"","#scena-"+(trenutna+1)); }
+function citajHash(){
+  const m=/scena-(\d+)/.exec(location.hash||"");
+  if(m){ const n=parseInt(m[1],10)-1; if(n>=0 && n<BROJ_SCENA){ trenutna=n; } }
+}
+
+/* ============================================================
+   Kontrole i tasteri
+   ============================================================ */
+document.getElementById("dugme-prethodna").addEventListener("click",()=>prethodna(true));
+document.getElementById("dugme-sledeca").addEventListener("click",()=>sledeca(true));
+document.getElementById("dugme-pauza").addEventListener("click",()=>{ pauza=!pauza; prosli=performance.now(); osveziPauzu(); });
+document.getElementById("dugme-ponovi").addEventListener("click",()=>{ sceneVreme=0; autoTajmer=0; });
+document.getElementById("rezim").addEventListener("click",()=>{ auto=!auto; autoTajmer=0; osveziRezim(); });
+document.querySelectorAll(".jez").forEach(b=>b.addEventListener("click",()=>postaviJezik(b.dataset.l)));
+window.addEventListener("keydown",(e)=>{
+  if(e.key==="ArrowRight") sledeca(true);
+  else if(e.key==="ArrowLeft") prethodna(true);
+  else if(e.key>="1" && e.key<="9"){ const n=parseInt(e.key,10)-1; if(n<BROJ_SCENA) idiNa(n,true); }
+  else if(e.key===" "){ e.preventDefault(); document.getElementById("dugme-pauza").click(); }
+});
+window.addEventListener("hashchange",()=>{ citajHash(); idiNa(trenutna,true); });
+
+/* ============================================================
+   Pokretanje
+   ============================================================ */
+citajHash();
+uskladiVelicinu();
+primeniJezik();
+azurirajHash();
+requestAnimationFrame(petlja);
+</script>
+</body>
+</html>
