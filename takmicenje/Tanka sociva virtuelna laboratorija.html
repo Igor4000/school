@@ -1,0 +1,2730 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtuelna optometrijska laboratorija — Tanka sočiva</title>
+<style>
+:root{
+  --bg:#f4f0e7; --panel:#fffdf8; --panel2:#ebe4d4; --ink:#242018; --ink2:#5d5446;
+  --line:#d6cdb8; --line2:#bfb49a; --accent:#1d6b86; --accent2:#a93c2c; --accentbg:#dde9ee;
+  --ok:#2c7a4b; --warn:#9c6209; --bad:#a93c2c; --shadow:0 1px 2px rgba(36,32,24,.09);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a1714; --panel:#232019; --panel2:#2d281f; --ink:#ece5d6; --ink2:#b5ab98;
+    --line:#413a2f; --line2:#564d3f; --accent:#6cb6d2; --accent2:#e0796b; --accentbg:#26323a;
+    --ok:#6ccf94; --warn:#dca040; --bad:#e0796b; --shadow:0 1px 3px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a1714; --panel:#232019; --panel2:#2d281f; --ink:#ece5d6; --ink2:#b5ab98;
+  --line:#413a2f; --line2:#564d3f; --accent:#6cb6d2; --accent2:#e0796b; --accentbg:#26323a;
+  --ok:#6ccf94; --warn:#dca040; --bad:#e0796b; --shadow:0 1px 3px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:16.5px/1.5 "Times New Roman", Times, serif;
+  font-variant-numeric:tabular-nums;
+  -webkit-text-size-adjust:100%;
+}
+.mono,input,select,button,textarea,table,.tag,.rd{
+  font-family:"Times New Roman", Times, serif; font-variant-numeric:tabular-nums;
+}
+h1,h2,h3,h4{margin:0; font-family:"Times New Roman", Times, serif; font-weight:700; text-wrap:balance}
+h1{font-size:1.35rem; letter-spacing:-.01em}
+h2{font-size:1.15rem; margin:0 0 .5rem}
+h3{font-size:1rem; margin:1.2rem 0 .45rem; color:var(--accent)}
+h4{font-size:.92rem; margin:.9rem 0 .35rem}
+p{margin:.55rem 0}
+a{color:var(--accent)}
+.wrap{max-width:1120px; margin:0 auto; padding:0 16px}
+
+/* ---------- zaglavlje ---------- */
+header.top{
+  background:var(--panel); border-bottom:1px solid var(--line);
+  padding:12px 0 10px; position:relative;
+}
+.top-row{display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; justify-content:space-between}
+.sub{color:var(--ink2); font-size:.84rem; margin-top:2px}
+.idbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:.82rem}
+.idbar .tag{
+  background:var(--panel2); border:1px solid var(--line); border-radius:4px;
+  padding:3px 8px; font-size:.78rem; color:var(--ink2);
+}
+.toolbtns{display:flex; gap:6px; flex-wrap:wrap}
+
+/* ---------- navigacija ---------- */
+nav.tabs{
+  position:sticky; top:0; z-index:20; background:var(--panel);
+  border-bottom:1px solid var(--line); box-shadow:var(--shadow);
+}
+.tabrow{display:flex; gap:2px; overflow-x:auto; padding:6px 16px; max-width:1120px; margin:0 auto}
+.tabrow button{
+  flex:0 0 auto; background:transparent; border:1px solid transparent;
+  border-radius:5px 5px 0 0; padding:6px 12px; cursor:pointer;
+  font-size:.88rem; font-weight:700; color:var(--ink2); white-space:nowrap;
+}
+.tabrow button:hover{background:var(--panel2); color:var(--ink)}
+.tabrow button[aria-current="true"]{
+  background:var(--accentbg); color:var(--accent); border-color:var(--line);
+  border-bottom-color:var(--accentbg);
+}
+section.part{display:none; padding:18px 0 60px}
+section.part[data-on="1"]{display:block}
+
+/* ---------- kartice ---------- */
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  padding:14px 16px; margin:12px 0; box-shadow:var(--shadow);
+}
+.card.tight{padding:10px 12px}
+.note{
+  background:var(--accentbg); border-left:3px solid var(--accent);
+  padding:9px 12px; border-radius:0 5px 5px 0; margin:10px 0; font-size:.9rem;
+}
+.note.warn{background:transparent; border-left-color:var(--warn); border:1px solid var(--line); border-left-width:3px}
+.formula{
+  background:var(--panel2); border:1px solid var(--line); border-radius:5px;
+  padding:9px 12px; margin:9px 0; font-size:.93rem; text-align:center;
+}
+.formula .fr{display:inline-block; vertical-align:middle; text-align:center; margin:0 .15em}
+.formula .fr .num{display:block; padding:0 .3em; border-bottom:1px solid currentColor}
+.formula .fr .den{display:block; padding:0 .3em}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ---------- kontrole ---------- */
+button{
+  background:var(--panel2); color:var(--ink); border:1px solid var(--line2);
+  border-radius:5px; padding:5px 11px; font-size:.88rem; font-weight:700; cursor:pointer;
+}
+button:hover{border-color:var(--accent); color:var(--accent)}
+button.pri{background:var(--accent); color:#fff; border-color:var(--accent)}
+button.pri:hover{opacity:.9; color:#fff}
+button.sm{padding:3px 7px; font-size:.74rem}
+button:disabled{opacity:.45; cursor:not-allowed}
+input,select,textarea{
+  background:var(--bg); color:var(--ink); border:1px solid var(--line2);
+  border-radius:4px; padding:4px 6px; font-size:.9rem;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline-offset:-1px}
+input[type=number]{width:86px}
+input.w5{width:62px} input.w7{width:80px} input.w12{width:130px} input.wide{width:100%}
+textarea{width:100%; min-height:90px; line-height:1.5; resize:vertical}
+label.fld{display:inline-flex; flex-direction:column; gap:3px; font-size:.76rem; color:var(--ink2); margin:0 10px 8px 0}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:8px 0}
+.rd{
+  display:inline-block; background:var(--panel2); border:1px solid var(--line);
+  border-radius:4px; padding:3px 9px; font-size:.86rem; font-weight:700; min-width:92px; text-align:center;
+}
+.rd.big{font-size:1.05rem; padding:5px 12px}
+.status{font-size:.82rem; color:var(--ink2); margin:6px 0; min-height:1.2em}
+.status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.bad{color:var(--bad)}
+
+/* ---------- tabele ---------- */
+.tblwrap{overflow-x:auto; margin:10px 0}
+table{border-collapse:collapse; width:100%; font-size:.86rem; font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line); padding:3px 5px; text-align:center}
+thead th{background:var(--panel2); font-weight:700; color:var(--ink2); font-size:.82rem; line-height:1.22}
+thead th.grp{background:var(--accentbg); color:var(--accent)}
+tbody td.lbl{background:var(--panel2); font-weight:700}
+tbody tr:nth-child(even) td{background:rgba(127,127,127,.045)}
+td input{width:100%; min-width:58px; text-align:center; border:none; background:transparent; padding:3px 2px}
+td input:focus{background:var(--bg); outline:1px solid var(--accent)}
+td.calc{background:rgba(29,107,134,.06)}
+.legend{font-size:.76rem; color:var(--ink2); margin:4px 0 0}
+
+/* ---------- instrumenti ---------- */
+svg.instr{display:block; width:100%; height:auto; background:var(--panel2); border:1px solid var(--line); border-radius:6px}
+.stationbar{display:flex; gap:2px; flex-wrap:wrap; margin:4px 0 12px}
+.stationbar button{border-radius:5px; font-size:.76rem}
+.stationbar button[aria-current="true"]{background:var(--accent); color:#fff; border-color:var(--accent)}
+.station{display:none} .station[data-on="1"]{display:block}
+.counter{font-size:.76rem; color:var(--ink2)}
+.counter b{color:var(--accent)}
+
+/* ---------- snimanje ---------- */
+.savebar{
+  display:flex; gap:7px; align-items:center; flex-wrap:wrap;
+  border-top:1px dashed var(--line2); margin-top:16px; padding-top:10px;
+}
+.savebar .lbl{font-size:.76rem; color:var(--ink2); font-weight:700; margin-right:2px}
+.hidden{display:none}
+
+/* ---------- izveštaj ---------- */
+.rep-field{margin:12px 0}
+.rep-field > label{display:block; font-size:.82rem; font-weight:700; color:var(--accent); margin-bottom:4px}
+.rep-hint{font-size:.76rem; color:var(--ink2); margin:0 0 5px; font-style:italic}
+.print-only{display:none}
+.repbox{border:1px solid var(--line); border-radius:6px; padding:14px 16px; background:var(--panel)}
+.rep-head{text-align:center; border-bottom:2px solid var(--ink); padding-bottom:9px; margin-bottom:12px}
+.rep-head h2{font-size:1.2rem; margin:0}
+.rep-meta{display:flex; gap:18px; justify-content:center; font-size:.82rem; color:var(--ink2); margin-top:6px; flex-wrap:wrap}
+
+@media print{
+  @page{size:A4; margin:16mm 14mm}
+  body{background:#fff; color:#000; font:11pt/1.42 "Times New Roman", Times, serif}
+  :root{--panel:#fff; --panel2:#f2f2f2; --ink:#000; --ink2:#333; --line:#999; --line2:#777;
+        --accent:#000; --accent2:#000; --accentbg:#f2f2f2; --shadow:none}
+  header.top, nav.tabs, .savebar, .noprint, button{display:none !important}
+  section.part{display:none !important; padding:0}
+  section#p9{display:block !important}
+  .repbox{border:none; padding:0; box-shadow:none}
+  .card{border:none; box-shadow:none; padding:0; margin:8px 0; break-inside:avoid}
+  textarea{display:none}
+  .print-only{display:block}
+  .pr-text{white-space:pre-wrap; border:1px solid #bbb; border-radius:3px; padding:6px 8px; min-height:1em; background:#fff}
+  table{font-size:9.4pt} th,td{border:1px solid #888}
+  .rep-field{break-inside:avoid}
+  .rep-field.big{break-inside:auto}
+  .rep-hint{display:none}
+  .tblwrap{break-inside:auto}
+  h3{color:#000; border-bottom:1px solid #000; padding-bottom:2px}
+  svg{max-width:100%; height:auto}
+  .pagebreak{break-before:page}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-row">
+    <div>
+      <h1>Virtuelna optometrijska laboratorija</h1>
+      <div class="sub">Tanka sočiva &middot; određivanje moći, oblika, materijala i recepta &middot; uz 4. poglavlje</div>
+    </div>
+    <div class="idbar">
+      <span class="tag" id="tagIme">—</span>
+      <span class="tag" id="tagSet">set —</span>
+      <div class="toolbtns">
+        <button class="sm" onclick="toggleTheme()">tema</button>
+        <button class="sm" onclick="exportAll()">sačuvaj sve</button>
+        <button class="sm" onclick="importAll()">uvezi sve</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tabrow" id="tabrow"></div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ DEO 0 ============ -->
+<section class="part" id="p0">
+  <div class="card">
+    <h2>Deo 0 — Radni list</h2>
+    <p>Upiši svoje ime i broj seta koji si dobila uz kutiju sa sočivima. Broj seta određuje koja su sočiva u kutiji
+       i koji su model-oči na stolu. Isti broj uvek daje isti pribor, pa možeš da nastaviš merenje drugog dana.</p>
+    <div class="row">
+      <label class="fld">ime i prezime
+        <input type="text" id="fIme" class="w12" oninput="setIdent()" placeholder="npr. Ana Nikolić">
+      </label>
+      <label class="fld">broj seta
+        <input type="number" id="fSet" class="w7" min="1" step="1" oninput="setIdent()" placeholder="1–9999">
+      </label>
+      <label class="fld">datum merenja
+        <input type="text" id="fDatum" class="w12" oninput="save()" placeholder="dd.mm.gggg.">
+      </label>
+      <button class="pri" onclick="loadSet()">učitaj pribor</button>
+    </div>
+    <div class="status" id="setStatus">Pribor još nije učitan.</div>
+  </div>
+
+  <div class="card" id="priborCard" style="display:none">
+    <h3>Pribor na stolu</h3>
+    <div class="grid2">
+      <div>
+        <h4>Kutija sa sočivima</h4>
+        <div class="tblwrap"><table id="tblPribor"></table></div>
+        <p class="legend">Jačine, poluprečnici i materijal nisu ispisani — to je ono što treba da izmeriš.
+           Oblik je naveden jer se vidi golim okom.</p>
+      </div>
+      <div>
+        <h4>Model-oči</h4>
+        <div class="tblwrap"><table id="tblOci"></table></div>
+        <p class="legend">Tri model-oka sa nepoznatim dalekim tačkama. Svako ima rožnjaču od koje se meri
+           temena daljina probnog sočiva.</p>
+        <h4>Instrumenti</h4>
+        <p class="legend">Optička klupa 120 cm sa milimetarskom skalom &middot; lensmetar (očitava do 0,01 D)
+           &middot; sferometar sa poluotvorom 10,00 mm (očitava do 0,001 mm) &middot; mikrometar (0,01 mm)
+           &middot; probni okvir sa dva ležišta na razmaku 2,0 mm &middot; set probnih sočiva u koracima od 0,25 D.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Kako se radi</h3>
+    <p>Vežba ima sedam delova posle ovog. Jedan deo merenja sa šest stanica, pet delova obrade, i nalaz.
+       Svaki deo ima svoje dugme za snimanje i uvoz. <b>Snimaj posle svake stanice.</b> Ako izgubiš podatke,
+       uvezeš snimljeni fajl i nastavljaš odatle.</p>
+    <div class="note">
+      Program ne računa umesto tebe. On meri i crta. Sve vergencije, poluprečnike, uvećanja, nagibe i
+      nesigurnosti računaš sama, kalkulatorom, i upisuješ u bela polja. Plavičasta polja su ona koja ti popunjavaš
+      računom; bela sa sivim okvirom su prepisana sa instrumenta.
+    </div>
+    <div class="note warn">
+      Očitavaj pošteno. Ako namestiš ekran „otprilike" i upišeš okrugao broj, grafik u obradi će to pokazati —
+      tačke će bežati sa prave, a nagib neće ispasti onakav kakav fizika nalaže.
+    </div>
+  </div>
+  <div class="savebar" data-save="0"></div>
+</section>
+
+<!-- ============ DEO 1 — MERENJE ============ -->
+<section class="part" id="p1">
+  <div class="card tight">
+    <h2>Deo 1 — Merenje</h2>
+    <div class="stationbar" id="stationbar"></div>
+  </div>
+  <div id="stA" class="station"></div>
+  <div id="stB" class="station"></div>
+  <div id="stC" class="station"></div>
+  <div id="stD" class="station"></div>
+  <div id="stE" class="station"></div>
+  <div id="stF" class="station"></div>
+  <div class="savebar" data-save="1"></div>
+</section>
+
+<section class="part" id="p2"><div id="ob1"></div><div class="savebar" data-save="2"></div></section>
+<section class="part" id="p3"><div id="ob2"></div><div class="savebar" data-save="3"></div></section>
+<section class="part" id="p4"><div id="ob3"></div><div class="savebar" data-save="4"></div></section>
+<section class="part" id="p5"><div id="ob4"></div><div class="savebar" data-save="5"></div></section>
+<section class="part" id="p6"><div id="ob5"></div><div class="savebar" data-save="6"></div></section>
+<section class="part" id="p7"><div id="nom"></div><div class="savebar" data-save="7"></div></section>
+<section class="part" id="p8"><div id="nal"></div><div class="savebar" data-save="8"></div></section>
+<section class="part" id="p9"><div id="izv"></div><div class="savebar noprint" data-save="9"></div></section>
+
+</main>
+
+<input type="file" id="fileIn" accept=".json" class="hidden">
+<script>
+"use strict";
+/* ============================================================
+   VIRTUELNA OPTOMETRIJSKA LABORATORIJA — TANKA SOČIVA
+   Sve je u jednom fajlu, bez ijedne spoljne biblioteke.
+   Konvencija znaka i oznake prate 4. poglavlje skripte.
+   ============================================================ */
+
+var VER = "lab-sociva-1";
+var H_SFER = 0.010;            // poluotvor sferometra, m
+var Y_PRED = 20.0;             // visina predmeta na klupi, mm
+var D_OKVIR = 0.0020;          // razmak ležišta u probnom okviru, m
+var VERTEKSI = [0,4,8,12,16,20,24];   // temene daljine, mm
+
+/* ---------- determinističke „slučajne" vrednosti ---------- */
+function h01(s){ var x = Math.sin(s*12.9898 + 78.233)*43758.5453; return x - Math.floor(x); }
+function rng(s,a,b){ return a + h01(s)*(b-a); }
+function qt(v,st){ return Math.round(v/st)*st; }
+function noise(s,sig){ return (h01(s)+h01(s+0.37)-1)*sig*1.8; }
+/* decimalni zarez: prikaz sa zarezom, a unos prima i zarez i tačku */
+function dsp(v,d){ return (d==null? String(v) : (+v).toFixed(d)).replace(".",","); }
+function pf(v){
+  if(v==null) return NaN;
+  if(typeof v==="number") return v;
+  return parseFloat(String(v).replace(",",".").replace(/\s/g,""));
+}
+
+/* ---------- stanje ---------- */
+var state = null;
+function freshState(){
+  return {
+    ver:VER, ime:"", set:null, datum:"",
+    A:[], B:[], C:[], Ct:[], D:[], E:[], Ef:[], F:[], Fdt:[],
+    o1:{}, o2:{}, o3:{}, o4:{}, o5:{}, o6:{}, nalaz:{}, izvestaj:{},
+    ui:{part:0, station:"A"}
+  };
+}
+var SET = null;   // generisani pribor (sočiva, oči) — nikad se ne snima u fajl
+
+/* ---------- generisanje pribora ---------- */
+function mkLens(id, oblik, n, F1, F2, t_mm){
+  var r1 = (F1!==0) ? (n-1)/F1 : Infinity;
+  var r2 = (F2!==0) ? (1-n)/F2 : Infinity;
+  var t = t_mm/1000;
+  return {
+    id:id, oblik:oblik, n:n, F1:F1, F2:F2, r1:r1, r2:r2, t:t_mm,
+    Ft: F1+F2,                                  // nominalna moć tankog sočiva
+    Fe: F1+F2-(t/n)*F1*F2,                      // ekvivalentna moć (klupa, Njutn)
+    Fv: F2 + F1/(1-(t/n)*F1)                    // temena moć (lensmetar)
+  };
+}
+function sagita(r){
+  if(!isFinite(r)) return 0;
+  var a = Math.abs(r);
+  if(a<=H_SFER) return NaN;
+  return (a - Math.sqrt(a*a - H_SFER*H_SFER))*1000;   // mm, uvek pozitivna
+}
+function buildSet(setNo){
+  var S = setNo*1000, L = [];
+  var n = [1.498,1.586,1.670][Math.floor(h01(S+1)*3)%3];
+
+  var Ft1 = qt(rng(S+2,4,6),0.25), Fa1 = qt(rng(S+3,2.0,3.0),0.25);
+  L.push(mkLens("L1","bikonveksno",n,Fa1,Ft1-Fa1, +rng(S+4,3.0,4.0).toFixed(2)));
+
+  var Ft2 = qt(rng(S+5,12,16),0.25);
+  L.push(mkLens("L2","plankonveksno",n,Ft2,0, +rng(S+6,7.0,9.0).toFixed(2)));
+
+  var Ft3 = qt(rng(S+7,2,4),0.25), Ff3 = qt(rng(S+8,7,9),0.25);
+  L.push(mkLens("L3","pozitivan meniskus",n,Ff3,Ft3-Ff3, +rng(S+9,2.2,3.0).toFixed(2)));
+
+  var Ft4 = qt(rng(S+10,-7,-4),0.25), Fb4 = qt(rng(S+11,5.5,6.5),0.25);
+  L.push(mkLens("L4","negativan meniskus",n,Fb4,Ft4-Fb4, +rng(S+12,1.2,1.8).toFixed(2)));
+
+  var E = S+7000;
+  var oci = [
+    {id:"M1", tip:"miopno oko",       F0: qt(rng(E+1,-10,-7),0.25)},
+    {id:"H1", tip:"hiperopno oko",    F0: qt(rng(E+2,6,8.5),0.25)},
+    {id:"M2", tip:"slabo miopno oko", F0: -2.00}
+  ];
+  oci.forEach(function(o){ o.f0 = 1/o.F0; });   // f'(0) u metrima; miop negativno
+
+  return {broj:setNo, n:n, L:L, oci:oci};
+}
+function lensById(id){ for(var i=0;i<SET.L.length;i++) if(SET.L[i].id===id) return SET.L[i]; return null; }
+function okoById(id){ for(var i=0;i<SET.oci.length;i++) if(SET.oci[i].id===id) return SET.oci[i]; return null; }
+
+/* ---------- pomoćne za prikaz ---------- */
+function el(tag,attrs,txt){
+  var e = document.createElement(tag);
+  if(attrs) for(var k in attrs){
+    if(k==="html") e.innerHTML = attrs[k];
+    else if(k==="cls") e.className = attrs[k];
+    else e.setAttribute(k,attrs[k]);
+  }
+  if(txt!=null) e.textContent = txt;
+  return e;
+}
+function $(id){ return document.getElementById(id); }
+function frac(a,b){ return '<span class="fr"><span class="num">'+a+'</span><span class="den">'+b+'</span></span>'; }
+function stat(id,msg,cls){ var e=$(id); if(!e) return; e.textContent=msg; e.className="status"+(cls?" "+cls:""); }
+
+/* ---------- snimanje ---------- */
+var DELOVI = [
+  {k:0, naziv:"Radni list",   polja:["ime","set","datum"]},
+  {k:1, naziv:"Merenje",      polja:["A","B","C","Ct","D","E","Ef","F","Fdt"]},
+  {k:2, naziv:"Obrada I",     polja:["o1"]},
+  {k:3, naziv:"Obrada II",    polja:["o2"]},
+  {k:4, naziv:"Obrada III",   polja:["o3"]},
+  {k:5, naziv:"Obrada IV",    polja:["o4"]},
+  {k:6, naziv:"Obrada V",     polja:["o5"]},
+  {k:7, naziv:"Obrada VI",    polja:["o6"]},
+  {k:8, naziv:"Nalaz",        polja:["nalaz"]},
+  {k:9, naziv:"Izveštaj",     polja:["izvestaj"]}
+];
+/* kada se obrise red merenja, mora otici i red koji je iz njega izracunat */
+var VEZE = {A:"o1", E:"o3", D:"o4", F:"o5"};
+function obrisiVezano(veza, i){
+  var k = VEZE[veza]; if(!k) return false;
+  var st = state[k] && state[k].r;
+  if(Array.isArray(st) && i < st.length){ st.splice(i,1); return true; }
+  return false;
+}
+function imaIzracunato(veza, i){
+  var k = VEZE[veza]; if(!k) return false;
+  var st = state[k] && state[k].r;
+  if(!Array.isArray(st) || i >= st.length) return false;
+  var red = st[i] || {};
+  for(var q in red){ if(red[q]!=null && String(red[q]).trim()!=="") return true; }
+  return false;
+}
+function suma(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h.toString(36); }
+function paketDela(k){
+  var d = DELOVI[k], o = {ver:VER, deo:k, naziv:d.naziv, set:state.set, ime:state.ime, podaci:{}};
+  d.polja.forEach(function(p){ o.podaci[p] = state[p]; });
+  o.suma = suma(JSON.stringify(o.podaci));
+  return o;
+}
+function skiniFajl(obj, ime){
+  var blob = new Blob([JSON.stringify(obj,null,1)], {type:"application/json"});
+  var a = el("a"); a.href = URL.createObjectURL(blob); a.download = ime;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+function imeFajla(k){
+  var s = (state.set!=null? "set"+state.set : "set-x");
+  var im = (state.ime||"").trim().split(/\s+/).join("-").toLowerCase() || "ucenik";
+  return "sociva_"+im+"_"+s+"_deo"+k+".json";
+}
+function exportDeo(k){
+  if(state.set==null){ alert("Prvo učitaj pribor u Delu 0."); return; }
+  skiniFajl(paketDela(k), imeFajla(k));
+  stat("sv"+k, "Snimljeno: "+imeFajla(k), "ok");
+}
+function exportAll(){
+  if(state.set==null){ alert("Prvo učitaj pribor u Delu 0."); return; }
+  var o = {ver:VER, deo:"sve", set:state.set, ime:state.ime, podaci:{}};
+  DELOVI.forEach(function(d){ d.polja.forEach(function(p){ o.podaci[p]=state[p]; }); });
+  o.suma = suma(JSON.stringify(o.podaci));
+  skiniFajl(o, imeFajla("-sve"));
+}
+function citajFajl(cb){
+  var inp = $("fileIn");
+  inp.value = "";
+  inp.onchange = function(){
+    var f = inp.files[0]; if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      var o; try{ o = JSON.parse(r.result); }catch(e){ alert("Fajl nije ispravan JSON."); return; }
+      cb(o,f.name);
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+function proveriPaket(o, ocekivaniDeo){
+  if(!o || o.ver!==VER) return "Fajl je iz druge verzije vežbe.";
+  if(ocekivaniDeo!=null && o.deo!==ocekivaniDeo)
+    return "Ovo je snimak dela „"+(o.naziv||o.deo)+"“, a uvoziš u deo „"+DELOVI[ocekivaniDeo].naziv+"“.";
+  if(state.set!=null && o.set!=null && o.set!==state.set)
+    return "Taj snimak je za set "+o.set+", a ti radiš set "+state.set+".";
+  if(o.suma && o.suma!==suma(JSON.stringify(o.podaci))) return "Podaci u fajlu su oštećeni.";
+  return null;
+}
+function importDeo(k){
+  citajFajl(function(o){
+    var greska = proveriPaket(o, k);
+    if(greska){ stat("sv"+k, greska, "bad"); return; }
+    for(var p in o.podaci) state[p] = o.podaci[p];
+    if(o.set!=null && state.set==null){ state.set=o.set; state.ime=o.ime||""; }
+    save(); primeniStanje();
+    stat("sv"+k, "Uvezeno "+(o.naziv||("deo "+k))+".", "ok");
+  });
+}
+function importAll(){
+  citajFajl(function(o){
+    if(!o || o.ver!==VER){ alert("Fajl je iz druge verzije vežbe."); return; }
+    if(o.suma && o.suma!==suma(JSON.stringify(o.podaci))){ alert("Podaci u fajlu su oštećeni."); return; }
+    for(var p in o.podaci) state[p] = o.podaci[p];
+    if(o.set!=null) state.set = o.set;
+    if(o.ime) state.ime = o.ime;
+    save(); primeniStanje();
+    alert("Uvezeni su svi delovi.");
+  });
+}
+function csvIzvoz(naziv, zaglavlje, redovi){
+  var t = zaglavlje.join(";")+"\n" + redovi.map(function(r){ return r.join(";"); }).join("\n");
+  var blob = new Blob(["﻿"+t], {type:"text/csv;charset=utf-8"});
+  var a = el("a"); a.href=URL.createObjectURL(blob); a.download=naziv;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
+}
+
+/* ---------- lokalno pamćenje (pomoćno, ne glavno) ---------- */
+function save(){
+  try{ localStorage.setItem("lab-sociva-v1", JSON.stringify(state)); }catch(e){}
+}
+function load(){
+  try{
+    var s = localStorage.getItem("lab-sociva-v1");
+    if(s){ var o = JSON.parse(s); if(o && o.ver===VER) return o; }
+  }catch(e){}
+  return null;
+}
+
+/* ---------- navigacija ---------- */
+function gradiTabove(){
+  var tr = $("tabrow");
+  tr.innerHTML = "";
+  var imena = ["0 · Radni list","1 · Merenje","2 · Obrada I","3 · Obrada II","4 · Obrada III",
+               "5 · Obrada IV","6 · Obrada V","7 · Nomogram","8 · Nalaz","9 · Izveštaj"];
+  imena.forEach(function(nm,i){
+    var b = el("button",{type:"button"},nm);
+    b.onclick = function(){ idiNa(i); };
+    tr.appendChild(b);
+  });
+  DELOVI.forEach(function(d){
+    var bar = document.querySelector('.savebar[data-save="'+d.k+'"]');
+    if(!bar) return;
+    bar.innerHTML = "";
+    bar.appendChild(el("span",{cls:"lbl"},"Deo "+d.k+":"));
+    var b1 = el("button",{type:"button"},"sačuvaj ovaj deo"); b1.onclick=function(){ exportDeo(d.k); };
+    var b2 = el("button",{type:"button"},"uvezi ovaj deo");  b2.onclick=function(){ importDeo(d.k); };
+    bar.appendChild(b1); bar.appendChild(b2);
+    bar.appendChild(el("span",{cls:"status",id:"sv"+d.k}));
+  });
+}
+function idiNa(i){
+  state.ui.part = i;
+  for(var k=0;k<=9;k++){ var s=$("p"+k); if(s) s.setAttribute("data-on", k===i?"1":"0"); }
+  var bs = $("tabrow").children;
+  for(var j=0;j<bs.length;j++) bs[j].setAttribute("aria-current", j===i?"true":"false");
+  if(bs[i] && bs[i].scrollIntoView){
+    try{ bs[i].scrollIntoView({block:"nearest", inline:"center"}); }catch(e){}
+  }
+  window.scrollTo(0,0);
+  save();
+  if(i>=2) osveziDeo(i);
+}
+function toggleTheme(){
+  var r = document.documentElement;
+  var cur = r.getAttribute("data-theme");
+  var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  var sada = cur ? cur : (dark?"dark":"light");
+  r.setAttribute("data-theme", sada==="dark"?"light":"dark");
+  try{ localStorage.setItem("lab-sociva-tema", r.getAttribute("data-theme")); }catch(e){}
+  setTimeout(function(){ if(state && state.set!=null) osveziSve(); }, 30);
+}
+
+/* ---------- identifikacija i učitavanje pribora ---------- */
+function setIdent(){
+  state.ime = $("fIme").value;
+  save();
+}
+function loadSet(){
+  var v = parseInt($("fSet").value,10);
+  if(!(v>0)){ stat("setStatus","Upiši broj seta — ceo broj veći od nule.","warn"); return; }
+  if(!$("fIme").value.trim()){ stat("setStatus","Upiši i svoje ime, ono ide na izveštaj.","warn"); return; }
+  if(state.set!=null && state.set!==v){
+    if(!confirm("Već radiš set "+state.set+". Prelazak na set "+v+" briše sva dosadašnja merenja. Nastaviti?")) return;
+    var im=$("fIme").value, dt=$("fDatum").value;
+    state = freshState(); state.ime=im; state.datum=dt;
+  }
+  state.set = v; state.ime = $("fIme").value; state.datum = $("fDatum").value;
+  SET = buildSet(v);
+  prikaziPribor();
+  save();
+  gradiSve();
+  stat("setStatus","Pribor za set "+v+" je na stolu. Idi na Deo 1.","ok");
+}
+function prikaziPribor(){
+  $("priborCard").style.display = "";
+  $("tagIme").textContent = state.ime || "—";
+  $("tagSet").textContent = "set " + state.set;
+  var t = $("tblPribor");
+  t.innerHTML = "<thead><tr><th>oznaka</th><th>oblik</th><th>jačina</th><th>materijal</th></tr></thead>";
+  var tb = el("tbody");
+  SET.L.forEach(function(L){
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},L.id));
+    tr.appendChild(el("td",null,L.oblik));
+    tr.appendChild(el("td",null,"nepoznata"));
+    tr.appendChild(el("td",null,"nepoznat"));
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+
+  var o = $("tblOci");
+  o.innerHTML = "<thead><tr><th>oznaka</th><th>opis</th><th>daleka tačka</th></tr></thead>";
+  var ob = el("tbody");
+  SET.oci.forEach(function(E){
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},E.id));
+    tr.appendChild(el("td",null,E.tip));
+    tr.appendChild(el("td",null,"nepoznata"));
+    ob.appendChild(tr);
+  });
+  o.appendChild(ob);
+}
+
+/* ---------- SVG alat ---------- */
+var NS = "http://www.w3.org/2000/svg";
+function sv(tag,attrs){
+  var e = document.createElementNS(NS,tag);
+  for(var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function svTxt(p,x,y,s,size,fill,anchor,weight){
+  var t = sv("text",{x:x,y:y,"font-size":size||10,fill:fill||"var(--ink2)",
+             "text-anchor":anchor||"middle","font-family":"Times New Roman, Times, serif"});
+  if(weight) t.setAttribute("font-weight",weight);
+  t.textContent = s; p.appendChild(t); return t;
+}
+
+/* ---------- grafik (samo crta, ništa ne računa) ---------- */
+function crtajGrafik(svg, serije, xlab, ylab, opt){
+  opt = opt || {};
+  svg.innerHTML = "";
+  var W=680, Hh=390, pad={l:66,r:18,t:16,b:46};
+  svg.setAttribute("viewBox","0 0 "+W+" "+Hh);
+  var pts = [];
+  serije.forEach(function(s){ s.tacke.forEach(function(p){ if(isFinite(p[0])&&isFinite(p[1])) pts.push(p); }); });
+  if(pts.length<2){ svTxt(svg,W/2,Hh/2,"Nema dovoljno upisanih vrednosti za grafik.",12,"var(--ink2)"); return; }
+  var xs=pts.map(function(p){return p[0];}), ys=pts.map(function(p){return p[1];});
+  var x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
+  var y0=Math.min.apply(null,ys), y1=Math.max.apply(null,ys);
+  if(opt.nulaX){ x0=Math.min(x0,0); x1=Math.max(x1,0); }
+  if(opt.nulaY){ y0=Math.min(y0,0); y1=Math.max(y1,0); }
+  var mx=(x1-x0)||1, my=(y1-y0)||1;
+  x0-=mx*0.08; x1+=mx*0.08; y0-=my*0.10; y1+=my*0.10;
+  var pw=W-pad.l-pad.r, ph=Hh-pad.t-pad.b;
+  function X(v){ return pad.l+(v-x0)/(x1-x0)*pw; }
+  function Y(v){ return pad.t+ph-(v-y0)/(y1-y0)*ph; }
+  function korak(r){ var g=Math.pow(10,Math.floor(Math.log(r/5)/Math.LN10)); var c=[1,2,2.5,5,10];
+    for(var i=0;i<c.length;i++){ if(g*c[i]>=r/8) return g*c[i]; } return g*10; }
+  var kx=korak(x1-x0), ky=korak(y1-y0);
+  for(var v=Math.ceil(x0/kx)*kx; v<=x1; v+=kx){
+    svg.appendChild(sv("line",{x1:X(v),y1:pad.t,x2:X(v),y2:pad.t+ph,stroke:"var(--line)","stroke-width":.7}));
+    svTxt(svg,X(v),pad.t+ph+16,dsp(+v.toFixed(6)),9.5);
+  }
+  for(var w=Math.ceil(y0/ky)*ky; w<=y1; w+=ky){
+    svg.appendChild(sv("line",{x1:pad.l,y1:Y(w),x2:pad.l+pw,y2:Y(w),stroke:"var(--line)","stroke-width":.7}));
+    svTxt(svg,pad.l-7,Y(w)+3.5,dsp(+w.toFixed(6)),9.5,"var(--ink2)","end");
+  }
+  if(x0<0&&x1>0) svg.appendChild(sv("line",{x1:X(0),y1:pad.t,x2:X(0),y2:pad.t+ph,stroke:"var(--ink2)","stroke-width":1.2}));
+  if(y0<0&&y1>0) svg.appendChild(sv("line",{x1:pad.l,y1:Y(0),x2:pad.l+pw,y2:Y(0),stroke:"var(--ink2)","stroke-width":1.2}));
+  svg.appendChild(sv("rect",{x:pad.l,y:pad.t,width:pw,height:ph,fill:"none",stroke:"var(--line2)","stroke-width":1}));
+  svTxt(svg,pad.l+pw/2,Hh-10,xlab,11,"var(--ink)");
+  var yl = svTxt(svg,0,0,ylab,11,"var(--ink)");
+  yl.setAttribute("transform","translate(16,"+(pad.t+ph/2)+") rotate(-90)");
+  var boje=["var(--accent2)","var(--accent)","var(--ok)","var(--warn)"];
+  serije.forEach(function(s,si){
+    var b = s.boja || boje[si%boje.length];
+    s.tacke.forEach(function(p){
+      if(!isFinite(p[0])||!isFinite(p[1])) return;
+      if(s.kvadrat) svg.appendChild(sv("rect",{x:X(p[0])-3.6,y:Y(p[1])-3.6,width:7.2,height:7.2,fill:b,stroke:"var(--panel)","stroke-width":1}));
+      else svg.appendChild(sv("circle",{cx:X(p[0]),cy:Y(p[1]),r:4,fill:b,stroke:"var(--panel)","stroke-width":1}));
+    });
+  });
+  if(serije.length>1){
+    var lx=pad.l+10, ly=pad.t+14;
+    serije.forEach(function(s,si){
+      var b=s.boja||boje[si%boje.length];
+      svg.appendChild(sv("circle",{cx:lx,cy:ly-3.5,r:4,fill:b}));
+      svTxt(svg,lx+9,ly,s.naziv,10,"var(--ink)","start");
+      ly+=15;
+    });
+  }
+  /* pomoćne prave koje ne nose rezultat, samo služe za poređenje */
+  (opt.pomocne||[]).forEach(function(pr){
+    if(pr.tip==="dijagonala"){
+      var a=Math.max(x0,y0), bb=Math.min(x1,y1);
+      if(bb>a) svg.appendChild(sv("line",{x1:X(a),y1:Y(a),x2:X(bb),y2:Y(bb),
+        stroke:"var(--ink2)","stroke-width":1,"stroke-dasharray":"5 4",opacity:.55}));
+    } else if(pr.tip==="vodoravna"){
+      if(pr.y>=y0 && pr.y<=y1){
+        svg.appendChild(sv("line",{x1:pad.l,y1:Y(pr.y),x2:pad.l+pw,y2:Y(pr.y),
+          stroke:"var(--warn)","stroke-width":1,"stroke-dasharray":"5 4",opacity:.8}));
+        svTxt(svg,pad.l+pw-4,Y(pr.y)-4,pr.oznaka||"",9,"var(--warn)","end");
+      }
+    }
+  });
+  svg.__map = {X:X, Y:Y, pad:pad, pw:pw, ph:ph, x0:x0, x1:x1, y0:y0, y1:y1,
+    iX:function(px){ return x0+(px-pad.l)/pw*(x1-x0); },
+    iY:function(py){ return y0+(pad.t+ph-py)/ph*(y1-y0); }};
+  if(opt.oc) crtajPravu(svg, opt.oc);
+}
+
+/* ---------- prava kroz tačke i očitavanje sa nje ---------- */
+function ocitajY(oc, x){
+  if(oc.ax==null || oc.bx==null || oc.ax===oc.bx) return NaN;
+  return oc.ay + (oc.by-oc.ay)*(x-oc.ax)/(oc.bx-oc.ax);
+}
+function ocitajX(oc, y){
+  if(oc.ax==null || oc.by==null || oc.ay===oc.by) return NaN;
+  return oc.ax + (oc.bx-oc.ax)*(y-oc.ay)/(oc.by-oc.ay);
+}
+function crtajPravu(svg, oc){
+  var m = svg.__map; if(!m) return;
+  if(oc.ax==null || !isFinite(oc.ax)){
+    oc.ax = m.x0+(m.x1-m.x0)*0.18; oc.ay = m.y0+(m.y1-m.y0)*0.18;
+    oc.bx = m.x0+(m.x1-m.x0)*0.82; oc.by = m.y0+(m.y1-m.y0)*0.82;
+  }
+  if(oc.ax!==oc.bx){
+    var yl = ocitajY(oc,m.x0), yd = ocitajY(oc,m.x1);
+    svg.appendChild(sv("line",{x1:m.X(m.x0),y1:m.Y(yl),x2:m.X(m.x1),y2:m.Y(yd),
+      stroke:"var(--accent)","stroke-width":1.6,opacity:.9}));
+  }
+  [["a",oc.ax,oc.ay],["b",oc.bx,oc.by]].forEach(function(p){
+    var px=m.X(p[1]), py=m.Y(p[2]);
+    svg.appendChild(sv("circle",{cx:px,cy:py,r:7,fill:"var(--panel)",stroke:"var(--accent)","stroke-width":2}));
+    svTxt(svg,px,py+3.5,p[0]==="a"?"A":"B",9,"var(--accent)","middle","700");
+  });
+  function krst(x,y){
+    if(!isFinite(x)||!isFinite(y)) return;
+    var cpx=m.X(x), cpy=m.Y(y);
+    svg.appendChild(sv("line",{x1:cpx,y1:m.pad.t,x2:cpx,y2:m.pad.t+m.ph,
+      stroke:"var(--accent2)","stroke-width":1,"stroke-dasharray":"3 3"}));
+    svg.appendChild(sv("line",{x1:m.pad.l,y1:cpy,x2:m.pad.l+m.pw,y2:cpy,
+      stroke:"var(--accent2)","stroke-width":1,"stroke-dasharray":"3 3"}));
+    svg.appendChild(sv("circle",{cx:cpx,cy:cpy,r:4.5,fill:"var(--accent2)"}));
+  }
+  if(oc.cx!=null && isFinite(oc.cx)) krst(oc.cx, ocitajY(oc,oc.cx));
+  if(oc.cy!=null && isFinite(oc.cy)) krst(ocitajX(oc,oc.cy), oc.cy);
+}
+function omogucPomeranje(svg, oc, posle){
+  if(svg.__drag) return;
+  svg.__drag = true;
+  svg.style.touchAction = "none";
+  svg.style.cursor = "crosshair";
+  var akt = null;
+  function pik(ev){
+    var r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+    return {px:(ev.clientX-r.left)/r.width*vb.width, py:(ev.clientY-r.top)/r.height*vb.height};
+  }
+  svg.addEventListener("pointerdown", function(ev){
+    var m = svg.__map; if(!m || oc.ax==null) return;
+    var p = pik(ev);
+    var da = Math.hypot(p.px-m.X(oc.ax), p.py-m.Y(oc.ay));
+    var db = Math.hypot(p.px-m.X(oc.bx), p.py-m.Y(oc.by));
+    if(Math.min(da,db) > 22) return;
+    akt = (da<=db)?"a":"b";
+    svg.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  });
+  svg.addEventListener("pointermove", function(ev){
+    if(!akt) return;
+    var m = svg.__map, p = pik(ev);
+    var x = Math.max(m.x0, Math.min(m.x1, m.iX(p.px)));
+    var y = Math.max(m.y0, Math.min(m.y1, m.iY(p.py)));
+    if(akt==="a"){ oc.ax=x; oc.ay=y; } else { oc.bx=x; oc.by=y; }
+    if(posle) posle();
+    ev.preventDefault();
+  });
+  function kraj(){ if(akt){ akt=null; save(); } }
+  svg.addEventListener("pointerup", kraj);
+  svg.addEventListener("pointercancel", kraj);
+}
+function tackeIz(redovi, fx_, fy_){
+  var t=[];
+  redovi.forEach(function(r){
+    var a=pf(fx_(r)), b=pf(fy_(r));
+    if(isFinite(a)&&isFinite(b)) t.push([a,b]);
+  });
+  return t;
+}
+</script>
+<script>
+"use strict";
+/* ============================================================
+   DEO 1 — MERNE STANICE
+   ============================================================ */
+
+var STANICE = [
+  {k:"A", naziv:"A · optička klupa"},
+  {k:"B", naziv:"B · lensmetar"},
+  {k:"C", naziv:"C · sferometar i mikrometar"},
+  {k:"D", naziv:"D · probni okvir"},
+  {k:"E", naziv:"E · Njutnove veličine"},
+  {k:"F", naziv:"F · model oka"}
+];
+function gradiStanice(){
+  var bar = $("stationbar"); bar.innerHTML="";
+  STANICE.forEach(function(s){
+    var b = el("button",{type:"button"},s.naziv);
+    b.onclick = function(){ idiStanica(s.k); };
+    bar.appendChild(b);
+  });
+}
+function idiStanica(k){
+  state.ui.station = k;
+  STANICE.forEach(function(s){ $("st"+s.k).setAttribute("data-on", s.k===k?"1":"0"); });
+  var bs = $("stationbar").children;
+  for(var i=0;i<bs.length;i++) bs[i].setAttribute("aria-current", STANICE[i].k===k?"true":"false");
+  save(); osveziStanicu(k);
+}
+function osveziStanicu(k){
+  /* i instrument i tabela, da prikaz uvek odgovara stanju */
+  if(k==="A"){ crtajKlupu("A"); crtajTabeluA(); }
+  if(k==="B"){ crtajLensmetar("B"); crtajTabeluLM("B"); }
+  if(k==="C"){ crtajSferometar(); crtajTabeluC(); }
+  if(k==="D"){ crtajLensmetar("D"); crtajTabeluLM("D"); }
+  if(k==="E"){ crtajKlupu("E"); crtajTabeluE(); }
+  if(k==="F"){ crtajOko(); crtajTabeluF(); }
+}
+
+/* ---------- opšta tabela merenja ---------- */
+function renderTabela(cont, kolone, redovi, naziv, onDel, onEdit, veza){
+  cont.innerHTML = "";
+  var w = el("div",{cls:"tblwrap"});
+  var t = el("table");
+  var thead = el("thead"), tr = el("tr");
+  tr.appendChild(el("th",null,"#"));
+  kolone.forEach(function(k){ tr.appendChild(el("th",{html:k.naziv})); });
+  tr.appendChild(el("th",null,""));
+  thead.appendChild(tr); t.appendChild(thead);
+  var tb = el("tbody");
+  if(!redovi.length){
+    var tr0 = el("tr");
+    tr0.appendChild(el("td",{colspan:kolone.length+2},"— još nema upisanih merenja —"));
+    tb.appendChild(tr0);
+  }
+  redovi.forEach(function(r,i){
+    var trr = el("tr");
+    trr.appendChild(el("td",{cls:"lbl"},String(i+1)));
+    kolone.forEach(function(k){
+      var td = el("td");
+      if(k.unos){
+        td.className = "calc";
+        var inp = el("input",{type:"text",value:(r[k.p]!=null?r[k.p]:""),placeholder:k.ph||""});
+        inp.oninput = function(){ r[k.p] = inp.value; save(); if(onEdit) onEdit(); };
+        td.appendChild(inp);
+      } else {
+        td.textContent = (k.fmt? k.fmt(r[k.p],r) : (r[k.p]!=null? r[k.p] : "—"));
+      }
+      trr.appendChild(td);
+    });
+    var tdx = el("td");
+    var b = el("button",{cls:"sm",type:"button",title:"obriši red"},"×");
+    b.onclick = function(){
+      var upozorenje = "Obrisati "+(i+1)+". merenje?";
+      if(imaIzracunato(veza,i))
+        upozorenje += "\n\nUz taj red već postoje vrednosti koje si izračunala u obradi. I one se brišu, "+
+                      "da ostatak tabele ne bi ostao pomeren.";
+      if(confirm(upozorenje)){ redovi.splice(i,1); obrisiVezano(veza,i); save(); onDel(); }
+    };
+    tdx.appendChild(b); trr.appendChild(tdx);
+    tb.appendChild(trr);
+  });
+  t.appendChild(tb); w.appendChild(t); cont.appendChild(w);
+  var foot = el("div",{cls:"row"});
+  foot.appendChild(el("span",{cls:"counter",html:"upisano: <b>"+redovi.length+"</b>"}));
+  var bc = el("button",{cls:"sm",type:"button"},"CSV");
+  bc.onclick = function(){
+    csvIzvoz(naziv+"_set"+state.set+".csv",
+      ["#"].concat(kolone.map(function(k){return k.naziv.replace(/<[^>]+>/g,"");})),
+      redovi.map(function(r,i){ return [i+1].concat(kolone.map(function(k){ return (r[k.p]!=null?String(r[k.p]).replace(".",","):""); })); }));
+  };
+  foot.appendChild(bc);
+  cont.appendChild(foot);
+}
+
+/* ============================================================
+   STANICA A — OPTIČKA KLUPA
+   ============================================================ */
+var KLUPA = {x0:52,x1:800,cmMin:-100,cmMax:112,osaY:118};
+function cmPx(cm){ return KLUPA.x0 + (cm-KLUPA.cmMin)/(KLUPA.cmMax-KLUPA.cmMin)*(KLUPA.x1-KLUPA.x0); }
+var KLUPA_KRAJ = 108;   /* dokle ekran ima smisla na klupi od 120 cm */
+function opsegKlupe(lid){
+  /* najblizi polozaj predmeta koji jos daje realan lik unutar klupe zavisi od jacine
+     samog sociva, pa se racuna, a ne zadaje unapred */
+  var L = lensById(lid);
+  if(!L) return {min:-95, max:-25};
+  var granica = 100/((100/KLUPA_KRAJ) - L.Fe);        /* negativna vrednost, u cm */
+  var max = Math.floor((granica - 0.5)*2)/2;          /* jos malo unutra, na pola cm */
+  var min = (lid==="L2") ? -32 : -95;
+  if(max <= min) max = min + 5;
+  return {min:min, max:max};
+}
+function likKlupe(lid, l_cm){
+  var L = lensById(lid); if(!L) return null;
+  var Lv = 100/l_cm, Lp = Lv + L.Fe;
+  if(Lp <= 0.02) return {realan:false};
+  var lp = 100/Lp;
+  var M = Lv/Lp;
+  return {realan:true, lp:lp, M:M, yp:M*Y_PRED};
+}
+
+function stanicaA_HTML(){
+  return ''+
+  '<div class="card"><h2>Stanica A — optička klupa</h2>'+
+  '<p>Meriš položaj i veličinu realnog lika za dva plus sočiva. Za svako sočivo uzmi <b>deset položaja predmeta</b>, '+
+  'sama ih biraj unutar dozvoljenog intervala, i rasporedi ih tako da pokriju ceo interval — ne gomilaj ih na jednom kraju. '+
+  'Predmet je uspravna strelica visine <b>y = 20,0 mm</b>.</p>'+
+  '<div class="row">'+
+    '<label class="fld">sočivo<select id="aLens" onchange="aLensChange()"><option value="L1">L1</option><option value="L2">L2</option></select></label>'+
+    '<label class="fld">položaj predmeta l (cm)<input type="text" inputmode="decimal" id="aL" oninput="aSet()"></label>'+
+    '<span class="counter" id="aOpseg"></span>'+
+  '</div>'+
+  '<svg class="instr" id="aSvg" viewBox="0 0 840 230" role="img" aria-label="optička klupa"></svg>'+
+  '<div class="grid2" style="margin-top:12px">'+
+    '<div>'+
+      '<h4>Ekran</h4>'+
+      '<div class="row">'+
+        '<button class="sm" onclick="aScr(-1)">◀◀</button>'+
+        '<button class="sm" onclick="aScr(-0.1)">◀</button>'+
+        '<span class="rd" id="aScrRd">—</span>'+
+        '<button class="sm" onclick="aScr(0.1)">▶</button>'+
+        '<button class="sm" onclick="aScr(1)">▶▶</button>'+
+      '</div>'+
+      '<div class="row">'+
+        '<button class="sm" onclick="aSkan(-1)" id="aSkL">◀ klizaj</button>'+
+        '<button class="sm" onclick="aSkan(1)" id="aSkD">klizaj ▶</button>'+
+        '<label class="fld">brzina<select id="aBrz"><option value="1">×1</option><option value="2">×2</option></select></label>'+
+      '</div>'+
+      '<div class="status" id="aStat">Namesti predmet, pa traži najoštriju sliku.</div>'+
+      '<button class="pri" onclick="aUpisi()">upiši merenje</button>'+
+    '</div>'+
+    '<div>'+
+      '<h4>Pogled na ekran</h4>'+
+      '<svg class="instr" id="aEkran" viewBox="0 0 340 250" role="img" aria-label="slika na ekranu"></svg>'+
+      '<p class="legend">Skala je u milimetrima. Visinu lika y′ očitavaš sama i upisuješ u tabelu — '+
+      'pazi na znak: obrnut lik je negativan.</p>'+
+    '</div>'+
+  '</div>'+
+  '<div id="aTbl"></div>'+
+  '<p class="legend">l i l′ se prepisuju sa klupe onako kako si ih namestila. y′ upisuješ ti.</p>'+
+  '</div>';
+}
+function aLensChange(){
+  state.ui.aLens = $("aLens").value;
+  var o = opsegKlupe(state.ui.aLens);
+  state.ui.aL = Math.round((o.min+o.max)/2*2)/2;
+  state.ui.aScr = 30;
+  $("aL").value = dsp(state.ui.aL,1);
+  $("aOpseg").textContent = "dozvoljeno od "+dsp(o.min,1)+" do "+dsp(o.max,1)+" cm";
+  save(); crtajKlupu("A");
+}
+function aSet(){
+  var o = opsegKlupe(state.ui.aLens||"L1");
+  var v = pf($("aL").value);
+  if(!isFinite(v)) return;
+  v = Math.max(o.min, Math.min(o.max, v));
+  state.ui.aL = v; save(); crtajKlupu("A");
+}
+function aScr(d){
+  state.ui.aScr = Math.max(1, Math.min(110, +((state.ui.aScr||30)+d).toFixed(2)));
+  save(); crtajKlupu("A");
+}
+var skanTajmer = null, skanSmer = 0;
+function aSkan(sm){
+  if(skanSmer===sm){ stopSkan(); return; }
+  stopSkan(); skanSmer = sm;
+  var brz = parseFloat($("aBrz").value)||1, zad = performance.now();
+  function korak(t){
+    var dt=(t-zad)/1000; zad=t;
+    state.ui.aScr = Math.max(1, Math.min(110, state.ui.aScr + sm*6*brz*dt));
+    crtajKlupu("A");
+    skanTajmer = requestAnimationFrame(korak);
+  }
+  skanTajmer = requestAnimationFrame(korak);
+  $("aSkL").textContent = sm===-1?"■ stani":"◀ klizaj";
+  $("aSkD").textContent = sm===1?"■ stani":"klizaj ▶";
+}
+function stopSkan(){
+  if(skanTajmer){ cancelAnimationFrame(skanTajmer); skanTajmer=null; }
+  skanSmer=0; save();
+  if($("aSkL")){ $("aSkL").textContent="◀ klizaj"; $("aSkD").textContent="klizaj ▶"; }
+}
+function aUpisi(){
+  var lid = state.ui.aLens||"L1";
+  var r = likKlupe(lid, state.ui.aL);
+  if(!r || !r.realan){ stat("aStat","Nema realnog lika za ovaj položaj — predmet je unutar žiže.","bad"); return; }
+  state.A.push({soc:lid, l:dsp(state.ui.aL,1), lp:dsp(state.ui.aScr,1), yp:""});
+  save(); crtajTabeluA();
+  stat("aStat","Upisano. Ukupno "+state.A.length+" merenja. Ne zaboravi y′.","ok");
+}
+function crtajTabeluA(){
+  renderTabela($("aTbl"), [
+    {naziv:"sočivo",p:"soc"},
+    {naziv:"l (cm)",p:"l"},
+    {naziv:"l′ (cm)",p:"lp"},
+    {naziv:"y′ (mm) — očitaj",p:"yp",unos:true,ph:"±mm"}
+  ], state.A, "stanicaA_klupa", crtajTabeluA, null, "A");
+}
+
+function crtajKlupu(rezim){
+  var pre = (rezim==="E")?"e":"a";
+  var svg = $(pre+"Svg"); if(!svg) return;
+  var lid = (rezim==="E") ? "L1" : (state.ui.aLens||"L1");
+  var lcm = (rezim==="E") ? (state.ui.eL||-30) : (state.ui.aL||-40);
+  var scr = (rezim==="E") ? (state.ui.eScr||30) : (state.ui.aScr||30);
+  var parSnop = (rezim==="E") && state.ui.eKolim;
+  var L = lensById(lid);
+  svg.innerHTML = "";
+  var oy = KLUPA.osaY;
+
+  for(var cm=-100; cm<=110; cm+=5){
+    var x = cmPx(cm), vel = (cm%25===0);
+    svg.appendChild(sv("line",{x1:x,y1:oy+(vel?9:4),x2:x,y2:oy-(vel?9:4),stroke:"var(--line2)","stroke-width":vel?1.1:.7}));
+    if(vel) svTxt(svg,x,oy+24,String(cm),9.5);
+  }
+  svg.appendChild(sv("line",{x1:KLUPA.x0-14,y1:oy,x2:KLUPA.x1+10,y2:oy,stroke:"var(--line2)","stroke-width":1.3}));
+  svTxt(svg,KLUPA.x1+34,oy+4,"cm",9.5,"var(--ink2)","middle");
+
+  var lx = cmPx(0);
+  svg.appendChild(sv("line",{x1:lx,y1:oy-46,x2:lx,y2:oy+46,stroke:"var(--accent)","stroke-width":3}));
+  [[-46,-35],[46,35]].forEach(function(p){
+    var dx = 6*(p[0]<0?-1:1);
+    svg.appendChild(sv("line",{x1:lx,y1:oy+p[0],x2:lx-dx,y2:oy+p[1],stroke:"var(--accent)","stroke-width":3,"stroke-linecap":"round"}));
+    svg.appendChild(sv("line",{x1:lx,y1:oy+p[0],x2:lx+dx,y2:oy+p[1],stroke:"var(--accent)","stroke-width":3,"stroke-linecap":"round"}));
+  });
+  svTxt(svg,lx,oy-54,lid,10.5,"var(--accent)","middle","700");
+
+  if(parSnop){
+    for(var k=-3;k<=3;k++){
+      if(k===0) continue;
+      var yy = oy + k*11;
+      svg.appendChild(sv("line",{x1:KLUPA.x0,y1:yy,x2:lx,y2:yy,stroke:"var(--accent2)","stroke-width":1.1,opacity:.8}));
+    }
+    svTxt(svg,cmPx(-70),oy-58,"kolimator — paralelan snop",10,"var(--accent2)");
+  } else {
+    var ox = cmPx(lcm), vis = 34;
+    svg.appendChild(sv("line",{x1:ox,y1:oy,x2:ox,y2:oy-vis,stroke:"var(--ink)","stroke-width":2.2}));
+    svg.appendChild(sv("path",{d:"M "+ox+" "+(oy-vis)+" l -5 8 l 10 0 z",fill:"var(--ink)"}));
+    svTxt(svg,ox,oy-vis-9,"predmet  l = "+dsp(lcm,1)+" cm",9.5);
+    svTxt(svg,ox,oy+38,"y = 20,0 mm",8.5);
+  }
+
+  var sx = cmPx(scr);
+  svg.appendChild(sv("rect",{x:sx-3,y:oy-50,width:6,height:68,fill:"var(--panel)",stroke:"var(--ink2)","stroke-width":1.1}));
+  svTxt(svg,sx,oy-58,"ekran  "+dsp(scr,1)+" cm",9.5,"var(--ink)");
+
+  if(rezim==="E" && state.ui.eZiza){
+    var fp = pf(state.ui.eZiza);
+    if(isFinite(fp) && fp>0){
+      [[-fp,"F"],[fp,"F′"]].forEach(function(p){
+        var fxp = cmPx(p[0]);
+        svg.appendChild(sv("line",{x1:fxp,y1:oy-14,x2:fxp,y2:oy+14,stroke:"var(--ok)","stroke-width":2,"stroke-dasharray":"3 2"}));
+        svTxt(svg,fxp,oy-20,p[1],10,"var(--ok)","middle","700");
+      });
+    }
+  }
+  var rd = $(pre+"ScrRd");
+  if(rd) rd.textContent = dsp(scr,1)+" cm";
+  crtajEkran(pre, lid, lcm, scr, parSnop);
+}
+
+function crtajEkran(pre, lid, lcm, scr, parSnop){
+  var svg = $(pre+"Ekran"); if(!svg) return;
+  svg.innerHTML = "";
+  var cx=170, cy=128, L=lensById(lid);
+  if(!L){ svTxt(svg,cx,cy,"Pribor nije učitan.",11); return; }
+
+  var pravo, ypTrue;
+  if(parSnop){ pravo = 100/L.Fe; ypTrue = 0.9; }
+  else {
+    var r = likKlupe(lid, lcm);
+    if(!r.realan){
+      svTxt(svg,cx,cy-14,"Snop i posle sočiva divergira.",11,"var(--warn)");
+      svTxt(svg,cx,cy+6,"Lik je virtuelan — ne pada na ekran.",11,"var(--warn)");
+      svTxt(svg,cx,cy+28,"Pomeri predmet dalje od sočiva.",10);
+      return;
+    }
+    pravo = r.lp; ypTrue = r.yp;
+  }
+  if(pravo>112){
+    svTxt(svg,cx,cy,"Lik pada van klupe.",11,"var(--warn)");
+    svTxt(svg,cx,cy+20,"Pomeri predmet dalje od sočiva.",10);
+    return;
+  }
+
+  var opseg = Math.max(28, Math.abs(ypTrue)*1.45);
+  var pxmm = 96/opseg;
+  svg.appendChild(sv("line",{x1:46,y1:cy,x2:320,y2:cy,stroke:"var(--line)","stroke-width":1}));
+  var korak = opseg>60?20:(opseg>25?10:5);
+  for(var mm=-Math.floor(opseg/korak)*korak; mm<=opseg; mm+=korak){
+    var y = cy - mm*pxmm;
+    svg.appendChild(sv("line",{x1:52,y1:y,x2:62,y2:y,stroke:"var(--ink2)","stroke-width":1}));
+    svTxt(svg,46,y+3.4,String(mm),8.5,"var(--ink2)","end");
+  }
+  for(var m2=-Math.floor(opseg/1)*1; m2<=opseg; m2+=1){
+    var y2 = cy - m2*pxmm;
+    if(Math.abs(y2-cy)<97) svg.appendChild(sv("line",{x1:57,y1:y2,x2:62,y2:y2,stroke:"var(--line2)","stroke-width":.5}));
+  }
+  svTxt(svg,60,16,"mm",9,"var(--ink2)","start");
+
+  var raz = Math.abs(scr - pravo);
+  var zam = Math.min(11, raz*0.55);
+  var g = sv("g",{});
+  if(zam>0.18){
+    var defs = sv("defs",{}), f = sv("filter",{id:pre+"blur",x:"-60%",y:"-60%",width:"220%",height:"220%"});
+    f.appendChild(sv("feGaussianBlur",{stdDeviation:zam.toFixed(2)}));
+    defs.appendChild(f); svg.appendChild(defs);
+    g.setAttribute("filter","url(#"+pre+"blur)");
+  }
+  if(parSnop){
+    g.appendChild(sv("circle",{cx:190,cy:cy,r:Math.max(2.2,2.2+zam*0.5),fill:"var(--accent2)"}));
+  } else {
+    var tipY = cy - ypTrue*pxmm;
+    g.appendChild(sv("line",{x1:190,y1:cy,x2:190,y2:tipY,stroke:"var(--accent2)","stroke-width":3.4}));
+    g.appendChild(sv("path",{d:"M 190 "+tipY+" l -6 "+(8*(ypTrue>=0?1:-1))+" l 12 0 z",fill:"var(--accent2)"}));
+  }
+  svg.appendChild(g);
+
+  var ostro = raz < 0.55;
+  svTxt(svg, cx, 236, ostro? "oštro — očitaj l′ i y′" : "podesi ekran do najoštrije slike",
+        10, ostro?"var(--ok)":"var(--ink2)");
+  if(pre==="a") stat("aStat", ostro? "Slika je oštra. Upiši merenje, pa očitaj y′ sa skale."
+                                   : "Traži najoštriju sliku pomeranjem ekrana.", ostro?"ok":"");
+  if(pre==="e") stat("eStat", ostro? "Slika je oštra. Upiši merenje." : "Traži najoštriju sliku.", ostro?"ok":"");
+}
+
+/* ============================================================
+   STANICA B i D — LENSMETAR
+   ============================================================ */
+function lensmetarCilj(kljuc, pok){
+  /* prava vrednost koju lensmetar pokazuje, sa šumom po pokušaju */
+  var osnovica;
+  if(kljuc.indexOf("+")>0){
+    var d = kljuc.split("+"), La = lensById(d[0]), Lb = lensById(d[1]);
+    osnovica = Lb.Fv + La.Fv/(1 - D_OKVIR*La.Fv);
+  } else {
+    osnovica = lensById(kljuc).Fv;
+  }
+  var sid = 0; for(var i=0;i<kljuc.length;i++) sid += kljuc.charCodeAt(i)*(i+3);
+  return osnovica + noise(state.set*31 + sid*7 + pok*1.7, 0.06);
+}
+function stanicaB_HTML(pre){
+  var naslov = (pre==="B")
+    ? '<h2>Stanica B — lensmetar</h2><p>Lensmetar meri <b>temenu moć</b> sočiva: jačinu merenu od zadnje površine, '+
+      'a to je ono što stoji u receptu. Za svako od četiri sočiva uradi <b>pet nezavisnih očitavanja</b> — '+
+      'svaki put pomeri bubanj sasvim van oštrine pa ga vrati. Tako dobijaš rasip, a ne pet istih brojeva.</p>'
+    : '<h2>Stanica D — probni okvir</h2><p>U probni okvir stavljaš dva sočiva jedno iza drugog, na razmaku od 2,0 mm, '+
+      'i meriš jačinu sklopa lensmetrom. Uzmi <b>osam različitih parova</b> i obavezno uključi parove sa L2 i parove bez njega. '+
+      'Negativno sočivo L4 se ovde i neutralizuje: samo ne pravi realan lik, pa mu se jačina dobija iz sklopa.</p>';
+  var izbor = (pre==="B")
+    ? '<label class="fld">sočivo<select id="bLens" onchange="bLensChange()">'+
+      '<option value="L1">L1</option><option value="L2">L2</option><option value="L3">L3</option><option value="L4">L4</option></select></label>'
+    : '<label class="fld">ležište 1<select id="dA" onchange="bLensChange()">'+
+      '<option value="L1">L1</option><option value="L2">L2</option><option value="L3">L3</option><option value="L4">L4</option></select></label>'+
+      '<label class="fld">ležište 2<select id="dB" onchange="bLensChange()">'+
+      '<option value="L1">L1</option><option value="L2">L2</option><option value="L3">L3</option><option value="L4">L4</option></select></label>';
+  var p = pre.toLowerCase();
+  return '<div class="card">'+naslov+
+  '<div class="row">'+izbor+
+    '<label class="fld">bubanj (D)<input type="text" inputmode="decimal" id="'+p+'Drum" oninput="lmSet(\''+pre+'\')"></label>'+
+    '<button class="sm" onclick="lmNudge(\''+pre+'\',-0.25)">−0,25</button>'+
+    '<button class="sm" onclick="lmNudge(\''+pre+'\',-0.01)">−0,01</button>'+
+    '<button class="sm" onclick="lmNudge(\''+pre+'\',0.01)">+0,01</button>'+
+    '<button class="sm" onclick="lmNudge(\''+pre+'\',0.25)">+0,25</button>'+
+    '<button class="sm" onclick="lmReset(\''+pre+'\')">rasturi oštrinu</button>'+
+  '</div>'+
+  '<div class="grid2">'+
+    '<div><svg class="instr" id="'+p+'Meta" viewBox="0 0 340 250" role="img" aria-label="meta lensmetra"></svg></div>'+
+    '<div>'+
+      '<div class="row"><span class="counter">očitavanje na bubnju</span><span class="rd big" id="'+p+'Rd">—</span></div>'+
+      '<div class="status" id="'+p+'Stat"></div>'+
+      '<button class="pri" onclick="lmUpisi(\''+pre+'\')">upiši očitavanje</button>'+
+      '<p class="legend">Meta je oštra samo kad je bubanj na pravoj jačini. Okreni ga dok krstić ne bude potpuno čist, '+
+      'pa tek onda upiši. Instrument očitava do 0,01 D.</p>'+
+    '</div>'+
+  '</div>'+
+  '<div id="'+p+'Tbl"></div>'+
+  '</div>';
+}
+function lmKljuc(pre){
+  if(pre==="B") return state.ui.bLens||"L1";
+  var a = state.ui.dA||"L1", b = state.ui.dB||"L4";
+  return a+"+"+b;
+}
+function lmPokusaj(pre){
+  var k = lmKljuc(pre);
+  var niz = (pre==="B")? state.B : state.D;
+  var n = 0;
+  niz.forEach(function(r){ if((pre==="B"? r.soc : r.a+"+"+r.b)===k) n++; });
+  return n;
+}
+function bLensChange(){
+  if($("bLens")) state.ui.bLens = $("bLens").value;
+  if($("dA")) state.ui.dA = $("dA").value;
+  if($("dB")) state.ui.dB = $("dB").value;
+  save();
+  lmReset($("bLens")&&document.activeElement===$("bLens")?"B":(state.ui.station==="D"?"D":"B"));
+}
+function lmSet(pre){
+  var p = pre.toLowerCase();
+  var v = pf($(p+"Drum").value);
+  if(!isFinite(v)) return;
+  v = Math.max(-25, Math.min(25, v));
+  state.ui[p+"Drum"] = v; save(); crtajLensmetar(pre);
+}
+function lmNudge(pre,d){
+  var p = pre.toLowerCase();
+  state.ui[p+"Drum"] = +(((state.ui[p+"Drum"]||0)+d).toFixed(2));
+  $(p+"Drum").value = dsp(state.ui[p+"Drum"],2);
+  save(); crtajLensmetar(pre);
+}
+function lmReset(pre){
+  var p = pre.toLowerCase();
+  state.ui[p+"Drum"] = 0;
+  if($(p+"Drum")) $(p+"Drum").value = dsp(0,2);
+  save(); crtajLensmetar(pre);
+}
+function lmUpisi(pre){
+  var p = pre.toLowerCase(), v = state.ui[p+"Drum"];
+  if(v==null){ stat(p+"Stat","Bubanj nije namesten \u2014 okreni ga do ostrine.","warn"); return; }
+  if(pre==="D" && (state.ui.dA||"L1")===(state.ui.dB||"L4")){
+    stat("dStat","Isto so\u010divo ne mo\u017ee da stoji u oba le\u017ei\u0161ta. Izaberi dva razli\u010dita.","warn"); return;
+  }
+  var cilj = lensmetarCilj(lmKljuc(pre), lmPokusaj(pre));
+  if(Math.abs(v-cilj) > 0.05){
+    stat(p+"Stat","Meta još nije oštra — ne upisuj. Dotera bubanj.","warn"); return;
+  }
+  if(pre==="B") state.B.push({soc:state.ui.bLens||"L1", F:dsp(v,2)});
+  else state.D.push({a:state.ui.dA||"L1", b:state.ui.dB||"L4", F:dsp(v,2)});
+  save(); crtajTabeluLM(pre); lmReset(pre);
+  stat(p+"Stat","Upisano. Bubanj je rasturen — namesti ponovo za sledeće očitavanje.","ok");
+}
+function crtajTabeluLM(pre){
+  if(pre==="B"){
+    renderTabela($("bTbl"), [{naziv:"sočivo",p:"soc"},{naziv:"F<sub>v</sub> (D)",p:"F"}],
+      state.B, "stanicaB_lensmetar", function(){ crtajTabeluLM("B"); });
+  } else {
+    renderTabela($("dTbl"), [{naziv:"ležište 1",p:"a"},{naziv:"ležište 2",p:"b"},{naziv:"F<sub>sklop</sub> (D)",p:"F"}],
+      state.D, "stanicaD_okvir", function(){ crtajTabeluLM("D"); }, null, "D");
+  }
+}
+function crtajLensmetar(pre){
+  var p = pre.toLowerCase(), svg = $(p+"Meta");
+  if(!svg || !SET) return;
+  if($(p+"Drum") && state.ui[p+"Drum"]!=null && document.activeElement!==$(p+"Drum"))
+    $(p+"Drum").value = dsp(state.ui[p+"Drum"],2);
+  if(pre==="B" && $("bLens")) $("bLens").value = state.ui.bLens||"L1";
+  if(pre==="D"){ if($("dA")) $("dA").value = state.ui.dA||"L1"; if($("dB")) $("dB").value = state.ui.dB||"L4"; }
+
+  var v = state.ui[p+"Drum"]||0;
+  if(pre==="D" && (state.ui.dA||"L1")===(state.ui.dB||"L4")){
+    svg.innerHTML = "";
+    svTxt(svg,170,110,"U oba le\u017ei\u0161ta je isto so\u010divo.",11,"var(--warn)");
+    svTxt(svg,170,132,"Jedno so\u010divo ne mo\u017ee biti na dva mesta.",10);
+    $(p+"Rd").textContent = "\u2014";
+    stat("dStat","Izaberi dva razli\u010dita so\u010diva.","warn");
+    return;
+  }
+  var cilj = lensmetarCilj(lmKljuc(pre), lmPokusaj(pre));
+  var raz = Math.abs(v-cilj), zam = Math.min(10, raz*2.6);
+  svg.innerHTML = "";
+  svg.appendChild(sv("circle",{cx:170,cy:116,r:96,fill:"var(--panel)",stroke:"var(--line2)","stroke-width":1.5}));
+  var defs = sv("defs",{}), f = sv("filter",{id:p+"lmb",x:"-60%",y:"-60%",width:"220%",height:"220%"});
+  f.appendChild(sv("feGaussianBlur",{stdDeviation:zam.toFixed(2)})); defs.appendChild(f); svg.appendChild(defs);
+  var g = sv("g",{filter:"url(#"+p+"lmb)"});
+  var b = "var(--accent2)";
+  g.appendChild(sv("line",{x1:170,y1:48,x2:170,y2:184,stroke:b,"stroke-width":2.4}));
+  g.appendChild(sv("line",{x1:102,y1:116,x2:238,y2:116,stroke:b,"stroke-width":2.4}));
+  for(var i=-3;i<=3;i++){
+    if(i===0) continue;
+    g.appendChild(sv("line",{x1:170+i*17,y1:104,x2:170+i*17,y2:128,stroke:b,"stroke-width":1.3}));
+    g.appendChild(sv("line",{x1:158,y1:116+i*17,x2:182,y2:116+i*17,stroke:b,"stroke-width":1.3}));
+  }
+  svg.appendChild(g);
+  svg.appendChild(sv("circle",{cx:170,cy:116,r:96,fill:"none",stroke:"var(--line2)","stroke-width":1.5}));
+  $(p+"Rd").textContent = (v>=0?"+":"") + dsp(v,2) + " D";
+  var ostro = raz<0.05;
+  svTxt(svg,170,236, ostro?"meta je oštra":"meta je zamućena", 10, ostro?"var(--ok)":"var(--ink2)");
+  if(!$(p+"Stat").textContent || $(p+"Stat").className.indexOf("ok")<0)
+    stat(p+"Stat", ostro?"Oštro. Možeš da upišeš očitavanje.":"Okreći bubanj dok meta ne postane oštra.", ostro?"ok":"");
+}
+
+/* ============================================================
+   STANICA C — SFEROMETAR I MIKROMETAR
+   ============================================================ */
+function povrsinaInfo(L, koja){
+  var r = (koja==="1")? L.r1 : L.r2;
+  var s = sagita(r);
+  var oblik;
+  if(!isFinite(r)) oblik = "ravna";
+  else if(koja==="1") oblik = (r>0)?"ispupčena":"udubljena";
+  else oblik = (r<0)?"ispupčena":"udubljena";
+  return {r:r, s:s, oblik:oblik};
+}
+function sferCilj(lid, koja, pok){
+  var L = lensById(lid), inf = povrsinaInfo(L,koja);
+  var sid = lid.charCodeAt(1)*13 + (koja==="1"?5:11);
+  if(inf.s === 0) return 0;            /* ravna povrsina: sferometar pokazuje tacno nulu */
+  return Math.max(0, inf.s + noise(state.set*17 + sid*23 + pok*3.1, 0.002));
+}
+function mikroCilj(lid, pok){
+  var L = lensById(lid);
+  return L.t + noise(state.set*19 + lid.charCodeAt(1)*41 + pok*5.3, 0.010);
+}
+function stanicaC_HTML(){
+  return '<div class="card"><h2>Stanica C — sferometar i mikrometar</h2>'+
+  '<p>Sferometar ima prsten poluotvora <b>h = 10,00 mm</b> i merni vrh u sredini. Spuštaš vrh dok ne dodirne staklo; '+
+  'tada očitavaš <b>sagitu s</b>, dubinu kalote, do 0,001 mm. Za svaku površinu uradi <b>tri očitavanja</b>. '+
+  'Mikrometrom izmeri i <b>centralnu debljinu</b> svakog sočiva, po dva puta.</p>'+
+  '<div class="formula">r = '+frac("h² + s²","2 · s")+'</div>'+
+  '<div class="grid2">'+
+    '<div>'+
+      '<div class="row">'+
+        '<label class="fld">sočivo<select id="cLens" onchange="cSel()"><option>L1</option><option>L2</option><option>L3</option><option>L4</option></select></label>'+
+        '<label class="fld">površina<select id="cPov" onchange="cSel()"><option value="1">prednja</option><option value="2">zadnja</option></select></label>'+
+        '<span class="tag" id="cOblik">—</span>'+
+      '</div>'+
+      '<svg class="instr" id="cSvg" viewBox="0 0 340 250" role="img" aria-label="sferometar"></svg>'+
+      '<div class="row">'+
+        '<button class="sm" onclick="cDial(-0.05)">▲▲</button>'+
+        '<button class="sm" onclick="cDial(-0.005)">▲</button>'+
+        '<span class="rd" id="cRd">—</span>'+
+        '<button class="sm" onclick="cDial(0.005)">▼</button>'+
+        '<button class="sm" onclick="cDial(0.05)">▼▼</button>'+
+        '<button class="sm" onclick="cNula()">na nulu</button>'+
+      '</div>'+
+      '<div class="status" id="cStat"></div>'+
+      '<button class="pri" onclick="cUpisi()">upiši sagitu</button>'+
+    '</div>'+
+    '<div>'+
+      '<h4>Mikrometar — centralna debljina</h4>'+
+      '<div class="row">'+
+        '<label class="fld">sočivo<select id="ctLens"><option>L1</option><option>L2</option><option>L3</option><option>L4</option></select></label>'+
+        '<button class="pri" onclick="ctUpisi()">izmeri debljinu</button>'+
+      '</div>'+
+      '<div class="status" id="ctStat">Mikrometar očitava do 0,01 mm.</div>'+
+      '<div id="ctTbl"></div>'+
+    '</div>'+
+  '</div>'+
+  '<div id="cTbl"></div>'+
+  '<p class="legend">Sferometar uvek pokazuje dubinu kao pozitivan broj. Da li je poluprečnik pozitivan ili negativan, '+
+  'zaključuješ iz oblika površine i konvencije znaka iz skripte — to radiš u Obradi II.</p>'+
+  '</div>';
+}
+function cSel(){
+  state.ui.cLens = $("cLens").value; state.ui.cPov = $("cPov").value;
+  state.ui.cDial = 0; save(); crtajSferometar();
+}
+function cDial(d){
+  state.ui.cDial = Math.max(0, Math.min(4, +(((state.ui.cDial||0)+d)).toFixed(4)));
+  save(); crtajSferometar();
+}
+function cNula(){ state.ui.cDial = 0; save(); crtajSferometar(); }
+function cBrojPokusaja(){
+  var lid=state.ui.cLens||"L1", pv=state.ui.cPov||"1", n=0;
+  state.C.forEach(function(r){ if(r.soc===lid && r.pov===(pv==="1"?"prednja":"zadnja")) n++; });
+  return n;
+}
+function cUpisi(){
+  var lid=state.ui.cLens||"L1", pv=state.ui.cPov||"1";
+  var cilj = sferCilj(lid,pv,cBrojPokusaja());
+  var v = state.ui.cDial||0;
+  if(Math.abs(v-cilj) > 0.0026){ stat("cStat","Vrh još ne dodiruje staklo kako treba — dotera dubinu.","warn"); return; }
+  state.C.push({soc:lid, pov:(pv==="1"?"prednja":"zadnja"), oblik:povrsinaInfo(lensById(lid),pv).oblik, s:dsp(v,3)});
+  save(); crtajTabeluC(); cNula();
+  stat("cStat","Upisano. Sada ponovo spusti vrh za sledeće očitavanje.","ok");
+}
+function ctUpisi(){
+  var lid = $("ctLens").value, n=0;
+  state.Ct.forEach(function(r){ if(r.soc===lid) n++; });
+  var v = mikroCilj(lid,n);
+  state.Ct.push({soc:lid, t:dsp(v,2)});
+  save(); crtajTabeluC();
+  stat("ctStat","Izmereno: "+dsp(v,2)+" mm.","ok");
+}
+function crtajTabeluC(){
+  renderTabela($("cTbl"), [{naziv:"sočivo",p:"soc"},{naziv:"površina",p:"pov"},
+    {naziv:"oblik",p:"oblik"},{naziv:"s (mm)",p:"s"}], state.C, "stanicaC_sferometar", crtajTabeluC);
+  renderTabela($("ctTbl"), [{naziv:"sočivo",p:"soc"},{naziv:"t (mm)",p:"t"}],
+    state.Ct, "stanicaC_debljina", crtajTabeluC);
+}
+function crtajSferometar(){
+  var svg=$("cSvg"); if(!svg||!SET) return;
+  $("cLens").value = state.ui.cLens||"L1";
+  $("cPov").value = state.ui.cPov||"1";
+  var L = lensById(state.ui.cLens||"L1");
+  var inf = povrsinaInfo(L, state.ui.cPov||"1");
+  $("cOblik").textContent = "površina je "+inf.oblik;
+  var v = state.ui.cDial||0;
+  $("cRd").textContent = dsp(v,3)+" mm";
+  var cilj = sferCilj(state.ui.cLens||"L1", state.ui.cPov||"1", cBrojPokusaja());
+  var dodir = Math.abs(v-cilj) <= 0.0026;
+
+  svg.innerHTML="";
+  var cx=170, baza=150, poluR=74;
+  svg.appendChild(sv("line",{x1:cx-poluR-26,y1:baza,x2:cx+poluR+26,y2:baza,stroke:"var(--line2)","stroke-width":1}));
+  [-1,1].forEach(function(s){
+    svg.appendChild(sv("line",{x1:cx+s*poluR,y1:baza,x2:cx+s*poluR,y2:baza-10,stroke:"var(--ink2)","stroke-width":2.4}));
+  });
+  svTxt(svg,cx,baza+18,"prsten  2h = 20,00 mm",9.5);
+
+  var ugib = (inf.oblik==="ravna")?0:(inf.oblik==="ispupčena"? -26 : 26);
+  var d = "M "+(cx-poluR)+" "+baza+" Q "+cx+" "+(baza+ugib*1.6)+" "+(cx+poluR)+" "+baza;
+  svg.appendChild(sv("path",{d:d,fill:"none",stroke:"var(--accent)","stroke-width":3}));
+  svTxt(svg,cx,baza+36,"površina: "+inf.oblik,9.5,"var(--accent)");
+
+  var visina = 44 - (v/ (Math.max(cilj,0.001)) )*(ugib===0?10:Math.abs(ugib)*0.9) - (v*8);
+  if(!isFinite(visina)) visina = 44;
+  visina = Math.max(2, Math.min(60, visina));
+  var vrhY = baza + (ugib>0? ugib*0.8 : 0) - visina;
+  svg.appendChild(sv("line",{x1:cx,y1:30,x2:cx,y2:vrhY,stroke:"var(--ink2)","stroke-width":4}));
+  svg.appendChild(sv("path",{d:"M "+cx+" "+(vrhY+7)+" l -4 -7 l 8 0 z",fill:"var(--ink)"}));
+  svg.appendChild(sv("circle",{cx:cx+74,cy:56,r:17,fill:dodir?"var(--ok)":"var(--panel2)",stroke:"var(--line2)","stroke-width":1.4}));
+  svTxt(svg,cx+74,60,dodir?"✓":"·",13,dodir?"#fff":"var(--ink2)");
+  svTxt(svg,cx+74,88,"dodir",8.5);
+  svTxt(svg,cx,224, dodir? "vrh dodiruje staklo — očitaj s" : "spuštaj ili podiži merni vrh",
+        10, dodir?"var(--ok)":"var(--ink2)");
+  if(!dodir) stat("cStat","Spuštaj merni vrh dok lampica dodira ne zasvetli.","");
+}
+</script>
+<script>
+"use strict";
+/* ============================================================
+   STANICA E — NJUTNOVE VELIČINE
+   ============================================================ */
+function stanicaE_HTML(){
+  return '<div class="card"><h2>Stanica E — Njutnove veličine</h2>'+
+  '<p>Ovde se sve meri <b>od žiža</b>, a ne od sočiva. Radi se samo sa sočivom L1, u dva koraka.</p>'+
+  '<h4>Korak 1 — gde su žiže</h4>'+
+  '<p>Uključi kolimator. Kroz sočivo tada prolazi paralelan snop, pa se lik tačke iz beskonačnosti stvara '+
+  'tačno u sekundarnoj žiži. Položaj ekrana na kom je tačka najsitnija je <b>f′</b>. Izmeri tri puta.</p>'+
+  '<div class="row">'+
+    '<button class="sm" onclick="eKolim()" id="eKolBtn">uključi kolimator</button>'+
+    '<button class="pri" onclick="eUpisiF()">upiši f′</button>'+
+    '<span class="counter" id="eFBroj"></span>'+
+  '</div>'+
+  '<div id="eFTbl"></div>'+
+  '<h4>Korak 2 — parovi x i x′</h4>'+
+  '<p>Isključi kolimator i vrati predmet. Upiši srednju vrednost svoje izmerene žižne daljine da bi se markeri '+
+  'F i F′ pojavili na klupi, pa izmeri <b>osam parova</b> položaja predmeta i lika. Rastojanja x i x′ računaš sama u Obradi III.</p>'+
+  '<div class="row">'+
+    '<label class="fld">moja izmerena f′ (cm)<input type="text" inputmode="decimal" id="eZiza" oninput="eZizaSet()"></label>'+
+    '<label class="fld">položaj predmeta l (cm)<input type="text" inputmode="decimal" id="eL" oninput="eLSet()"></label>'+
+    '<span class="counter" id="eOpseg"></span>'+
+  '</div>'+
+  '<svg class="instr" id="eSvg" viewBox="0 0 840 230" role="img" aria-label="optička klupa, Njutn"></svg>'+
+  '<div class="grid2" style="margin-top:12px">'+
+    '<div>'+
+      '<div class="row">'+
+        '<button class="sm" onclick="eScr(-1)">◀◀</button><button class="sm" onclick="eScr(-0.1)">◀</button>'+
+        '<span class="rd" id="eScrRd">—</span>'+
+        '<button class="sm" onclick="eScr(0.1)">▶</button><button class="sm" onclick="eScr(1)">▶▶</button>'+
+      '</div>'+
+      '<div class="status" id="eStat"></div>'+
+      '<button class="pri" onclick="eUpisi()">upiši par</button>'+
+    '</div>'+
+    '<div><svg class="instr" id="eEkran" viewBox="0 0 340 250" role="img" aria-label="slika na ekranu"></svg></div>'+
+  '</div>'+
+  '<div id="eTbl"></div>'+
+  '<div class="note">Dogovor o znaku, isti kao u skripti: <b>x</b> je rastojanje predmeta od primarne žiže F i pozitivno je '+
+  'kad je predmet levo od F. <b>x′</b> je rastojanje lika od sekundarne žiže F′ i pozitivno je kad je lik desno od F′. '+
+  'U tom dogovoru važi x · x′ = f′².</div>'+
+  '</div>';
+}
+function eKolim(){
+  state.ui.eKolim = !state.ui.eKolim;
+  $("eKolBtn").textContent = state.ui.eKolim? "isključi kolimator":"uključi kolimator";
+  save(); crtajKlupu("E");
+}
+function eZizaSet(){ state.ui.eZiza = $("eZiza").value; save(); crtajKlupu("E"); }
+function opsegNjutn(){
+  var o = opsegKlupe("L1");
+  return {min:-70, max:o.max};
+}
+function eLSet(){
+  var v = pf($("eL").value);
+  if(!isFinite(v)) return;
+  var o = opsegNjutn();
+  v = Math.max(o.min, Math.min(o.max, v));
+  state.ui.eL = v; save(); crtajKlupu("E");
+}
+function eScr(d){
+  state.ui.eScr = Math.max(1, Math.min(110, +(((state.ui.eScr||30)+d)).toFixed(2)));
+  save(); crtajKlupu("E");
+}
+function eUpisiF(){
+  var L = lensById("L1"), pravo = 100/L.Fe, scr = state.ui.eScr||30;
+  if(!state.ui.eKolim){ stat("eStat","Prvo uključi kolimator.","warn"); return; }
+  if(Math.abs(scr-pravo) > 0.55){ stat("eStat","Tačka još nije najsitnija — dotera ekran.","warn"); return; }
+  state.Ef.push({fp:dsp(scr,2)});
+  save(); crtajTabeluE();
+  stat("eStat","Upisano f′ = "+dsp(scr,2)+" cm. Pomeri ekran i izmeri ponovo.","ok");
+}
+function eUpisi(){
+  if(state.ui.eKolim){ stat("eStat","Isključi kolimator pre merenja parova.","warn"); return; }
+  var r = likKlupe("L1", state.ui.eL||-30);
+  if(!r.realan){ stat("eStat","Nema realnog lika.","bad"); return; }
+  if(Math.abs((state.ui.eScr||30)-r.lp) > 0.55){ stat("eStat","Slika nije oštra — dotera ekran.","warn"); return; }
+  state.E.push({l:dsp(state.ui.eL,1), lp:dsp(state.ui.eScr,1)});
+  save(); crtajTabeluE();
+  stat("eStat","Upisano. Ukupno "+state.E.length+" parova.","ok");
+}
+function crtajTabeluE(){
+  renderTabela($("eFTbl"), [{naziv:"f′ (cm)",p:"fp"}], state.Ef, "stanicaE_zizna", crtajTabeluE);
+  renderTabela($("eTbl"), [{naziv:"l (cm)",p:"l"},{naziv:"l′ (cm)",p:"lp"}], state.E, "stanicaE_parovi", crtajTabeluE, null, "E");
+  if($("eFBroj")) $("eFBroj").innerHTML = "izmereno f′: <b>"+state.Ef.length+"</b> od 3";
+}
+
+/* ============================================================
+   STANICA F — MODEL OKA I TEMENA DALJINA
+   ============================================================ */
+var DT_TOL = 0.15;   /* dubina ostrine pri trazenju daleke tacke, u dioptrijama */
+function dtOdstupanje(oid, meta_cm){
+  var O = okoById(oid);
+  if(O.F0 >= 0) return Infinity;              /* hiperop nema realnu daleku tacku */
+  return Math.abs(100/meta_cm - 100/(Math.abs(O.f0)*100));
+}
+function trazenaMoc(oid, d_mm){
+  var O = okoById(oid);
+  return 1/(O.f0 + d_mm/1000);
+}
+function stanicaF_HTML(){
+  var opc = SET? SET.oci.map(function(o){ return '<option value="'+o.id+'">'+o.id+' — '+o.tip+'</option>'; }).join("") : "";
+  var dbtn = VERTEKSI.map(function(d){ return '<button class="sm" onclick="fSetD('+d+')" id="fd'+d+'">'+d+' mm</button>'; }).join(" ");
+  return '<div class="card"><h2>Stanica F — model oka i temena daljina</h2>'+
+  '<p>Ovo je primena. Pacijentu se traži jačina sočiva koja mu izoštrava daleku metu. Ali jačina zavisi od toga '+
+  '<b>koliko je sočivo udaljeno od rožnjače</b> — a baš po tome se naočare razlikuju od kontaktnog sočiva. '+
+  'Za svako model-oko izmeri potrebnu jačinu na svih sedam temenih daljina.</p>'+
+  '<div class="row">'+
+    '<label class="fld">model-oko<select id="fOko" onchange="fOkoSet()">'+opc+'</select></label>'+
+    '<span class="counter">temena daljina d:</span> '+dbtn+
+  '</div>'+
+  '<div class="grid2">'+
+    '<div><svg class="instr" id="fSvg" viewBox="0 0 340 250" role="img" aria-label="meta kroz model oka"></svg></div>'+
+    '<div>'+
+      '<div class="row">'+
+        '<span class="counter">probno sočivo</span>'+
+        '<button class="sm" onclick="fPow(-0.25)">−0,25</button>'+
+        '<span class="rd big" id="fRd">—</span>'+
+        '<button class="sm" onclick="fPow(0.25)">+0,25</button>'+
+      '</div>'+
+      '<div class="row"><span class="counter">prazno ležište:</span><button class="sm" onclick="fPraz()">izvadi sočivo</button></div>'+
+      '<div class="status" id="fStat"></div>'+
+      '<button class="pri" onclick="fUpisi()">upiši jačinu</button>'+
+      '<p class="legend">Kofer ima sočiva u koracima od 0,25 D. Dubina oštrine oka je oko 0,12 D, pa je '+
+      'najjače sočivo koje još daje oštru sliku ono koje upisuješ.</p>'+
+    '</div>'+
+  '</div>'+
+  '<div id="fTbl"></div>'+
+  '<h4>Daleka tačka bez sočiva</h4>'+
+  '<p>Skloni probni okvir i pomeraj metu dok je oko ne vidi oštro bez ikakve pomoći. To rastojanje od rožnjače '+
+  'je <b>daleka tačka</b>. Izmeri po tri puta. Jedno od tri oka ovo neće dozvoliti — zapiši i zašto.</p>'+
+  '<div class="row">'+
+    '<label class="fld">rastojanje mete (cm)<input type="text" inputmode="decimal" id="fMeta" value="50" oninput="fMetaSet()"></label>'+
+    '<button class="sm" onclick="fMetaNudge(-1)">−1</button><button class="sm" onclick="fMetaNudge(-0.1)">−0,1</button>'+
+    '<button class="sm" onclick="fMetaNudge(0.1)">+0,1</button><button class="sm" onclick="fMetaNudge(1)">+1</button>'+
+    '<button class="pri" onclick="fUpisiDT()">upiši daleku tačku</button>'+
+  '</div>'+
+  '<div class="status" id="fdtStat"></div>'+
+  '<div id="fdtTbl"></div>'+
+  '</div>';
+}
+function fOkoSet(){ state.ui.fOko = $("fOko").value; save(); crtajOko(); }
+function fSetD(d){ state.ui.fD = d; save(); crtajOko(); }
+function fPow(d){
+  if(state.ui.fPow==null) state.ui.fPow = 0;
+  state.ui.fPow = +(((state.ui.fPow)+d).toFixed(2));
+  state.ui.fPrazno = false;
+  save(); crtajOko();
+}
+function fPraz(){ state.ui.fPrazno = true; save(); crtajOko(); }
+function fMetaSet(){
+  var v = pf($("fMeta").value);
+  if(isFinite(v)) state.ui.fMeta = Math.max(5, Math.min(300, v));
+  save(); crtajOko();
+}
+function fMetaNudge(d){
+  state.ui.fMeta = +Math.max(5, Math.min(300, (state.ui.fMeta||50)+d)).toFixed(1);
+  $("fMeta").value = dsp(state.ui.fMeta,1); save(); crtajOko();
+}
+function fUpisi(){
+  if(state.ui.fPrazno){ stat("fStat","U ležištu nema sočiva.","warn"); return; }
+  var oid = state.ui.fOko||SET.oci[0].id, d = (state.ui.fD==null?0:state.ui.fD);
+  var tr = trazenaMoc(oid,d), v = state.ui.fPow||0;
+  if(Math.abs(v-tr) > 0.13){ stat("fStat","Meta još nije oštra — promeni sočivo.","warn"); return; }
+  state.F.push({oko:oid, d:d, F:dsp(v,2)});
+  save(); crtajTabeluF();
+  stat("fStat","Upisano. Pređi na sledeću temenu daljinu.","ok");
+}
+function fUpisiDT(){
+  var oid = state.ui.fOko||SET.oci[0].id, O = okoById(oid);
+  if(O.F0>0){ stat("fdtStat","Ovo oko ni na jednom rastojanju ne vidi oštro bez sočiva. Zapiši to kao nalaz.","warn"); return; }
+  var m = state.ui.fMeta||50;
+  if(dtOdstupanje(oid,m) > DT_TOL){ stat("fdtStat","Meta još nije oštra — pomeraj je.","warn"); return; }
+  state.Fdt.push({oko:oid, k:dsp(m,1)});
+  save(); crtajTabeluF();
+  stat("fdtStat","Upisano. Pomeri metu i izmeri ponovo.","ok");
+}
+function crtajTabeluF(){
+  renderTabela($("fTbl"), [{naziv:"oko",p:"oko"},{naziv:"d (mm)",p:"d"},{naziv:"F (D)",p:"F"}],
+    state.F, "stanicaF_verteks", crtajTabeluF, null, "F");
+  renderTabela($("fdtTbl"), [{naziv:"oko",p:"oko"},{naziv:"daleka tačka (cm)",p:"k"}],
+    state.Fdt, "stanicaF_daleka", crtajTabeluF);
+}
+function crtajOko(){
+  var svg=$("fSvg"); if(!svg||!SET) return;
+  if($("fOko")) $("fOko").value = state.ui.fOko||SET.oci[0].id;
+  var d = (state.ui.fD==null?0:state.ui.fD);
+  VERTEKSI.forEach(function(v){ var b=$("fd"+v); if(b) b.setAttribute("aria-current", v===d?"true":"false"); });
+  $("fRd").textContent = state.ui.fPrazno? "prazno" : ((state.ui.fPow>=0?"+":"")+dsp(state.ui.fPow||0,2)+" D");
+  if($("fMeta") && document.activeElement!==$("fMeta")) $("fMeta").value = dsp(state.ui.fMeta||50,1);
+
+  var oid = state.ui.fOko||SET.oci[0].id, O = okoById(oid);
+  var tr = trazenaMoc(oid,d);
+  var greska;
+  if(state.ui.fPrazno){
+    greska = dtOdstupanje(oid, state.ui.fMeta||50);
+    if(!isFinite(greska)) greska = 9;
+  } else {
+    greska = Math.abs((state.ui.fPow||0) - tr);
+  }
+  var zam = Math.min(9, greska*3.4);
+  var ostro = greska <= (state.ui.fPrazno? DT_TOL : 0.13);
+
+  svg.innerHTML="";
+  var defs=sv("defs",{}), f=sv("filter",{id:"fblur",x:"-60%",y:"-60%",width:"220%",height:"220%"});
+  f.appendChild(sv("feGaussianBlur",{stdDeviation:zam.toFixed(2)})); defs.appendChild(f); svg.appendChild(defs);
+  svg.appendChild(sv("rect",{x:40,y:24,width:260,height:168,fill:"var(--panel)",stroke:"var(--line2)","stroke-width":1.2,rx:4}));
+  var g=sv("g",{filter:"url(#fblur)"});
+  var redovi=[["E",30,56],["F P",20,92],["T O Z",15,120],["L P E D",11,144],["P E C F D",8.5,164],["E D F C Z P",7,180]];
+  redovi.forEach(function(r){
+    var t=sv("text",{x:170,y:r[2],"font-size":r[1],fill:"var(--ink)","text-anchor":"middle",
+             "font-family":"DejaVu Sans Mono, monospace","font-weight":"700","letter-spacing":"3"});
+    t.textContent=r[0]; g.appendChild(t);
+  });
+  svg.appendChild(g);
+  svTxt(svg,170,212, state.ui.fPrazno? ("meta na "+dsp(state.ui.fMeta||50,1)+" cm, bez sočiva")
+        : ("sočivo "+((state.ui.fPow>=0?"+":"")+dsp(state.ui.fPow||0,2))+" D na d = "+d+" mm"), 10);
+  svTxt(svg,170,232, ostro? "oštro" : "zamućeno", 10.5, ostro?"var(--ok)":"var(--ink2)");
+  if(state.ui.fPrazno) stat("fdtStat", ostro? "Oštro — upiši daleku tačku." : "Pomeraj metu dok slova ne postanu oštra.", ostro?"ok":"");
+  else if(!$("fStat").className || $("fStat").className.indexOf("ok")<0)
+    stat("fStat", ostro? "Oštro — upiši jačinu." : "Menjaj probno sočivo dok slova ne postanu oštra.", ostro?"ok":"");
+}
+
+/* ============================================================
+   SASTAVLJANJE
+   ============================================================ */
+function gradiStanicuHTML(){
+  $("stA").innerHTML = stanicaA_HTML();
+  $("stB").innerHTML = stanicaB_HTML("B");
+  $("stC").innerHTML = stanicaC_HTML();
+  $("stD").innerHTML = stanicaB_HTML("D");
+  $("stE").innerHTML = stanicaE_HTML();
+  $("stF").innerHTML = stanicaF_HTML();
+
+  if(state.ui.aLens==null) state.ui.aLens="L1";
+  if(state.ui.aL==null || state.ui.aL > opsegKlupe(state.ui.aLens).max) state.ui.aL=opsegKlupe(state.ui.aLens).max-6;
+  if(state.ui.aScr==null) state.ui.aScr=30;
+  if(state.ui.eL==null || state.ui.eL > opsegNjutn().max) state.ui.eL=opsegNjutn().max-4;
+  if(state.ui.eScr==null) state.ui.eScr=30;
+  if(state.ui.bDrum==null) state.ui.bDrum=0;
+  if(state.ui.dDrum==null) state.ui.dDrum=0;
+  if(state.ui.fPow==null) state.ui.fPow=0;
+  if(state.ui.fD==null) state.ui.fD=0;
+  if(state.ui.fMeta==null) state.ui.fMeta=50;
+  if(state.ui.fOko==null) state.ui.fOko=SET.oci[0].id;
+
+  $("aLens").value = state.ui.aLens;
+  $("aL").value = dsp(state.ui.aL,1);
+  $("aOpseg").textContent = "dozvoljeno od "+dsp(opsegKlupe(state.ui.aLens).min,1)+" do "+dsp(opsegKlupe(state.ui.aLens).max,1)+" cm";
+  $("eL").value = dsp(state.ui.eL,1);
+  $("eOpseg").textContent = "dozvoljeno od "+dsp(opsegNjutn().min,1)+" do "+dsp(opsegNjutn().max,1)+" cm";
+  if(state.ui.eZiza) $("eZiza").value = state.ui.eZiza;
+  $("eKolBtn").textContent = state.ui.eKolim? "isključi kolimator":"uključi kolimator";
+
+  crtajTabeluA(); crtajTabeluLM("B"); crtajTabeluC(); crtajTabeluLM("D"); crtajTabeluE(); crtajTabeluF();
+}
+function osveziSve(){
+  if(!SET) return;
+  $("aOpseg").textContent = "dozvoljeno od "+dsp(opsegKlupe(state.ui.aLens||"L1").min,1)+" do "+dsp(opsegKlupe(state.ui.aLens||"L1").max,1)+" cm";
+  if($("eOpseg")) $("eOpseg").textContent = "dozvoljeno od "+dsp(opsegNjutn().min,1)+" do "+dsp(opsegNjutn().max,1)+" cm";
+  if($("aScrRd")) $("aScrRd").textContent = dsp(state.ui.aScr||30,1)+" cm";
+  if($("eScrRd")) $("eScrRd").textContent = dsp(state.ui.eScr||30,1)+" cm";
+  osveziStanicu(state.ui.station||"A");
+  if(state.ui.part>=2) osveziDeo(state.ui.part);
+}
+</script>
+<script>
+"use strict";
+/* ============================================================
+   DELOVI 2–6 — OBRADA
+   Program ovde ne računa ništa. Prenosi izmereno, crta grafike,
+   i prima ono što je učenica izračunala.
+   ============================================================ */
+
+function syncStore(store, n){
+  while(store.length < n) store.push({});
+  while(store.length > n) store.pop();
+  return store;
+}
+function tabelaObrade(cont, izvor, kolone, store, posle){
+  syncStore(store, izvor.length);
+  cont.innerHTML = "";
+  var w = el("div",{cls:"tblwrap"}), t = el("table");
+  var thead = el("thead");
+  var trg = el("tr");
+  trg.appendChild(el("th",{rowspan:2},"#"));
+  var grupe = [];
+  kolone.forEach(function(k){
+    var g = k.src? "izmereno":"izračunaj sama";
+    if(!grupe.length || grupe[grupe.length-1].g!==g) grupe.push({g:g,n:0});
+    grupe[grupe.length-1].n++;
+  });
+  grupe.forEach(function(g){
+    var th = el("th",{colspan:g.n, cls:(g.g==="izmereno"?"":"grp")}, g.g);
+    trg.appendChild(th);
+  });
+  thead.appendChild(trg);
+  var tr = el("tr");
+  kolone.forEach(function(k){ tr.appendChild(el("th",{html:k.naziv})); });
+  thead.appendChild(tr); t.appendChild(thead);
+  var tb = el("tbody");
+  if(!izvor.length){
+    var tr0 = el("tr");
+    tr0.appendChild(el("td",{colspan:kolone.length+1},"— nema izmerenih podataka; vrati se u Deo 1 —"));
+    tb.appendChild(tr0);
+  }
+  izvor.forEach(function(r,i){
+    var trr = el("tr");
+    trr.appendChild(el("td",{cls:"lbl"},String(i+1)));
+    kolone.forEach(function(k){
+      var td = el("td");
+      if(k.src){
+        td.textContent = (k.fmt? k.fmt(r) : (r[k.p]!=null? r[k.p] : "—"));
+      } else {
+        td.className = "calc";
+        var inp = el("input",{type:"text",value:(store[i][k.p]!=null?store[i][k.p]:"")});
+        inp.oninput = function(){ store[i][k.p]=inp.value; save(); if(posle) posle(); };
+        td.appendChild(inp);
+      }
+      trr.appendChild(td);
+    });
+    tb.appendChild(trr);
+  });
+  t.appendChild(tb); w.appendChild(t); cont.appendChild(w);
+}
+function poljeUnos(obj, kljuc, naziv, sirina){
+  var l = el("label",{cls:"fld"}, naziv);
+  var i = el("input",{type:"text",cls:sirina||"w7",value:(obj[kljuc]!=null?obj[kljuc]:"")});
+  i.oninput = function(){ obj[kljuc]=i.value; save(); };
+  l.appendChild(i); return l;
+}
+function redPolja(obj, lista){
+  var r = el("div",{cls:"row"});
+  lista.forEach(function(p){ r.appendChild(poljeUnos(obj,p[0],p[1],p[2])); });
+  return r;
+}
+function tekstPolje(obj, kljuc, naslov, hint){
+  var d = el("div",{cls:"rep-field"});
+  d.appendChild(el("label",null,naslov));
+  if(hint) d.appendChild(el("p",{cls:"rep-hint"},hint));
+  var ta = el("textarea");
+  ta.value = obj[kljuc]||"";
+  ta.oninput = function(){ obj[kljuc]=ta.value; save(); };
+  d.appendChild(ta);
+  var pr = el("div",{cls:"print-only pr-text"});
+  pr.textContent = obj[kljuc]||"";
+  d.appendChild(pr);
+  return d;
+}
+function brFmt(v){
+  if(v==null || !isFinite(v)) return "—";
+  var a = Math.abs(v);
+  var d = a<0.01?5:(a<1?4:(a<100?3:2));
+  return dsp(v,d);
+}
+var CRTACI = {};
+function grafikBlok(id, dugme, crtaj, oc, uputstvo){
+  var d = el("div");
+  var fn = function(){
+    crtaj();
+    var s = $(id); if(!s) return;
+    s.__redraw = fn;
+    if(oc){ omogucPomeranje(s, oc, fn); azurirajOcitavanje(id, oc); }
+  };
+  var r = el("div",{cls:"row"});
+  var b = el("button",{cls:"pri",type:"button"}, dugme);
+  b.onclick = fn;
+  r.appendChild(b);
+  d.appendChild(r);
+  var s = el("div",{cls:"tblwrap"});
+  s.innerHTML = '<svg class="instr" id="'+id+'" viewBox="0 0 680 390"></svg>';
+  d.appendChild(s);
+  if(oc) d.appendChild(ocitavanjeUI(id, oc, fn, uputstvo));
+  CRTACI[id] = fn;
+  /* iscrtaj odmah po ubacivanju u stranicu, da se grafik ne gubi pri povratku u deo */
+  setTimeout(function(){ if($(id)) fn(); }, 0);
+  return d;
+}
+/* pre prenosa u izveštaj: sastavi sve obrade i iscrtaj svaki grafik */
+function iscrtajSve(){
+  for(var i=2;i<=7;i++) osveziDeo(i);
+  Object.keys(CRTACI).forEach(function(id){ if($(id)) CRTACI[id](); });
+}
+function ocitavanjeUI(id, oc, redraw, uputstvo){
+  var d = el("div",{cls:"card tight"});
+  d.appendChild(el("h4",null,"Očitavanje sa grafika"));
+  var p = el("p",{cls:"legend"}, uputstvo ||
+    "Prevuci tačke A i B dok prava ne legne kroz izmerene tačke. Koordinate obe tačke su ispod — "+
+    "iz njih sama računaš nagib. Prava se produžava do ivica polja, pa možeš da očitaš i ono što nisi merila.");
+  d.appendChild(p);
+  var r1 = el("div",{cls:"row"});
+  r1.appendChild(el("span",{cls:"counter"},"tačka A:"));
+  r1.appendChild(el("span",{cls:"rd",id:id+"_ra"},"—"));
+  r1.appendChild(el("span",{cls:"counter"},"tačka B:"));
+  r1.appendChild(el("span",{cls:"rd",id:id+"_rb"},"—"));
+  d.appendChild(r1);
+  var r2 = el("div",{cls:"row"});
+  var lab = el("label",{cls:"fld"},"očitaj na x =");
+  var inp = el("input",{type:"text",cls:"w7",value:(oc.cx!=null?dsp(oc.cx,4):"")});
+  inp.oninput = function(){
+    var v = pf(inp.value);
+    oc.cx = isFinite(v)? v : null;
+    save(); redraw();
+  };
+  lab.appendChild(inp); r2.appendChild(lab);
+  r2.appendChild(el("span",{cls:"counter"},"prava daje y ="));
+  r2.appendChild(el("span",{cls:"rd",id:id+"_rc"},"—"));
+  var bz = el("button",{cls:"sm",type:"button"},"očitaj na x = 0");
+  bz.onclick = function(){ oc.cx = 0; inp.value = "0"; save(); redraw(); };
+  r2.appendChild(bz);
+  d.appendChild(r2);
+  var r3 = el("div",{cls:"row"});
+  var lab2 = el("label",{cls:"fld"},"obrnuto: očitaj na y =");
+  var inp2 = el("input",{type:"text",cls:"w7",value:(oc.cy!=null?dsp(oc.cy,4):"")});
+  inp2.oninput = function(){
+    var v = pf(inp2.value);
+    oc.cy = isFinite(v)? v : null;
+    save(); redraw();
+  };
+  lab2.appendChild(inp2); r3.appendChild(lab2);
+  r3.appendChild(el("span",{cls:"counter"},"prava je seče na x ="));
+  r3.appendChild(el("span",{cls:"rd",id:id+"_rd"},"—"));
+  d.appendChild(r3);
+  return d;
+}
+function azurirajOcitavanje(id, oc){
+  var a=$(id+"_ra"), b=$(id+"_rb"), c=$(id+"_rc");
+  if(a) a.textContent = (oc.ax==null)?"—":("("+brFmt(oc.ax)+" ; "+brFmt(oc.ay)+")");
+  if(b) b.textContent = (oc.bx==null)?"—":("("+brFmt(oc.bx)+" ; "+brFmt(oc.by)+")");
+  if(c) c.textContent = (oc.cx==null)?"—":brFmt(ocitajY(oc,oc.cx));
+  var e=$(id+"_rd");
+  if(e) e.textContent = (oc.cy==null)?"—":brFmt(ocitajX(oc,oc.cy));
+}
+function osveziDeo(i){
+  if(!SET) return;
+  if(i===2) gradiObrada1();
+  if(i===3) gradiObrada2();
+  if(i===4) gradiObrada3();
+  if(i===5) gradiObrada4();
+  if(i===6) gradiObrada5();
+  if(i===7) gradiNomogram();
+  if(i===8) gradiNalaz();
+  if(i===9) gradiIzvestaj();
+}
+
+/* ============================================================
+   OBRADA I — VERGENCIJSKA ANALIZA
+   ============================================================ */
+function gradiObrada1(){
+  var o = state.o1; if(!o.r) o.r = [];
+  var c = $("ob1"); c.innerHTML = "";
+  var card = el("div",{cls:"card"});
+  card.innerHTML = '<h2>Deo 2 — Obrada I: vergencijska analiza</h2>'+
+  '<p>Za svaki par sa klupe izračunaj vergenciju predmeta i vergenciju lika, pa ih nanesi na grafik. '+
+  'Po jednačini vergencija lik i predmet stoje u pravolinijskoj vezi, i to u vrlo određenoj: nagib mora biti jedan, '+
+  'a odsečak je sama moć sočiva.</p>'+
+  '<div class="formula">L = '+frac("n","l")+' , &nbsp; L′ = '+frac("n′","l′")+' , &nbsp; L′ = L + F<sub>T</sub> , &nbsp; '+
+  'M<sub>L</sub> = '+frac("L","L′")+' = '+frac("l′","l")+'</div>'+
+  '<div class="note">Pazi na jedinice. Ako l upišeš u centimetrima, vergencija nije u dioptrijama. '+
+  'I pazi na znak: predmet je levo od sočiva, pa je l negativno.</div>';
+  c.appendChild(card);
+
+  var t = el("div"); card.appendChild(t);
+  tabelaObrade(t, state.A, [
+    {naziv:"sočivo",p:"soc",src:true},
+    {naziv:"l (cm)",p:"l",src:true},
+    {naziv:"l′ (cm)",p:"lp",src:true},
+    {naziv:"y′ (mm)",p:"yp",src:true},
+    {naziv:"L (D)",p:"L"},
+    {naziv:"L′ (D)",p:"Lp"},
+    {naziv:"M<sub>L</sub> = L/L′",p:"m1"},
+    {naziv:"M<sub>L</sub> = l′/l",p:"m2"},
+    {naziv:"y′/y",p:"m3"}
+  ], o.r, function(){});
+
+  if(!o.oc) o.oc = {};
+  card.appendChild(grafikBlok("g1","nacrtaj grafik L′ u funkciji L", function(){
+    var s1=[], s2=[];
+    state.A.forEach(function(r,i){
+      var a=pf(o.r[i]&&o.r[i].L), b=pf(o.r[i]&&o.r[i].Lp);
+      if(isFinite(a)&&isFinite(b)) (r.soc==="L1"?s1:s2).push([a,b]);
+    });
+    crtajGrafik($("g1"),[{naziv:"L1",tacke:s1},{naziv:"L2",tacke:s2,kvadrat:true}],
+      "L (D)","L′ (D)",{nulaX:true,nulaY:true,oc:o.oc});
+  }, o.oc,
+  "Prvo namesti pravu kroz tačke sočiva L1. Iz koordinata tačaka A i B izračunaj nagib, a odsečak očitaj "+
+  "dugmetom za x = 0 — to je moć sočiva, dobijena bez ijednog računa sa jednačinom. Zatim prebaci istu pravu na tačke sočiva L2 i ponovi."));
+
+  var oc1 = el("div",{cls:"card tight"});
+  oc1.innerHTML = '<h4>Šta se očitava sa ovog grafika</h4>'+
+  '<p class="legend">Odsečak pri L = 0 znači predmet u beskonačnosti: tada je vergencija lika jednaka samoj moći sočiva. '+
+  'Zato prava mora da seče uspravnu osu baš u F. Interpolacija je drugi posao: pomeri kursor na vergenciju predmeta '+
+  'koju nisi merila i očitaj koliku bi vergenciju lika dobila.</p>';
+  card.appendChild(oc1);
+  oc1.appendChild(redPolja(o,[["gOds1","L1: odsečak očitan (D)"],["gNag1","L1: nagib iz A i B"],
+    ["gOds2","L2: odsečak očitan (D)"],["gNag2","L2: nagib iz A i B"]]));
+  oc1.appendChild(el("p",{cls:"legend"},
+    "Interpolacija: izaberi jednu vergenciju predmeta između svojih tačaka, očitaj L′ sa prave, pa istu vrednost izračunaj iz jednačine vergencija i uporedi."));
+  oc1.appendChild(redPolja(o,[["gIntL","izabrano L (D)"],["gIntOc","L′ očitano sa prave (D)"],
+    ["gIntRac","L′ izračunato (D)"],["gIntRaz","razlika (D)"]]));
+
+  var h = el("div");
+  h.innerHTML = '<h3>Šta grafik kaže</h3><p>Povuci pravu kroz tačke lenjirom, očitaj nagib i odsečak za svako sočivo. '+
+  'Nagib je bezdimenzion, odsečak je u dioptrijama.</p>';
+  card.appendChild(h);
+  card.appendChild(redPolja(o,[["nag1","L1: nagib"],["ods1","L1: odsečak = F (D)"],["dF1","L1: ΔF (D)"]]));
+  card.appendChild(redPolja(o,[["nag2","L2: nagib"],["ods2","L2: odsečak = F (D)"],["dF2","L2: ΔF (D)"]]));
+  var n2 = el("div",{cls:"note"});
+  n2.innerHTML = 'Nesigurnost: iz ΔL = '+frac("Δl","l²")+' i istog izraza za Δl′ sledi ΔF ≈ ΔL + ΔL′. '+
+  'Uzmi Δl = 0,2 cm i Δl′ = 0,2 cm, pa vidi koliko to iznosi u dioptrijama za tvoje najmanje i najveće rastojanje.';
+  card.appendChild(n2);
+  card.appendChild(tekstPolje(o,"komentar","Komentar uz Obradu I",
+    "Da li je nagib ispao jedan? Ako nije, za koliko odstupa i da li je to više od tvoje greške očitavanja? Slažu li se tri načina računanja uvećanja?"));
+}
+
+/* ============================================================
+   OBRADA II — FORMULA BRUSAČA I MATERIJAL
+   ============================================================ */
+var MATERIJALI = [["CR-39 (plastika)","1,498"],["kronglas","1,523"],["polikarbonat","1,586"],
+                  ["visoki indeks","1,600"],["visoki indeks","1,670"],["visoki indeks","1,740"]];
+function gradiObrada2(){
+  var o = state.o2; if(!o.s) o.s = {};
+  ["L1","L2","L3","L4"].forEach(function(id){ if(!o.s[id]) o.s[id]={}; });
+  var c = $("ob2"); c.innerHTML="";
+  var card = el("div",{cls:"card"});
+  card.innerHTML = '<h2>Deo 3 — Obrada II: formula brusača i materijal</h2>'+
+  '<p>Iz sagita dobijaš poluprečnike, iz poluprečnika moći površina, a iz njih ukupnu moć. Ali indeks sočiva '+
+  'niko ti nije rekao. Zato ide obrnuto: uzmi moć koju je lensmetar izmerio, uzmi poluprečnike koje si izmerila, '+
+  'i izvuci indeks. Pa pogledaj u tablicu od kog je materijala kutija.</p>'+
+  '<div class="formula">r = '+frac("h² + s²","2 · s")+' , &nbsp; F₁ = '+frac("n<sub>L</sub> − 1","r₁")+' , &nbsp; '+
+  'F₂ = '+frac("1 − n<sub>L</sub>","r₂")+' , &nbsp; F<sub>T</sub> = (n<sub>L</sub> − 1) · ( '+frac("1","r₁")+' − '+frac("1","r₂")+' )</div>'+
+  '<div class="note">Sferometar pokazuje dubinu kao pozitivan broj. Znak poluprečnika određuješ ti, iz oblika površine '+
+  'i konvencije: centar krivine desno od temena znači pozitivan poluprečnik, levo znači negativan. '+
+  'Ravna površina ima beskonačan poluprečnik, pa njena moć iznosi nula.</div>';
+  c.appendChild(card);
+
+  var tw = el("div",{cls:"tblwrap"});
+  var t = el("table");
+  t.innerHTML = '<thead><tr><th rowspan="2">sočivo</th><th colspan="3">izmereno</th>'+
+    '<th colspan="7" class="grp">izračunaj sama</th></tr>'+
+    '<tr><th>s₁ (mm)</th><th>s₂ (mm)</th><th>t (mm)</th>'+
+    '<th>F<sub>v</sub> sredina (D)</th><th>r₁ (mm)</th><th>r₂ (mm)</th>'+
+    '<th>F₁ (D)</th><th>F₂ (D)</th><th>F<sub>T</sub> (D)</th><th>n<sub>L</sub></th></tr></thead>';
+  var tb = el("tbody");
+  ["L1","L2","L3","L4"].forEach(function(id){
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},id));
+    ["sr1","sr2","tsr"].forEach(function(p){
+      var td = el("td",{cls:"calc"});
+      var inp = el("input",{type:"text",value:(o.s[id][p]||""),placeholder:"sredina"});
+      inp.oninput=function(){ o.s[id][p]=inp.value; save(); };
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    ["Fv","r1","r2","F1","F2","FT","n"].forEach(function(p){
+      var td = el("td",{cls:"calc"});
+      var inp = el("input",{type:"text",value:(o.s[id][p]||"")});
+      inp.oninput=function(){ o.s[id][p]=inp.value; save(); };
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb); tw.appendChild(t); card.appendChild(tw);
+  card.appendChild(el("p",{cls:"legend"},
+    "Sredine sagita i debljina računaš iz svojih očitavanja sa Stanice C, a sredinu temene moći iz pet očitavanja sa Stanice B."));
+
+  var pod = el("div");
+  pod.innerHTML = '<h3>Tvoja merenja sa Stanice C</h3>';
+  var g = el("div",{cls:"grid2"});
+  var lev = el("div"), des = el("div");
+  var tc = el("table");
+  tc.innerHTML = "<thead><tr><th>sočivo</th><th>površina</th><th>oblik</th><th>očitane sagite (mm)</th></tr></thead>";
+  var tcb = el("tbody");
+  ["L1","L2","L3","L4"].forEach(function(id){
+    ["prednja","zadnja"].forEach(function(pv){
+      var v = state.C.filter(function(r){ return r.soc===id && r.pov===pv; });
+      var tr = el("tr");
+      tr.appendChild(el("td",{cls:"lbl"},id));
+      tr.appendChild(el("td",null,pv));
+      tr.appendChild(el("td",null, v.length? v[0].oblik : "—"));
+      tr.appendChild(el("td",null, v.length? v.map(function(x){return x.s;}).join("  ·  ") : "—"));
+      tcb.appendChild(tr);
+    });
+  });
+  tc.appendChild(tcb);
+  var w1 = el("div",{cls:"tblwrap"}); w1.appendChild(tc); lev.appendChild(w1);
+
+  var td2 = el("table");
+  td2.innerHTML = "<thead><tr><th>sočivo</th><th>debljine (mm)</th><th>temena moć, pet očitavanja (D)</th></tr></thead>";
+  var tdb = el("tbody");
+  ["L1","L2","L3","L4"].forEach(function(id){
+    var dv = state.Ct.filter(function(r){return r.soc===id;}).map(function(x){return x.t;});
+    var fv = state.B.filter(function(r){return r.soc===id;}).map(function(x){return x.F;});
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},id));
+    tr.appendChild(el("td",null, dv.length? dv.join("  ·  "):"—"));
+    tr.appendChild(el("td",null, fv.length? fv.join("  ·  "):"—"));
+    tdb.appendChild(tr);
+  });
+  td2.appendChild(tdb);
+  var w2 = el("div",{cls:"tblwrap"}); w2.appendChild(td2); des.appendChild(w2);
+  g.appendChild(lev); g.appendChild(des); pod.appendChild(g);
+  card.appendChild(pod);
+
+  var mat = el("div");
+  mat.innerHTML = '<h3>Tablica materijala</h3>';
+  var mt = el("table");
+  mt.innerHTML = "<thead><tr><th>materijal</th><th>n<sub>L</sub></th></tr></thead><tbody>"+
+    MATERIJALI.map(function(m){ return "<tr><td>"+m[0]+"</td><td>"+m[1]+"</td></tr>"; }).join("")+"</tbody>";
+  var mw = el("div",{cls:"tblwrap"}); mw.appendChild(mt); mat.appendChild(mw);
+  mat.appendChild(el("p",{cls:"legend"},
+    "Prva dva reda razlikuju se za svega 0,025. Ako ti nesigurnost ne dozvoljava da ih razdvojiš, tako i napiši — to je pošten nalaz, a ne neuspeh."));
+  card.appendChild(mat);
+
+  card.appendChild(redPolja(o,[["odstupa","koje sočivo odstupa","w5"],
+    ["nsr","srednji n<sub>L</sub> bez njega","w7"],["dn","Δn<sub>L</sub>","w5"]]));
+  card.appendChild(el("p",{cls:"legend"},
+    "Jedno od četiri daće indeks koji ne pripada nijednom materijalu iz tablice. Nemoj ga uprosečiti sa ostalima — "+
+    "izdvoj ga, pa ćeš u Obradi IV videti odakle dolazi."));
+  card.appendChild(redPolja(o,[["materijal","materijal kutije","w12"]]));
+  card.appendChild(tekstPolje(o,"komentar","Komentar uz Obradu II",
+    "Koje sočivo ti je dalo indeks koji bode oči i zašto baš ono? Da li se oblici koje si zaključila iz znakova poluprečnika slažu sa onim što vidiš? Šta je sa ravnom površinom?"));
+}
+
+/* ============================================================
+   OBRADA III — NJUTNOVA RELACIJA
+   ============================================================ */
+function gradiObrada3(){
+  var o = state.o3; if(!o.r) o.r=[];
+  var c = $("ob3"); c.innerHTML="";
+  var card = el("div",{cls:"card"});
+  card.innerHTML = '<h2>Deo 4 — Obrada III: Njutnova relacija</h2>'+
+  '<p>Isto sočivo, treći put, i bez ijednog merenja od sočiva. Sve ide od žiža.</p>'+
+  '<div class="formula">x · x′ = f′² , &nbsp;&nbsp; M<sub>L</sub> = − '+frac("f′","x")+'</div>'+
+  '<p>Obe veze se prave u linearne ako na vodoravnu osu staviš '+frac("1","x")+'. Prva daje pravu kroz koordinatni početak '+
+  'čiji je nagib f′², druga pravu čiji je nagib −f′. Dve nezavisne procene iste veličine, iz istih merenja.</p>';
+  c.appendChild(card);
+
+  var fv = state.Ef.map(function(r){ return r.fp; }).join("  ·  ") || "—";
+  var sr = el("div");
+  sr.innerHTML = '<h3>Žižna daljina iz kolimatora</h3><p class="legend">tvoja tri očitavanja: '+fv+' cm</p>';
+  card.appendChild(sr);
+  card.appendChild(redPolja(o,[["fsr","srednja f′ (cm)"],["dfsr","Δf′ (cm)"],
+    ["fpos","položaj F′ na klupi (cm)"],["fneg","položaj F na klupi (cm)"]]));
+
+  var t = el("div"); card.appendChild(t);
+  tabelaObrade(t, state.E, [
+    {naziv:"l (cm)",p:"l",src:true},
+    {naziv:"l′ (cm)",p:"lp",src:true},
+    {naziv:"x (cm)",p:"x"},
+    {naziv:"x′ (cm)",p:"xp"},
+    {naziv:"x · x′ (cm²)",p:"xx"},
+    {naziv:"1/x (cm⁻¹)",p:"ix"},
+    {naziv:"M<sub>L</sub>",p:"m"}
+  ], o.r, function(){});
+
+  if(!o.ocA) o.ocA={}; if(!o.ocB) o.ocB={};
+  card.appendChild(grafikBlok("g3a","nacrtaj x′ u funkciji 1/x", function(){
+    crtajGrafik($("g3a"),[{naziv:"L1",tacke:tackeIz(o.r,function(r){return r.ix;},function(r){return r.xp;})}],
+      "1/x (cm⁻¹)","x′ (cm)",{nulaX:true,nulaY:true,oc:o.ocA});
+  }, o.ocA,
+  "Nagib ove prave je f′². Namesti pravu, pročitaj koordinate A i B, pa nagib izračunaj sama. "+
+  "Očitaj i gde prava seče uspravnu osu: ako teorija važi, mora proći kroz nulu."));
+  card.appendChild(grafikBlok("g3b","nacrtaj M_L u funkciji 1/x", function(){
+    crtajGrafik($("g3b"),[{naziv:"L1",tacke:tackeIz(o.r,function(r){return r.ix;},function(r){return r.m;})}],
+      "1/x (cm⁻¹)","M_L",{nulaX:true,nulaY:true,oc:o.ocB});
+  }, o.ocB,
+  "Nagib ove prave je −f′. Isti postupak. Na kraju imaš tri nezavisne vrednosti žižne daljine: iz kolimatora i iz dva nagiba."));
+  var oc3 = el("div",{cls:"card tight"});
+  oc3.innerHTML = '<h4>Očitano sa grafika</h4>';
+  card.appendChild(oc3);
+  oc3.appendChild(redPolja(o,[["gOds3a","odsečak prvog grafika (cm)"],["gInt3","očitaj x′ za 1/x koje nisi merila (cm)"],
+    ["gInt3x","to 1/x (cm⁻¹)"],["gInt3r","ista vrednost iz x · x′ = f′² (cm)"]]));
+  card.appendChild(redPolja(o,[["nagA","nagib prvog grafika (cm²)"],["fA","f′ iz njega (cm)"],
+    ["nagB","nagib drugog grafika (cm)"],["fB","f′ iz njega (cm)"]]));
+  card.appendChild(tekstPolje(o,"komentar","Komentar uz Obradu III",
+    "Da li prva prava prolazi kroz koordinatni početak? Koliko se tri vrednosti za f′ — iz kolimatora i iz dva grafika — međusobno razlikuju i da li je to u granicama tvoje greške?"));
+}
+
+/* ============================================================
+   OBRADA IV — ADITIVNOST I GRANICE MODELA
+   ============================================================ */
+function gradiObrada4(){
+  var o = state.o4; if(!o.r) o.r=[]; if(!o.d) o.d={};
+  var c = $("ob4"); c.innerHTML="";
+  var card = el("div",{cls:"card"});
+  card.innerHTML = '<h2>Deo 5 — Obrada IV: aditivnost i granice modela tankog sočiva</h2>'+
+  '<p>Model tankog sočiva tvrdi da se moći sabiraju. Izvođenje te tvrdnje pretpostavlja da je razmak nula. '+
+  'U probnom okviru razmak je 2,0 mm. Pitanje je gde se to još ne vidi, a gde već boli.</p>'+
+  '<div class="formula">F<sub>T</sub> = F₁ + F₂</div>';
+  c.appendChild(card);
+
+  var t = el("div"); card.appendChild(t);
+  tabelaObrade(t, state.D, [
+    {naziv:"ležište 1",p:"a",src:true},
+    {naziv:"ležište 2",p:"b",src:true},
+    {naziv:"F<sub>sklop</sub> izmereno (D)",p:"F",src:true},
+    {naziv:"F<sub>a</sub> + F<sub>b</sub> (D)",p:"zbir"},
+    {naziv:"razlika (D)",p:"raz"},
+    {naziv:"razlika (%)",p:"pct"}
+  ], o.r, function(){});
+  if(!o.oc) o.oc={}; if(!o.ocR) o.ocR={};
+  card.appendChild(grafikBlok("g4","nacrtaj izmereno u funkciji zbira", function(){
+    var t = [];
+    state.D.forEach(function(r,i){
+      var zb = pf(o.r[i] && o.r[i].zbir), iz = pf(r.F);
+      if(isFinite(zb) && isFinite(iz)) t.push([zb, iz]);
+    });
+    crtajGrafik($("g4"),[{naziv:"sklopovi",tacke:t}],"F_a + F_b (D)","F_sklop izmereno (D)",
+      {nulaX:true,nulaY:true,oc:o.oc,pomocne:[{tip:"dijagonala"}]});
+  }, o.oc,
+  "Isprekidana dijagonala je ono što bi aditivnost dala da je tačna. Namesti svoju pravu kroz izmerene tačke i "+
+  "vidi da li se poklapa sa dijagonalom. Ako ne, nagib tvoje prave je veći od jedan — i to je merljiv podatak, ne greška."));
+  card.appendChild(grafikBlok("g4r","nacrtaj razliku u funkciji zbira", function(){
+    var t = [];
+    state.D.forEach(function(r,i){
+      var zb = pf(o.r[i] && o.r[i].zbir), rz = pf(o.r[i] && o.r[i].raz);
+      if(isFinite(zb) && isFinite(rz)) t.push([zb, rz]);
+    });
+    crtajGrafik($("g4r"),[{naziv:"odstupanje",tacke:t}],"F_a + F_b (D)","razlika (D)",
+      {nulaX:true,nulaY:true,oc:o.ocR,pomocne:[{tip:"vodoravna",y:0.25,oznaka:"0,25 D"}]});
+  }, o.ocR,
+  "Ovde se očitava granica. Namesti pravu kroz tačke odstupanja, pa kursorom nađi jačinu sklopa pri kojoj prava "+
+  "preseca vodoravnu liniju od 0,25 D. Ispod te jačine razmak u okviru ne igra ulogu, iznad igra."));
+  var oc4 = el("div",{cls:"card tight"});
+  oc4.innerHTML = '<h4>Očitano sa grafika</h4>';
+  card.appendChild(oc4);
+  oc4.appendChild(redPolja(o,[["gNag4","nagib prvog grafika"],["gPrag","jačina na kojoj razlika dostiže 0,25 D"],
+    ["gOdst","očitano odstupanje za najjači sklop (D)"]]));
+  var g4n = el("p",{cls:"legend"},"Ako je aditivnost tačna, tačke leže na pravoj nagiba jedan kroz koordinatni početak. Pogledaj koje tačke beže.");
+  card.appendChild(g4n);
+  card.appendChild(redPolja(o,[["pragD","od koje jačine razlika prelazi 0,25 D"],["objasnjenje2","razmak koji to objašnjava (mm)"]]));
+
+  var k2 = el("div",{cls:"card"});
+  k2.innerHTML = '<h3>Tačan račun kroz obe površine — sočivo L2</h3>'+
+  '<p>L2 je jako i debelo, kakvo se stavlja posle operacije mrene. Za njega prođi isti put kao u Primeru 6 iz skripte: '+
+  'predmet u beskonačnosti, prelamanje na prvoj površini, prenos kroz staklo, pa druga površina. Uporedi sa onim '+
+  'što je lensmetar stvarno izmerio.</p>'+
+  '<div class="formula">L′₁ = F₁ , &nbsp; l′₁ = '+frac("n<sub>L</sub>","L′₁")+' , &nbsp; l₂ = l′₁ − t , &nbsp; '+
+  'L₂ = '+frac("n<sub>L</sub>","l₂")+' , &nbsp; L′₂ = L₂ + F₂</div>';
+  c.appendChild(k2);
+  k2.appendChild(redPolja(o.d,[["F1","F₁ (D)"],["lp1","l′₁ (cm)"],["l2","l₂ (cm)"],["L2v","L₂ (D)"],["Lp2","L′₂ (D)"]]));
+  k2.appendChild(redPolja(o.d,[["FT","nominalno F<sub>T</sub> (D)"],["Fv","tačno, iz računa (D)"],
+    ["Fizm","lensmetar je izmerio (D)"],["raz","razlika nominalno−tačno (D)"],["pct","razlika (%)"]]));
+  k2.appendChild(el("div",{cls:"note",html:
+    'Uradi isti račun i za L1 pa uporedi razlike. Jedno od ta dva sočiva pokazaće da je model tankog sočiva '+
+    'sasvim dovoljan, a drugo da nije. Upravo to skripta tvrdi na kraju teorijskog dela — sad imaš broj uz tu tvrdnju.'}));
+  k2.appendChild(redPolja(o.d,[["L1raz","ista razlika za L1 (D)"],["L1pct","za L1 (%)"]]));
+  k2.appendChild(tekstPolje(o,"komentar","Komentar uz Obradu IV",
+    "Kod kojih sklopova aditivnost pada i zašto baš kod njih? Koliko iznosi razlika nominalne i temene moći za L2, a koliko za L1? Koja od te dve moći ide u recept?"));
+}
+
+/* ============================================================
+   OBRADA V — EFEKTIVNA MOĆ, NAOČARE ILI KONTAKTNO SOČIVO
+   ============================================================ */
+function gradiObrada5(){
+  var o = state.o5; if(!o.r) o.r=[]; if(!o.e) o.e={}; if(!o.oc) o.oc={};
+  var c = $("ob5"); c.innerHTML="";
+  var card = el("div",{cls:"card"});
+  card.innerHTML = '<h2>Deo 6 — Obrada V: naočare ili kontaktno sočivo</h2>'+
+  '<p>Sočivo mora lik beskonačno udaljenog predmeta da baci tačno u daleku tačku oka. Daleka tačka se ne pomera. '+
+  'Ako se sočivo pomeri za neko rastojanje, njegova žižna daljina mora da se promeni za tačno toliko.</p>'+
+  '<div class="formula">f′(d) = f′(0) + d , &nbsp;&nbsp; F(d) = '+frac("1","f′(d)")+'</div>'+
+  '<p>Zato se potrebna jačina menja sa temenom daljinom, i to je razlog zašto se recept za naočare ne prepisuje '+
+  'u recept za kontaktno sočivo. Nanesi f′ u funkciji d: nagib mora ispasti jedan, a odsečak je žižna daljina '+
+  'kontaktnog sočiva, odnosno sama daleka tačka.</p>'+
+  '<div class="note">Računaj u metrima. Temena daljina je u milimetrima, pa je pretvori pre nego što je naneseš.</div>';
+  c.appendChild(card);
+
+  var t = el("div"); card.appendChild(t);
+  tabelaObrade(t, state.F, [
+    {naziv:"oko",p:"oko",src:true},
+    {naziv:"d (mm)",p:"d",src:true},
+    {naziv:"F izmereno (D)",p:"F",src:true},
+    {naziv:"d (m)",p:"dm"},
+    {naziv:"f′ = 1/F (m)",p:"fp"}
+  ], o.r, function(){});
+
+  card.appendChild(grafikBlok("g5","nacrtaj f′ u funkciji d", function(){
+    var ser = {};
+    state.F.forEach(function(r,i){
+      var a=pf(o.r[i]&&o.r[i].dm), b=pf(o.r[i]&&o.r[i].fp);
+      if(!isFinite(a)||!isFinite(b)) return;
+      if(!ser[r.oko]) ser[r.oko]=[];
+      ser[r.oko].push([a,b]);
+    });
+    var lista = Object.keys(ser).map(function(k,i){ return {naziv:k, tacke:ser[k], kvadrat:(i===1)}; });
+    crtajGrafik($("g5"), lista.length?lista:[{naziv:"—",tacke:[]}], "d (m)","f′ (m)",{nulaX:true,oc:o.oc});
+  }, o.oc,
+  "Namesti pravu kroz tačke jednog oka. Nagib izračunaj iz A i B — mora ispasti jedan. Odsečak na x = 0 je "+
+  "žižna daljina kontaktnog sočiva. Posle prebaci pravu na drugo oko."));
+  var oc5 = el("div",{cls:"card tight"});
+  oc5.innerHTML = '<h4>Očitavanje onoga što nisi merila</h4>'+
+  '<p class="legend">Temene daljine od 10 mm i 14 mm nisu bile u seriji, a u praksi se traže stalno. '+
+  'Očitaj ih sa prave, pa iz žižne daljine izračunaj jačinu i zaokruži je na 0,25 D kao da pišeš recept.</p>';
+  card.appendChild(oc5);
+  oc5.appendChild(redPolja(o,[["g10f","f′ na d = 10 mm (m)"],["g10F","to kao jačina (D)"],
+    ["g14f","f′ na d = 14 mm (m)"],["g14F","to kao jačina (D)"]]));
+  oc5.appendChild(el("p",{cls:"legend"},
+    "Zatim proveri jednu od te dve vrednosti računom iz f′(d) = f′(0) + d i vidi koliko se razlikuju."));
+  oc5.appendChild(redPolja(o,[["gProvF","izračunata vrednost (D)"],["gProvRaz","razlika od očitane (D)"]]));
+
+  var tabl = el("div",{cls:"tblwrap"});
+  var tt = el("table");
+  tt.innerHTML = '<thead><tr><th>oko</th><th>nagib</th><th>odsečak f′(0) (m)</th>'+
+    '<th>jačina kontaktnog sočiva (D)</th><th>jačina naočara na 12 mm (D)</th><th>razlika (D)</th></tr></thead>';
+  var ttb = el("tbody");
+  (SET?SET.oci:[]).forEach(function(E){
+    if(!o.e[E.id]) o.e[E.id]={};
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},E.id));
+    ["nag","ods","Fk","F12","raz"].forEach(function(p){
+      var td = el("td",{cls:"calc"});
+      var inp = el("input",{type:"text",value:(o.e[E.id][p]||"")});
+      inp.oninput=function(){ o.e[E.id][p]=inp.value; save(); };
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    ttb.appendChild(tr);
+  });
+  tt.appendChild(ttb); tabl.appendChild(tt); card.appendChild(tabl);
+
+  var dt = el("div");
+  var dtv = state.Fdt.map(function(r){ return r.oko+": "+r.k+" cm"; }).join("  ·  ") || "—";
+  dt.innerHTML = '<h3>Provera dalekom tačkom</h3><p class="legend">tvoja direktna merenja: '+dtv+'</p>'+
+  '<p>Za miopno oko daleka tačka je realna i merljiva, pa odsečak sa grafika i izmerena daleka tačka moraju '+
+  'da budu ista veličina. Za hiperopno oko nije — i to nije kvar instrumenta.</p>';
+  card.appendChild(dt);
+  card.appendChild(redPolja(o,[["dtGraf","odsečak za miopno oko (cm)"],["dtMer","izmerena daleka tačka (cm)"],["dtRaz","razlika (cm)"]]));
+
+  var rec = el("div",{cls:"card"});
+  rec.innerHTML = '<h3>Recept</h3><p>Napiši konačne jačine onako kako bi stajale u nalazu, zaokružene na 0,25 D, '+
+  'i uz svaku naznači na kom rastojanju važe.</p>';
+  c.appendChild(rec);
+  rec.appendChild(redPolja(o,[["recM1","M1 naočare (D)","w5"],["recM1k","M1 kontaktno (D)","w5"],
+    ["recH1","H1 naočare (D)","w5"],["recH1k","H1 kontaktno (D)","w5"],
+    ["recM2","M2 naočare (D)","w5"],["recM2k","M2 kontaktno (D)","w5"]]));
+  rec.appendChild(el("div",{cls:"note",html:
+    'Jedno od tri oka daće istu jačinu na svih sedam temenih daljina. Pronađi koje i reci zašto se kod njega '+
+    'preračunavanje ne isplati, a kod drugog oka se isplati. Tu je granica iza koje optometrista mora da računa.'}));
+  rec.appendChild(tekstPolje(o,"komentar","Komentar uz Obradu V",
+    "Koliki je nagib ispao i da li je jedan u granicama greške? Od koje jačine naviše razlika naočara i kontaktnog sočiva prelazi 0,25 D, pa postaje klinički važna?"));
+}
+</script>
+<script>
+"use strict";
+/* ============================================================
+   DEO 7 — OBRADA VI: NOMOGRAM ZA PRERAČUNAVANJE
+   Sve se čita sa grafika koji je učenica sama sastavila.
+   ============================================================ */
+var NOM_FS = [-12,-10,-8,-7,-6,-5,-4,-3,3,4,5,6,7,8,10,12];
+function pacijenti(setNo){
+  var S = setNo*5000, p = [];
+  p.push({id:"P1", F: qt(rng(S+1,-11,-6),0.25)});
+  p.push({id:"P2", F: qt(rng(S+2,5,10),0.25)});
+  p.push({id:"P3", F: qt(rng(S+3,-4.5,-2.5),0.25)});
+  return p;
+}
+function gradiNomogram(){
+  var o = state.o6;
+  if(!o.r) o.r = [];
+  if(!o.oc) o.oc = {};
+  if(!o.ocR) o.ocR = {};
+  if(!o.p) o.p = {};
+  var c = $("nom"); c.innerHTML = "";
+
+  var card = el("div",{cls:"card"});
+  card.innerHTML = '<h2>Deo 7 — Obrada VI: nomogram za preračunavanje recepta</h2>'+
+  '<p>U radnji se ne računa za svakog pacijenta iznova. Napravi se jednom tablica ili kriva, pa se sa nje očitava. '+
+  'To je nomogram. Sastavićeš ga sama, iz veze koju si izvela u prethodnom delu, i onda ga koristiti kako se zaista koristi — '+
+  'očitavanjem, bez računa.</p>'+
+  '<div class="formula">'+frac("1","F<sub>k</sub>")+' = '+frac("1","F<sub>n</sub>")+' − d '+
+  '&nbsp;&nbsp;⟹&nbsp;&nbsp; F<sub>k</sub> = '+frac("F<sub>n</sub>","1 − d · F<sub>n</sub>")+'</div>'+
+  '<p>F<sub>n</sub> je jačina naočara na temenoj daljini d, a F<sub>k</sub> jačina kontaktnog sočiva, dakle na d = 0. '+
+  'Uzmi <b>d = 12 mm</b>, standardnu temenu daljinu. Idi preko žižnih daljina, ne pravo preko druge formule — '+
+  'tako vidiš odakle dolazi.</p>'+
+  '<div class="note">Za svaku jačinu iz prve kolone: pretvori je u žižnu daljinu, oduzmi 12 mm, pa se vrati u dioptrije. '+
+  'Šesnaest redova. Računaj u metrima i pazi na znak kod minus sočiva.</div>';
+  c.appendChild(card);
+
+  var izvor = NOM_FS.map(function(F){ return {Fn:dsp(F,2)}; });
+  var t = el("div"); card.appendChild(t);
+  tabelaObrade(t, izvor, [
+    {naziv:"F<sub>n</sub> na 12 mm (D)",p:"Fn",src:true},
+    {naziv:"f′<sub>n</sub> (m)",p:"fn"},
+    {naziv:"f′<sub>k</sub> = f′<sub>n</sub> − d (m)",p:"fk"},
+    {naziv:"F<sub>k</sub> (D)",p:"Fk"},
+    {naziv:"F<sub>k</sub> − F<sub>n</sub> (D)",p:"raz"}
+  ], o.r, function(){});
+
+  card.appendChild(grafikBlok("g6","nacrtaj nomogram F_k u funkciji F_n", function(){
+    var t6 = [];
+    NOM_FS.forEach(function(F,i){
+      var v = pf(o.r[i] && o.r[i].Fk);
+      if(isFinite(v)) t6.push([F, v]);
+    });
+    crtajGrafik($("g6"),[{naziv:"nomogram",tacke:t6}],
+      "F_n na 12 mm (D)","F_k kontaktno (D)",{nulaX:true,nulaY:true,oc:o.oc,pomocne:[{tip:"dijagonala"}]});
+  }, o.oc,
+  "Isprekidana dijagonala je mesto gde bi tačke ležale da preračunavanje nije potrebno. Tvoje tačke je prate u sredini, "+
+  "a beže na krajevima. Ovde pravu A–B koristiš drugačije nego ranije: namesti je na onaj deo krive koji ti treba, "+
+  "pa kursorom očitaj."));
+
+  var g2 = el("div",{cls:"card"});
+  g2.innerHTML = '<h3>Grafik razlike</h3><p>Isti podaci, ali se crta samo razlika. Na njemu se granica vidi odmah.</p>';
+  c.appendChild(g2);
+  g2.appendChild(grafikBlok("g6r","nacrtaj razliku u funkciji F_n", function(){
+    var t6r = [];
+    NOM_FS.forEach(function(F,i){
+      var v = pf(o.r[i] && o.r[i].raz);
+      if(isFinite(v)) t6r.push([F, v]);
+    });
+    crtajGrafik($("g6r"),[{naziv:"razlika",tacke:t6r}],
+      "F_n na 12 mm (D)","F_k − F_n (D)",{nulaX:true,nulaY:true,oc:o.ocR,
+        pomocne:[{tip:"vodoravna",y:0.25,oznaka:"granica 0,25 D"}]});
+  }, o.ocR,
+  "Ovde koristi obrnuto očitavanje: upiši 0,25 u polje za y i pročitaj na kojoj jačini prava preseca tu liniju. Uradi to posebno za plus, posebno za minus stranu. "+
+  "Nisu iste, i to nije greška — pogledaj formulu i reci zašto."));
+  g2.appendChild(redPolja(o,[["pragPlus","granica za plus sočiva (D)"],["pragMinus","granica za minus sočiva (D)"]]));
+  g2.appendChild(tekstPolje(o,"zastoNesimetrično","Zašto granice nisu simetrične",
+    "Pogledaj imenilac u formuli. Šta se dešava sa njim kad je jačina pozitivna, a šta kad je negativna?"));
+
+  var pac = el("div",{cls:"card"});
+  pac.innerHTML = '<h3>Tri pacijenta</h3>'+
+  '<p>Sad radiš kao u radnji. Za svakog pacijenta ispod dat je recept za naočare na 12 mm. '+
+  '<b>Očitaj</b> sa nomograma jačinu kontaktnog sočiva — kursorom, ne računom — i zaokruži je na 0,25 D. '+
+  'Tek kad sva tri upišeš, jedan od njih proveri računom.</p>';
+  c.appendChild(pac);
+  var P = pacijenti(state.set);
+  var w = el("div",{cls:"tblwrap"}), tt = el("table");
+  tt.innerHTML = '<thead><tr><th>pacijent</th><th>naočare na 12 mm (D)</th>'+
+    '<th class="grp">očitano F<sub>k</sub> (D)</th><th class="grp">zaokruženo na 0,25 D</th>'+
+    '<th class="grp">razlika od naočara (D)</th><th class="grp">da li je preračunavanje potrebno</th></tr></thead>';
+  var tb = el("tbody");
+  P.forEach(function(p){
+    if(!o.p[p.id]) o.p[p.id] = {};
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},p.id));
+    tr.appendChild(el("td",null,dsp(p.F,2)));
+    ["oc","zao","raz","treba"].forEach(function(k){
+      var td = el("td",{cls:"calc"});
+      var inp = el("input",{type:"text",value:(o.p[p.id][k]||"")});
+      inp.oninput = function(){ o.p[p.id][k]=inp.value; save(); };
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  tt.appendChild(tb); w.appendChild(tt); pac.appendChild(w);
+  pac.appendChild(el("p",{cls:"legend"},
+    "Ako je jačina pacijenta između dve tvoje tačke, to je interpolacija i radi se kursorom. "+
+    "Ako je izvan opsega tabele, to je ekstrapolacija — napiši da si je radila i koliko joj veruješ."));
+  pac.appendChild(redPolja(o,[["provPac","koji pacijent je proveren","w5"],["provRac","izračunato F_k (D)"],
+    ["provOc","očitano F_k (D)"],["provRaz","razlika (D)"]]));
+
+  var zak = el("div",{cls:"card"});
+  zak.innerHTML = '<h3>Poređenje sa model-očima</h3>'+
+  '<p>U Obradi V si dobila jačine kontaktnih sočiva za sva tri model-oka, iz merenja. '+
+  'Sad ista ta oka provuci kroz nomogram: uzmi jačinu naočara na 12 mm koju si izmerila i očitaj kontaktnu sa krive. '+
+  'Dva nezavisna puta do iste veličine.</p>';
+  c.appendChild(zak);
+  var w2 = el("div",{cls:"tblwrap"}), t2 = el("table");
+  t2.innerHTML = '<thead><tr><th>oko</th><th class="grp">F na 12 mm, izmereno (D)</th>'+
+    '<th class="grp">F<sub>k</sub> očitano sa nomograma (D)</th>'+
+    '<th class="grp">F<sub>k</sub> iz odsečka u Obradi V (D)</th><th class="grp">razlika (D)</th></tr></thead>';
+  var tb2 = el("tbody");
+  (SET?SET.oci:[]).forEach(function(E){
+    if(!o.p["oko_"+E.id]) o.p["oko_"+E.id] = {};
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},E.id));
+    ["f12","nom","ods","raz"].forEach(function(k){
+      var td = el("td",{cls:"calc"});
+      var inp = el("input",{type:"text",value:(o.p["oko_"+E.id][k]||"")});
+      inp.oninput = function(){ o.p["oko_"+E.id][k]=inp.value; save(); };
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tb2.appendChild(tr);
+  });
+  t2.appendChild(tb2); w2.appendChild(t2); zak.appendChild(w2);
+  zak.appendChild(el("div",{cls:"note",html:
+    'Jedno od tri oka daće razliku koja je manja od koraka u koferu. Za njega nomogram nije ni potreban — '+
+    'a to je upravo odgovor na pitanje kada se preračunavanje isplati, sada izveden iz dve različite obrade.'}));
+  zak.appendChild(tekstPolje(o,"komentar","Komentar uz Obradu VI",
+    "Koliko se očitavanje sa nomograma razlikuje od računa i da li je ta razlika manja od koraka od 0,25 D u koferu? Gde je očitavanje pouzdano, a gde bi radije računala?"));
+}
+</script>
+<script>
+"use strict";
+/* ============================================================
+   DEO 7 — NALAZ
+   ============================================================ */
+function gradiNalaz(){
+  var o = state.nalaz; if(!o.s) o.s={};
+  ["L1","L2","L3","L4"].forEach(function(id){ if(!o.s[id]) o.s[id]={}; });
+  var c = $("nal"); c.innerHTML="";
+  var card = el("div",{cls:"card"});
+  card.innerHTML = '<h2>Deo 8 — Nalaz</h2>'+
+  '<p>Četiri puta si merila istu stvar, svaki put drugim putem. Sad ih stavi jedno pored drugog. '+
+  'Gde se slažu, imaš rezultat. Gde se ne slažu, imaš razlog — i on je fizički, a ne greška.</p>';
+  c.appendChild(card);
+
+  var w = el("div",{cls:"tblwrap"});
+  var t = el("table");
+  t.innerHTML = '<thead><tr><th rowspan="2">sočivo</th><th colspan="4" class="grp">moć iz pojedinih metoda (D)</th>'+
+    '<th colspan="3" class="grp">konačno</th></tr>'+
+    '<tr><th>klupa (odsečak)</th><th>lensmetar</th><th>poluprečnici</th><th>Njutn</th>'+
+    '<th>usvojeno F</th><th>ΔF</th><th>oblik</th></tr></thead>';
+  var tb = el("tbody");
+  ["L1","L2","L3","L4"].forEach(function(id){
+    var tr = el("tr");
+    tr.appendChild(el("td",{cls:"lbl"},id));
+    ["klupa","lens","rad","njutn","F","dF","oblik"].forEach(function(p){
+      var td = el("td",{cls:"calc"});
+      var inp = el("input",{type:"text",value:(o.s[id][p]||"")});
+      inp.oninput=function(){ o.s[id][p]=inp.value; save(); };
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb); w.appendChild(t); card.appendChild(w);
+  card.appendChild(el("p",{cls:"legend"},
+    "Prazno polje je u redu ako ta metoda za to sočivo nije ni rađena — samo u komentaru napiši zašto."));
+
+  card.appendChild(redPolja(o,[["materijal","materijal kutije","w12"],["n","n<sub>L</sub>","w5"],["dn","Δn<sub>L</sub>","w5"]]));
+  card.appendChild(tekstPolje(o,"zakljucak","Nalaz o kutiji",
+    "Šta je u kutiji: koje jačine, kojih oblika, od kog materijala. Napiši kao da predaješ nalaz, u rečenicama."));
+
+  var pr = el("div",{cls:"card"});
+  pr.innerHTML = '<h3>Provera</h3><p>Tek kada si upisala konačne vrednosti. Unesi broj seta još jednom i uporedi.</p>';
+  c.appendChild(pr);
+  var r = el("div",{cls:"row"});
+  var inp = el("input",{type:"number",cls:"w7",id:"provSet",placeholder:"broj seta"});
+  r.appendChild(inp);
+  var b = el("button",{cls:"pri",type:"button"},"uporedi sa pravim vrednostima");
+  b.onclick = otkrij;
+  r.appendChild(b);
+  pr.appendChild(r);
+  pr.appendChild(el("div",{id:"provBox"}));
+}
+function otkrij(){
+  var n = parseInt($("provSet").value,10);
+  var box = $("provBox");
+  if(!(n>0)){ box.innerHTML = '<p class="status warn">Upiši broj seta.</p>'; return; }
+  var S = buildSet(n), o = state.nalaz;
+  var h = '<div class="tblwrap"><table><thead><tr><th>sočivo</th><th>prava F<sub>T</sub></th>'+
+    '<th>prava F<sub>v</sub></th><th>r₁ (mm)</th><th>r₂ (mm)</th><th>t (mm)</th>'+
+    '<th>tvoje F</th><th>odstupanje</th></tr></thead><tbody>';
+  S.L.forEach(function(L){
+    var moje = pf((o.s[L.id]||{}).F);
+    var odst = "—", cls="";
+    if(isFinite(moje)){
+      var p = Math.abs(moje - L.Fv)/Math.abs(L.Fv)*100;
+      odst = dsp(p,1)+" %";
+      cls = p<=2? "ok" : (p<=6? "warn":"bad");
+    }
+    h += "<tr><td class='lbl'>"+L.id+"</td><td>"+dsp(L.Ft,2)+" D</td><td>"+dsp(L.Fv,2)+" D</td>"+
+         "<td>"+(isFinite(L.r1)?dsp(L.r1*1000,1):"∞")+"</td>"+
+         "<td>"+(isFinite(L.r2)?dsp(L.r2*1000,1):"∞")+"</td>"+
+         "<td>"+dsp(L.t,2)+"</td><td>"+(isFinite(moje)?dsp(moje,2)+" D":"—")+"</td>"+
+         "<td style='color:var(--"+(cls||"ink2")+")'>"+odst+"</td></tr>";
+  });
+  h += "</tbody></table></div>";
+  h += '<p>Pravi indeks materijala: <b>'+S.n.toFixed(3).replace(".",",")+'</b>';
+  if(o.n){ h += ' &nbsp;·&nbsp; tvoj: '+o.n; }
+  h += '</p>';
+  h += '<div class="tblwrap"><table><thead><tr><th>oko</th><th>prava jačina kontaktnog sočiva</th>'+
+       '<th>prava daleka tačka</th></tr></thead><tbody>';
+  S.oci.forEach(function(E){
+    h += "<tr><td class='lbl'>"+E.id+"</td><td>"+dsp(E.F0,2)+" D</td><td>"+
+         (E.F0<0? dsp(Math.abs(E.f0*100),1)+" cm ispred rožnjače" : dsp(Math.abs(E.f0*100),1)+" cm iza rožnjače, virtuelna")+"</td></tr>";
+  });
+  h += "</tbody></table></div>";
+  h += '<div class="note">Odstupanje je računato prema <b>temenoj moći</b>, jer je to ono što lensmetar meri i '+
+       'ono što stoji u receptu. Ako si za L2 upisala nominalnu moć, razlika će izgledati velika — a nije greška merenja.</div>';
+  box.innerHTML = h;
+  state.nalaz.provereno = true; save();
+}
+
+/* ============================================================
+   DEO 8 — IZVEŠTAJ
+   ============================================================ */
+function gradiIzvestaj(){
+  var o = state.izvestaj;
+  var c = $("izv"); c.innerHTML="";
+
+  var alat = el("div",{cls:"card noprint"});
+  alat.innerHTML = '<h2>Deo 9 — Izveštaj</h2>'+
+  '<p>Ovo je šablon izveštaja. Popuni polja svojim rečima, prenesi tabele i grafike iz obrada, '+
+  'pa sačuvaj kao PDF. U prozoru za štampu izaberi odredište <b>Sačuvaj kao PDF</b>.</p>';
+  var r = el("div",{cls:"row"});
+  var b1 = el("button",{cls:"pri",type:"button"},"prenesi tabele i grafike");
+  b1.onclick = prenesiUIzvestaj;
+  var b2 = el("button",{type:"button"},"sačuvaj kao PDF");
+  b2.onclick = function(){ prenesiUIzvestaj(); setTimeout(function(){ window.print(); }, 250); };
+  r.appendChild(b1); r.appendChild(b2);
+  alat.appendChild(r);
+  alat.appendChild(el("div",{cls:"status",id:"izvStat"}));
+  c.appendChild(alat);
+
+  var box = el("div",{cls:"repbox"});
+  var hd = el("div",{cls:"rep-head"});
+  hd.innerHTML = '<h2>Određivanje moći, oblika i materijala tankih sočiva</h2>'+
+    '<div class="rep-meta"><span>'+(state.ime||"—")+'</span><span>set '+(state.set!=null?state.set:"—")+'</span>'+
+    '<span>'+(state.datum||"—")+'</span></div>';
+  box.appendChild(hd);
+
+  box.appendChild(tekstPolje(o,"cilj","1. Cilj vežbe",
+    "Jednom rečenicom: šta se određuje i kojim metodama."));
+  box.appendChild(tekstPolje(o,"pribor","2. Pribor",
+    "Nabroj instrumente i naznači tačnost očitavanja svakog."));
+  box.appendChild(tekstPolje(o,"teorija","3. Teorijski uvod",
+    "Formule koje si koristila i odakle slede. Konvencija znaka. Ne prepisuj celu skriptu — samo ono što ti treba."));
+  box.appendChild(tekstPolje(o,"postupak","4. Postupak merenja",
+    "Kako si merila na svakoj stanici i koliko si merenja uzela. Ovde ide i to kako si birala položaje predmeta."));
+
+  var tab = el("div",{cls:"rep-field big"});
+  tab.innerHTML = '<label>5. Rezultati merenja i obrade</label><p class="rep-hint">Tabele i grafici se prenose dugmetom gore.</p>';
+  tab.appendChild(el("div",{id:"izvTabele"}));
+  box.appendChild(tab);
+
+  box.appendChild(tekstPolje(o,"racun","6. Primer računa",
+    "Jedan pun račun ispisan korak po korak, sa brojevima i jedinicama, za jedno merenje. Onaj koji je najteži."));
+  box.appendChild(tekstPolje(o,"greske","7. Greške merenja",
+    "Odakle greška dolazi na svakoj stanici, koliko iznosi, i kako se prenosi na konačan rezultat."));
+  box.appendChild(tekstPolje(o,"diskusija","8. Diskusija",
+    "Gde se metode slažu, gde ne i zašto. Šta se desilo sa L2. Šta pokazuje grafik efektivne moći. Ovo je najvažniji deo izveštaja."));
+  box.appendChild(tekstPolje(o,"zakljucak","9. Zaključak",
+    "Konačne vrednosti sa nesigurnostima, u rečenicama. Nalaz o kutiji i oba recepta."));
+
+  var pot = el("div",{cls:"rep-field"});
+  pot.innerHTML = '<label>10. Potpis i datum predaje</label>';
+  var pr = el("div",{cls:"row"});
+  pr.appendChild(poljeUnos(o,"potpis","potpis","w12"));
+  pr.appendChild(poljeUnos(o,"datumPredaje","datum predaje","w12"));
+  pot.appendChild(pr);
+  var prp = el("div",{cls:"print-only"});
+  prp.innerHTML = '<div style="margin-top:26px;display:flex;justify-content:space-between">'+
+    '<span>potpis: '+((o.potpis||"").replace(/[<>]/g,""))+'</span>'+
+    '<span>datum: '+((o.datumPredaje||"").replace(/[<>]/g,""))+'</span></div>';
+  pot.appendChild(prp);
+  box.appendChild(pot);
+
+  c.appendChild(box);
+}
+function prenesiUIzvestaj(){
+  var d = $("izvTabele"); if(!d) return;
+  if(!SET){ d.innerHTML = '<p class="status warn">Pribor nije učitan.</p>'; return; }
+  iscrtajSve();
+  d = $("izvTabele");
+  d.innerHTML = "";
+
+  function naslov(s){ var h=el("h4",null,s); h.style.marginTop="14px"; d.appendChild(h); }
+  function tabelaIz(zagl, redovi){
+    var w = el("div",{cls:"tblwrap"}), t = el("table");
+    t.innerHTML = "<thead><tr>"+zagl.map(function(z){return "<th>"+z+"</th>";}).join("")+"</tr></thead>";
+    var tb = el("tbody");
+    if(!redovi.length){ var tr0=el("tr"); tr0.appendChild(el("td",{colspan:zagl.length},"—")); tb.appendChild(tr0); }
+    redovi.forEach(function(r){
+      var tr = el("tr");
+      r.forEach(function(v,j){ tr.appendChild(el("td",{cls:(j===0?"lbl":"")}, v==null?"—":String(v))); });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); w.appendChild(t); d.appendChild(w);
+  }
+
+  naslov("5.1 Merenja sa optičke klupe");
+  tabelaIz(["#","sočivo","l (cm)","l′ (cm)","y′ (mm)","L (D)","L′ (D)","M_L = L/L′","M_L = l′/l"],
+    state.A.map(function(r,i){
+      var o=(state.o1.r&&state.o1.r[i])||{};
+      return [i+1,r.soc,r.l,r.lp,r.yp,o.L,o.Lp,o.m1,o.m2];
+    }));
+
+  naslov("5.2 Lensmetar — temena moć");
+  tabelaIz(["sočivo","pet očitavanja (D)","sredina (D)"],
+    ["L1","L2","L3","L4"].map(function(id){
+      var v = state.B.filter(function(x){return x.soc===id;}).map(function(x){return x.F;});
+      return [id, v.join("  ·  ")||"—", ((state.o2.s&&state.o2.s[id])||{}).Fv];
+    }));
+
+  naslov("5.3 Sferometar, mikrometar i formula brusača");
+  tabelaIz(["sočivo","s₁ (mm)","s₂ (mm)","t (mm)","r₁ (mm)","r₂ (mm)","F₁ (D)","F₂ (D)","F_T (D)","n_L"],
+    ["L1","L2","L3","L4"].map(function(id){
+      var o=((state.o2.s&&state.o2.s[id])||{});
+      return [id,o.sr1,o.sr2,o.tsr,o.r1,o.r2,o.F1,o.F2,o.FT,o.n];
+    }));
+
+  naslov("5.4 Njutnova relacija");
+  tabelaIz(["#","l (cm)","l′ (cm)","x (cm)","x′ (cm)","x · x′ (cm²)","M_L"],
+    state.E.map(function(r,i){
+      var o=(state.o3.r&&state.o3.r[i])||{};
+      return [i+1,r.l,r.lp,o.x,o.xp,o.xx,o.m];
+    }));
+
+  naslov("5.5 Aditivnost u probnom okviru");
+  tabelaIz(["#","ležište 1","ležište 2","F izmereno (D)","F_a + F_b (D)","razlika (D)","razlika (%)"],
+    state.D.map(function(r,i){
+      var o=(state.o4.r&&state.o4.r[i])||{};
+      return [i+1,r.a,r.b,r.F,o.zbir,o.raz,o.pct];
+    }));
+
+  naslov("5.6 Efektivna moć na model-očima");
+  tabelaIz(["#","oko","d (mm)","F izmereno (D)","d (m)","f′ (m)"],
+    state.F.map(function(r,i){
+      var o=(state.o5.r&&state.o5.r[i])||{};
+      return [i+1,r.oko,r.d,r.F,o.dm,o.fp];
+    }));
+  tabelaIz(["oko","nagib","odsečak f′(0) (m)","kontaktno (D)","naočare na 12 mm (D)","razlika (D)"],
+    (SET.oci||[]).map(function(E){
+      var o=((state.o5.e&&state.o5.e[E.id])||{});
+      return [E.id,o.nag,o.ods,o.Fk,o.F12,o.raz];
+    }));
+
+  naslov("5.7 Nomogram za preračunavanje na 12 mm");
+  tabelaIz(["F_n (D)","f′_n (m)","f′_k (m)","F_k (D)","F_k − F_n (D)"],
+    NOM_FS.map(function(F,i){
+      var o=(state.o6.r&&state.o6.r[i])||{};
+      return [dsp(F,2),o.fn,o.fk,o.Fk,o.raz];
+    }));
+  tabelaIz(["pacijent","naočare na 12 mm (D)","očitano F_k (D)","zaokruženo (D)","razlika (D)"],
+    (state.set!=null?pacijenti(state.set):[]).map(function(p){
+      var o=((state.o6.p&&state.o6.p[p.id])||{});
+      return [p.id,dsp(p.F,2),o.oc,o.zao,o.raz];
+    }));
+
+  naslov("5.8 Zbirni nalaz");
+  tabelaIz(["sočivo","klupa (D)","lensmetar (D)","poluprečnici (D)","Njutn (D)","usvojeno F (D)","ΔF (D)","oblik"],
+    ["L1","L2","L3","L4"].map(function(id){
+      var o=((state.nalaz.s&&state.nalaz.s[id])||{});
+      return [id,o.klupa,o.lens,o.rad,o.njutn,o.F,o.dF,o.oblik];
+    }));
+
+  naslov("5.9 Grafici");
+  var ids = [["g1","L′ u funkciji L"],["g3a","x′ u funkciji 1/x"],["g3b","M_L u funkciji 1/x"],
+             ["g4","aditivnost sklopova"],["g4r","odstupanje od aditivnosti"],
+             ["g5","f′ u funkciji temene daljine"],["g6","nomogram F_k u funkciji F_n"],
+             ["g6r","razlika F_k − F_n"]];
+  var ima = 0;
+  ids.forEach(function(p){
+    var src = $(p[0]);
+    if(!src || !src.childNodes.length) return;
+    ima++;
+    var h = el("p",{cls:"legend"},p[1]); h.style.marginTop="10px"; d.appendChild(h);
+    var kl = src.cloneNode(true);
+    kl.removeAttribute("id");
+    kl.setAttribute("style","max-width:520px;margin:0 auto 8px");
+    d.appendChild(kl);
+  });
+  if(!ima) d.appendChild(el("p",{cls:"legend"},
+    "Nijedan grafik nema upisane vrednosti, pa nema šta da se prenese. Popuni kolone u obradama."));
+  else if(ima < ids.length) d.appendChild(el("p",{cls:"legend"},
+    "Preneto je "+ima+" od "+ids.length+" grafika. Oni koji nedostaju nemaju dovoljno upisanih vrednosti."));
+  stat("izvStat","Preneto. Proveri da li su sve tabele popunjene pre štampe.","ok");
+}
+
+/* ============================================================
+   POKRETANJE
+   ============================================================ */
+function gradiSve(){
+  gradiStanicuHTML();
+  idiStanica(state.ui.station||"A");
+}
+function primeniStanje(){
+  if(state.set!=null){
+    SET = buildSet(state.set);
+    $("fIme").value = state.ime||"";
+    $("fSet").value = state.set;
+    $("fDatum").value = state.datum||"";
+    prikaziPribor();
+    gradiSve();
+    stat("setStatus","Pribor za set "+state.set+" je na stolu.","ok");
+  }
+  idiNa(state.ui&&state.ui.part!=null?state.ui.part:0);
+}
+window.addEventListener("beforeprint", function(){
+  document.querySelectorAll(".rep-field").forEach(function(f){
+    var ta = f.querySelector("textarea"), pr = f.querySelector(".pr-text");
+    if(ta && pr) pr.textContent = ta.value;
+  });
+});
+window.addEventListener("beforeunload", save);
+
+(function init(){
+  try{
+    var tm = localStorage.getItem("lab-sociva-tema");
+    if(tm) document.documentElement.setAttribute("data-theme", tm);
+  }catch(e){}
+  var s = load();
+  state = s || freshState();
+  if(!state.ui) state.ui = {part:0, station:"A"};
+  ["A","B","C","Ct","D","E","Ef","F","Fdt"].forEach(function(k){ if(!Array.isArray(state[k])) state[k]=[]; });
+  ["o1","o2","o3","o4","o5","o6","nalaz","izvestaj"].forEach(function(k){ if(!state[k]) state[k]={}; });
+  gradiTabove();
+  gradiStanice();
+  primeniStanje();
+})();
+</script>
+</body>
+</html>
