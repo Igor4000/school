@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excel alapképletek – gyakorló feladatsor 2</title>
+<style>
+:root{
+  --d9:#1c2430; --d8:#283347; --d7:#334155; --d6:#49586e; --d5:#6b7d95;
+  --d2:#d7dde6; --d1:#eceff4; --d0:#f6f8fb;
+  --bg:#eceff4; --line:#d7dde6; --ink:#18231d; --mut:#5a6b61; --amber:#e8a013;
+  --e:#2f9e5f; --eb:#e3f4ea;
+  --m:#2f7fb8; --mb:#e2eef8;
+  --k:#c47f16; --kb:#fdf1da;
+  --h:#9c3b6a; --hb:#f9e7ef;
+  --font:"Segoe UI",Calibri,Carlito,system-ui,-apple-system,Arial,sans-serif;
+  --mono:Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:116px}
+body{margin:0;overflow-x:hidden;font-family:var(--font);font-size:17px;line-height:1.56;color:var(--ink);background:var(--bg);padding-bottom:62px}
+strong{font-weight:700}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+code{font-family:var(--mono);font-size:.86em;background:var(--d1);color:var(--d8);border:1px solid var(--d2);padding:0 6px;border-radius:5px;white-space:nowrap}
+kbd{font-family:var(--mono);font-size:.82em;background:#fff;border:1px solid #b9c8bf;border-bottom-width:2px;border-radius:5px;padding:0 6px}
+
+/* ---------- színpaletta-választó ---------- */
+.theme-picker{position:fixed;top:14px;right:14px;z-index:50;display:flex;gap:6px;align-items:center;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:999px;padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.theme-picker .tp-label{font-size:.72rem;font-weight:700;color:var(--mut);letter-spacing:.03em;text-transform:uppercase;margin-right:2px;white-space:nowrap}
+.theme-picker button{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0;flex:none}
+.theme-picker button.active{box-shadow:0 0 0 2px var(--d7)}
+.theme-picker button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+@media (max-width:620px){.theme-picker{top:auto;right:10px;bottom:72px}.theme-picker .tp-label{display:none}}
+
+/* ---------- ellenőrző doboz ---------- */
+.checkrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:11px;border-top:1px dashed #d4e0d9}
+.checkrow .clabel{font-size:.88rem;color:var(--mut)}
+.checkrow .clabel b{color:var(--d8);font-family:var(--mono);font-weight:700}
+.chkinput{font:inherit;font-size:.95rem;padding:6px 14px;border:1.5px solid var(--line);border-radius:999px;width:150px;max-width:100%;color:var(--ink);background:#fff}
+.chkinput:focus-visible{outline:3px solid var(--amber);outline-offset:1px;border-color:var(--d5)}
+.hbtn.checkb{--bc:var(--d6);--bt:var(--d6)}
+.checkmsg{font-size:.88rem;font-weight:700;min-height:1.2em}
+.checkmsg.ok{color:var(--d6)}
+.checkmsg.bad{color:#b4232c}
+
+/* ---------- felső sáv ---------- */
+.ribbon{position:sticky;top:0;z-index:40;background:var(--d6);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.ribbon .r1{max-width:1120px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:14px}
+.ribbon svg.logo{width:30px;height:30px;flex:none}
+.ribbon .name{font-weight:700;font-size:1.12rem;line-height:1.2}
+.ribbon .sub{font-size:.85rem;color:#d4e9dd;line-height:1.2}
+.tabs{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{color:#dcefe4;text-decoration:none;padding:7px 18px 6px;font-size:.95rem;border-radius:8px 8px 0 0;white-space:nowrap}
+.tabs a:hover{background:rgba(255,255,255,.14)}
+.tabs a.on{background:var(--bg);color:var(--d7);font-weight:700;box-shadow:inset 0 -3px 0 var(--amber)}
+.tabs a:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px 40px;min-width:0}
+
+/* ---------- kártyák ---------- */
+.panelc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 30px;margin-bottom:20px;box-shadow:0 1px 2px rgba(13,43,29,.05)}
+.hero{position:relative;overflow:hidden;padding:34px 34px 28px}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--d2),var(--d1) 60%,transparent 72%);pointer-events:none}
+.hero > *{position:relative;z-index:1}
+h1{font-size:clamp(1.85rem,3.6vw,2.6rem);line-height:1.12;margin:0 0 14px;color:var(--d8);font-weight:700;letter-spacing:-.012em;max-width:24ch}
+.lead{font-size:1.08rem;max-width:68ch;margin:0 0 10px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stat{display:inline-flex;align-items:center;gap:9px;padding:7px 16px 7px 12px;border-radius:999px;background:var(--d0);border:1px solid var(--d2);font-size:.97rem}
+.stat b{font-size:1.14rem;font-variant-numeric:tabular-nums}
+.stat i{width:11px;height:11px;border-radius:50%;background:var(--c);display:inline-block}
+.stat.s-must{--c:var(--d6)} .stat.s-extra{--c:var(--k)} .stat.s-bonus{--c:var(--h)}
+.stat.ver{background:var(--d8);border-color:var(--d8);color:#fff;font-weight:600}
+.panelc h2{margin:0 0 8px;font-size:1.28rem;color:var(--d8);line-height:1.25}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px}
+.two .panelc{margin-bottom:0}
+.legend{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.legend li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:8px 12px;border-radius:10px;background:#f6faf8;border:1px solid var(--line)}
+.legend .d{font-size:.93rem;color:var(--mut)}
+.legend .req{font-size:.77rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.req.must{background:var(--d6);color:#fff} .req.extra{background:var(--kb);color:#8a5200;border:1px solid #e3b667} .req.bonus{background:var(--hb);color:#7d2450;border:1px solid #dca6bf}
+.ul{list-style:none;margin:10px 0 0;padding:0}
+.ul li{padding:5px 0 5px 20px;position:relative}
+.ul li::before{content:"";position:absolute;left:0;top:.95em;width:8px;height:8px;border-radius:50%;background:var(--d5)}
+.ul li.note{color:var(--mut);font-size:.94rem}
+.ul li.note::before{background:var(--amber)}
+
+/* ---------- képlet-puska ---------- */
+.fxgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:14px}
+.fxcard{border:1px solid var(--line);border-radius:12px;padding:12px 15px;background:#f6faf8}
+.fxcard .fn{font-family:var(--mono);font-weight:700;color:var(--d7);font-size:1.02rem}
+.fxcard .fn span{font-family:var(--font);font-weight:600;color:var(--mut);font-size:.82em}
+.fxcard p{margin:5px 0 0;font-size:.92rem;color:var(--mut)}
+.fxcard .ex{display:block;margin-top:7px}
+
+/* ---------- adattáblák ---------- */
+.view{margin:16px 0 0;min-width:0}
+.view figcaption{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px}
+.view .vt{font-weight:700;color:var(--d8);font-size:1.04rem}
+.view .vw{color:var(--mut);font-size:.9rem}
+.copy{margin-left:auto;font:inherit;font-size:.88rem;font-weight:600;color:var(--d7);background:#fff;border:1.5px solid var(--d6);border-radius:999px;padding:3px 14px;cursor:pointer}
+.copy:hover{background:var(--d6);color:#fff}
+.copy:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy .lbl-ok{display:none}
+.copy.copied{background:var(--d6);color:#fff}
+.copy.copied .lbl{display:none} .copy.copied .lbl-ok{display:inline}
+.scroll{overflow:auto;max-height:330px;border:1px solid var(--line);border-bottom:0;background:#fff;border-radius:8px 8px 0 0}
+.scroll.sm{max-height:none}
+table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;background:#fff}
+.xl th{background:#e4ece7;color:#44584c;font-weight:400;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:2px 10px;text-align:center;font-size:.8rem;position:sticky;top:0;z-index:2}
+.xl th.rn{width:38px;padding:2px 6px;position:sticky;left:0;top:auto;z-index:1}
+.xl th.corner{width:38px;left:0;z-index:3}
+.xl td{border-right:1px solid #e0e8e3;border-bottom:1px solid #e0e8e3;padding:3px 11px;white-space:nowrap}
+.xl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.xl td.hd{background:var(--d1);font-weight:700;color:var(--d8)}
+.xl td.mut{color:var(--mut);font-size:.92em}
+.xl td.fillme{background:#fff3cd;box-shadow:inset 0 0 0 1px #edcf86;min-width:150px}
+.xl tbody tr:nth-child(odd) td.fillme{background:#fff3cd}
+.swatch{display:inline-block;width:13px;height:13px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-2px;margin:0 2px}
+.dest .sw{display:inline-block;width:11px;height:11px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-1px;margin:0 3px 0 5px}
+.xl tbody tr:nth-child(odd) td{background:#fafcfb}
+.xl tbody tr:nth-child(odd) td.hd{background:var(--d1)}
+.sheettab{display:flex;background:#e4ece7;border:1px solid var(--line);border-radius:0 0 8px 8px;overflow:hidden}
+.sheettab span{background:#fff;color:var(--d7);font-weight:700;font-size:.9rem;padding:4px 18px 3px;border-bottom:3px solid var(--d6);border-right:1px solid var(--line)}
+.howto{margin-top:20px;background:#fdf8ea;border:1px solid #ecd79a;border-left:5px solid var(--amber);border-radius:12px;padding:16px 22px 18px}
+.howto h3{margin:0 0 6px;font-size:1.08rem;color:#7a5200;display:flex;align-items:center;gap:9px}
+.hlead{margin:0 0 10px;max-width:84ch}
+.steps{margin:0;padding-left:22px}
+.steps li{padding:4px 0;max-width:84ch}
+.steps li.note{color:var(--mut);font-size:.94rem;margin-top:4px}
+
+/* ---------- szakaszok ---------- */
+.sec{margin-top:34px}
+.lband{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,var(--d9),var(--d7));color:#fff;border-radius:16px;padding:22px 28px;box-shadow:0 2px 6px rgba(13,43,29,.2)}
+.lband .big{flex:none;width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center;font-size:1.9rem;font-weight:700;line-height:1}
+.lband h2{margin:0;font-size:1.46rem;line-height:1.2;color:#fff}
+.lband p{margin:5px 0 0;color:#cde5d7;max-width:72ch}
+.lband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 11px;border-radius:999px;font-size:.85rem;border:1px solid rgba(255,255,255,.45);color:#fff;white-space:nowrap}
+
+.pband{display:flex;align-items:center;gap:16px;margin:28px 0 16px;padding:12px 18px;background:var(--d1);border:1px solid var(--d2);border-radius:12px}
+.pband .pn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--d6);color:#fff;font-weight:700;display:grid;place-items:center;font-size:1rem}
+.pband .pb{flex:1;min-width:0}
+.pband h3{margin:0;font-size:1.13rem;color:var(--d8);line-height:1.25}
+.pband p{margin:1px 0 0;color:var(--mut);font-size:.93rem}
+.pband .ptag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right}
+.ptab{font-size:.83rem;color:var(--d7);font-weight:700;background:#fff;border:1px solid var(--d2);padding:1px 11px;border-radius:999px;font-family:var(--mono)}
+.pcount{font-size:.87rem;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcount.full{color:var(--d6);font-weight:700}
+
+/* ---------- feladatkártyák ---------- */
+.tasks{position:relative;margin-top:0}
+.tasks::before{content:"";position:absolute;left:21px;top:22px;bottom:30px;width:2px;background:var(--d2)}
+.task{--c:var(--e);--cb:var(--eb);display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 16px;margin-bottom:14px;position:relative}
+.task.lv-e{--c:var(--e);--cb:var(--eb)} .task.lv-m{--c:var(--m);--cb:var(--mb)}
+.task.lv-k{--c:var(--k);--cb:var(--kb)} .task.lv-h{--c:var(--h);--cb:var(--hb)}
+.num{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;font-size:1rem;display:grid;place-items:center;font-variant-numeric:tabular-nums;border:4px solid var(--bg);box-shadow:0 0 0 1px var(--c)}
+.num svg{display:none;width:20px;height:20px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.task.done .num{background:var(--d6);box-shadow:0 0 0 1px var(--d6)}
+.task.done .num .n{display:none} .task.done .num svg{display:block}
+
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:16px 22px 14px;box-shadow:0 1px 2px rgba(13,43,29,.05);min-width:0;transition:box-shadow .15s,border-color .15s}
+.task:hover .card{box-shadow:0 3px 10px rgba(13,43,29,.1)}
+.task.done .card{background:var(--d0);border-color:var(--d5);border-left-color:var(--d6);border-style:solid}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap}
+.head h4{margin:0;font-size:1.14rem;line-height:1.3;color:var(--d8);flex:1 1 240px}
+.chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lv{display:inline-flex;align-items:center;gap:6px;font-size:.81rem;font-weight:700;color:var(--c);background:var(--cb);padding:2px 11px 2px 9px;border-radius:999px;white-space:nowrap}
+.lv i{width:8px;height:8px;border-radius:50%;background:var(--c);display:inline-block}
+
+.path{display:flex;align-items:flex-start;gap:8px;margin:9px 0 11px;font-size:.85rem}
+.path > span{display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px}
+.path .pi{color:var(--d5);font-size:1.15rem;margin-top:3px}
+.crumb{background:var(--d1);color:var(--d8);border:1px solid var(--d2);border-radius:6px;padding:1px 9px;line-height:1.5;font-family:var(--mono);font-size:.93em}
+.crumb:first-of-type{background:var(--d6);border-color:var(--d6);color:#fff;font-weight:600;font-family:var(--font)}
+.sep{color:#8ba599;font-style:normal;font-weight:700}
+.txt{margin:0;max-width:82ch}
+.txt strong{color:var(--d9)}
+
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;margin-top:14px;padding-top:11px;border-top:1px dashed #d4e0d9}
+.helps{display:flex;gap:10px;flex-wrap:wrap;align-items:center;min-height:30px}
+.dest{font-size:.84rem;color:var(--mut);background:#f4f8f6;border:1px solid var(--line);border-radius:999px;padding:3px 12px;white-space:nowrap}
+.dest b{font-family:var(--mono);color:var(--d7)}
+.hbtn{font:inherit;font-size:.87rem;font-weight:700;display:inline-flex;align-items:center;gap:7px;padding:4px 13px 4px 10px;border-radius:999px;cursor:pointer;background:#fff;border:1.5px solid var(--bc);color:var(--bt)}
+.hbtn.tipb{--bc:#ddab46;--bt:#8a5200}
+.hbtn:hover,.hbtn[aria-expanded="true"]{background:var(--bc);color:#fff}
+.hbtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.hbtn svg.i{font-size:1.1em}
+.panel{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:.96rem;max-width:76ch}
+.panel p{margin:0}
+.panel .plab{display:block;font-size:.77rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.panel.tip{background:#fdf8ea;border:1px solid #ecd79a} .panel.tip .plab{color:#8a5200}
+.panel[hidden]{display:none}
+
+.ok{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.ok input{position:absolute;opacity:0;width:1px;height:1px}
+.ok .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--d5);display:grid;place-items:center;flex:none}
+.ok .box svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.ok input:checked + .box{background:var(--d6);border-color:var(--d6)}
+.ok input:checked + .box svg{opacity:1}
+.ok input:focus-visible + .box{outline:3px solid var(--amber);outline-offset:2px}
+.ok .oktxt{font-size:.9rem;font-weight:600;color:var(--mut)}
+.ok input:checked ~ .oktxt{color:var(--d6)}
+
+.endnote{padding:22px 4px 0;color:var(--mut);font-size:.89rem}
+
+/* ---------- alsó állapotsor ---------- */
+.status{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--d8);color:#fff;font-size:.94rem;box-shadow:0 -2px 8px rgba(0,0,0,.15)}
+.status .in{max-width:1120px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:14px}
+.status b{font-variant-numeric:tabular-nums}
+.track{flex:1;height:9px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;min-width:60px}
+.fill{height:100%;width:0;background:var(--amber);transition:width .25s,background .25s}
+.fill.full{background:#7be0a5}
+.reset{font:inherit;font-size:.85rem;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:2px 12px;cursor:pointer;white-space:nowrap}
+.reset:hover{background:rgba(255,255,255,.16)}
+
+@media (max-width:880px){
+  body{font-size:16.5px}
+  .wrap{padding:16px 12px 30px}
+  .panelc{padding:20px 18px}
+  .hero{padding:26px 20px 22px}
+  .two{grid-template-columns:minmax(0,1fr)}
+  .tasks::before{left:15px}
+  .task{grid-template-columns:32px minmax(0,1fr);gap:0 10px}
+  .num{width:32px;height:32px;font-size:.85rem;border-width:3px}
+  .num svg{width:15px;height:15px}
+  .card{padding:14px 15px 12px}
+  .lband{padding:18px 16px;gap:14px;align-items:flex-start}
+  .lband .big{width:46px;height:46px;font-size:1.35rem;border-radius:12px}
+  .lband h2{font-size:1.22rem}
+  .pband{flex-wrap:wrap;gap:8px 12px;padding:10px 12px}
+  .pband .ptag{flex-direction:row;align-items:center;gap:10px;margin-left:46px}
+  .ribbon .sub{display:none}
+  .ribbon .r1{padding:8px 12px}
+  .tabs{padding:0 8px}
+  .tabs a{padding:7px 12px 6px}
+  .view figcaption .copy{margin-left:0}
+  .status .in{gap:8px;padding:7px 12px;font-size:.85rem}
+  .legend li{grid-template-columns:1fr auto}
+  .legend .d{grid-column:1 / -1;order:3}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
+
+@media print{
+  body{background:#fff;padding:0;font-size:11.5pt}
+  .ribbon,.status,.copy,.ok,.hbtn{display:none !important}
+  .panel.tip[hidden]{display:block !important}
+  .wrap{padding:0}
+  .scroll{max-height:none}
+  .card,.panelc{box-shadow:none}
+  .task{break-inside:avoid}
+  .lband,.num,.crumb,.lv,.pband{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></symbol>
+  <symbol id="i-fx" viewBox="0 0 24 24"><path d="M4 20c2 0 3-1 3.4-3.2L10 4.6C10.4 2.6 11.6 2 13.5 2M6 10h8M14 12l6 8M20 12l-6 8"/></symbol>
+</svg>
+
+<div class="theme-picker" role="group" aria-label="Szín kiválasztása">
+  <span class="tp-label">Szín</span>
+  <button type="button" data-theme="grafit" data-colors="#1c2430,#283347,#334155,#49586e,#6b7d95,#d7dde6,#eceff4,#f6f8fb" style="background:#49586e" aria-label="Szürke" class="active"></button>
+  <button type="button" data-theme="kek" data-colors="#172554,#1e3a8a,#1d4ed8,#2563eb,#60a5fa,#bfdbfe,#dbeafe,#eff6ff" style="background:#2563eb" aria-label="Kék"></button>
+  <button type="button" data-theme="lila" data-colors="#2e1065,#4c1d95,#6d28d9,#7c3aed,#a78bfa,#ddd6fe,#ede9fe,#f5f3ff" style="background:#7c3aed" aria-label="Lila"></button>
+  <button type="button" data-theme="pink" data-colors="#500724,#831843,#be185d,#db2777,#f472b6,#fbcfe8,#fce7f3,#fdf2f8" style="background:#db2777" aria-label="Rózsaszín"></button>
+  <button type="button" data-theme="piros" data-colors="#450a0a,#7f1d1d,#b91c1c,#dc2626,#f87171,#fecaca,#fee2e2,#fef2f2" style="background:#dc2626" aria-label="Piros"></button>
+  <button type="button" data-theme="narancs" data-colors="#431407,#7c2d12,#c2410c,#ea580c,#fb923c,#fed7aa,#ffedd5,#fff7ed" style="background:#ea580c" aria-label="Narancs"></button>
+  <button type="button" data-theme="turkiz" data-colors="#042f2e,#115e59,#0f766e,#0d9488,#2dd4bf,#99f6e4,#ccfbf1,#f0fdfa" style="background:#0d9488" aria-label="Türkiz"></button>
+  <button type="button" data-theme="zold" data-colors="#0d2b1d,#12402c,#185c36,#217346,#2f9460,#c7e2d2,#e3f1e9,#f1f8f4" style="background:#217346" aria-label="Zöld"></button>
+</div>
+
+<header class="ribbon">
+  <div class="r1">
+    <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="1.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+    </svg>
+    <div>
+      <div class="name">Alapképletek – gyakorló feladatsor 2</div>
+      <div class="sub">SUM · AVERAGE · MIN · MAX · COUNT · ROUND · $ abszolút hivatkozás</div>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Navigáció">
+    <a href="#cheat" class="on">Képletek</a>
+    <a href="#f1">1. feladatsor</a>
+    <a href="#f2">2. feladatsor</a>
+    <a href="#f3">3. feladatsor</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="panelc hero" id="top">
+    <h1>Hat alapfüggvény, három feladatsor</h1>
+    <p class="lead">
+      Ez a feladatsor ugyanazt a hat alapképletet gyakoroltatja háromszor, három különböző történeten keresztül:
+      <strong>SUM, AVERAGE, MIN, MAX, COUNT, ROUND</strong> – és mellékesen megtanulod a <strong>dollárjeles ($) rögzített hivatkozást</strong> is,
+      ami nélkül a képletek lehúzásakor hibás eredményt kapnál.
+    </p>
+    <p class="lead">
+      Az első két feladatsorban minden kártya breadcrumbja megmondja, melyik függvényt kell használni, és minden kártyán van egy <strong>ellenőrző doboz</strong>: számítsd ki a választ Excelben, másold be az eredményt, és a gomb megmondja, jól számoltál-e.
+      A <strong>harmadik feladatsorban nincs segítség</strong>: a szöveg alapján neked kell kitalálnod, melyik a hat függvény közül illik a kérdéshez.
+    </p>
+    <div class="stats">
+      <span class="stat s-must"><i></i><b>30</b> feladat</span>
+      <span class="stat ver"><svg class="i"><use href="#i-fx"/></svg> angol függvénynevek</span>
+    </div>
+  </section>
+
+  <section class="panelc" id="cheat">
+    <h2>Mielőtt elkezded: a hat függvény és a dollárjel</h2>
+    <p style="margin:0 0 4px;font-size:1rem">
+      Minden feladatsorhoz nyiss egy <strong>új Excel munkafüzetet</strong>. A táblázatokat oda illeszd be (<kbd>Ctrl</kbd>+<kbd>V</kbd>), ahová a felirat mondja.
+      Amelyik cellába képletet írsz, azt <strong>színezd ki</strong> <span class="swatch"></span> – így látod, hol tartasz.
+    </p>
+    <div class="fxgrid">
+      <div class="fxcard"><div class="fn">SUM <span>SZUM – összeadás</span></div><p>Összeadja egy tartomány celláit.</p><code class="ex">=SUM(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">AVERAGE <span>ÁTLAG</span></div><p>A tartomány számtani átlaga – magától elosztja a darabszámmal.</p><code class="ex">=AVERAGE(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">MAX <span>legnagyobb érték</span></div><p>A tartomány legnagyobb száma.</p><code class="ex">=MAX(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">MIN <span>legkisebb érték</span></div><p>A tartomány legkisebb száma.</p><code class="ex">=MIN(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">COUNT <span>DARAB – darabszám</span></div><p>Megszámolja, hány <em>számmal kitöltött</em> cella van a tartományban. Az üres cellákat nem számolja.</p><code class="ex">=COUNT(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">ROUND <span>KEREKÍTÉS</span></div><p>Kerekít egy számot a megadott tizedesjegyre. 0 = egész számra.</p><code class="ex">=ROUND(B2,0)</code></div>
+    </div>
+
+    <div class="howto">
+      <h3><svg class="i" aria-hidden="true"><use href="#i-fx"/></svg> Mire jó a dollárjel ($)?</h3>
+      <p class="hlead">
+        Ha egy képletet lehúzol vagy másolsz, Excel a hivatkozásokat <strong>automatikusan elmozdítja</strong>: B2-ből lehúzás után B3, majd B4 lesz.
+        Ez legtöbbször pontosan ezt szeretnéd – de ha a képletben van egy <strong>fix cella</strong>, ami minden sorban ugyanaz
+        (pl. egy szorzó vagy egy napi limit), azt <strong>rögzítened</strong> kell, különben lehúzás közben rossz cellára csúszik.
+      </p>
+      <ol class="steps">
+        <li>Tedd dollárjelet az oszlopbetű <strong>és</strong> a sorszám elé is: <code>$I$1</code>. Ez teljesen rögzíti a hivatkozást – lehúzás közben mindig ugyanarra a cellára mutat.</li>
+        <li>Példa: <code>=E2*$I$1</code> az E2-ben van, de ha lehúzod E9-ig, a bal oldal E3, E4… lesz, a jobb oldal $I$1 marad végig ugyanaz.</li>
+        <li class="note">Nem kell begépelned a dollárjelet kézzel: a hivatkozás beírása után üsd le az <kbd>F4</kbd> billentyűt, és Excel beteszi helyetted.</li>
+      </ol>
+    </div>
+
+    <p class="ul" style="margin-top:16px;color:var(--mut);font-size:.94rem">
+      Magyar nyelvű Excelben a magyar függvénynevet kell beírnod: <code>SUM → SZUM</code>, <code>AVERAGE → ÁTLAG</code>, <code>COUNT → DARAB</code>, <code>ROUND → KEREKÍTÉS</code>
+      (a MIN és a MAX ugyanaz marad), és az argumentumokat <strong>pontosvessző</strong> választja el, nem vessző.
+    </p>
+  </section>
+
+  <!-- ===================== 1. FELADATSOR ===================== -->
+  <section class="sec" id="f1">
+    <header class="lband">
+      <div class="big">1</div>
+      <div>
+        <h2>1. feladatsor – Fagylaltozó napi eladásai</h2>
+        <p>Egy fagylaltozó 60 napjának eladásai, három ízben. Minden kártyán van <strong>ellenőrző doboz</strong> – számold ki Excelben, és ellenőrizd itt.</p>
+        <div class="meta">
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>kb. 20 perc</span>
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-fx"/></svg>SUM · $ · AVERAGE · MAX · MIN · COUNT · ROUND</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="panelc" style="margin-top:20px">
+      <h2>Kiindulási adatok</h2>
+      <p style="margin:0;font-size:1rem">Kattints a <strong>Másolás Excelbe</strong> gombra, és illeszd be a jelölt cellába.</p>
+
+      <figure class="view">
+        <figcaption>
+          <span class="vt">1. Napi eladások</span>
+          <span class="vw">az <code>A1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl1-adatok"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Másolva ✓</span></button>
+        </figcaption>
+        <div class="scroll"><table class="xl" id="tbl1-adatok"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr></thead><tbody>
+          <tr><th class="rn">1</th><td class="hd">Nap</td><td class="hd">Vanília (db)</td><td class="hd">Csoki (db)</td><td class="hd">Puncs (db)</td><td class="hd">Összesen (db)</td><td class="hd">Bevétel (RSD)</td></tr>
+          <tr><th class="rn">2</th><td>1. nap</td><td class="n">56</td><td class="n">34</td><td class="n">60</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">3</th><td>2. nap</td><td class="n">21</td><td class="n">24</td><td class="n">78</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">4</th><td>3. nap</td><td class="n">27</td><td class="n">61</td><td class="n">17</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">5</th><td>4. nap</td><td class="n">79</td><td class="n">42</td><td class="n">14</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">6</th><td>5. nap</td><td class="n">26</td><td class="n">70</td><td class="n">63</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">7</th><td>6. nap</td><td class="n">23</td><td class="n">45</td><td class="n">21</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">8</th><td>7. nap</td><td class="n">85</td><td class="n">69</td><td class="n">17</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">9</th><td>8. nap</td><td class="n">87</td><td class="n">30</td><td class="n">38</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">10</th><td>9. nap</td><td class="n">95</td><td class="n">95</td><td class="n">17</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">11</th><td>10. nap</td><td class="n">88</td><td class="n">89</td><td class="n">60</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">12</th><td>11. nap</td><td class="n">21</td><td class="n">43</td><td class="n">15</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">13</th><td>12. nap</td><td class="n">86</td><td class="n">32</td><td class="n">47</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">14</th><td>13. nap</td><td class="n">68</td><td class="n">33</td><td class="n">79</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">15</th><td>14. nap</td><td class="n">30</td><td class="n">88</td><td class="n">49</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">16</th><td>15. nap</td><td class="n">86</td><td class="n">38</td><td class="n">23</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">17</th><td>16. nap</td><td class="n">89</td><td class="n">88</td><td class="n">34</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">18</th><td>17. nap</td><td class="n">62</td><td class="n">27</td><td class="n">80</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">19</th><td>18. nap</td><td class="n">23</td><td class="n">87</td><td class="n">17</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">20</th><td>19. nap</td><td class="n">94</td><td class="n">41</td><td class="n">73</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">21</th><td>20. nap</td><td class="n">83</td><td class="n">69</td><td class="n">50</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">22</th><td>21. nap</td><td class="n">74</td><td class="n">89</td><td class="n">68</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">23</th><td>22. nap</td><td class="n">61</td><td class="n">53</td><td class="n">41</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">24</th><td>23. nap</td><td class="n">38</td><td class="n">46</td><td class="n">20</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">25</th><td>24. nap</td><td class="n">88</td><td class="n">53</td><td class="n">77</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">26</th><td>25. nap</td><td class="n">78</td><td class="n">58</td><td class="n">67</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">27</th><td>26. nap</td><td class="n">51</td><td class="n">92</td><td class="n">19</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">28</th><td>27. nap</td><td class="n">30</td><td class="n">80</td><td class="n">63</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">29</th><td>28. nap</td><td class="n">36</td><td class="n">58</td><td class="n">29</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">30</th><td>29. nap</td><td class="n">77</td><td class="n">68</td><td class="n">15</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">31</th><td>30. nap</td><td class="n">24</td><td class="n">86</td><td class="n">50</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">32</th><td>31. nap</td><td class="n">58</td><td class="n">59</td><td class="n">73</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">33</th><td>32. nap</td><td class="n">89</td><td class="n">73</td><td class="n">18</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">34</th><td>33. nap</td><td class="n">26</td><td class="n">49</td><td class="n">70</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">35</th><td>34. nap</td><td class="n">23</td><td class="n">22</td><td class="n">49</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">36</th><td>35. nap</td><td class="n">88</td><td class="n">72</td><td class="n">46</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">37</th><td>36. nap</td><td class="n">64</td><td class="n">59</td><td class="n">12</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">38</th><td>37. nap</td><td class="n">74</td><td class="n">60</td><td class="n">31</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">39</th><td>38. nap</td><td class="n">93</td><td class="n">29</td><td class="n">73</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">40</th><td>39. nap</td><td class="n">22</td><td class="n">42</td><td class="n">46</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">41</th><td>40. nap</td><td class="n">31</td><td class="n">46</td><td class="n">60</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">42</th><td>41. nap</td><td class="n">65</td><td class="n">78</td><td class="n">20</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">43</th><td>42. nap</td><td class="n">36</td><td class="n">72</td><td class="n">61</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">44</th><td>43. nap</td><td class="n">85</td><td class="n">50</td><td class="n">27</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">45</th><td>44. nap</td><td class="n">70</td><td class="n">85</td><td class="n">45</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">46</th><td>45. nap</td><td class="n">68</td><td class="n">60</td><td class="n">58</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">47</th><td>46. nap</td><td class="n">44</td><td class="n">34</td><td class="n">20</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">48</th><td>47. nap</td><td class="n">37</td><td class="n">34</td><td class="n">39</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">49</th><td>48. nap</td><td class="n">44</td><td class="n">16</td><td class="n">72</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">50</th><td>49. nap</td><td class="n">90</td><td class="n">38</td><td class="n">43</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">51</th><td>50. nap</td><td class="n">51</td><td class="n">15</td><td class="n">28</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">52</th><td>51. nap</td><td class="n">68</td><td class="n">83</td><td class="n">57</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">53</th><td>52. nap</td><td class="n">93</td><td class="n">87</td><td class="n">50</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">54</th><td>53. nap</td><td class="n">31</td><td class="n">80</td><td class="n">16</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">55</th><td>54. nap</td><td class="n">73</td><td class="n">86</td><td class="n">60</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">56</th><td>55. nap</td><td class="n">65</td><td class="n">66</td><td class="n">60</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">57</th><td>56. nap</td><td class="n">28</td><td class="n">76</td><td class="n">61</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">58</th><td>57. nap</td><td class="n">22</td><td class="n">39</td><td class="n">18</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">59</th><td>58. nap</td><td class="n">41</td><td class="n">71</td><td class="n">30</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">60</th><td>59. nap</td><td class="n">29</td><td class="n">58</td><td class="n">16</td><td class="fillme"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">61</th><td>60. nap</td><td class="n">28</td><td class="n">15</td><td class="n">29</td><td class="fillme"></td><td class="fillme"></td></tr>
+        </tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+
+      <figure class="view" style="margin-top:24px">
+        <figcaption>
+          <span class="vt">2. Egységár és összesítő</span>
+          <span class="vw">ugyanarra a lapra, a <code>H1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl1-osszes"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Másolva ✓</span></button>
+        </figcaption>
+        <div class="scroll sm"><table class="xl" id="tbl1-osszes"><thead><tr><th class="corner"></th><th>H</th><th>I</th></tr></thead><tbody>
+          <tr><th class="rn">1</th><td class="hd">Egységár (RSD/gombóc)</td><td class="n">180</td></tr>
+          <tr><th class="rn">2</th><td></td><td></td></tr>
+          <tr><th class="rn">3</th><td class="hd wide">ÖSSZESÍTŐ</td><td class="hd"></td></tr>
+          <tr><th class="rn">4</th><td class="mut">Átlagos napi eladás (db)</td><td class="fillme"></td></tr>
+          <tr><th class="rn">5</th><td class="mut">Legtöbb gombóc egy napon</td><td class="fillme"></td></tr>
+          <tr><th class="rn">6</th><td class="mut">Legkevesebb gombóc egy napon</td><td class="fillme"></td></tr>
+          <tr><th class="rn">7</th><td class="mut">Hány napra van rögzített eladási adat</td><td class="fillme"></td></tr>
+          <tr><th class="rn">8</th><td class="mut">Átlag kerekítve egész gombócra</td><td class="fillme"></td></tr>
+          <tr><th class="rn">9</th><td class="mut">Teljes időszak bevétele</td><td class="fillme"></td></tr>
+          <tr><th class="rn">10</th><td class="mut">Átlagos napi vanília-eladás</td><td class="fillme"></td></tr>
+          <tr><th class="rn">11</th><td class="mut">A legtöbb eladott gombóc egyetlen ízből, egyetlen napon</td><td class="fillme"></td></tr>
+        </tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+    </section>
+
+    <div class="pband" id="part1">
+      <span class="pn">1</span>
+      <div class="pb"><h3>Fagylaltozó-feladatok</h3><p>Minden kártyán ellenőrző doboz van – oldd meg Excelben, és nézd meg itt, jó-e.</p></div>
+      <div class="ptag"><span class="ptab">SUM · $ · AVG · MAX · MIN · COUNT · ROUND</span><span class="pcount" data-pc="1">0 / 10</span></div>
+    </div>
+    <div class="tasks">
+
+      <article class="task lv-e kind-must" id="t1" data-part="1" data-kind="must">
+        <div class="num"><span class="n">1</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi gombócot adtak el egy-egy napon összesen?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">Minden napnál három íz eladása van (B, C, D oszlop). Add össze az 1. nap háromízét a <strong>SUM</strong> függvénnyel, majd húzd le a képletet a 61. sorig, hogy minden napra meglegyen az összes eladás.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>E2:E61</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="1" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Ellenőrzéshez írd be, mennyi lett a lista <b>utolsó sorában</b> (60. nap, <b>E61</b>):</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 72" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="72" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t2" data-part="1" data-kind="must">
+        <div class="num"><span class="n">2</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Számítsd ki a napi bevételt</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">$ abszolút hivatkozás</span></span></div>
+          <p class="txt">A napi bevétel az összesen eladott gombóc szorozva a <code>H1</code> cellában álló egységárral (180 RSD). Mind a 60 sorban <strong>ugyanarra a H1 cellára</strong> kell hivatkozni – ehhez rögzített ($) hivatkozást kell használnod, különben lehúzás közben az ár elcsúszik H2-re, H3-ra…</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F2:F61</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="2" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Ellenőrzéshez írd be, mennyi lett a lista <b>utolsó sorában</b> (60. nap, <b>F61</b>):</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 12960" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="12960" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-e kind-must" id="t3" data-part="1" data-kind="must">
+        <div class="num"><span class="n">3</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi az átlagos napi eladás?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Most hogy minden napra megvan az összesen eladott gombóc száma (E oszlop), számítsd ki mind a 60 nap <strong>átlagát</strong> az <strong>AVERAGE</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I4</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="3" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 157.55" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="157.55" data-tol="0.6">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-e kind-must" id="t4" data-part="1" data-kind="must">
+        <div class="num"><span class="n">4</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Melyik napon adtak el a legtöbb gombócot?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">Nem kell megmondanod, melyik nap volt az – csak a <strong>legnagyobb napi eladást</strong> kell kiszámolnod a <strong>MAX</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I5</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="4" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 237" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="237" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-e kind-must" id="t5" data-part="1" data-kind="must">
+        <div class="num"><span class="n">5</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi volt a legkisebb napi eladás?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MIN</span></span></div>
+          <p class="txt">A MAX párja: keresd meg a legkisebb napi eladást a <strong>MIN</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I6</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="5" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 72" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="72" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-e kind-must" id="t6" data-part="1" data-kind="must">
+        <div class="num"><span class="n">6</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Hány napra van rögzített eladási adat?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT</span></span></div>
+          <p class="txt">Számold meg, hány olyan cella van az Összesen oszlopban, amiben <strong>szám</strong> áll – ez adja meg, hány napról van adat. Használd a <strong>COUNT</strong> függvényt.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I7</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="6" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 60" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="60" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t7" data-part="1" data-kind="must">
+        <div class="num"><span class="n">7</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Kerekítsd az átlagot egész gombócra</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span></span></div>
+          <p class="txt">A 3. feladatban kiszámolt átlag (I4) biztosan tizedestört. Kerekítsd <strong>egész számra</strong> a <strong>ROUND</strong> függvénnyel – hivatkozz az I4 cellára, ne írd be újra a tartományt.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I8</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="7" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 158" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="158" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t8" data-part="1" data-kind="must">
+        <div class="num"><span class="n">8</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi a teljes időszak bevétele?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">A 2. feladatban kiszámolt Bevétel oszlop (F) most mind a 60 sorban ki van töltve. Add össze az egész oszlopot a <strong>SUM</strong> függvénnyel – ez adja meg, mennyi volt a fagylaltozó teljes bevétele.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I9</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="8" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 1701540" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="1701540" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t9" data-part="1" data-kind="must">
+        <div class="num"><span class="n">9</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi volt az átlagos napi vanília-eladás?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Ez más kérdés, mint a 3. feladat! Ott az Összesen (3 íz együtt) átlagát számoltad. Most csak a <strong>Vanília</strong> (B oszlop) átlagát kérdezzük az <strong>AVERAGE</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I10</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="9" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 57.03" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="57.0333" data-tol="0.6">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-k kind-must" id="t10" data-part="1" data-kind="must">
+        <div class="num"><span class="n">10</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mi volt a legtöbb gombóc egyetlen ízből, egyetlen napon?</h4><div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">A 4. feladatban az Összesen (3 íz együtt) maximumát kerested. Most azt kérdezzük: egyetlen ízből, akármelyik napon, <strong>mennyi volt a legtöbb eladott gombóc</strong>? A <strong>MAX</strong> függvénynek most a teljes <code>B2:D61</code> tartományt add meg, nem csak egy oszlopot.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>I11</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="10" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 95" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="95" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== 2. FELADATSOR ===================== -->
+  <section class="sec" id="f2">
+    <header class="lband">
+      <div class="big">2</div>
+      <div>
+        <h2>2. feladatsor – Könyvtári olvasóterem napi látogatószáma</h2>
+        <p>80 nap látogatói adatai, egy rögzített teremkapacitással. Minden kártyán van <strong>ellenőrző doboz</strong>.</p>
+        <div class="meta">
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>kb. 20 perc</span>
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-fx"/></svg>SUM · $ · AVERAGE · MAX · MIN · COUNT · ROUND</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="panelc" style="margin-top:20px">
+      <h2>Kiindulási adatok</h2>
+
+      <figure class="view">
+        <figcaption>
+          <span class="vt">1. Napi látogatószám</span>
+          <span class="vw">az <code>A1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl2-adatok"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Másolva ✓</span></button>
+        </figcaption>
+        <div class="scroll"><table class="xl" id="tbl2-adatok"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th></tr></thead><tbody>
+          <tr><th class="rn">1</th><td class="hd">Nap</td><td class="hd">Látogatók (fő)</td><td class="hd">Szabad hely</td></tr>
+          <tr><th class="rn">2</th><td>1. nap</td><td class="n">43</td><td class="fillme"></td></tr>
+          <tr><th class="rn">3</th><td>2. nap</td><td class="n">28</td><td class="fillme"></td></tr>
+          <tr><th class="rn">4</th><td>3. nap</td><td class="n">35</td><td class="fillme"></td></tr>
+          <tr><th class="rn">5</th><td>4. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">6</th><td>5. nap</td><td class="n">12</td><td class="fillme"></td></tr>
+          <tr><th class="rn">7</th><td>6. nap</td><td class="n">12</td><td class="fillme"></td></tr>
+          <tr><th class="rn">8</th><td>7. nap</td><td class="n">59</td><td class="fillme"></td></tr>
+          <tr><th class="rn">9</th><td>8. nap</td><td class="n">36</td><td class="fillme"></td></tr>
+          <tr><th class="rn">10</th><td>9. nap</td><td class="n">34</td><td class="fillme"></td></tr>
+          <tr><th class="rn">11</th><td>10. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">12</th><td>11. nap</td><td class="n">35</td><td class="fillme"></td></tr>
+          <tr><th class="rn">13</th><td>12. nap</td><td class="n">35</td><td class="fillme"></td></tr>
+          <tr><th class="rn">14</th><td>13. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">15</th><td>14. nap</td><td class="n">24</td><td class="fillme"></td></tr>
+          <tr><th class="rn">16</th><td>15. nap</td><td class="n">10</td><td class="fillme"></td></tr>
+          <tr><th class="rn">17</th><td>16. nap</td><td class="n">14</td><td class="fillme"></td></tr>
+          <tr><th class="rn">18</th><td>17. nap</td><td class="n">11</td><td class="fillme"></td></tr>
+          <tr><th class="rn">19</th><td>18. nap</td><td class="n">52</td><td class="fillme"></td></tr>
+          <tr><th class="rn">20</th><td>19. nap</td><td class="n">26</td><td class="fillme"></td></tr>
+          <tr><th class="rn">21</th><td>20. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">22</th><td>21. nap</td><td class="n">52</td><td class="fillme"></td></tr>
+          <tr><th class="rn">23</th><td>22. nap</td><td class="n">21</td><td class="fillme"></td></tr>
+          <tr><th class="rn">24</th><td>23. nap</td><td class="n">35</td><td class="fillme"></td></tr>
+          <tr><th class="rn">25</th><td>24. nap</td><td class="n">58</td><td class="fillme"></td></tr>
+          <tr><th class="rn">26</th><td>25. nap</td><td class="n">49</td><td class="fillme"></td></tr>
+          <tr><th class="rn">27</th><td>26. nap</td><td class="n">15</td><td class="fillme"></td></tr>
+          <tr><th class="rn">28</th><td>27. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">29</th><td>28. nap</td><td class="n">38</td><td class="fillme"></td></tr>
+          <tr><th class="rn">30</th><td>29. nap</td><td class="n">6</td><td class="fillme"></td></tr>
+          <tr><th class="rn">31</th><td>30. nap</td><td class="n">18</td><td class="fillme"></td></tr>
+          <tr><th class="rn">32</th><td>31. nap</td><td class="n">38</td><td class="fillme"></td></tr>
+          <tr><th class="rn">33</th><td>32. nap</td><td class="n">28</td><td class="fillme"></td></tr>
+          <tr><th class="rn">34</th><td>33. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">35</th><td>34. nap</td><td class="n">14</td><td class="fillme"></td></tr>
+          <tr><th class="rn">36</th><td>35. nap</td><td class="n">49</td><td class="fillme"></td></tr>
+          <tr><th class="rn">37</th><td>36. nap</td><td class="n">39</td><td class="fillme"></td></tr>
+          <tr><th class="rn">38</th><td>37. nap</td><td class="n">6</td><td class="fillme"></td></tr>
+          <tr><th class="rn">39</th><td>38. nap</td><td class="n">53</td><td class="fillme"></td></tr>
+          <tr><th class="rn">40</th><td>39. nap</td><td class="n">38</td><td class="fillme"></td></tr>
+          <tr><th class="rn">41</th><td>40. nap</td><td class="n">24</td><td class="fillme"></td></tr>
+          <tr><th class="rn">42</th><td>41. nap</td><td class="n">46</td><td class="fillme"></td></tr>
+          <tr><th class="rn">43</th><td>42. nap</td><td class="n">10</td><td class="fillme"></td></tr>
+          <tr><th class="rn">44</th><td>43. nap</td><td class="n">49</td><td class="fillme"></td></tr>
+          <tr><th class="rn">45</th><td>44. nap</td><td class="n">59</td><td class="fillme"></td></tr>
+          <tr><th class="rn">46</th><td>45. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">47</th><td>46. nap</td><td class="n">21</td><td class="fillme"></td></tr>
+          <tr><th class="rn">48</th><td>47. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">49</th><td>48. nap</td><td class="n">38</td><td class="fillme"></td></tr>
+          <tr><th class="rn">50</th><td>49. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">51</th><td>50. nap</td><td class="n">28</td><td class="fillme"></td></tr>
+          <tr><th class="rn">52</th><td>51. nap</td><td class="n">15</td><td class="fillme"></td></tr>
+          <tr><th class="rn">53</th><td>52. nap</td><td class="n">27</td><td class="fillme"></td></tr>
+          <tr><th class="rn">54</th><td>53. nap</td><td class="n">54</td><td class="fillme"></td></tr>
+          <tr><th class="rn">55</th><td>54. nap</td><td class="n">19</td><td class="fillme"></td></tr>
+          <tr><th class="rn">56</th><td>55. nap</td><td class="n">39</td><td class="fillme"></td></tr>
+          <tr><th class="rn">57</th><td>56. nap</td><td class="n">39</td><td class="fillme"></td></tr>
+          <tr><th class="rn">58</th><td>57. nap</td><td class="n">54</td><td class="fillme"></td></tr>
+          <tr><th class="rn">59</th><td>58. nap</td><td class="n">37</td><td class="fillme"></td></tr>
+          <tr><th class="rn">60</th><td>59. nap</td><td class="n">26</td><td class="fillme"></td></tr>
+          <tr><th class="rn">61</th><td>60. nap</td><td class="n">45</td><td class="fillme"></td></tr>
+          <tr><th class="rn">62</th><td>61. nap</td><td class="n">19</td><td class="fillme"></td></tr>
+          <tr><th class="rn">63</th><td>62. nap</td><td class="n">44</td><td class="fillme"></td></tr>
+          <tr><th class="rn">64</th><td>63. nap</td><td class="n">56</td><td class="fillme"></td></tr>
+          <tr><th class="rn">65</th><td>64. nap</td><td class="n">55</td><td class="fillme"></td></tr>
+          <tr><th class="rn">66</th><td>65. nap</td><td class="n">53</td><td class="fillme"></td></tr>
+          <tr><th class="rn">67</th><td>66. nap</td><td class="n">59</td><td class="fillme"></td></tr>
+          <tr><th class="rn">68</th><td>67. nap</td><td class="n">17</td><td class="fillme"></td></tr>
+          <tr><th class="rn">69</th><td>68. nap</td><td class="n">56</td><td class="fillme"></td></tr>
+          <tr><th class="rn">70</th><td>69. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">71</th><td>70. nap</td><td class="n">20</td><td class="fillme"></td></tr>
+          <tr><th class="rn">72</th><td>71. nap</td><td class="n">57</td><td class="fillme"></td></tr>
+          <tr><th class="rn">73</th><td>72. nap</td><td class="n">30</td><td class="fillme"></td></tr>
+          <tr><th class="rn">74</th><td>73. nap</td><td class="n">52</td><td class="fillme"></td></tr>
+          <tr><th class="rn">75</th><td>74. nap</td><td class="n">56</td><td class="fillme"></td></tr>
+          <tr><th class="rn">76</th><td>75. nap</td><td class="n">19</td><td class="fillme"></td></tr>
+          <tr><th class="rn">77</th><td>76. nap</td><td class="n">17</td><td class="fillme"></td></tr>
+          <tr><th class="rn">78</th><td>77. nap</td><td class="n">38</td><td class="fillme"></td></tr>
+          <tr><th class="rn">79</th><td>78. nap</td><td class="n">36</td><td class="fillme"></td></tr>
+          <tr><th class="rn">80</th><td>79. nap</td><td class="n">27</td><td class="fillme"></td></tr>
+          <tr><th class="rn">81</th><td>80. nap</td><td class="n">51</td><td class="fillme"></td></tr>
+        </tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+      <p class="ul" style="margin-top:10px;color:var(--mut);font-size:.9rem">Néhány napon <strong>zárva volt az olvasóterem</strong> – azoknál a Látogatók cella szándékosan üres.</p>
+
+      <figure class="view" style="margin-top:24px">
+        <figcaption>
+          <span class="vt">2. Teremkapacitás és összesítő</span>
+          <span class="vw">ugyanarra a lapra, az <code>E1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl2-osszes"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Másolva ✓</span></button>
+        </figcaption>
+        <div class="scroll sm"><table class="xl" id="tbl2-osszes"><thead><tr><th class="corner"></th><th>E</th><th>F</th></tr></thead><tbody>
+          <tr><th class="rn">1</th><td class="hd">Olvasóterem kapacitása (fő)</td><td class="n">60</td></tr>
+          <tr><th class="rn">2</th><td></td><td></td></tr>
+          <tr><th class="rn">3</th><td class="hd wide">ÖSSZESÍTŐ</td><td class="hd"></td></tr>
+          <tr><th class="rn">4</th><td class="mut">Összes látogató az időszak alatt</td><td class="fillme"></td></tr>
+          <tr><th class="rn">5</th><td class="mut">Átlagos napi látogatószám</td><td class="fillme"></td></tr>
+          <tr><th class="rn">6</th><td class="mut">A legtöbb látogató egy napon</td><td class="fillme"></td></tr>
+          <tr><th class="rn">7</th><td class="mut">A legkevesebb, amikor nyitva volt</td><td class="fillme"></td></tr>
+          <tr><th class="rn">8</th><td class="mut">Hány napon volt nyitva az olvasóterem</td><td class="fillme"></td></tr>
+          <tr><th class="rn">9</th><td class="mut">Átlagos napi látogatószám, kerekítve egész főre</td><td class="fillme"></td></tr>
+          <tr><th class="rn">10</th><td class="mut">Összes szabad hely az időszak alatt</td><td class="fillme"></td></tr>
+          <tr><th class="rn">11</th><td class="mut">Átlagos napi szabad hely</td><td class="fillme"></td></tr>
+          <tr><th class="rn">12</th><td class="mut">A legtöbb szabad hely egy napon</td><td class="fillme"></td></tr>
+        </tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+    </section>
+
+    <div class="pband" id="part2">
+      <span class="pn">2</span>
+      <div class="pb"><h3>Könyvtár-feladatok</h3><p>Figyelj: néhány nap üresen maradt – ez pár feladatnál számít.</p></div>
+      <div class="ptag"><span class="ptab">SUM · $ · AVG · MAX · MIN · COUNT · ROUND</span><span class="pcount" data-pc="2">0 / 10</span></div>
+    </div>
+    <div class="tasks">
+
+      <article class="task lv-e kind-must" id="t11" data-part="2" data-kind="must">
+        <div class="num"><span class="n">11</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Hány látogatója volt összesen az olvasóteremnek?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">Add össze mind a 80 nap látogatóit a <strong>SUM</strong> függvénnyel. Az üres (zárva volt) napok cellái simán beleférnek a tartományba, nem zavarják az összeget.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F4</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="11" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 2415" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="2415" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t12" data-part="2" data-kind="must">
+        <div class="num"><span class="n">12</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Számítsd ki a napi szabad helyek számát</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">$ abszolút hivatkozás</span></span></div>
+          <p class="txt">A szabad helyek száma = a terem kapacitása (<code>E1</code>) mínusz az adott napi látogatók száma. Az <code>E1</code> cellára mind a <strong>80 sorban</strong> hivatkoznod kell, tehát rögzített ($) hivatkozást használj, mielőtt lehúzod a képletet.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>C2:C81</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="12" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Ellenőrzéshez írd be, mennyi lett az <b>1. napnál</b> (<b>C2</b>):</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 17" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="17" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-e kind-must" id="t13" data-part="2" data-kind="must">
+        <div class="num"><span class="n">13</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi az átlagos napi látogatószám?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Számítsd ki a látogatók átlagát az <strong>AVERAGE</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F5</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="13" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 34.5" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="34.5" data-tol="0.6">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-e kind-must" id="t14" data-part="2" data-kind="must">
+        <div class="num"><span class="n">14</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Melyik napon volt a legtöbb látogató?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">Nem kell megmondanod, melyik nap volt az – csak a legnagyobb napi látogatószámot add meg a <strong>MAX</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F6</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="14" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 59" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="59" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-e kind-must" id="t15" data-part="2" data-kind="must">
+        <div class="num"><span class="n">15</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi volt a legkevesebb látogató, amikor nyitva volt?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MIN</span></span></div>
+          <p class="txt">Keresd meg a legkisebb olyan napi látogatószámot, amikor az olvasóterem <strong>egyáltalán nyitva</strong> volt – használd a <strong>MIN</strong> függvényt.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F7</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="15" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 6" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="6" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t16" data-part="2" data-kind="must">
+        <div class="num"><span class="n">16</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Hány napon volt nyitva az olvasóterem?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT</span></span></div>
+          <p class="txt">80 nap van, de nem mindegyiken volt nyitva a terem. Számold meg a <strong>COUNT</strong> függvénnyel, hány napra van <strong>szám</strong> a Látogatók oszlopban – ez adja meg, hány napon volt nyitva.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F8</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="16" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 70" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="70" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t17" data-part="2" data-kind="must">
+        <div class="num"><span class="n">17</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Kerekítsd az átlagos látogatószámot egész főre</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span></span></div>
+          <p class="txt">A 13. feladatban kiszámolt átlag (F5) biztosan tizedestört. Kerekítsd <strong>egész főre</strong> a <strong>ROUND</strong> függvénnyel – hivatkozz az F5 cellára.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F9</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="17" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 35" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="35" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t18" data-part="2" data-kind="must">
+        <div class="num"><span class="n">18</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Összesen hány szabad hely volt az időszak alatt?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">A 12. feladatban kiszámolt Szabad hely oszlop (C) most mind a 80 sorban ki van töltve. Add össze a teljes oszlopot a <strong>SUM</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F10</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="18" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 2385" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="2385" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-m kind-must" id="t19" data-part="2" data-kind="must">
+        <div class="num"><span class="n">19</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi az átlagos napi szabad hely?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Most a C oszlop (Szabad hely) <strong>átlagát</strong> számold ki az <strong>AVERAGE</strong> függvénnyel – nem a látogatókét, hanem a szabad helyekét.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F11</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="19" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 29.81" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="29.8125" data-tol="0.6">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-k kind-must" id="t20" data-part="2" data-kind="must">
+        <div class="num"><span class="n">20</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Melyik napon volt a legtöbb szabad hely?</h4><div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div></div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">Ez ugyanaz a logika, mint a 14. feladatnál, csak most a C oszlopon (Szabad hely): keresd meg a <strong>legnagyobb</strong> egynapi szabad hely-számot a <strong>MAX</strong> függvénnyel. Gondold végig: melyik napon lehet ez a legnagyobb – amikor sokan vagy amikor senki sem jött?</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>F12</b> <i class="sw"></i> színezd ki</span>
+            </div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="20" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 60" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="60" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== 3. FELADATSOR ===================== -->
+  <section class="sec" id="f3">
+    <header class="lband">
+      <div class="big">3</div>
+      <div>
+        <h2>3. feladatsor – Egy YouTube-csatorna napi megtekintései</h2>
+        <p>90 nap adatai. Itt <strong>nincs megsúgva, melyik függvényt használd</strong> – nincs breadcrumb, nincs függvénynév a szövegben. A hat függvény közül (SUM, AVERAGE, MIN, MAX, COUNT, ROUND) kell kiválasztanod a megfelelőt, a szöveg alapján – néhány feladatnál kettőt is kombinálva. Az <strong>ellenőrző doboz</strong> itt is megvan: azt mondja meg, jó számot kaptál-e, de a képletet magadnak kell kitalálnod.</p>
+        <div class="meta">
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>kb. 25 perc</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="panelc" style="margin-top:20px">
+      <h2>Kiindulási adatok</h2>
+
+      <figure class="view">
+        <figcaption>
+          <span class="vt">1. Napi megtekintések</span>
+          <span class="vw">az <code>A1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl3-adatok"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Másolva ✓</span></button>
+        </figcaption>
+        <div class="scroll"><table class="xl" id="tbl3-adatok"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th></tr></thead><tbody>
+          <tr><th class="rn">1</th><td class="hd">Nap</td><td class="hd">Megtekintések</td><td class="hd">Cél elérve (%)</td></tr>
+          <tr><th class="rn">2</th><td>1. nap</td><td class="n">8527</td><td class="fillme"></td></tr>
+          <tr><th class="rn">3</th><td>2. nap</td><td class="n">6926</td><td class="fillme"></td></tr>
+          <tr><th class="rn">4</th><td>3. nap</td><td class="n">7174</td><td class="fillme"></td></tr>
+          <tr><th class="rn">5</th><td>4. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">6</th><td>5. nap</td><td class="n">2519</td><td class="fillme"></td></tr>
+          <tr><th class="rn">7</th><td>6. nap</td><td class="n">4812</td><td class="fillme"></td></tr>
+          <tr><th class="rn">8</th><td>7. nap</td><td class="n">2873</td><td class="fillme"></td></tr>
+          <tr><th class="rn">9</th><td>8. nap</td><td class="n">4916</td><td class="fillme"></td></tr>
+          <tr><th class="rn">10</th><td>9. nap</td><td class="n">8901</td><td class="fillme"></td></tr>
+          <tr><th class="rn">11</th><td>10. nap</td><td class="n">4422</td><td class="fillme"></td></tr>
+          <tr><th class="rn">12</th><td>11. nap</td><td class="n">6733</td><td class="fillme"></td></tr>
+          <tr><th class="rn">13</th><td>12. nap</td><td class="n">4548</td><td class="fillme"></td></tr>
+          <tr><th class="rn">14</th><td>13. nap</td><td class="n">9107</td><td class="fillme"></td></tr>
+          <tr><th class="rn">15</th><td>14. nap</td><td class="n">1231</td><td class="fillme"></td></tr>
+          <tr><th class="rn">16</th><td>15. nap</td><td class="n">9055</td><td class="fillme"></td></tr>
+          <tr><th class="rn">17</th><td>16. nap</td><td class="n">6836</td><td class="fillme"></td></tr>
+          <tr><th class="rn">18</th><td>17. nap</td><td class="n">2589</td><td class="fillme"></td></tr>
+          <tr><th class="rn">19</th><td>18. nap</td><td class="n">3164</td><td class="fillme"></td></tr>
+          <tr><th class="rn">20</th><td>19. nap</td><td class="n">7565</td><td class="fillme"></td></tr>
+          <tr><th class="rn">21</th><td>20. nap</td><td class="n">4465</td><td class="fillme"></td></tr>
+          <tr><th class="rn">22</th><td>21. nap</td><td class="n">9032</td><td class="fillme"></td></tr>
+          <tr><th class="rn">23</th><td>22. nap</td><td class="n">4124</td><td class="fillme"></td></tr>
+          <tr><th class="rn">24</th><td>23. nap</td><td class="n">8309</td><td class="fillme"></td></tr>
+          <tr><th class="rn">25</th><td>24. nap</td><td class="n">6647</td><td class="fillme"></td></tr>
+          <tr><th class="rn">26</th><td>25. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">27</th><td>26. nap</td><td class="n">2621</td><td class="fillme"></td></tr>
+          <tr><th class="rn">28</th><td>27. nap</td><td class="n">7685</td><td class="fillme"></td></tr>
+          <tr><th class="rn">29</th><td>28. nap</td><td class="n">8788</td><td class="fillme"></td></tr>
+          <tr><th class="rn">30</th><td>29. nap</td><td class="n">7776</td><td class="fillme"></td></tr>
+          <tr><th class="rn">31</th><td>30. nap</td><td class="n">2591</td><td class="fillme"></td></tr>
+          <tr><th class="rn">32</th><td>31. nap</td><td class="n">3802</td><td class="fillme"></td></tr>
+          <tr><th class="rn">33</th><td>32. nap</td><td class="n">3985</td><td class="fillme"></td></tr>
+          <tr><th class="rn">34</th><td>33. nap</td><td class="n">3281</td><td class="fillme"></td></tr>
+          <tr><th class="rn">35</th><td>34. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">36</th><td>35. nap</td><td class="n">1651</td><td class="fillme"></td></tr>
+          <tr><th class="rn">37</th><td>36. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">38</th><td>37. nap</td><td class="n">3676</td><td class="fillme"></td></tr>
+          <tr><th class="rn">39</th><td>38. nap</td><td class="n">8824</td><td class="fillme"></td></tr>
+          <tr><th class="rn">40</th><td>39. nap</td><td class="n">3594</td><td class="fillme"></td></tr>
+          <tr><th class="rn">41</th><td>40. nap</td><td class="n">8971</td><td class="fillme"></td></tr>
+          <tr><th class="rn">42</th><td>41. nap</td><td class="n">6941</td><td class="fillme"></td></tr>
+          <tr><th class="rn">43</th><td>42. nap</td><td class="n">3754</td><td class="fillme"></td></tr>
+          <tr><th class="rn">44</th><td>43. nap</td><td class="n">3346</td><td class="fillme"></td></tr>
+          <tr><th class="rn">45</th><td>44. nap</td><td class="n">1550</td><td class="fillme"></td></tr>
+          <tr><th class="rn">46</th><td>45. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">47</th><td>46. nap</td><td class="n">1433</td><td class="fillme"></td></tr>
+          <tr><th class="rn">48</th><td>47. nap</td><td class="n">2883</td><td class="fillme"></td></tr>
+          <tr><th class="rn">49</th><td>48. nap</td><td class="n">3481</td><td class="fillme"></td></tr>
+          <tr><th class="rn">50</th><td>49. nap</td><td class="n">8307</td><td class="fillme"></td></tr>
+          <tr><th class="rn">51</th><td>50. nap</td><td class="n">4391</td><td class="fillme"></td></tr>
+          <tr><th class="rn">52</th><td>51. nap</td><td class="n">4657</td><td class="fillme"></td></tr>
+          <tr><th class="rn">53</th><td>52. nap</td><td class="n">1658</td><td class="fillme"></td></tr>
+          <tr><th class="rn">54</th><td>53. nap</td><td class="n">5326</td><td class="fillme"></td></tr>
+          <tr><th class="rn">55</th><td>54. nap</td><td class="n">4686</td><td class="fillme"></td></tr>
+          <tr><th class="rn">56</th><td>55. nap</td><td class="n">5999</td><td class="fillme"></td></tr>
+          <tr><th class="rn">57</th><td>56. nap</td><td class="n">9411</td><td class="fillme"></td></tr>
+          <tr><th class="rn">58</th><td>57. nap</td><td class="n">5140</td><td class="fillme"></td></tr>
+          <tr><th class="rn">59</th><td>58. nap</td><td class="n">6541</td><td class="fillme"></td></tr>
+          <tr><th class="rn">60</th><td>59. nap</td><td class="n">5449</td><td class="fillme"></td></tr>
+          <tr><th class="rn">61</th><td>60. nap</td><td class="n">8065</td><td class="fillme"></td></tr>
+          <tr><th class="rn">62</th><td>61. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">63</th><td>62. nap</td><td class="n">3347</td><td class="fillme"></td></tr>
+          <tr><th class="rn">64</th><td>63. nap</td><td class="n">2197</td><td class="fillme"></td></tr>
+          <tr><th class="rn">65</th><td>64. nap</td><td class="n">6996</td><td class="fillme"></td></tr>
+          <tr><th class="rn">66</th><td>65. nap</td><td class="n">8706</td><td class="fillme"></td></tr>
+          <tr><th class="rn">67</th><td>66. nap</td><td class="n">9666</td><td class="fillme"></td></tr>
+          <tr><th class="rn">68</th><td>67. nap</td><td class="n">8091</td><td class="fillme"></td></tr>
+          <tr><th class="rn">69</th><td>68. nap</td><td class="n">9419</td><td class="fillme"></td></tr>
+          <tr><th class="rn">70</th><td>69. nap</td><td class="n">3342</td><td class="fillme"></td></tr>
+          <tr><th class="rn">71</th><td>70. nap</td><td class="n">3687</td><td class="fillme"></td></tr>
+          <tr><th class="rn">72</th><td>71. nap</td><td class="n">9777</td><td class="fillme"></td></tr>
+          <tr><th class="rn">73</th><td>72. nap</td><td class="n">9564</td><td class="fillme"></td></tr>
+          <tr><th class="rn">74</th><td>73. nap</td><td class="n">1506</td><td class="fillme"></td></tr>
+          <tr><th class="rn">75</th><td>74. nap</td><td class="n">8411</td><td class="fillme"></td></tr>
+          <tr><th class="rn">76</th><td>75. nap</td><td class="n">4200</td><td class="fillme"></td></tr>
+          <tr><th class="rn">77</th><td>76. nap</td><td class="n">1264</td><td class="fillme"></td></tr>
+          <tr><th class="rn">78</th><td>77. nap</td><td class="n">3654</td><td class="fillme"></td></tr>
+          <tr><th class="rn">79</th><td>78. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">80</th><td>79. nap</td><td class="n">4023</td><td class="fillme"></td></tr>
+          <tr><th class="rn">81</th><td>80. nap</td><td class="n">3519</td><td class="fillme"></td></tr>
+          <tr><th class="rn">82</th><td>81. nap</td><td class="n">8957</td><td class="fillme"></td></tr>
+          <tr><th class="rn">83</th><td>82. nap</td><td class="n">3171</td><td class="fillme"></td></tr>
+          <tr><th class="rn">84</th><td>83. nap</td><td class="n">2211</td><td class="fillme"></td></tr>
+          <tr><th class="rn">85</th><td>84. nap</td><td class="n">6540</td><td class="fillme"></td></tr>
+          <tr><th class="rn">86</th><td>85. nap</td><td class="n">9692</td><td class="fillme"></td></tr>
+          <tr><th class="rn">87</th><td>86. nap</td><td class="n">9105</td><td class="fillme"></td></tr>
+          <tr><th class="rn">88</th><td>87. nap</td><td class="n">2938</td><td class="fillme"></td></tr>
+          <tr><th class="rn">89</th><td>88. nap</td><td class="n">2130</td><td class="fillme"></td></tr>
+          <tr><th class="rn">90</th><td>89. nap</td><td class="mut"></td><td class="fillme"></td></tr>
+          <tr><th class="rn">91</th><td>90. nap</td><td class="n">5271</td><td class="fillme"></td></tr>
+        </tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+      <p class="ul" style="margin-top:10px;color:var(--mut);font-size:.9rem">Néhány napon nem posztoltak új videót, ezért azokon a napokon üres a Megtekintések cella.</p>
+
+      <figure class="view" style="margin-top:24px">
+        <figcaption>
+          <span class="vt">2. Napi cél és időszak-összesítő</span>
+          <span class="vw">ugyanarra a lapra, az <code>E1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl3-osszes"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Másolva ✓</span></button>
+        </figcaption>
+        <div class="scroll sm"><table class="xl" id="tbl3-osszes"><thead><tr><th class="corner"></th><th>E</th><th>F</th></tr></thead><tbody>
+          <tr><th class="rn">1</th><td class="hd">Napi cél (megtekintés)</td><td class="n">5000</td></tr>
+          <tr><th class="rn">2</th><td></td><td></td></tr>
+          <tr><th class="rn">3</th><td class="hd wide">IDŐSZAK-ÖSSZESÍTŐ</td><td class="hd"></td></tr>
+          <tr><th class="rn">4</th><td class="mut">Összesen ennyi megtekintést gyűjtött a csatorna</td><td class="fillme"></td></tr>
+          <tr><th class="rn">5</th><td class="mut">Ennyi volt az átlagos napi megtekintés</td><td class="fillme"></td></tr>
+          <tr><th class="rn">6</th><td class="mut">A legjobb napon ennyi megtekintés volt</td><td class="fillme"></td></tr>
+          <tr><th class="rn">7</th><td class="mut">A leggyengébb, videóval ellátott napon ennyi megtekintés volt</td><td class="fillme"></td></tr>
+          <tr><th class="rn">8</th><td class="mut">Ennyi napra van rögzített megtekintés-adat</td><td class="fillme"></td></tr>
+          <tr><th class="rn">9</th><td class="mut">Ennyivel volt több megtekintés a legjobb napon, mint a leggyengébbön</td><td class="fillme"></td></tr>
+          <tr><th class="rn">10</th><td class="mut">Az átlag a legközelebbi száz megtekintésre kerekítve</td><td class="fillme"></td></tr>
+          <tr><th class="rn">11</th><td class="mut">Ennyi megtekintés lett volna összesen, ha minden rögzített napon pont a célt érné el</td><td class="fillme"></td></tr>
+          <tr><th class="rn">12</th><td class="mut">Ennyivel haladta meg (vagy maradt el) összesen az elvárt céltól</td><td class="fillme"></td></tr>
+        </tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+    </section>
+
+    <div class="pband" id="part3">
+      <span class="pn">3</span>
+      <div class="pb"><h3>Csatorna-feladatok</h3><p>Nincs megsúgva a függvény – olvasd el figyelmesen a szöveget, és magad válassz. Az ellenőrző doboz utána megmondja, jó-e az eredményed.</p></div>
+      <div class="ptag"><span class="ptab">? · ? · ? · ? · ? · ?</span><span class="pcount" data-pc="3">0 / 10</span></div>
+    </div>
+    <div class="tasks">
+
+      <article class="task lv-h kind-must" id="t21" data-part="3" data-kind="must">
+        <div class="num"><span class="n">21</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Hány megtekintést gyűjtött a csatorna összesen?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">A kérdés pontosan azt kéri, amit maga a mondat mond: az <strong>összes</strong> megtekintést. Gondold végig, melyik a hat függvény közül az, amelyik egy tartomány értékeit egyetlen végösszegbe gyűjti.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F4</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="21" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 446122" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="446122" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t22" data-part="3" data-kind="must">
+        <div class="num"><span class="n">22</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi volt az átlagos napi megtekintés?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">Nem az összeget kérdezzük, hanem azt, hogy egy <strong>tipikus nap</strong> alapján mennyi megtekintést kapott a csatorna. Az üres cellák nem szabad, hogy lerontsák az eredményt – válassz olyan függvényt, amelyik ezt magától jól kezeli.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F5</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="22" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 5440.51" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="5440.5122" data-tol="1">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t23" data-part="3" data-kind="must">
+        <div class="num"><span class="n">23</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi volt a legjobb napi megtekintés?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">Nem kell megmondanod, melyik nap volt az – csak azt az egyetlen <strong>legnagyobb</strong> napi megtekintést add meg, amit ez idő alatt elért a csatorna.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F6</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="23" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 9777" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="9777" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t24" data-part="3" data-kind="must">
+        <div class="num"><span class="n">24</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>És a leggyengébb, videóval ellátott napon mennyi volt a megtekintés?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">Figyelj a szóra: <strong>videóval ellátott</strong> napon. Az üres cellájú napokat nem szabad 0 megtekintésként beleszámolni – gondold végig, hogy a megfelelő függvény ezekkel a napokkal automatikusan mit tesz.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F7</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="24" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 1231" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="1231" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t25" data-part="3" data-kind="must">
+        <div class="num"><span class="n">25</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Hány napra van egyáltalán rögzített megtekintés-adat?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">90 nap van a táblázatban, de nem mindegyiken posztoltak videót. A kérdés nem azt kéri, mennyi volt a megtekintés, hanem azt, <strong>hány cellában áll egyáltalán szám</strong> a Megtekintések oszlopban.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F8</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="25" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 82" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="82" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t26" data-part="3" data-kind="must">
+        <div class="num"><span class="n">26</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Hány százalékát éri el a napi célnak, naponta?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">A C oszlopba minden nap mellé számítsd ki, a napi megtekintés hány százaléka a napi célnak (<code>E1</code>). A cél mindig <strong>ugyanabban a cellában</strong> van, akármelyik sorban is vagy – ha egyszerűen lehúzod a képletet, az rossz cellára fog csúszni, tehát valahogy meg kell akadályoznod, hogy a hivatkozás elmozduljon. Az eredményt egész százalékra kerekítve add meg.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>C2:C91</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="26" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Ellenőrzéshez írd be, mennyi lett az <b>1. napnál</b> (<b>C2</b>):</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 171" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="171" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t27" data-part="3" data-kind="must">
+        <div class="num"><span class="n">27</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyivel volt több megtekintés a legjobb napon, mint a leggyengébbön?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">Ez most két korábbi eredményedre épül (23. és 24. feladat). Nem kell új tartományt megadnod – egyetlen képletben vond ki egymásból a két értéket, amit már kiszámoltál.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F9</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="27" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 8546" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="8546" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t28" data-part="3" data-kind="must">
+        <div class="num"><span class="n">28</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi az átlag, a legközelebbi száz megtekintésre kerekítve?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">A 22. feladatban kiszámolt átlagot most nem egész megtekintésre, hanem a legközelebbi <strong>száz</strong> megtekintésre kell kerekítened. Gondold végig, mit kell írnod abba az argumentumba, amelyik a kerekítés pontosságát adja meg – itt nem 0 és nem is pozitív szám a jó válasz.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F10</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="28" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 5400" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="5400" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t29" data-part="3" data-kind="must">
+        <div class="num"><span class="n">29</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Mennyi megtekintés lett volna összesen, ha minden rögzített napon pont a célt érné el?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">Ehhez nem a valódi megtekintés-számokra van szükséged, hanem arra, <strong>hány napról van egyáltalán adat</strong> (25. feladat), megszorozva a napi céllal (<code>E1</code>). Mivel a célra minden esetben ugyanabból a cellából kell venned az értéket, oda is rögzített hivatkozás kell.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F11</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="29" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 410000" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="410000" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="task lv-h kind-must" id="t30" data-part="3" data-kind="must">
+        <div class="num"><span class="n">30</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head"><h4>Összesen mennyivel haladta meg (vagy maradt el) a csatorna az elvárt céltól?</h4><div class="chips"><span class="lv"><i></i>Nehéz</span></div></div>
+          <p class="txt">Ez a feladatsor csúcspontja: vond ki a 29. feladatban kiszámolt elvárt összmegtekintést a tényleges, 21. feladatban kiszámolt teljes megtekintés-számból. Pozitív szám azt jelenti, hogy összességében <strong>többet</strong> ért el a csatorna, mint amennyit a cél megkívánt volna; negatív azt, hogy kevesebbet.</p>
+          <div class="foot">
+            <div class="helps"><span class="dest">Ide számold: <b>F12</b> <i class="sw"></i> színezd ki</span></div>
+            <label class="ok" title="Kész"><input type="checkbox" data-n="30" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
+          </div>
+          <div class="checkrow">
+            <span class="clabel">Írd be ide az Excelben kapott eredményt:</span>
+            <input type="text" class="chkinput" inputmode="decimal" placeholder="pl. 36122" aria-label="Ellenőrző érték">
+            <button type="button" class="hbtn checkb" data-answer="36122" data-tol="0">Ellenőrzés</button>
+            <span class="checkmsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="endnote">Ha elakadtál a 3. feladatsorban, lapozz vissza a <a href="#cheat">Képletek</a> szakaszhoz – minden ott áll, amire szükséged van.</p>
+  </section>
+
+</main>
+
+<footer class="status">
+  <div class="in">
+    <span><b id="doneN">0</b> / 30 feladat kész</span>
+    <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0" id="bar"><div class="fill" id="fill"></div></div>
+    <button type="button" class="reset" id="reset">Újrakezdés</button>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var MUST = 30;
+  var KEY = 'excel-kepletek-gyakorlas2-v1';
+  function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+
+  function confetti(){
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){ return; }
+    var cv = document.createElement('canvas');
+    cv.setAttribute('aria-hidden','true');
+    cv.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:1000';
+    document.body.appendChild(cv);
+    var ctx = cv.getContext('2d');
+    if(!ctx){ document.body.removeChild(cv); return; }
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), W = 0, H = 0, alive = true;
+    function size(){ W = window.innerWidth; H = window.innerHeight; cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); }
+    size();
+    window.addEventListener('resize', size);
+    var COLORS = ['#217346','#2f9460','#e8a013','#2f7fb8','#9c3b6a','#c47f16','#ffffff'];
+    var parts = [];
+    function add(x,y,vx,vy){ parts.push({x:x,y:y,vx:vx,vy:vy,w:6+Math.random()*7,h:4+Math.random()*6,rot:Math.random()*Math.PI*2,vr:(Math.random()-.5)*0.35,wob:Math.random()*Math.PI*2,c:COLORS[Math.floor(Math.random()*COLORS.length)],round:Math.random()<0.25,age:0,life:170+Math.random()*90}); }
+    function burst(x,y,angle,spread,n,power){ for(var i=0;i<n;i++){ var a=angle+(Math.random()-.5)*spread, sp=power*(0.45+Math.random()*0.65); add(x,y,Math.cos(a)*sp,Math.sin(a)*sp); } }
+    function done(){ if(!alive){ return; } alive=false; window.removeEventListener('resize',size); if(cv.parentNode){ cv.parentNode.removeChild(cv); } }
+    var t0=0,last=0,finale=false;
+    burst(0,H,-Math.PI*0.30,0.8,70,26);
+    burst(W,H,-Math.PI*0.70,0.8,70,26);
+    function frame(t){
+      if(!alive){ return; }
+      if(!t0){ t0=last=t; }
+      var dt=Math.min((t-last)/16.667,3), el=t-t0; last=t;
+      if(el<1600){ for(var k=0;k<2;k++){ add(Math.random()*W,-12,(Math.random()-.5)*3,1+Math.random()*3); } }
+      if(!finale && el>650){ finale=true; burst(W*0.5,H*0.85,-Math.PI/2,1.3,90,30); }
+      ctx.clearRect(0,0,W,H);
+      for(var i=parts.length-1;i>=0;i--){
+        var p=parts[i];
+        p.vy+=0.42*dt; p.vx*=Math.pow(0.985,dt); p.vy*=Math.pow(0.985,dt);
+        p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vr*dt; p.wob+=0.12*dt; p.age+=dt;
+        if(p.age>p.life || p.y>H+30){ parts.splice(i,1); continue; }
+        ctx.save();
+        ctx.globalAlpha=Math.min(1,(p.life-p.age)/30);
+        ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+        var sy=Math.abs(Math.cos(p.wob));
+        if(p.round){ ctx.beginPath(); ctx.ellipse(0,0,p.w*0.4,p.w*0.4*sy+0.5,0,0,Math.PI*2); ctx.fill(); }
+        else { ctx.fillRect(-p.w/2,-p.h*sy/2,p.w,Math.max(1,p.h*sy)); }
+        ctx.restore();
+      }
+      if(el<1600 || parts.length){ window.requestAnimationFrame(frame); } else { done(); }
+    }
+    window.requestAnimationFrame(frame);
+    setTimeout(done, 9000);
+  }
+
+  var state = {};
+  try{ state = JSON.parse(lsGet(KEY) || '{}') || {}; }catch(e){ state = {}; }
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+
+  function refresh(){
+    var must=0, per={}, tot={};
+    boxes.forEach(function(b){
+      var t=b.closest('.task'), p=t.getAttribute('data-part');
+      tot[p]=(tot[p]||0)+1;
+      t.classList.toggle('done', b.checked);
+      if(b.checked){ per[p]=(per[p]||0)+1; must++; }
+    });
+    document.getElementById('doneN').textContent = must;
+    var fill = document.getElementById('fill');
+    fill.style.width = (100*must/MUST) + '%';
+    fill.classList.toggle('full', must === MUST);
+    document.getElementById('bar').setAttribute('aria-valuenow', must);
+    Array.prototype.forEach.call(document.querySelectorAll('.pcount'), function(el){
+      var p = el.getAttribute('data-pc'), d = per[p]||0, t = tot[p]||0;
+      el.textContent = d + ' / ' + t;
+      el.classList.toggle('full', d === t && t > 0);
+    });
+  }
+
+  function countDone(){ var n=0; boxes.forEach(function(b){ if(b.checked){ n++; } }); return n; }
+  var doneAll = (countDone() === boxes.length);
+
+  boxes.forEach(function(b){
+    var n = b.getAttribute('data-n');
+    b.checked = !!state[n];
+    b.addEventListener('change', function(){
+      if(b.checked){ state[n]=1; } else { delete state[n]; }
+      lsSet(KEY, JSON.stringify(state));
+      refresh();
+      var n2 = countDone();
+      if(b.checked){ if(!doneAll && n2 === boxes.length){ doneAll = true; confetti(); } }
+      else { if(n2 < boxes.length){ doneAll = false; } }
+    });
+  });
+  refresh();
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if(window.confirm('Törlöd az összes pipát?')){
+      state = {}; lsSet(KEY, '{}');
+      boxes.forEach(function(b){ b.checked = false; });
+      refresh();
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.checkb'), function(btn){
+    btn.addEventListener('click', function(){
+      var row = btn.closest('.checkrow');
+      var input = row.querySelector('.chkinput');
+      var msg = row.querySelector('.checkmsg');
+      var raw = (input.value || '').trim().replace(',', '.').replace('%', '');
+      var val = parseFloat(raw);
+      var answer = parseFloat(btn.getAttribute('data-answer'));
+      var tol = parseFloat(btn.getAttribute('data-tol')) || 0;
+      if(isNaN(val)){
+        msg.textContent = 'Írj be egy számot.';
+        msg.className = 'checkmsg bad';
+        return;
+      }
+      if(Math.abs(val - answer) <= tol + 0.0001){
+        msg.textContent = '✓ Helyes!';
+        msg.className = 'checkmsg ok';
+        var card = btn.closest('.card');
+        var cb = card.querySelector('.ok input[type=checkbox]');
+        if(cb && !cb.checked){ cb.checked = true; cb.dispatchEvent(new Event('change')); }
+      } else {
+        msg.textContent = '✗ Még nem jó – nézd át a képletet.';
+        msg.className = 'checkmsg bad';
+      }
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.chkinput'), function(inp){
+    inp.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); inp.closest('.checkrow').querySelector('.checkb').click(); }
+    });
+  });
+
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var tbl = document.getElementById(btn.getAttribute('data-tbl'));
+      var rows = [];
+      Array.prototype.forEach.call(tbl.querySelectorAll('tr'), function(tr){
+        var cells = tr.querySelectorAll('td');
+        if(cells.length){ rows.push(Array.prototype.map.call(cells, function(c){ return c.textContent.trim(); }).join('\t')); }
+      });
+      var text = rows.join('\n');
+      function ok(){ btn.classList.add('copied'); setTimeout(function(){ btn.classList.remove('copied'); }, 1800); }
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(ok, function(){ fallbackCopy(text); ok(); });
+      } else { fallbackCopy(text); ok(); }
+    });
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('.tabs a'));
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+        }
+      });
+    }, {rootMargin:'-130px 0px -65% 0px'});
+    ['cheat','f1','f2','f3'].forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); });
+  }
+})();
+
+(function(){
+  var KEYT = 'excel-kepletek-gyakorlas2-theme';
+  var VARS = ['--d9','--d8','--d7','--d6','--d5','--d2','--d1','--d0'];
+  var root = document.documentElement;
+  function apply(btn){
+    var colors = btn.getAttribute('data-colors').split(',');
+    VARS.forEach(function(v,i){ root.style.setProperty(v, colors[i]); });
+    root.style.setProperty('--bg', colors[6]);
+    root.style.setProperty('--line', colors[5]);
+    Array.prototype.forEach.call(document.querySelectorAll('.theme-picker button'), function(b){ b.classList.toggle('active', b===btn); });
+    try{ window.localStorage.setItem(KEYT, btn.getAttribute('data-theme')); }catch(e){}
+  }
+  var saved = null;
+  try{ saved = window.localStorage.getItem(KEYT); }catch(e){}
+  var buttons = Array.prototype.slice.call(document.querySelectorAll('.theme-picker button'));
+  var initial = buttons[0];
+  if(saved){ buttons.forEach(function(b){ if(b.getAttribute('data-theme')===saved){ initial = b; } }); }
+  apply(initial);
+  buttons.forEach(function(b){ b.addEventListener('click', function(){ apply(b); }); });
+})();
+</script>
+</body>
+</html>
