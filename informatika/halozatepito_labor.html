@@ -514,7 +514,7 @@ function makeBoard(host,tid,readonly){
     else if(either('laptop')&&either('ap')) media='wifi';
     if(either('internet')) media='wan';
     if(cfg.mode==='ip' && isEnd(A) && isEnd(C)){ msg('Két végpontot itt switch-csel köss össze.','bad'); return; }
-    if(either('ap') && either('ap')){ msg('Két hozzáférési pontot ne köss össze közvetlenül.','bad'); return; }
+    if(ta==='ap' && tc==='ap'){ msg('Két hozzáférési pontot ne köss össze közvetlenül.','bad'); return; }
     b.links.push({id:a+'-'+c+'-'+Date.now().toString(36),a:a,b:c,media:media,broken:false,fixed:false});
     save(); draw(); msg((media==='wifi'?'Wifi-kapcsolat létrejött: ':'Összekötve: ')+A.label+' – '+C.label+'.','ok');
   }
