@@ -257,7 +257,8 @@ footer{margin-top:26px; display:flex; justify-content:space-between; flex-wrap:w
 'use strict';
 var KEY='halozat_hu_v1';
 var S={tab:1, done:{}, ans:{}, boards:{}, pings:{}, finishedAt:null};
-try{ var raw=localStorage.getItem(KEY); if(raw){ var o=JSON.parse(raw); if(o&&typeof o==='object') for(var k in o) if(Object.prototype.hasOwnProperty.call(S,k)) S[k]=o[k]; } }catch(e){}
+var hasSave=false;
+try{ var raw=localStorage.getItem(KEY); if(raw){ hasSave=true; var o=JSON.parse(raw); if(o&&typeof o==='object') for(var k in o) if(Object.prototype.hasOwnProperty.call(S,k)) S[k]=o[k]; } }catch(e){}
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
 var TEACHER=/[?&]tanar\b/.test(location.search);
 function $(id){ return document.getElementById(id); }
@@ -853,6 +854,16 @@ function exportPDF(){
 if(TEACHER) $('teacherBox').innerHTML='<div class="teacher"><b>Tanári nézet:</b> minden feladat és az összefoglaló is nyitva van. Minden feladatnál van „Mintamegoldás (tanár)” gomb, amely betölti a helyes megoldást.</div>';
 (function(){ var b=$('resetBtn'), armed=false, t=null;
   b.addEventListener('click',function(){ if(!armed){ armed=true; b.textContent='Biztosan? Kattints újra'; t=setTimeout(function(){ armed=false; b.textContent='Minden adat törlése'; },4000); return; } clearTimeout(t); try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }); })();
+if(!hasSave){
+  lessonTasks(1).forEach(function(t){
+    if(!S.ans[t.id]) S.ans[t.id]={};
+    if(t.solve) t.solve(getB(t.id),S.ans[t.id]);
+    else (t.qs||[]).forEach(function(q){ S.ans[t.id][q.k]=q.t==='num'?String(q.ans):q.ans; });
+    S.done[t.id]=true;
+  });
+  S.tab=2;
+  save();
+}
 window.__net={TASKS:TASKS,S:S,CFG:CFG,getB:getB,ipPing:ipPing,topoPing:topoPing,runCheck:runCheck,go:go,T:T};
 go(S.tab===2||S.tab===3?S.tab:1);
 })();
