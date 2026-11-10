@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Webdetektív</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f6; --paper:#ffffff; --paper2:#f4f7fa; --ink:#14202b; --muted:#465565; --line:#d3dce6;
+  --red:#c0392b; --red-soft:#fbe9e7; --blue:#1d4ed8; --blue-soft:#eaf1fd; --ok:#166534; --ok-soft:#e6f4ea; --bad:#b42318; --bad-soft:#fdecea;
+  --easy:#166534; --easy-soft:#e6f4ea; --mid:#92400e; --mid-soft:#fdf2dc; --hard:#b42318; --hard-soft:#fdecea;
+  --tab:#dbe6f4; --shadow:0 1px 2px rgba(20,32,43,.05),0 6px 18px rgba(20,32,43,.08);
+  --term:#0d1117; --term-ink:#d2f5d2; --term-dim:#8fb3a0; --term-amber:#ffd166; --term-err:#ff9b8f;
+  --type:"Atkinson Hyperlegible","Segoe UI",Roboto,Arial,sans-serif; --sans:"Atkinson Hyperlegible","Segoe UI",Roboto,Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f141a; --paper:#18202a; --paper2:#131a22; --ink:#e9eff5; --muted:#a9b6c3; --line:#2c3846;
+    --red:#ff8a7d; --red-soft:#3a1f1c; --blue:#8ab4ff; --blue-soft:#1a2740; --ok:#86d99a; --ok-soft:#14281b; --bad:#ff8a7d; --bad-soft:#3a1f1c;
+    --easy:#86d99a; --easy-soft:#14281b; --mid:#f5c25b; --mid-soft:#33290f; --hard:#ff8a7d; --hard-soft:#3a1f1c;
+    --tab:#22344d; --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f141a; --paper:#18202a; --paper2:#131a22; --ink:#e9eff5; --muted:#a9b6c3; --line:#2c3846;
+    --red:#ff8a7d; --red-soft:#3a1f1c; --blue:#8ab4ff; --blue-soft:#1a2740; --ok:#86d99a; --ok-soft:#14281b; --bad:#ff8a7d; --bad-soft:#3a1f1c;
+    --easy:#86d99a; --easy-soft:#14281b; --mid:#f5c25b; --mid-soft:#33290f; --hard:#ff8a7d; --hard-soft:#3a1f1c;
+    --tab:#22344d; --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.6}
+h1,h2,h3{font-family:var(--type); font-weight:700; letter-spacing:-.01em; line-height:1.25}
+code{font-family:var(--mono); font-size:.88em; background:var(--paper2); border:1px solid var(--line); padding:0 .3em; border-radius:4px; overflow-wrap:anywhere}
+button,input,select{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+.hide{display:none !important}
+.small{font-size:.8rem; color:var(--muted)}
+.page{max-width:1440px; margin:0 auto; padding:0 16px 40px}
+
+/* header */
+.top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 0}
+.brand{display:flex; align-items:center; gap:12px}
+.badge{width:44px; height:44px; border-radius:50%; border:3px double var(--red); color:var(--red); display:grid; place-items:center; font-family:var(--type); font-size:1.1rem; transform:rotate(-8deg)}
+.brand b{font-family:var(--type); font-size:1.35rem; font-weight:700; display:block; line-height:1}
+.brand small{color:var(--muted); font-size:.76rem}
+.acts{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.btn{border:2px solid var(--ink); background:var(--ink); color:var(--paper); border-radius:6px; padding:.4rem .8rem; font-weight:700; cursor:pointer; font-size:.86rem; white-space:nowrap}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn.red{background:var(--red); border-color:var(--red); color:#fff}
+.btn.sm{padding:.25rem .6rem; font-size:.8rem}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.savest{font-family:var(--mono); font-size:.74rem; padding:.18rem .5rem; border:1px dashed var(--line); border-radius:4px; color:var(--muted); white-space:nowrap}
+.savest.dirty{color:var(--red); border-color:var(--red)} .savest.clean{color:var(--ok); border-color:var(--ok)}
+
+/* intro dossier */
+.dossier{position:relative; background:var(--paper); border:1px solid var(--line); border-radius:4px 14px 14px 14px; padding:22px 24px; box-shadow:var(--shadow); margin-top:18px}
+.dossier::before{content:"ÜGYIRAT · 2026/11"; position:absolute; top:-22px; left:-1px; background:var(--tab); color:var(--ink); font-family:var(--type); font-weight:700; font-size:.8rem; padding:3px 14px 2px; border-radius:8px 8px 0 0; border:1px solid var(--line); border-bottom:0}
+.dossier h1{font-size:clamp(1.7rem,5vw,2.6rem); margin:.1rem 0 .4rem}
+.dossier p{margin:.35rem 0; max-width:760px}
+.stamp{position:absolute; right:22px; top:18px; border:3px solid var(--red); color:var(--red); font-family:var(--type); padding:4px 12px; transform:rotate(9deg); font-size:1.1rem; opacity:.85; border-radius:4px}
+@media (max-width:700px){ .stamp{position:static; display:inline-block; margin-bottom:6px} }
+.rules{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-top:14px}
+.rules div{background:var(--paper2); border:1px dashed var(--line); border-radius:8px; padding:9px 12px; font-size:.88rem}
+.rules b{font-family:var(--type); font-weight:700; display:block; font-size:1rem}
+
+/* chapters */
+.chaps{display:grid; grid-template-columns:repeat(3,1fr) .8fr; gap:10px; margin:18px 0}
+.chaps button{text-align:left; background:var(--paper); border:1px solid var(--line); border-top:6px solid var(--tab); border-radius:6px; padding:9px 12px; cursor:pointer; box-shadow:var(--shadow); min-width:0}
+.chaps .n{font-family:var(--mono); font-size:.72rem; color:var(--muted)}
+.chaps .t{display:block; font-family:var(--type); font-weight:700; font-size:1.02rem; line-height:1.2; margin:.15rem 0}
+.chaps .st{font-size:.76rem; color:var(--muted)}
+.chaps button[aria-current="true"]{border-top-color:var(--red); outline:2px solid var(--ink)}
+.chaps button.ok .st{color:var(--ok); font-weight:700}
+.chaps button.lock{opacity:.55}
+@media (max-width:760px){ .chaps{grid-template-columns:1fr 1fr} }
+
+/* workspace */
+.work{display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,520px); gap:16px; align-items:start}
+@media (max-width:1050px){ .work{grid-template-columns:minmax(0,1fr)} }
+.chap-h{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:14px; box-shadow:var(--shadow)}
+.chap-h h2{margin:0 0 .3rem; font-size:1.6rem}
+.chap-h p{margin:.25rem 0}
+.chip{display:inline-block; font-family:var(--mono); font-size:.7rem; font-weight:600; padding:.1rem .45rem; border-radius:4px; white-space:nowrap; border:1px solid currentColor}
+.chip.easy{color:var(--easy); background:var(--easy-soft)} .chip.mid{color:var(--mid); background:var(--mid-soft)} .chip.hard{color:var(--hard); background:var(--hard-soft)} .chip.time{color:var(--blue); background:var(--blue-soft)}
+
+.clue{position:relative; background:var(--paper); border:1px solid var(--line); border-radius:4px 10px 10px 10px; margin:30px 0 16px; box-shadow:var(--shadow)}
+.clue .tabl{position:absolute; top:-24px; left:-1px; background:var(--tab); border:1px solid var(--line); border-bottom:0; border-radius:8px 8px 0 0; padding:2px 12px 1px; font-family:var(--type); font-weight:700; font-size:.85rem}
+.clue.ok .tabl{background:var(--ok-soft); color:var(--ok)}
+.clue.locked{opacity:.55; box-shadow:none}
+.clue-in{padding:14px 18px}
+.clue h3{margin:0 0 .2rem; font-size:1.3rem}
+.clue .meta{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px}
+.solved{position:absolute; right:16px; top:10px; border:3px solid var(--ok); color:var(--ok); font-family:var(--type); padding:2px 10px; transform:rotate(-7deg); border-radius:4px; font-size:1rem; background:var(--paper)}
+.brief{border-left:4px solid var(--blue); background:var(--paper2); border-radius:0 8px 8px 0; padding:8px 12px; margin:8px 0}
+.know{background:var(--blue-soft); border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:10px 0; font-size:.93rem}
+.know .kt{font-family:var(--type); font-weight:700; color:var(--blue); font-size:.95rem}
+.know p{margin:.3rem 0}
+.term-def{background:var(--paper); border:1px dashed var(--line); border-radius:6px; padding:4px 9px; margin:.3rem 0; font-size:.88rem}
+.term-def b{color:var(--blue)}
+.todo{margin:.5rem 0; padding-left:1.25rem}
+.todo li{margin:.25rem 0}
+.cmd{font-family:var(--mono); font-size:.82rem; background:var(--term); color:var(--term-ink); border:0; border-radius:4px; padding:.08rem .45rem; cursor:pointer; white-space:normal; overflow-wrap:anywhere; text-align:left}
+.cmd::before{content:"› "; color:var(--term-amber)}
+details.hint{background:var(--paper2); border:1px dashed var(--line); border-radius:8px; padding:5px 10px; margin:.5rem 0; font-size:.88rem}
+details.hint summary{cursor:pointer; font-weight:700}
+.evid{background:var(--paper2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-top:10px}
+.evid .eh{font-family:var(--type); font-weight:700; font-size:.95rem; margin-bottom:6px}
+.q{padding:7px 0; border-bottom:1px dashed var(--line)}
+.q:last-child{border-bottom:0}
+.q p{margin:0 0 .35rem; font-size:.93rem}
+.q p b.qn{font-family:var(--mono); color:var(--red); margin-right:.3rem}
+.opts{display:grid; gap:5px}
+.opts label{display:flex; gap:8px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:5px 9px; cursor:pointer; font-size:.9rem}
+.opts input{margin-top:.3rem; flex:none}
+.q input[type=text]{width:240px; max-width:100%; background:var(--paper); border:1px solid var(--line); border-bottom:2px solid var(--blue); border-radius:6px 6px 0 0; padding:.35rem .5rem; font-family:var(--mono); font-size:.95rem}
+.q select{background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:.32rem .45rem; max-width:100%}
+.check-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:12px}
+.res{font-size:.9rem; border-radius:6px; padding:7px 11px; margin-top:8px}
+.res.ok{background:var(--ok-soft); color:var(--ok); font-weight:700}
+.res.bad{background:var(--bad-soft); color:var(--bad)}
+.mail{background:var(--paper); border:1px solid var(--line); border-radius:8px; overflow:hidden; margin:10px 0}
+.mail .mh{background:var(--paper2); border-bottom:1px solid var(--line); padding:8px 12px; font-size:.86rem}
+.mail .mb{padding:10px 12px; font-size:.92rem}
+.mail .raw{font-family:var(--mono); font-size:.76rem; white-space:pre-wrap; background:var(--term); color:var(--term-ink); padding:10px 12px; overflow-wrap:anywhere}
+.fakebtn{display:inline-block; background:var(--blue); color:#fff; border:0; border-radius:6px; padding:.35rem .9rem; font-weight:700; cursor:help}
+.realurl{display:inline-block; margin-top:6px; font-family:var(--mono); font-size:.8rem; color:var(--red); background:var(--red-soft); border-radius:4px; padding:2px 6px; overflow-wrap:anywhere}
+
+/* terminal */
+.dock{position:sticky; top:12px}
+.term{background:var(--term); border-radius:10px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; height:calc(100vh - 24px); min-height:480px; border:1px solid #000}
+.term-h{display:flex; align-items:center; gap:8px; padding:7px 10px; background:#161b22; color:#e6edf3; font-family:var(--mono); font-size:.78rem; border-bottom:1px solid #000}
+.term-h .dots{display:flex; gap:5px} .term-h .dots i{width:10px; height:10px; border-radius:50%; background:#ff6b5e} .term-h .dots i:nth-child(2){background:#f2c14e} .term-h .dots i:nth-child(3){background:#5fd068}
+.term-h .tt{flex:1}
+.term-h button{background:transparent; border:1px solid #3b4a3d; color:#cfe8cf; border-radius:4px; font-family:var(--mono); font-size:.72rem; padding:.1rem .45rem; cursor:pointer}
+.term-out{flex:1; overflow:auto; padding:12px 14px; font-family:var(--mono); font-size:.86rem; line-height:1.55; color:var(--term-ink); white-space:pre-wrap; overflow-wrap:anywhere}
+.term-out div{min-height:1.55em}
+.term-out .c{color:#fff} .term-out .c::before{content:"C:\\nyomozo> "; color:var(--term-amber)}
+.term-out .e{color:var(--term-err)} .term-out .d{color:var(--term-dim)} .term-out .h{color:var(--term-amber)}
+.term-in{display:flex; align-items:center; gap:6px; padding:9px 12px; border-top:1px solid #000; background:#11161d}
+.term-in span{font-family:var(--mono); color:var(--term-amber); font-size:.84rem; white-space:nowrap}
+.term-in input{flex:1; min-width:0; background:transparent; border:0; outline:none; color:#fff; font-family:var(--mono); font-size:.95rem; caret-color:var(--term-amber)}
+.dock-toggle{display:none}
+@media (max-width:1050px){
+  .dock{position:fixed; left:0; right:0; bottom:0; top:auto; z-index:40; padding:0 8px 8px}
+  .term{height:52px; min-height:0; transition:height .2s}
+  .dock.open .term{height:62vh}
+  .dock-toggle{display:inline-block}
+  .page{padding-bottom:80px}
+}
+
+/* notes / summary */
+.notebook{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:16px 20px; margin:18px 0; box-shadow:var(--shadow); background-image:repeating-linear-gradient(transparent 0 27px,rgba(31,78,121,.12) 27px 28px)}
+.notebook h3{margin:0 0 .5rem}
+.notebook dl{margin:0; display:grid; grid-template-columns:minmax(130px,220px) 1fr; gap:4px 14px; font-size:.92rem}
+.notebook dt{font-weight:700; color:var(--blue)} .notebook dd{margin:0}
+@media (max-width:560px){ .notebook dl{grid-template-columns:1fr} }
+.savecall{background:var(--red-soft); border:2px dashed var(--red); border-radius:8px; padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin:16px 0}
+.savecall b{font-family:var(--type); font-weight:700; color:var(--red); font-size:1.05rem}
+.done-banner{background:var(--ok-soft); border:1px solid var(--ok); border-radius:8px; padding:12px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin:16px 0}
+.done-banner b{font-family:var(--type); font-weight:700; color:var(--ok); font-size:1.1rem}
+.locked-box{background:var(--paper); border:1px dashed var(--line); border-radius:8px; padding:30px 18px; text-align:center}
+.toast{position:fixed; left:50%; bottom:70px; transform:translateX(-50%); background:var(--ink); color:var(--paper); padding:10px 16px; border-radius:8px; font-size:.9rem; z-index:60; max-width:90vw; box-shadow:var(--shadow)}
+.sum-sec{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:12px; box-shadow:var(--shadow)}
+.sum-sec h3{margin:0 0 .4rem}
+.sum-sec ul{margin:.3rem 0; padding-left:1.2rem} .sum-sec li{margin:.25rem 0}
+.mini-t{border-collapse:collapse; width:100%; font-size:.86rem}
+.mini-t th,.mini-t td{border-bottom:1px solid var(--line); padding:5px 8px; text-align:left; vertical-align:top}
+.mini-t th{font-size:.74rem; color:var(--muted)}
+.stat{display:flex; flex-wrap:wrap; gap:10px}
+.stat div{background:var(--paper2); border:1px solid var(--line); border-radius:6px; padding:8px 14px}
+.stat b{display:block; font-family:var(--mono); font-size:1.2rem}
+.pdfbar{background:var(--blue-soft); border:1px solid var(--line); border-radius:8px; padding:12px 16px; margin-bottom:12px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+.pdf-head{display:none}
+.pdfmode{--paper:#fff; --paper2:#f4f7fa; --ink:#14202b; --muted:#465565; --line:#d3dce6; --blue:#1d4ed8; --ok:#2f6b2f; --shadow:none; background:#fff; color:#14202b; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:1.5; padding:4px}
+.pdfmode .pdf-head{display:flex; justify-content:space-between; border-bottom:3px solid #1d4ed8; padding-bottom:6px; margin-bottom:12px; font-size:12px; color:#465565}
+.pdfmode .pdf-head b{color:#1d4ed8; font-size:14px}
+.pdfmode .chap-h,.pdfmode .sum-sec{box-shadow:none; break-inside:avoid; page-break-inside:avoid; margin-bottom:10px}
+.pdfmode .sum-sec.long{break-inside:auto; page-break-inside:auto}
+.pdfmode h2,.pdfmode h3{font-family:Arial,Helvetica,sans-serif}
+.teacher{background:var(--mid-soft); border:1px dashed var(--mid); border-radius:6px; padding:8px 12px; font-size:.86rem; margin-bottom:12px}
+footer{margin-top:20px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; color:var(--muted); font-size:.82rem; align-items:center}
+@media print{ body{background:#fff !important} .top,.dossier,.chaps,#teacherBox,footer,.pdfbar,#pdfMsg,.dock,.savecall{display:none !important} .work{display:block} .pdf-head{display:flex; justify-content:space-between; border-bottom:3px double #b3261e; margin-bottom:12px} .sum-sec{box-shadow:none; break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top">
+  <div class="brand"><div class="badge">WD</div><div><b>Webdetektív</b><small>Internet és web · nyomozós virtuális labor</small></div></div>
+  <div class="acts">
+    <span class="savest" id="saveSt">—</span>
+    <button type="button" class="btn red" id="saveBtn">💾 Ügyirat mentése</button>
+    <button type="button" class="btn ghost" id="loadBtn">📂 Ügyirat betöltése</button>
+    <input type="file" id="loadIn" accept=".json,application/json" class="hide">
+    <button type="button" class="btn ghost" id="themeBtn" aria-label="Téma váltása">🌙</button>
+  </div>
+</header>
+
+<section class="dossier">
+  <div class="stamp">BIZALMAS</div>
+  <h1>Az elnémult honlap rejtélye</h1>
+  <p>Hétfő reggel 8:05. A Napsugár Gimnázium honlapja a diákgépeken nem töltődik be, a tanáriban viszont igen. Pár nappal később furcsa levelek érkeznek a szülőkhöz az iskola nevében. A rendszergazda beteg, és az ügy rád maradt.</p>
+  <p>Nem kattintgatással nyomozol, hanem úgy, ahogy a valódi rendszergazdák: <b>parancsokat írsz egy terminálba</b> (ipconfig, ping, nslookup, tracert, curl, whois), elemzed a válaszokat, és a bizonyítékokat beírod az ügyiratba.</p>
+  <div class="rules">
+    <div><b>3 fejezet = 3 óra</b>Mindegyik kb. 35 perc, 6 nyommal. A nyomok sorban nyílnak meg. Két nyom <b style="display:inline;font-family:inherit;color:var(--hard)">nehéz</b>, ott a „Segítség” fokozatosan rávezet.</div>
+    <div><b>A terminál</b>Jobb oldalon (telefonon alul) van. A sötét, kattintható parancsokkal beírod a parancsot, aztán Entert nyomsz. A <code>sugo</code> parancs mindent kilistáz.</div>
+    <div><b>Mentés</b>Óra végén: „💾 Ügyirat mentése” (egy .json fájl). Következő órán: „📂 Ügyirat betöltése”, és ott folytatod, ahol abbahagytad.</div>
+  </div>
+</section>
+
+<nav class="chaps" id="chaps" aria-label="Fejezetek"></nav>
+<div id="teacherBox"></div>
+
+<div class="work">
+  <main id="main"></main>
+  <aside class="dock" id="dock" aria-label="Terminál">
+    <div class="term">
+      <div class="term-h"><span class="dots"><i></i><i></i><i></i></span><span class="tt">nyomozo@napsugar-gimi — terminál</span><button type="button" id="clrBtn">törlés</button><button type="button" class="dock-toggle" id="dockBtn">▲ megnyit</button></div>
+      <div class="term-out" id="tout" aria-live="polite"></div>
+      <div class="term-in"><span>C:\nyomozo&gt;</span><input id="tin" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Parancs beírása" placeholder="írj be egy parancsot, pl. sugo"></div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <span>Webdetektív · minden szereplő, cím és adat kitalált · a szimulált terminál nem kapcsolódik a valódi hálózathoz</span>
+  <button class="btn ghost sm" id="resetBtn" type="button">Minden adat törlése</button>
+</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var KEY='webdetektiv_hu_v1', APP='webdetektiv-labor';
+function fresh(){ return {tab:1, done:{}, ans:{}, ran:[], term:[], finishedAt:null, rev:0, fileRev:-1, fileSavedAt:null}; }
+var S=fresh();
+try{ var raw=localStorage.getItem(KEY); if(raw){ var o=JSON.parse(raw); if(o&&typeof o==='object') for(var k in o) if(Object.prototype.hasOwnProperty.call(S,k)) S[k]=o[k]; } }catch(e){}
+function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+function save(){ S.rev++; persist(); updSave(); }
+var TEACHER=/[?&]tanar\b/.test(location.search);
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function Art(n){ return (n===1||n===5)?'Az':'A'; }
+function toast(m){ var t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(function(){ t.remove(); },3800); }
+function A_(id){ if(!S.ans[id]) S.ans[id]={}; return S.ans[id]; }
+function FRAC(a,b){ return '<span style="display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-family:var(--mono);font-size:.9em;margin:0 .15em;line-height:1.15"><span style="border-bottom:1.5px solid currentColor;padding:0 .2em">'+a+'</span><span style="padding:0 .2em">'+b+'</span></span>'; }
+
+/* ---------- theme ---------- */
+(function(){
+  var t=null; try{ t=localStorage.getItem('webdet_theme'); }catch(e){}
+  if(t==='dark'||t==='light') document.documentElement.setAttribute('data-theme',t);
+  function cur(){ var c=document.documentElement.getAttribute('data-theme'); if(!c) c=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'; return c; }
+  function icon(){ $('themeBtn').textContent=cur()==='dark'?'☀️':'🌙'; }
+  $('themeBtn').addEventListener('click',function(){ var n=cur()==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',n); try{ localStorage.setItem('webdet_theme',n); }catch(e){} icon(); });
+  icon();
+})();
+
+/* =========================================================
+   SIMULATED NETWORK
+   ========================================================= */
+var MY={ip:'192.168.10.23', mask:'255.255.255.0', gw:'192.168.10.1', dns:'192.168.10.53'};
+var DNS_SCHOOL='192.168.10.53', DNS_EXT='198.51.100.53';
+function dnsFixed(){ return !!S.done['1.6']; }
+function lookup(name, server){
+  name=String(name||'').toLowerCase().replace(/\.$/,'');
+  var site = (server===DNS_EXT || dnsFixed()) ? '203.0.113.81' : '203.0.113.80';
+  var base={'napsugar-gimi.hu':site,'www.napsugar-gimi.hu':site,'kulso-teszt.net':'198.51.100.10','napsugar-gimn.hu':'198.51.100.66','mail.napsugar-gimn.hu':'198.51.100.66','befizetes-portal.net':'198.51.100.66','iskola-dns.local':'192.168.10.53','router.local':'192.168.10.1'};
+  if(base[name]) return base[name];
+  if(/\.befizetes-portal\.net$/.test(name)) return '198.51.100.66';
+  return null;
+}
+function isIP(s){ return /^\d{1,3}(\.\d{1,3}){3}$/.test(s); }
+var PINGT={'192.168.10.1':[[1,1,2,1],64],'192.168.10.53':[[1,2,1,1],64],'198.51.100.10':[[18,17,19,18],56],'198.51.100.53':[[15,16,15,14],57],'203.0.113.81':[[32,31,33,32],54],'198.51.100.66':[[41,39,40,40],51]};
+var HOPS_SITE=[[1,'192.168.10.1','iskola-router.local'],[4,'10.20.0.1','szabadka-gw.pelda-isp.net'],[6,'10.20.4.9','szabadka-core.pelda-isp.net'],[9,'10.30.1.1','belgrad-core.pelda-isp.net'],[29,'10.40.2.2','frankfurt-ix.pelda-isp.net'],[31,'10.40.7.5','frankfurt-dc.pelda-hosting.net'],[32,'203.0.113.81','napsugar-gimi.hu']];
+var HOPS_EXT=[[1,'192.168.10.1','iskola-router.local'],[4,'10.20.0.1','szabadka-gw.pelda-isp.net'],[6,'10.20.4.9','szabadka-core.pelda-isp.net'],[9,'10.30.1.1','belgrad-core.pelda-isp.net'],[15,'10.50.0.1','budapest-ix.pelda-isp.net']];
+var WHOIS={
+ 'napsugar-gimi.hu':['Domain:        napsugar-gimi.hu','Regisztrálva:  2009-03-12','Lejárat:       2027-03-12','Tulajdonos:    Napsugár Gimnázium','Regisztrátor:  Pelda Domain Zrt.','Névszerverek:  ns1.pelda-hosting.net, ns2.pelda-hosting.net'],
+ 'napsugar-gimn.hu':['Domain:        napsugar-gimn.hu','Regisztrálva:  2026-11-06','Lejárat:       2027-11-06','Tulajdonos:    ADATVÉDELMI OKBÓL REJTVE','Regisztrátor:  OlcsoDomain24 (kitalált)','Névszerverek:  ns.befizetes-portal.net'],
+ 'befizetes-portal.net':['Domain:        befizetes-portal.net','Regisztrálva:  2026-11-05','Lejárat:       2027-11-05','Tulajdonos:    ADATVÉDELMI OKBÓL REJTVE','Regisztrátor:  OlcsoDomain24 (kitalált)','Névszerverek:  ns.befizetes-portal.net'],
+ 'kulso-teszt.net':['Domain:        kulso-teszt.net','Regisztrálva:  2015-06-01','Tulajdonos:    Pelda Internetszolgáltató','Regisztrátor:  Pelda Domain Zrt.']
+};
+var HINT_TXT='Nezd meg a /belso/naplo.txt fajlt!';
+var HINT_B64=btoa(HINT_TXT), HINT_COOKIE=encodeURIComponent(HINT_B64);
+var DATE='Date: Mon, 09 Nov 2026 08:14:22 GMT';
+function siteHtml(){ return ['<!DOCTYPE html>','<html lang="hu">','<head>','  <meta charset="utf-8">','  <title>Napsugár Gimnázium</title>','  <meta name="description" content="A Napsugár Gimnázium hivatalos honlapja">','</head>','<body>','  <h1>Napsugár Gimnázium</h1>','  <nav><a href="/hirek/">Hírek</a> | <a href="/orarend">Órarend</a> | <a href="/kapcsolat">Kapcsolat</a></nav>','  <!-- Megjegyzés a fejlesztőnek: a régi admin felület még elérhető: /regi-admin -->','  <p>Üdvözlünk a Napsugár Gimnázium honlapján!</p>','</body>','</html>']; }
+var LOG=['198.51.100.66 - [08/Nov/2026:03:12:01] "GET /admin HTTP/1.1" 404','198.51.100.66 - [08/Nov/2026:03:12:02] "GET /wp-login.php HTTP/1.1" 404','198.51.100.66 - [08/Nov/2026:03:12:02] "GET /regi-admin HTTP/1.1" 403','198.51.100.66 - [08/Nov/2026:03:12:03] "GET /.env HTTP/1.1" 404','198.51.100.66 - [08/Nov/2026:03:12:03] "GET /backup.zip HTTP/1.1" 404','198.51.100.66 - [08/Nov/2026:03:12:04] "GET /belso/ HTTP/1.1" 403','198.51.100.66 - [08/Nov/2026:03:12:05] "GET /config.php HTTP/1.1" 404','198.51.100.23 - [08/Nov/2026:07:58:11] "GET / HTTP/1.1" 200','198.51.100.23 - [08/Nov/2026:07:58:14] "GET /hirek/ HTTP/1.1" 200','203.0.113.7   - [08/Nov/2026:08:02:40] "GET /orarend HTTP/1.1" 200','203.0.113.7   - [08/Nov/2026:08:05:19] "GET /hirek/ HTTP/1.1" 200','192.0.2.14    - [08/Nov/2026:08:11:47] "GET /favicon.ico HTTP/1.1" 404','198.51.100.23 - [08/Nov/2026:08:13:02] "GET /kapcsolat HTTP/1.1" 200'];
+function resp(scheme,host,path){
+  var site=/^(www\.)?napsugar-gimi\.hu$/.test(host), fake=/\.befizetes-portal\.net$/.test(host)||host==='befizetes-portal.net';
+  var tlsReal='* TLS: tanúsítvány kiállítva erre: napsugar-gimi.hu · kiállító: Pelda CA · érvényes: 2026-03-01 – 2027-03-01';
+  var tlsFake='* TLS: tanúsítvány kiállítva erre: *.befizetes-portal.net · kiállító: Ingyen-Tanusitvany CA (kitalált) · érvényes: 2026-11-05-től';
+  function R(code,txt,headers,body,tls){ return {code:code,status:'HTTP/1.1 '+code+' '+txt,headers:headers,body:body||[],tls:scheme==='https'?tls:null}; }
+  var H=['Server: nginx',DATE];
+  if(site){
+    if(host.indexOf('www.')===0) return R(301,'Moved Permanently',H.concat(['Location: https://napsugar-gimi.hu'+path]),['<p>Átköltözött</p>'],tlsReal);
+    if(scheme==='http') return R(301,'Moved Permanently',H.concat(['Location: https://napsugar-gimi.hu'+path]),['<p>Átköltözött</p>'],null);
+    if(path==='/'||path==='') return R(200,'OK',H.concat(['Content-Type: text/html; charset=utf-8','Content-Length: 1834']),siteHtml(),tlsReal);
+    if(path==='/hirek') return R(301,'Moved Permanently',H.concat(['Location: https://napsugar-gimi.hu/hirek/']),['<p>Átköltözött</p>'],tlsReal);
+    if(path==='/hirek/') return R(200,'OK',H.concat(['Content-Type: text/html; charset=utf-8']),['<h1>Hírek</h1>','<p>Jövő héten kirándulás! A befizetés az osztályfőnöknél, készpénzben.</p>'],tlsReal);
+    if(path==='/orarend'||path==='/kapcsolat') return R(200,'OK',H.concat(['Content-Type: text/html; charset=utf-8']),['<h1>'+(path==='/orarend'?'Órarend':'Kapcsolat')+'</h1>'],tlsReal);
+    if(path==='/robots.txt') return R(200,'OK',H.concat(['Content-Type: text/plain; charset=utf-8']),['User-agent: *','Disallow: /regi-admin','Disallow: /belso/'],tlsReal);
+    if(path==='/regi-admin'||path==='/regi-admin/') return R(403,'Forbidden',H.concat(['Content-Type: text/html; charset=utf-8','Set-Cookie: nyom='+HINT_COOKIE+'; Path=/']),['<h1>403 – Tilos</h1>','<p>Ehhez nincs jogosultságod.</p>'],tlsReal);
+    if(path==='/belso/'||path==='/belso') return R(403,'Forbidden',H.concat(['Content-Type: text/html; charset=utf-8']),['<h1>403 – Tilos</h1>'],tlsReal);
+    if(path==='/belso/naplo.txt') return R(200,'OK',H.concat(['Content-Type: text/plain; charset=utf-8']),['# hozzáférési napló – 2026-11-08','# IP-cím - [időpont] "kérés" állapotkód'].concat(LOG),tlsReal);
+    return R(404,'Not Found',H.concat(['Content-Type: text/html; charset=utf-8']),['<h1>404 – Nincs ilyen oldal</h1>'],tlsReal);
+  }
+  if(fake){
+    if(scheme==='http') return R(301,'Moved Permanently',['Server: Apache',DATE,'Location: https://'+host+path],[],null);
+    return R(200,'OK',['Server: Apache',DATE,'Content-Type: text/html; charset=utf-8'],['<title>Napsugár Gimnázium – Online befizetés</title>','<h1>Kirándulási díj befizetése</h1>','<p>[űrlap: kártyaszám, lejárat, biztonsági kód]  ← GYANÚS!</p>'],tlsFake);
+  }
+  if(host==='kulso-teszt.net') return R(200,'OK',['Server: nginx',DATE,'Content-Type: text/plain'],['Kapcsolat rendben.'],null);
+  return null;
+}
+
+/* =========================================================
+   TERMINAL
+   ========================================================= */
+var tout=$('tout'), tin=$('tin'), hist=[], hi=-1;
+function line(cls,s){ S.term.push([cls,s]); if(S.term.length>400) S.term.splice(0,S.term.length-400); }
+function renderTerm(){ tout.innerHTML=S.term.map(function(l){ return '<div class="'+l[0]+'">'+esc(l[1])+'</div>'; }).join(''); tout.scrollTop=tout.scrollHeight; }
+function out(arr,cls){ arr.forEach(function(s){ line(cls||'',s); }); }
+var HELP=['Elérhető parancsok:','  ipconfig                    a géped hálózati beállításai','  ping <cím|név>              él-e a kapcsolat egy géppel','  nslookup <név> [dns-szerver]  név → IP-cím (DNS-lekérdezés)','  tracert <cím|név>           az útvonal routerei (ugrások)','  curl -I <url>               a szerver válaszának fejléce','  curl <url>                  az oldal tartalma (forráskód)','  whois <domain>              ki és mikor regisztrálta a domaint','  urldecode <szöveg>          URL-kódolás visszafejtése (%3D → =)','  base64 -d <szöveg>          Base64 visszafejtése','  cls                         a képernyő törlése','Tipp: a ↑ nyíllal előhozod az előző parancsot.'];
+function run(raw){
+  var cmd=String(raw||'').trim(); if(!cmd) return;
+  hist.push(cmd); hi=hist.length;
+  line('c',cmd);
+  var norm=cmd.replace(/\s+/g,' ').toLowerCase(); S.ran.push(norm); if(S.ran.length>300) S.ran.splice(0,S.ran.length-300);
+  var p=cmd.split(/\s+/), c=p[0].toLowerCase(), a=p.slice(1);
+  try{
+    if(c==='sugo'||c==='súgó'||c==='help'||c==='?') out(HELP,'h');
+    else if(c==='cls'||c==='clear'){ S.term=[]; }
+    else if(c==='ipconfig') out(['','Windows IP-konfiguráció','','Ethernet-adapter Ethernet:','   Kapcsolatspecifikus DNS-utótag: napsugar.local','   IPv4-cím . . . . . . . . . . . : '+MY.ip,'   Alhálózati maszk . . . . . . . : '+MY.mask,'   Alapértelmezett átjáró . . . . : '+MY.gw,'   DNS-kiszolgálók  . . . . . . . : '+MY.dns,'']);
+    else if(c==='ping') doPing(a);
+    else if(c==='nslookup') doNs(a);
+    else if(c==='tracert'||c==='traceroute') doTrace(a);
+    else if(c==='curl') doCurl(a);
+    else if(c==='whois') doWhois(a);
+    else if(c==='urldecode'){ if(!a.length) out(['Használat: urldecode <szöveg>'],'e'); else { try{ out([decodeURIComponent(a.join(' '))]); }catch(e){ out(['Hiba: érvénytelen URL-kódolás.'],'e'); } } }
+    else if(c==='base64'){ if(a[0]!=='-d'||!a[1]) out(['Használat: base64 -d <szöveg>'],'e'); else { var s=a.slice(1).join(''); if(/[^A-Za-z0-9+\/=]/.test(s)) out(['Hiba: érvénytelen Base64 szöveg. Base64-ben csak betű, szám, +, / és = lehet. (Van benne % jel? Akkor előbb urldecode!)'],'e'); else { try{ out([decodeURIComponent(escape(atob(s)))]); }catch(e){ out(['Hiba: érvénytelen Base64 szöveg.'],'e'); } } } }
+    else out(['A(z) „'+p[0]+'” nem ismert parancs. Írd be: sugo'],'e');
+  }catch(e){ out(['Váratlan hiba: '+e.message],'e'); }
+  save(); renderTerm();
+}
+function doPing(a){
+  var t=a.filter(function(x){ return x.charAt(0)!=='-'; })[0];
+  if(!t){ out(['Használat: ping <cím vagy név>'],'e'); return; }
+  var ip=isIP(t)?t:lookup(t,DNS_SCHOOL);
+  if(!ip){ out(['A ping nem találja ezt az állomást: '+t+'. Ellenőrizd a nevet, és próbáld újra.'],'e'); return; }
+  out(['','Ping '+(isIP(t)?ip:t+' ['+ip+']')+' 32 bájt adattal:']);
+  var d=PINGT[ip];
+  if(!d){ for(var i=0;i<4;i++) out(['Kérés időtúllépés.'],'e'); out(['',ip+' ping-statisztikája:','    Csomagok: elküldve = 4, fogadva = 0, elveszett = 4 (100% veszteség),','']); return; }
+  d[0].forEach(function(ms){ out(['Válasz '+ip+': bájtok=32 idő='+ms+'ms TTL='+d[1]]); });
+  var mn=Math.min.apply(null,d[0]), mx=Math.max.apply(null,d[0]), av=Math.round(d[0].reduce(function(x,y){ return x+y; },0)/4);
+  out(['',ip+' ping-statisztikája:','    Csomagok: elküldve = 4, fogadva = 4, elveszett = 0 (0% veszteség),','Oda-vissza út ideje (ms):','    Minimum = '+mn+'ms, Maximum = '+mx+'ms, Átlag = '+av+'ms','']);
+}
+function doNs(a){
+  if(!a[0]){ out(['Használat: nslookup <név> [dns-szerver]'],'e'); return; }
+  var name=a[0].toLowerCase(), srv=a[1]||DNS_SCHOOL;
+  var srvName={'192.168.10.53':'iskola-dns.local','198.51.100.53':'kulso-dns.pelda-isp.net'}[srv];
+  if(!srvName){ out(['*** A DNS-szerver nem válaszol: '+srv],'e'); return; }
+  out(['Kiszolgáló:  '+srvName,'Address:  '+srv,'']);
+  var ip=isIP(name)?null:lookup(name,srv);
+  if(!ip){ out(['*** '+srvName+' nem talál ilyen nevet: '+name+': Non-existent domain'],'e'); return; }
+  if(srv===DNS_EXT) out(['Nem mérvadó válasz:']);
+  out(['Név:     '+name,'Address:  '+ip,'']);
+}
+function doTrace(a){
+  var t=a.filter(function(x){ return x.charAt(0)!=='-'; })[0];
+  if(!t){ out(['Használat: tracert <cím vagy név>'],'e'); return; }
+  var ip=isIP(t)?t:lookup(t,DNS_SCHOOL);
+  if(!ip){ out(['Nem oldható fel a célnév: '+t],'e'); return; }
+  out(['','Útvonal követése: '+(isIP(t)?ip:t+' ['+ip+']'),'legfeljebb 30 ugráson keresztül:','']);
+  function hop(i,ms,adr,nm){ var m=(ms<10?' ':'')+ms+' ms'; out(['  '+(i<10?' ':'')+i+'   '+m+'   '+m.replace(ms+'',(ms+1)+'')+'   '+m+'   '+nm+' ['+adr+']']); }
+  if(ip==='192.168.10.1'){ hop(1,1,'192.168.10.1','iskola-router.local'); out(['','A nyomkövetés befejeződött.']); return; }
+  if(ip==='203.0.113.81'){ HOPS_SITE.forEach(function(h,i){ hop(i+1,h[0],h[1],h[2]); }); out(['','A nyomkövetés befejeződött.']); return; }
+  if(ip==='203.0.113.80'){ HOPS_SITE.slice(0,4).forEach(function(h,i){ hop(i+1,h[0],h[1],h[2]); }); for(var i=5;i<=8;i++) out(['  '+(i<10?' ':'')+i+'     *        *        *     Kérés időtúllépés.'],'e'); out(['','A nyomkövetés megszakítva: a cél nem érhető el.'],'e'); return; }
+  var tgt=PINGT[ip]; HOPS_EXT.forEach(function(h,i){ hop(i+1,h[0],h[1],h[2]); });
+  if(tgt){ hop(HOPS_EXT.length+1,tgt[0][0],ip,(t===ip?ip:t)); out(['','A nyomkövetés befejeződött.']); } else { out(['   6     *        *        *     Kérés időtúllépés.'],'e'); }
+}
+function doCurl(a){
+  var I=a.indexOf('-I')>=0||a.indexOf('-i')>=0||a.indexOf('--head')>=0, u=a.filter(function(x){ return x.charAt(0)!=='-'; })[0];
+  if(!u){ out(['Használat: curl -I <url>  vagy  curl <url>'],'e'); return; }
+  var m=u.match(/^(?:(https?):\/\/)?([^\/\s?#]+)([^\s]*)$/i);
+  if(!m){ out(['curl: (3) Hibás URL: '+u],'e'); return; }
+  var scheme=(m[1]||'http').toLowerCase(), host=m[2].toLowerCase(), path=(m[3]||'/').split('#')[0]||'/';
+  var ip=isIP(host)?host:lookup(host,DNS_SCHOOL);
+  if(!ip){ out(['curl: (6) Nem oldható fel a név: '+host],'e'); return; }
+  if(ip==='203.0.113.80'){ out(['curl: (28) Kapcsolódási időtúllépés 30 másodperc után: '+host+' ('+ip+') nem válaszol.'],'e'); return; }
+  var r=isIP(host)?null:resp(scheme,host,path);
+  if(!r){ out(['curl: (7) Nem sikerült kapcsolódni: '+host+' ('+ip+')'],'e'); return; }
+  if(r.tls) out([r.tls],'d');
+  if(I){ out([r.status].concat(r.headers).concat([''])); }
+  else { out(r.body.length?r.body:['(üres válasz)']); }
+}
+function doWhois(a){
+  if(!a[0]){ out(['Használat: whois <domain>'],'e'); return; }
+  var d=a[0].toLowerCase().replace(/^https?:\/\//,'').split('/')[0], parts=d.split('.'), reg=parts.slice(-2).join('.');
+  var w=WHOIS[reg]; if(!w){ out(['Nincs találat: '+reg],'e'); return; }
+  if(reg!==d) out(['(A whois a regisztrált domaint keresi: '+reg+')'],'d');
+  out(w.concat(['']));
+}
+tin.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){ var v=tin.value; tin.value=''; run(v); }
+  else if(e.key==='ArrowUp'){ if(hist.length){ hi=Math.max(0,hi-1); tin.value=hist[hi]; e.preventDefault(); } }
+  else if(e.key==='ArrowDown'){ if(hist.length){ hi=Math.min(hist.length,hi+1); tin.value=hist[hi]||''; e.preventDefault(); } }
+});
+$('clrBtn').addEventListener('click',function(){ S.term=[]; save(); renderTerm(); });
+$('dockBtn').addEventListener('click',function(){ var d=$('dock'); d.classList.toggle('open'); this.textContent=d.classList.contains('open')?'▼ bezár':'▲ megnyit'; });
+document.addEventListener('click',function(e){ var b=e.target.closest('.cmd'); if(!b) return; tin.value=b.getAttribute('data-cmd'); $('dock').classList.add('open'); $('dockBtn').textContent='▼ bezár'; tin.focus(); });
+function ran(re){ return S.ran.some(function(c){ return re.test(c); }); }
+
+/* =========================================================
+   CASE FILE: CLUES
+   ========================================================= */
+function C(s){ return '<button type="button" class="cmd" data-cmd="'+esc(s)+'">'+esc(s)+'</button>'; }
+var EMAIL_RAW=['Return-Path: <bounce@napsugar-gimn.hu>','Received: from mail.napsugar-gimn.hu (mail.napsugar-gimn.hu [198.51.100.66])','        by mx.pelda-mail.net; Mon, 09 Nov 2026 06:41:09 +0100','From: "Napsugár Gimnázium Titkárság" <titkarsag@napsugar-gimi.hu>','Reply-To: penzugy@napsugar-gimn.hu','To: szulo@pelda-mail.net','Subject: SÜRGŐS: a kirándulás díját ma éjfélig be kell fizetni','Content-Type: text/html; charset=utf-8'].join('\n');
+function emailHTML(){ return '<div class="mail"><div class="mh"><b>Feladó:</b> Napsugár Gimnázium Titkárság &lt;titkarsag@napsugar-gimi.hu&gt;<br><b>Tárgy:</b> SÜRGŐS: a kirándulás díját ma éjfélig be kell fizetni</div><div class="mb"><p style="margin-top:0">Tisztelt Szülő!</p><p>Gyermeke csak akkor vehet részt a jövő heti kiránduláson, ha a 12 500 Ft-os díjat <b>ma éjfélig</b> befizeti. Késedelem esetén a helyet másnak adjuk. Fizessen bankkártyával az alábbi gombra kattintva:</p><button type="button" class="fakebtn" title="https://napsugar-gimi.hu.befizetes-portal.net/fizetes" data-mailbtn="1">Befizetés: napsugar-gimi.hu/befizetes</button><br><span class="realurl hide" data-real="1">A gomb valódi címe: https://napsugar-gimi.hu.befizetes-portal.net/fizetes</span><p>Üdvözlettel:<br>Titkárság</p></div><details style="padding:0 12px 10px"><summary style="cursor:pointer;font-weight:700">Teljes fejléc mutatása</summary><div class="raw">'+esc(EMAIL_RAW)+'</div></details></div>'; }
+function term(t,d){ return [t,d]; }
+var CLUES=[
+/* ===== 1. FEJEZET ===== */
+{id:'1.1',L:1,title:'Ki vagyok én a hálózaton?',diff:'easy',time:'4 perc',
+ brief:'Első szabály: mielőtt máshol keresed a hibát, nézd meg a saját géped. Milyen címe van, és kit kérdez meg, ha egy nevet keres?',
+ know:'<p>Minden gépnek a hálózaton van egy <b>IP-címe</b>. Az <b>alapértelmezett átjáró</b> (a router) a kapu a többi hálózat, vagyis az internet felé. A <b>DNS-kiszolgáló</b> az a gép, amelytől a számítógép megkérdezi, melyik IP-cím tartozik egy névhez. Windowson az <code>ipconfig</code> parancs mutatja meg mindhármat.</p>',
+ terms:[term('IP-cím','A gép címe a hálózaton (pl. 192.168.10.23).'),term('Alapértelmezett átjáró','A router címe: ezen keresztül megy az adat más hálózatokba.'),term('DNS-kiszolgáló','Az a szerver, amely a nevekhez IP-címet keres.')],
+ todo:['Futtasd: '+C('ipconfig'),'Írd be a három adatot az ügyiratba.'],
+ need:[[/^ipconfig$/,'Futtasd a terminálban az ipconfig parancsot.']],
+ qs:[{k:'a',t:'txt',text:'A géped IPv4-címe:',ans:'192.168.10.23'},{k:'b',t:'txt',text:'Az alapértelmezett átjáró címe:',ans:'192.168.10.1'},{k:'c',t:'txt',text:'A DNS-kiszolgáló címe:',ans:'192.168.10.53'}]},
+{id:'1.2',L:1,title:'Él a kapcsolat?',diff:'easy',time:'5 perc',
+ brief:'Lehet, hogy egyszerűen nincs internet a gépen? Mielőtt bonyolult elméleteket gyártasz, ellenőrizd a legegyszerűbbet.',
+ know:'<p>A <b>ping</b> egy kis próbacsomagot küld egy gépnek, amely visszaválaszol. Megmutatja, hány válasz jött vissza, és mennyi idő alatt (<b>oda-vissza idő</b>, ezredmásodpercben, ms). Ha egy csomagra nem jön válasz, az <b>csomagvesztés</b>. Windowson a ping alapból 4 csomagot küld.</p>',
+ terms:[term('Ping','Próbacsomag, amellyel ellenőrizzük, él-e a kapcsolat egy géppel.'),term('Oda-vissza idő (ms)','Mennyi idő alatt ér oda a csomag és jön vissza a válasz.')],
+ todo:['Pingeld az átjárót: '+C('ping 192.168.10.1'),'Pingelj egy internetes tesztgépet: '+C('ping kulso-teszt.net'),'Válaszolj a kulso-teszt.net pingje alapján.'],
+ need:[[/^ping (kulso-teszt\.net|198\.51\.100\.10)/,'Pingeld meg a kulso-teszt.net gépet.']],
+ qs:[{k:'a',t:'num',text:'Hány csomagot küldött a ping?',ans:4},{k:'b',t:'num',text:'Hány csomag veszett el?',ans:0},{k:'c',t:'num',text:'Mennyi volt az átlagos oda-vissza idő (ms)?',ans:18},
+     {k:'d',t:'mc',text:'Mit bizonyít ez a nyomozás szempontjából?',opts:['A gépnek van internetkapcsolata, tehát a hiba máshol van.','A honlap szervere biztosan működik.','A DNS biztosan jó.'],ans:0}]},
+{id:'1.3',L:1,title:'A név nyomában',diff:'mid',time:'7 perc',
+ brief:'Az internet működik, a honlap mégsem jön be. Egy fontos tanú szerint <b>a tanáriban jól működik</b>, ott ugyanis a gépek egy <b>külső DNS-szervert</b> (198.51.100.53) használnak, nem az iskolait. Gyanús…',
+ know:'<p>Az <code>nslookup név</code> megkérdezi a DNS-t, melyik IP-cím tartozik egy névhez. A név után egy másik DNS-szerver címét is megadhatod: <code>nslookup név szerver</code>. Ha két DNS-szerver különböző címet ad ugyanarra a névre, az egyik <b>elavult</b> lehet. Ez például akkor fordul elő, ha a honlap új szerverre költözött, de valahol nem frissítették a bejegyzést.</p>',
+ terms:[term('nslookup','Parancs, amely DNS-lekérdezést végez: név → IP-cím.'),term('Elavult DNS-bejegyzés','Régi, már nem érvényes IP-cím a DNS-ben, ezért a név rossz gépre mutat.')],
+ todo:['Kérdezd meg az iskolai DNS-t: '+C('nslookup napsugar-gimi.hu'),'Kérdezd meg a külső DNS-t is: '+C('nslookup napsugar-gimi.hu 198.51.100.53'),'Pingeld meg mindkét kapott IP-címet (a parancsot most magad írd be!).'],
+ need:[[/^nslookup napsugar-gimi\.hu$/,'Kérdezd le a napsugar-gimi.hu címét az iskolai DNS-től.'],[/^nslookup napsugar-gimi\.hu 198\.51\.100\.53$/,'Kérdezd le a napsugar-gimi.hu címét a külső DNS-től is (198.51.100.53).'],[/^ping 203\.0\.113\.81/,'Pingeld meg a külső DNS által adott címet is.']],
+ qs:[{k:'a',t:'txt',text:'Az iskolai DNS által adott IP-cím:',ans:'203.0.113.80'},{k:'b',t:'txt',text:'A külső DNS által adott IP-cím:',ans:'203.0.113.81'},
+     {k:'c',t:'sel',text:'Melyik cím válaszol a pingre?',opts:['Csak az iskolai DNS által adott','Csak a külső DNS által adott','Mindkettő','Egyik sem'],ans:1},
+     {k:'d',t:'mc',text:'Mi a hiba oka?',opts:['Elszakadt egy kábel az iskolában.','Az iskolai DNS-szerver elavult (régi) IP-címet ad a honlapra.','A honlap szervere teljesen leállt.'],ans:1}]},
+{id:'1.4',L:1,title:'Merre jár a csomag?',diff:'mid',time:'6 perc',
+ brief:'Tudjuk a helyes címet. De hol van fizikailag a szerver? Kövessük végig a csomag útját!',
+ know:'<p>A <code>tracert</code> (nyomkövetés) kilistázza a routereket, amelyeken a csomag áthalad a célig. Minden sor egy <b>ugrás</b>, mellette három mérés oda-vissza ideje ms-ban, a router neve és címe. A routerek neve gyakran elárulja, melyik városban vannak. Ahol az idő hirtelen megugrik, ott a csomag nagy távolságot tett meg.</p>',
+ terms:[term('tracert / traceroute','Parancs, amely megmutatja, mely routereken át jut el a csomag a célig.'),term('Ugrás (hop)','A csomag útjának egy szakasza két router között.')],
+ todo:['Futtasd: '+C('tracert 203.0.113.81'),'Elemezd a sorokat, és válaszolj.'],
+ need:[[/^tracert 203\.0\.113\.81$/,'Futtasd a tracert parancsot a 203.0.113.81 címre.']],
+ qs:[{k:'a',t:'num',text:'Hány ugrás után ér célba a csomag?',ans:7},
+     {k:'b',t:'sel',text:'Hányadik ugrás az első, amely már az iskolán kívül van (az internetszolgáltatónál)?',opts:['1.','2.','3.','4.'],ans:1},
+     {k:'c',t:'sel',text:'Melyik két ugrás között nő meg legjobban az idő?',opts:['2. és 3. között','3. és 4. között','4. és 5. között','6. és 7. között'],ans:2},
+     {k:'d',t:'num',text:'Hány ms-mal nő ott az idő?',ans:20},
+     {k:'e',t:'sel',text:'Melyik városban van a honlap szervere a routernevek alapján?',opts:['Szabadka','Belgrád','Budapest','Frankfurt'],ans:3}]},
+{id:'1.5',L:1,title:'A fénysebesség határa',diff:'hard',time:'7 perc',
+ brief:'Valaki azt állítja, hogy a 4. és az 5. router „szomszéd utcában” van. A mérés alapján ez lehetetlen. Bizonyítsd be fizikával!',
+ know:'<p>Az üvegszálban a jel a fénysebesség kb. kétharmadával, körülbelül <b>200 000 km/s</b> sebességgel halad. A tracert <b>oda-vissza</b> időt mér, tehát az egyirányú út ideje ennek a fele:</p><p style="text-align:center">távolság = sebesség · '+FRAC('oda-vissza idő','2')+'</p><p>A valóságban a csomagnak a routereken is időt kell töltenie, és a kábel sem egyenes, ezért ebből csak a <b>legnagyobb lehetséges</b> távolság jön ki.</p>',
+ terms:[term('Késleltetés (latencia)','Az az idő, amíg az adat eljut a célig. Fizikai határa a jel sebessége a kábelben.')],
+ todo:['Használd az előző nyom eredményét (a 4. és 5. ugrás közötti növekedést).','Számolj digitronnal. Vigyázz a mértékegységekre: 1 ms = 0,001 s.'],
+ hints:['Az oda-vissza idő növekedése 20 ms. Mennyi ebből az egyirányú út?','Egy irányban 10 ms = 0,01 s. A távolság = 200 000 km/s · 0,01 s.','A második kérdésnél fordítva számolj: 1000 km egy irányban 1000 / 200 000 s, és oda-vissza ennek a kétszerese.'],
+ qs:[{k:'a',t:'num',text:'Legfeljebb hány km hosszú lehet a kábel a 4. és az 5. router között?',ans:2000,tol:5},
+     {k:'b',t:'num',text:'Belgrád és Frankfurt között kb. 1000 km a kábel. Mennyi lenne ezen a legkisebb lehetséges oda-vissza idő (ms)?',ans:10,tol:0.1},
+     {k:'c',t:'mc',text:'Miért nagyobb a mért érték (20 ms) ennél?',opts:['Mert a jel a kábelben gyorsabb a fénynél.','Mert a kábel nem egyenes vonalban fut, és a routereknek is idő kell a csomag továbbításához.','Mert a ping hibásan mér.'],ans:1}]},
+{id:'1.6',L:1,title:'Jelentés a rendszergazdának',diff:'mid',time:'5 perc',
+ brief:'Az első ügy megoldva. Írd meg a jelentést, hogy a rendszergazda egy lépésben javíthassa. (Ha elküldöd, a hibát kijavítják, és a 2. fejezetben már működik a honlap.)',
+ know:'<p>Egy jó hibajelentés röviden leírja a <b>tünetet</b> (mi nem működik és hol), a <b>bizonyítékot</b> (milyen méréssel derült ki), az <b>okot</b> és a <b>javasolt javítást</b>. Hálózati hibánál a sorrend mindig a saját géptől halad kifelé: saját beállítások → kapcsolat → név (DNS) → útvonal → szerver.</p>',
+ terms:[term('Hibakeresési sorrend','Saját gép → kapcsolat (ping) → DNS (nslookup) → útvonal (tracert) → szerver.')],
+ todo:['Töltsd ki a jelentést.'],
+ qs:[{k:'a',t:'mc',text:'Miért működött a honlap a tanáriban?',opts:['Mert ott gyorsabb az internet.','Mert ott a gépek a külső DNS-szervert kérdezik, amely a helyes címet adja.','Mert a tanárok jelszóval lépnek be.'],ans:1},
+     {k:'b',t:'sel',text:'Ki tudja kijavítani a hibát véglegesen?',opts:['Minden diák a saját gépén','Az iskola rendszergazdája az iskolai DNS-szerveren','Az internetszolgáltató kábelcserével'],ans:1},
+     {k:'c',t:'txt',text:'Mire kell átírni a napsugar-gimi.hu bejegyzést az iskolai DNS-ben? (IP-cím)',ans:'203.0.113.81'},
+     {k:'d',t:'sel',text:'Melyik a helyes hibakeresési sorrend?',opts:['tracert → ipconfig → ping → nslookup','ipconfig → ping → nslookup → tracert','nslookup → tracert → ping → ipconfig'],ans:1}]},
+
+/* ===== 2. FEJEZET ===== */
+{id:'2.1',L:2,title:'A szerver megszólal',diff:'easy',time:'4 perc',
+ brief:'A DNS-t kijavították, a honlap betölt. Most a szerver kerül a kihallgatószékbe. Mit árul el magáról a válasza?',
+ know:'<p>A böngésző és a webszerver <b>HTTP</b>-n beszélget. A szerver válasza két részből áll: a <b>fejlécből</b> (állapotkód és adatok a válaszról) és a <b>tartalomból</b> (pl. HTML). A <code>curl -I cím</code> csak a fejlécet kéri le. Az első sor az <b>állapotkód</b> (200 = rendben), a <code>Content-Type</code> megmondja a tartalom típusát, a <code>Server</code> pedig a szerverprogramot.</p>',
+ terms:[term('HTTP-fejléc','A szerver válaszának első része: állapotkód és információk a válaszról.'),term('Content-Type','A válasz tartalmának típusa, pl. text/html (weboldal) vagy text/plain (sima szöveg).')],
+ todo:['Futtasd: '+C('curl -I https://napsugar-gimi.hu/')],
+ need:[[/^curl -i https:\/\/napsugar-gimi\.hu\/?$/,'Futtasd a curl -I https://napsugar-gimi.hu/ parancsot.']],
+ qs:[{k:'a',t:'num',text:'Mi az állapotkód?',ans:200},{k:'b',t:'sel',text:'Milyen típusú a tartalom?',opts:['text/html','image/png','application/json'],ans:0},{k:'c',t:'sel',text:'Milyen szerverprogram fut?',opts:['Apache','nginx','IIS'],ans:1}]},
+{id:'2.2',L:2,title:'Az átirányítások útvesztője',diff:'mid',time:'6 perc',
+ brief:'Egy diák azt mondja, a régi könyvjelzője (http://napsugar-gimi.hu/hirek) „ugrál”. Kövesd végig, hová!',
+ know:'<p>A <b>301</b>-es válasz azt jelenti: az oldal végleg máshová költözött. A <code>Location</code> fejléc mondja meg, hová. A böngésző ilyenkor automatikusan továbbmegy, a curl viszont nem, így minden lépést te követhetsz. Gyakori átirányítás a titkosítatlan <b>http</b>-ről a titkosított <b>https</b>-re, és a perjel (/) nélküli címről a perjeles változatra.</p>',
+ terms:[term('Átirányítás (301)','A szerver közli, hogy az oldal végleg máshol van. A Location fejléc adja meg az új címet.')],
+ todo:['Indulj innen: '+C('curl -I http://napsugar-gimi.hu/hirek'),'Mindig a Location fejlécben kapott címre futtasd újra a curl -I parancsot, amíg 200-at nem kapsz.'],
+ need:[[/^curl -i http:\/\/napsugar-gimi\.hu\/hirek$/,'Indulj a curl -I http://napsugar-gimi.hu/hirek paranccsal.'],[/^curl -i https:\/\/napsugar-gimi\.hu\/hirek\/$/,'Kövesd az átirányítást a végső címig.']],
+ qs:[{k:'a',t:'num',text:'Hány átirányítás (301) után kapsz 200-as választ?',ans:2},
+     {k:'b',t:'mc',text:'Mi az első átirányítás oka?',opts:['A szerver a titkosítatlan http-ről a titkosított https-re irányít.','Az oldal törlődött.','A szerver túlterhelt.'],ans:0},
+     {k:'c',t:'txt',text:'Mi a végső cím (URL)?',ans:'https://napsugar-gimi.hu/hirek/'}]},
+{id:'2.3',L:2,title:'A forráskód titka',diff:'mid',time:'6 perc',
+ brief:'A fejlesztők néha üzeneteket hagynak a kódban. Ezeket a látogató nem látja… hacsak nem nézi meg a forráskódot.',
+ know:'<p>A <code>curl cím</code> (a -I nélkül) a teljes tartalmat letölti, vagyis a weboldal <b>forráskódját</b>. Ugyanezt a böngészőben a Ctrl+U mutatja. A <code>&lt;!-- … --&gt;</code> közötti szöveg <b>HTML-megjegyzés</b>: az oldalon nem jelenik meg, de a forráskódban bárki elolvashatja. Ezért titkos adat soha nem kerülhet bele!</p>',
+ terms:[term('Forráskód','A weboldal HTML-kódja. A böngészőben a Ctrl+U mutatja meg.'),term('HTML-megjegyzés','<!-- … --> közötti szöveg: nem látszik az oldalon, de a forráskódban bárki elolvassa.')],
+ todo:['Töltsd le a kezdőlap forráskódját: '+C('curl https://napsugar-gimi.hu/'),'Keresd meg a megjegyzést, és nézd meg a benne említett oldal fejlécét is (a parancsot most magad írd be).'],
+ need:[[/^curl https:\/\/napsugar-gimi\.hu\/?$/,'Töltsd le a kezdőlap forráskódját (curl, -I nélkül).'],[/^curl -i https:\/\/napsugar-gimi\.hu\/regi-admin\/?$/,'Nézd meg a rejtett oldal fejlécét is curl -I-vel.']],
+ qs:[{k:'a',t:'txt',text:'Milyen rejtett útvonalat említ a megjegyzés?',ans:'/regi-admin'},{k:'b',t:'num',text:'Milyen állapotkódot ad ez az oldal?',ans:403},
+     {k:'c',t:'mc',text:'Mi a tanulság?',opts:['A HTML-megjegyzéseket csak a fejlesztő látja.','A forráskódot bárki megnézheti, ezért titkot nem szabad beleírni.','A 403-as oldalak nem léteznek.'],ans:1}]},
+{id:'2.4',L:2,title:'Kérés a keresőrobotoknak',diff:'mid',time:'5 perc',
+ brief:'Sok webhely gyökerében van egy robots.txt fájl. Lássuk, mit kér az iskola a keresőktől!',
+ know:'<p>A <b>robots.txt</b> a webhely gyökerében lévő szöveges fájl, amelyben a webhely kéri a keresőrobotokat, hogy bizonyos részeket ne indexeljenek (<code>Disallow:</code>). Ez csak <b>kérés</b>, nem védelem: bárki elolvashatja, sőt pont azt árulja el, mit szeretne elrejteni a tulajdonos.</p>',
+ terms:[term('robots.txt','Fájl, amelyben a webhely kéri a keresőket, hogy egyes részeket ne indexeljenek. Nem véd semmit.')],
+ todo:['Futtasd: '+C('curl https://napsugar-gimi.hu/robots.txt')],
+ need:[[/^curl https:\/\/napsugar-gimi\.hu\/robots\.txt$/,'Töltsd le a robots.txt fájlt.']],
+ qs:[{k:'a',t:'num',text:'Hány útvonalat tilt le a robots.txt?',ans:2},{k:'b',t:'txt',text:'Melyik mappát tiltja a /regi-admin mellett?',ans:'/belso/',alts:['/belso','belso','belso/']},
+     {k:'c',t:'mc',text:'Megvédi a robots.txt ezeket az oldalakat a kíváncsiaktól?',opts:['Igen, ezeket senki nem tudja megnyitni.','Nem, ez csak kérés a keresőknek, és bárki elolvashatja.','Csak a tanárok tudják megnyitni őket.'],ans:1}]},
+{id:'2.5',L:2,title:'Kódolt üzenet egy sütiben',diff:'hard',time:'8 perc',
+ brief:'A /regi-admin oldal 403-at adott, de a fejlécében valami furcsa lapul: egy <b>süti</b> (cookie) értelmetlen szöveggel. A régi rendszergazda üzenete lehet. Fejtsd vissza!',
+ know:'<p>A <b>süti</b> (cookie) kis adat, amelyet a szerver a <code>Set-Cookie</code> fejléccel küld a böngészőnek. A webcímekben és sütikben a különleges karaktereket <b>URL-kódolással</b> írják: <code>%</code> és két hexadecimális jegy, pl. <code>%3D</code> = <code>=</code>, <code>%2F</code> = <code>/</code>.</p><p>A <b>Base64</b> az adatot betűkkel, számokkal és a <code>+ / =</code> jelekkel írja le (a végén gyakran <code>=</code> áll). Fontos: ez csak <b>kódolás, nem titkosítás</b>, bárki visszafejtheti!</p>',
+ terms:[term('Süti (cookie)','Kis adat, amelyet a szerver a böngészőben tárol (Set-Cookie fejléc).'),term('URL-kódolás','Különleges karakterek írása %XX formában, pl. %3D = „=”.'),term('Base64','Kódolás betűkkel és számokkal. Nem titkosítás, bárki visszafejtheti.')],
+ todo:['Nézd meg újra a /regi-admin fejlécét, és keresd meg a Set-Cookie sort. A süti értéke a <code>nyom=</code> és a <code>;</code> közötti rész.','Fejtsd vissza a megfelelő sorrendben. Melyik kódolás volt a „külső réteg”?'],
+ hints:['A süti értékében % jelek vannak. Ez melyik kódolásra utal?','Előbb: urldecode <a süti értéke>. Az eredmény végén = jelek lesznek, ez Base64.','Utána: base64 -d <az urldecode eredménye>. A kijelölés és a Ctrl+C / Ctrl+V a terminálban is működik.'],
+ need:[[/^base64 -d /,'Fejtsd vissza a Base64 szöveget a base64 -d paranccsal.']],
+ qs:[{k:'a',t:'txt',text:'Milyen fájl útvonalát árulja el az üzenet?',ans:'/belso/naplo.txt'},
+     {k:'b',t:'mc',text:'Milyen sorrendben kellett visszafejteni?',opts:['Előbb Base64, aztán URL-kódolás','Előbb URL-kódolás, aztán Base64','Csak Base64'],ans:1},
+     {k:'c',t:'mc',text:'Biztonságos-e titkos adatot Base64-gyel „elrejteni”?',opts:['Igen, a Base64 erős titkosítás.','Nem, a Base64 csak kódolás, bárki visszafejtheti.','Csak ha hosszú a szöveg.'],ans:1}]},
+{id:'2.6',L:2,title:'Mit rejt a napló?',diff:'mid',time:'6 perc',
+ brief:'A szerver minden kérést feljegyez egy naplóba. Ha valaki szaglászott az oldalon, annak itt nyoma van.',
+ know:'<p>A webszerver <b>hozzáférési naplója</b> soronként rögzíti: ki (IP-cím), mikor, mit kért, és milyen állapotkódot kapott. Ha egy IP-cím rövid idő alatt sorra próbálgat nem létező, tipikusan sebezhető útvonalakat (<code>/admin</code>, <code>/wp-login.php</code>, <code>/.env</code>, <code>/backup.zip</code>), az <b>automatikus szkennelés</b>: a támadó gyenge pontot keres.</p>',
+ terms:[term('Szervernapló','A szerver feljegyzése minden kérésről: IP-cím, idő, kérés, állapotkód.'),term('Szkennelés','Gyenge pontok automatikus keresése: sok próbálkozás ismert útvonalakkal.')],
+ todo:['Töltsd le a naplót a megfejtett útvonalról (a parancsot magad írd be).','Elemezd a sorokat: melyik IP-cím viselkedik gyanúsan?'],
+ need:[[/^curl https:\/\/napsugar-gimi\.hu\/belso\/naplo\.txt$/,'Töltsd le a naplót curl-lel (https://napsugar-gimi.hu/…).']],
+ qs:[{k:'a',t:'txt',text:'Melyik IP-cím szkennelte az oldalt?',ans:'198.51.100.66'},{k:'b',t:'num',text:'Hány kérése végződött 404-gyel?',ans:5},{k:'c',t:'num',text:'Hány kérést küldött összesen?',ans:7},
+     {k:'d',t:'sel',text:'Mikor történt a szkennelés?',opts:['Reggel 8 óra körül','Hajnali 3 óra körül','Délben'],ans:1}]},
+
+/* ===== 3. FEJEZET ===== */
+{id:'3.1',L:3,title:'A gyanús levél',diff:'easy',time:'4 perc',
+ brief:'Hétfő reggel több szülő is továbbította ezt a levelet: „Tényleg ma kell fizetni?” A hírek oldalon (2. fejezet) viszont azt olvastad, hogy a befizetés készpénzben, az osztályfőnöknél történik…',
+ know:'<p>Az <b>adathalász</b> levél megbízható feladónak álcázza magát, hogy pénzt vagy adatot csaljon ki. Árulkodó jelek: sürgetés és fenyegetés, általános megszólítás, kártyaadatok kérése, és olyan link, amelynek <b>valódi címe</b> más, mint a felirata. Vidd az egeret a gomb fölé, mielőtt kattintanál!</p>',
+ terms:[term('Adathalászat (phishing)','Megbízhatónak álcázott csaló üzenet, amely adatot vagy pénzt próbál kicsalni.')],
+ pre:emailHTML,
+ todo:['Olvasd el a levelet. Vidd az egeret a gomb fölé (vagy kattints rá: a gyakorló levélben nem nyílik meg semmi).','Jelöld be az árulkodó jeleket.'],
+ qs:[{k:'a',t:'chk',text:'Mely jelek utalnak csalásra? (Több is jó.)',opts:['Sürgetés: „ma éjfélig”, különben elveszik a helyet','Az iskola nevével érkezett','A gomb felirata és valódi címe eltér','Bankkártyás fizetést kér, pedig a hírek szerint készpénzben kell fizetni','Magyar nyelven íródott'],ans:[0,2,3]}]},
+{id:'3.2',L:3,title:'A fejléc nem hazudik',diff:'mid',time:'6 perc',
+ brief:'A levél az iskola címéről jött… legalábbis ezt állítja. A teljes fejléc többet elárul.',
+ know:'<p>A levél <b>Feladó</b> (From) mezőjét a küldő szabadon beírhatja, ezért könnyen hamisítható. Megbízhatóbb nyomok a teljes fejlécben vannak: a <code>Received: from</code> sor megmutatja, melyik szerver és IP-cím küldte valójában a levelet, a <code>Return-Path</code> és a <code>Reply-To</code> pedig azt, hová mennek a visszapattanó levelek és a válaszok.</p>',
+ terms:[term('Levélfejléc','A levél technikai adatai. A Received sorok mutatják a valódi útját.'),term('Hamisított feladó','A From mező szabadon írható, ezért önmagában nem bizonyíték.')],
+ pre:emailHTML,
+ todo:['Nyisd meg a levél alatt a „Teljes fejléc mutatása” részt.','Keresd meg a valódi küldő szervert és a válaszcímet.'],
+ qs:[{k:'a',t:'txt',text:'Melyik domainről küldték valójában a levelet?',ans:'napsugar-gimn.hu'},{k:'b',t:'txt',text:'A küldő levelezőszerver IP-címe:',ans:'198.51.100.66'},
+     {k:'c',t:'mc',text:'Hová érkezne, ha a szülő a Válasz gombra kattintana?',opts:['titkarsag@napsugar-gimi.hu','penzugy@napsugar-gimn.hu','szulo@pelda-mail.net'],ans:1},
+     {k:'d',t:'mc',text:'Miért nem elég a Feladó mezőt nézni?',opts:['Mert azt a küldő szabadon beírhatja, ezért hamisítható.','Mert az mindig üres.','Mert csak a tanárok látják.'],ans:0}]},
+{id:'3.3',L:3,title:'Ki van a domain mögött?',diff:'mid',time:'6 perc',
+ brief:'napsugar-gimi.hu és napsugar-gimn.hu: két betű különbség. Nézzük meg, ki regisztrálta őket, és mikor!',
+ know:'<p>A <code>whois</code> parancs megmutatja egy domain nyilvános regisztrációs adatait: mikor regisztrálták, meddig érvényes, ki a regisztrátor, és (ha nem rejtették el) ki a tulajdonos. A csalók domainjei jellemzően <b>néhány naposak</b>, a tulajdonos <b>rejtve</b> van, és a név egy valódira hasonlít (<b>megtévesztő domain</b>).</p>',
+ terms:[term('whois','Parancs, amely egy domain regisztrációs adatait mutatja.'),term('Megtévesztő domain','A valódira hasonlító név (betűcsere, elírás), amelyet csalók regisztrálnak.')],
+ todo:['Futtasd: '+C('whois napsugar-gimi.hu')+' és '+C('whois napsugar-gimn.hu'),'Hasonlítsd össze a két eredményt. A nyomozás napja: 2026-11-09.'],
+ need:[[/^whois napsugar-gimi\.hu$/,'Futtasd a whois napsugar-gimi.hu parancsot.'],[/^whois napsugar-gimn\.hu$/,'Futtasd a whois napsugar-gimn.hu parancsot.']],
+ qs:[{k:'a',t:'num',text:'Hány napos volt a napsugar-gimn.hu domain a nyomozás napján (2026-11-09)?',ans:3},{k:'b',t:'num',text:'Melyik évben regisztrálták a valódi napsugar-gimi.hu domaint?',ans:2009},
+     {k:'c',t:'mc',text:'Mi a következtetés?',opts:['Mindkét domain az iskoláé.','A napsugar-gimn.hu friss, rejtett tulajdonosú, megtévesztő domain: tipikus csalás.','A whois adatai mindig hamisak.'],ans:1}]},
+{id:'3.4',L:3,title:'Hová vezet a gomb?',diff:'mid',time:'6 perc',
+ brief:'A levél gombja ide mutat: <code>https://napsugar-gimi.hu.befizetes-portal.net/fizetes</code>. Kié valójában ez a cím, és hol fut?',
+ know:'<p>A domain nevet <b>jobbról balra</b> olvassuk: az első egyedüli / előtti rész utolsó két tagja mutatja meg, kié a cím. Ami előtte van, az csak <b>aldomain</b>, amelyet a domain tulajdonosa bármire elnevezhet, akár egy iskola nevére is.</p>',
+ terms:[term('Aldomain','A domain előtti rész (pl. napsugar-gimi.hu.befizetes-portal.net-ben a „napsugar-gimi.hu”). A domain tulajdonosa szabadon létrehozhatja.')],
+ todo:['Állapítsd meg, kié a domain.','Kérdezd le az IP-címét az nslookup paranccsal (magad írd be).','Hasonlítsd össze az eddigi nyomokkal.'],
+ need:[[/^nslookup (napsugar-gimi\.hu\.)?befizetes-portal\.net/,'Kérdezd le nslookup-pal a befizetes-portal.net (vagy a teljes cím) IP-címét.']],
+ qs:[{k:'a',t:'txt',text:'Melyik regisztrált domainhez tartozik valójában a cím?',ans:'befizetes-portal.net'},{k:'b',t:'txt',text:'Milyen IP-címen fut?',ans:'198.51.100.66'},
+     {k:'c',t:'chk',text:'Hol találkoztál már ezzel az IP-címmel? (Több is jó.)',opts:['A szervernaplóban, a szkennelő gépnél','A levél Received fejlécében','Az iskola saját gépének ipconfig-adatai között','A tanári DNS-szerverénél'],ans:[0,1]}]},
+{id:'3.5',L:3,title:'Lakat a hamis oldalon',diff:'mid',time:'5 perc',
+ brief:'Egy szülő megnyugtatna: „De hát ott a lakat a címsorban, akkor biztonságos!” Igaza van?',
+ know:'<p>A <b>HTTPS</b> és a lakat azt jelenti, hogy a kapcsolat <b>titkosított</b>, és hogy az oldal birtokolja a domainjéhez kiállított <b>tanúsítványt</b>. Tanúsítványt viszont bárki kaphat a <i>saját</i> domainjére, akár ingyen és percek alatt. A lakat tehát nem azt mondja meg, hogy az oldal tisztességes, csak azt, hogy kié a domain, és hogy a kapcsolatot más nem látja.</p>',
+ terms:[term('Tanúsítvány (HTTPS)','Igazolja, hogy a kapcsolat egy adott domainhez tartozik, és titkosított. Nem igazolja a tulajdonos becsületességét.')],
+ todo:['Hasonlítsd össze a két oldal tanúsítványát (a * TLS kezdetű sor):','  '+C('curl -I https://napsugar-gimi.hu/'),'  '+C('curl -I https://napsugar-gimi.hu.befizetes-portal.net/fizetes')],
+ need:[[/^curl -i https:\/\/napsugar-gimi\.hu\.befizetes-portal\.net\/fizetes$/,'Kérd le a hamis oldal fejlécét curl -I-vel.']],
+ qs:[{k:'a',t:'txt',text:'Kinek a nevére állították ki a hamis oldal tanúsítványát?',ans:'befizetes-portal.net',alts:['*.befizetes-portal.net']},{k:'b',t:'txt',text:'Mikortól érvényes ez a tanúsítvány? (ÉÉÉÉ-HH-NN)',ans:'2026-11-05'},
+     {k:'c',t:'mc',text:'Mit válaszolsz a szülőnek?',opts:['Igaza van, a lakat azt jelenti, hogy az oldal biztonságos.','A lakat csak a titkosított kapcsolatot jelzi. Ez a tanúsítvány egy pár napos, idegen domainé, nem az iskoláé.','A lakat azt jelenti, hogy az iskola ellenőrizte az oldalt.'],ans:1}]},
+{id:'3.6',L:3,title:'Az ügy lezárása',diff:'mid',time:'6 perc',
+ brief:'Minden nyom összeállt. Írd meg a zárójelentést az igazgatónak!',
+ know:'<p>Egy incidens lezárásakor három dolgot kell tenni: <b>megvédeni</b> az érintetteket (figyelmeztetés, ne fizessenek), <b>bejelenteni</b> a csalást (a domain regisztrátorának, a levelezőszolgáltatónak, szükség esetén a rendőrségnek), és <b>megerősíteni</b> a rendszert (pl. letiltani a támadó IP-címét, eltávolítani a régi admin felületet és a kódolt nyomokat).</p>',
+ terms:[term('Incidenskezelés','Védekezés, bejelentés és a rendszer megerősítése egy biztonsági esemény után.')],
+ todo:['Válaszd ki a helyes lépéseket, és foglald össze az ügyet.'],
+ qs:[{k:'a',t:'chk',text:'Mit tegyen az iskola? (Több is jó.)',opts:['Figyelmeztesse a szülőket, hogy ne fizessenek a linken keresztül','Jelentse a hamis domaineket a regisztrátornak és a levelezőszolgáltatónak','Válaszoljon a csalónak, hogy hagyja abba','Tiltsa le a 198.51.100.66 IP-címet az iskola szerverén','Kattintson a linkre, hogy kipróbálja, működik-e','Távolítsa el a régi admin felületet és a forráskódban hagyott megjegyzést'],ans:[0,1,3,5]},
+     {k:'b',t:'mc',text:'Mi kapcsolja össze a szkennelést és az adathalász leveleket?',opts:['Ugyanaz az IP-cím (198.51.100.66) állt a szkennelés, a levelek és a hamis oldal mögött.','Mindkettő hétfőn történt.','Semmi, véletlen egybeesés.'],ans:0},
+     {k:'c',t:'mc',text:'Melyik nyom vezetett rá a /belso/naplo.txt fájlra?',opts:['A robots.txt és a sütiben kódolt üzenet','A whois adatai','A tracert eredménye'],ans:0}]}
+];
+function T(id){ return CLUES.filter(function(t){ return t.id===id; })[0]; }
+function chTasks(L){ return CLUES.filter(function(t){ return t.L===L; }); }
+function chDone(L){ return chTasks(L).every(function(t){ return S.done[t.id]; }); }
+function countDone(){ return CLUES.filter(function(t){ return S.done[t.id]; }).length; }
+function chOpen(L){ return TEACHER || L===1 || chDone(L-1); }
+function taskOpen(t){ if(TEACHER) return true; if(!chOpen(t.L)) return false; var ts=chTasks(t.L), i=ts.indexOf(t); return i===0 || !!S.done[ts[i-1].id]; }
+
+/* ---------- questions ---------- */
+function normTxt(s){ return String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,''); }
+function qOk(q,v){
+  if(q.t==='num'){ var x=parseFloat(String(v==null?'':v).replace(/\s/g,'').replace(',','.')); return isFinite(x)&&Math.abs(x-q.ans)<=(q.tol||1e-9); }
+  if(q.t==='txt'){ var n=normTxt(v); return n===normTxt(q.ans)||(q.alts||[]).some(function(a){ return n===normTxt(a); }); }
+  if(q.t==='chk') return (Array.isArray(v)?v:[]).map(Number).sort().join(',')===q.ans.slice().sort().join(',');
+  return String(v)===String(q.ans);
+}
+function checkClue(t){
+  var A=A_(t.id);
+  if(t.need) for(var i=0;i<t.need.length;i++) if(!ran(t.need[i][0])) return 'Hiányzó bizonyíték: '+t.need[i][1];
+  var qs=t.qs||[];
+  for(i=0;i<qs.length;i++){ var q=qs[i], v=A[q.k]; if(!qOk(q,v)) return (v==null||v===''||(Array.isArray(v)&&!v.length))?(Art(i+1)+' '+(i+1)+'. kérdésre még nem válaszoltál.'):(Art(i+1)+' '+(i+1)+'. válasz még nem stimmel. Nézd meg újra a terminál kimenetét.'); }
+  return null;
+}
+function qHTML(t){
+  var A=A_(t.id), h='<div class="evid"><div class="eh">🗂 Bizonyítékok az ügyiratba</div>';
+  (t.qs||[]).forEach(function(q,i){
+    h+='<div class="q"><p><b class="qn">'+(i+1)+'.</b>'+q.text+'</p>';
+    if(q.t==='mc') h+='<div class="opts">'+q.opts.map(function(o,oi){ return '<label><input type="radio" name="'+t.id+q.k+'" data-q="'+q.k+'" value="'+oi+'"'+(String(A[q.k])===String(oi)?' checked':'')+'><span>'+o+'</span></label>'; }).join('')+'</div>';
+    if(q.t==='chk'){ var arr=Array.isArray(A[q.k])?A[q.k].map(Number):[]; h+='<div class="opts">'+q.opts.map(function(o,oi){ return '<label><input type="checkbox" data-q="'+q.k+'" data-chk="1" value="'+oi+'"'+(arr.indexOf(oi)>=0?' checked':'')+'><span>'+o+'</span></label>'; }).join('')+'</div>'; }
+    if(q.t==='num'||q.t==='txt') h+='<input type="text" inputmode="'+(q.t==='num'?'decimal':'text')+'" data-q="'+q.k+'" value="'+esc(A[q.k]==null?'':A[q.k])+'" aria-label="Válasz" autocomplete="off" spellcheck="false">';
+    if(q.t==='sel') h+='<select data-q="'+q.k+'"><option value="">— válassz —</option>'+q.opts.map(function(o,oi){ return '<option value="'+oi+'"'+(String(A[q.k])===String(oi)?' selected':'')+'>'+o+'</option>'; }).join('')+'</select>';
+    h+='</div>';
+  });
+  return h+'</div>';
+}
+function bindQ(host,t){
+  var A=A_(t.id);
+  host.addEventListener('change',function(e){ var el=e.target; if(!el.hasAttribute('data-q')) return; var k=el.getAttribute('data-q');
+    if(el.hasAttribute('data-chk')) A[k]=Array.prototype.map.call(host.querySelectorAll('input[data-q="'+k+'"]:checked'),function(x){ return +x.value; }); else A[k]=el.value; save(); });
+  host.addEventListener('input',function(e){ var el=e.target; if(el.type==='text'&&el.hasAttribute('data-q')){ A[el.getAttribute('data-q')]=el.value; save(); } });
+}
+
+/* ---------- rendering ---------- */
+var CH={1:{t:'Csend a hálózaton',s:'A honlap a diákgépeken nem töltődik be. Saját gép, ping, DNS, útvonal és egy kis fizika.'},2:{t:'A szerver vallomása',s:'HTTP-fejlécek, átirányítások, forráskód, robots.txt, kódolt üzenet és a szervernapló.'},3:{t:'Az adathalász nyomában',s:'Hamis levél, levélfejléc, whois, megtévesztő domainek, tanúsítványok és az ügy lezárása.'}};
+function renderChaps(){
+  var h='';
+  [1,2,3].forEach(function(L){ var ts=chTasks(L), n=ts.filter(function(t){ return S.done[t.id]; }).length, o=chOpen(L), d=chDone(L);
+    h+='<button type="button" data-tab="'+L+'" class="'+(d?'ok':'')+(o?'':' lock')+'" aria-current="'+(S.tab===L)+'"><span class="n">'+L+'. fejezet · '+L+'. óra · 35 perc</span><span class="t">'+CH[L].t+'</span><span class="st">'+(d?'✓ lezárva':(o?n+' / '+ts.length+' nyom':'🔒 zárva'))+'</span></button>'; });
+  var all=chDone(3);
+  h+='<button type="button" data-tab="4" class="'+(all?'ok':'')+((all||TEACHER)?'':' lock')+'" aria-current="'+(S.tab===4)+'"><span class="n">a végén</span><span class="t">Zárójelentés</span><span class="st">'+(all?'✓ elérhető':'🔒 a 3. fejezet után')+'</span></button>';
+  $('chaps').innerHTML=h;
+}
+$('chaps').addEventListener('click',function(e){ var b=e.target.closest('[data-tab]'); if(b) go(+b.getAttribute('data-tab')); });
+function diffChip(d){ return '<span class="chip '+(d==='easy'?'easy':d==='hard'?'hard':'mid')+'">'+(d==='easy'?'könnyű':d==='hard'?'nehéz':'közepes')+'</span>'; }
+function clueHTML(t){
+  var open=taskOpen(t), done=!!S.done[t.id], nr=t.id.split('.')[1];
+  var h='<article class="clue'+(done?' ok':'')+(open?'':' locked')+'" id="clue-'+t.id.replace('.','-')+'"><div class="tabl">'+t.L+'. fejezet · '+nr+'. nyom</div>'+(done?'<div class="solved">MEGOLDVA</div>':'')+'<div class="clue-in"><h3>'+t.title+'</h3><div class="meta">'+diffChip(t.diff)+'<span class="chip time">≈ '+t.time+'</span></div>';
+  if(!open) return h+'<p class="small">🔒 Az előző nyom megoldása után nyílik meg.</p></div></article>';
+  h+='<div class="brief"><b>🕵️ Eligazítás:</b> '+t.brief+'</div>';
+  h+='<div class="know"><div class="kt">📚 Tudástár</div>'+t.know+t.terms.map(function(x){ return '<div class="term-def"><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>'; }).join('')+'</div>';
+  if(t.pre) h+=(typeof t.pre==='function'?t.pre():t.pre);
+  h+='<div style="font-weight:700;margin-top:8px">Teendők</div><ol class="todo">'+t.todo.map(function(s){ return '<li>'+s+'</li>'; }).join('')+'</ol>';
+  if(t.hints) h+='<details class="hint"><summary>💡 Segítség (fokozatos)</summary><ol>'+t.hints.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ol></details>';
+  h+='<div data-qs="'+t.id+'">'+qHTML(t)+'</div>';
+  h+='<div class="check-row"><button type="button" class="btn" data-check="'+t.id+'">Bizonyítékok ellenőrzése</button>'+(TEACHER?'<button type="button" class="btn ghost sm" data-solve="'+t.id+'">Mintamegoldás (tanár)</button>':'')+'</div><div data-res="'+t.id+'" class="'+(done?'res ok':'hide')+'">'+(done?'✓ A nyom megoldva.':'')+'</div></div></article>';
+  return h;
+}
+function notesHTML(L){ var terms=[]; chTasks(L).forEach(function(t){ terms=terms.concat(t.terms); });
+  return '<section class="notebook"><h3>📓 Nyomozói jegyzetfüzet · '+L+'. fejezet</h3><p class="small" style="margin:0 0 .6rem">Írd le ezeket a fogalmakat a füzetedbe. Ezekből készülsz az ellenőrzőre.</p><dl>'+terms.map(function(x){ return '<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>'; }).join('')+'</dl></section>'; }
+function saveCall(){ return '<div class="savecall"><div><b>💾 Óra vége előtt mentsd az ügyiratot!</b><br><span class="small">A következő órán a „📂 Ügyirat betöltése” gombbal folytatod, bármelyik gépen.</span></div><button type="button" class="btn red" data-savecall="1">💾 Ügyirat mentése</button></div>'; }
+function go(tab){
+  S.tab=tab; persist(); renderChaps();
+  var m=$('main');
+  if(tab===4){ renderSummary(); bindSave(); return; }
+  if(!chOpen(tab)){ m.innerHTML='<div class="locked-box"><div style="font-size:2rem">🔒</div><h3>'+Art(tab)+' '+tab+'. fejezet még zárva van</h3><p>Előbb oldd meg '+(tab-1===1?'az':'a')+' '+(tab-1)+'. fejezet összes nyomát. Ha a múltkor mentettél, töltsd be az ügyiratodat.</p><button type="button" class="btn" id="backBtn">Vissza</button></div>'; $('backBtn').addEventListener('click',function(){ go(tab-1); }); return; }
+  var L=tab, ts=chTasks(L);
+  var h='<div class="chap-h"><h2>'+L+'. fejezet · '+CH[L].t+'</h2><p>'+CH[L].s+'</p><p class="small">'+ts.length+' nyom · kb. 35 perc · '+ts.filter(function(t){ return t.diff==='easy'; }).length+' könnyű, '+ts.filter(function(t){ return t.diff==='mid'; }).length+' közepes'+(ts.some(function(t){ return t.diff==='hard'; })?', 1 nehéz':'')+'</p>'+(L===2&&!dnsFixed()?'<p class="small" style="color:var(--red)">Megjegyzés: a honlap csak az 1. fejezet jelentése után működik (akkor javítják a DNS-t).</p>':'')+'</div>';
+  ts.forEach(function(t){ h+=clueHTML(t); });
+  if(chDone(L)) h+='<div class="done-banner"><b>✓ '+Art(L)+' '+L+'. fejezet lezárva!</b><button type="button" class="btn" id="nextL">'+(L<3?'Tovább a '+(L+1)+'. fejezetre →':'A zárójelentés megnyitása →')+'</button></div>'+notesHTML(L);
+  h+=saveCall();
+  m.innerHTML=h;
+  var nl=$('nextL'); if(nl) nl.addEventListener('click',function(){ go(L+1); window.scrollTo(0,0); });
+  ts.forEach(function(t){ if(!taskOpen(t)) return; var qh=m.querySelector('[data-qs="'+t.id+'"]'); if(qh) bindQ(qh,t); });
+  m.querySelectorAll('[data-check]').forEach(function(b){ b.addEventListener('click',function(){ runCheck(b.getAttribute('data-check')); }); });
+  m.querySelectorAll('[data-solve]').forEach(function(b){ b.addEventListener('click',function(){ solve(T(b.getAttribute('data-solve'))); save(); var y=window.pageYOffset; go(S.tab); window.scrollTo(0,y); }); });
+  m.querySelectorAll('[data-mailbtn]').forEach(function(b){ var show=function(){ var r=b.parentNode.querySelector('[data-real]'); if(r) r.classList.remove('hide'); }; b.addEventListener('mouseenter',show); b.addEventListener('click',function(){ show(); toast('Gyakorló levél: a gomb nem nyit meg semmit. Nézd meg, hová mutatna!'); }); });
+  bindSave();
+}
+function bindSave(){ document.querySelectorAll('[data-savecall]').forEach(function(b){ b.addEventListener('click',saveFile); }); }
+function runCheck(id){
+  var t=T(id), msg; try{ msg=checkClue(t); }catch(e){ msg='Hiba: '+e.message; }
+  var res=document.querySelector('[data-res="'+id+'"]');
+  if(msg===null){ var was=!!S.done[id]; S.done[id]=true; if(chDone(3)&&!S.finishedAt) S.finishedAt=new Date().toISOString(); save();
+    if(id==='1.6'&&!was){ line('d','[rendszerüzenet] A rendszergazda kijavította az iskolai DNS-t: napsugar-gimi.hu → 203.0.113.81'); renderTerm(); }
+    if(!was){ var y=window.pageYOffset; go(S.tab); window.scrollTo(0,y); var nr=document.querySelector('[data-res="'+id+'"]'); if(nr){ nr.className='res ok'; nr.textContent='✓ A nyom megoldva. A következő nyom megnyílt.'; } return; }
+    res.className='res ok'; res.textContent='✓ A nyom megoldva.';
+  } else { res.className='res bad'; res.textContent='✗ '+msg; }
+  renderChaps();
+}
+var SOLVE_CMDS={'1.1':['ipconfig'],'1.2':['ping kulso-teszt.net'],'1.3':['nslookup napsugar-gimi.hu','nslookup napsugar-gimi.hu 198.51.100.53','ping 203.0.113.81'],'1.4':['tracert 203.0.113.81'],'2.1':['curl -i https://napsugar-gimi.hu/'],'2.2':['curl -i http://napsugar-gimi.hu/hirek','curl -i https://napsugar-gimi.hu/hirek/'],'2.3':['curl https://napsugar-gimi.hu/','curl -i https://napsugar-gimi.hu/regi-admin'],'2.4':['curl https://napsugar-gimi.hu/robots.txt'],'2.5':['base64 -d x'],'2.6':['curl https://napsugar-gimi.hu/belso/naplo.txt'],'3.3':['whois napsugar-gimi.hu','whois napsugar-gimn.hu'],'3.4':['nslookup befizetes-portal.net'],'3.5':['curl -i https://napsugar-gimi.hu.befizetes-portal.net/fizetes']};
+function solve(t){ var A=A_(t.id); (t.qs||[]).forEach(function(q){ A[q.k]=q.t==='chk'?q.ans.slice():String(q.ans); }); (SOLVE_CMDS[t.id]||[]).forEach(function(c){ S.ran.push(c); }); }
+
+/* ---------- save / load ---------- */
+function updSave(){ var st=$('saveSt'), started=countDone()>0||S.ran.length>0;
+  if(S.fileRev===S.rev&&S.fileSavedAt){ st.className='savest clean'; st.textContent='✓ mentve '+new Date(S.fileSavedAt).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'}); }
+  else if(started){ st.className='savest dirty'; st.textContent='● nem mentett változások'; } else { st.className='savest'; st.textContent='új ügy'; } }
+function saveFile(){
+  S.fileSavedAt=new Date().toISOString(); S.fileRev=S.rev; persist();
+  var d=new Date(), pad=function(n){ return (n<10?'0':'')+n; }, name='webdetektiv_ugyirat_'+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes())+'.json';
+  try{ var blob=new Blob([JSON.stringify({app:APP,version:1,savedAt:S.fileSavedAt,progress:countDone()+' / '+CLUES.length,state:S},null,1)],{type:'application/json'}), a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1500);
+    updSave(); toast('Ügyirat mentve: '+name+' (a Letöltések mappában keresd)'); }catch(e){ toast('A mentés nem sikerült ebben a böngészőben.'); }
+}
+$('saveBtn').addEventListener('click',saveFile);
+$('loadBtn').addEventListener('click',function(){ $('loadIn').click(); });
+$('loadIn').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(!f) return; var r=new FileReader();
+  r.onload=function(){ try{ var o=JSON.parse(String(r.result)); if(!o||o.app!==APP||!o.state||typeof o.state!=='object') throw 0;
+      var n=fresh(); for(var k in o.state) if(Object.prototype.hasOwnProperty.call(n,k)) n[k]=o.state[k]; S=n; S.fileRev=S.rev; persist(); updSave(); renderTerm();
+      var tab=1; if(chDone(1)) tab=2; if(chDone(2)) tab=3; if(chDone(3)) tab=4; go(tab); window.scrollTo(0,0);
+      toast('Ügyirat betöltve! Megoldott nyomok: '+countDone()+' / '+CLUES.length+'.'); }catch(e){ toast('Ez nem a Webdetektív laborból mentett ügyirat, ezért nem tudom betölteni.'); } };
+  r.readAsText(f,'utf-8'); this.value=''; });
+window.addEventListener('beforeunload',function(e){ if(S.rev!==S.fileRev&&countDone()>0&&!TEACHER){ e.preventDefault(); e.returnValue=''; } });
+
+/* ---------- summary + PDF ---------- */
+function renderSummary(){
+  var m=$('main');
+  if(!TEACHER&&!chDone(3)){ m.innerHTML='<div class="locked-box"><div style="font-size:2rem">🔒</div><h3>A zárójelentés a 3. fejezet után nyílik meg</h3></div>'; return; }
+  var all=[]; CLUES.forEach(function(t){ all=all.concat(t.terms); });
+  var pick=['IP-cím','Alapértelmezett átjáró','DNS-kiszolgáló','Ping','nslookup','Elavult DNS-bejegyzés','tracert / traceroute','Késleltetés (latencia)','HTTP-fejléc','Átirányítás (301)','Forráskód','robots.txt','URL-kódolás','Base64','Szervernapló','Adathalászat (phishing)','Levélfejléc','whois','Aldomain','Tanúsítvány (HTTPS)','Incidenskezelés'];
+  var key=all.filter(function(x){ return pick.indexOf(x[0])>=0; }), d=S.finishedAt?new Date(S.finishedAt):null;
+  m.innerHTML='<div class="pdfbar"><div><b>Töltsd le a zárójelentést!</b><br><span class="small">PDF-fájlként mentheted a gépedre.</span></div><button type="button" class="btn" id="pdfBtn">⬇ Letöltés PDF-ben</button></div><div id="sumDoc">'+
+  '<div class="pdf-head"><div><b>Webdetektív · Zárójelentés</b> · Internet és web</div><div>'+(d||new Date()).toLocaleDateString('hu-HU')+'</div></div>'+
+  '<div class="chap-h"><h2>Zárójelentés: az elnémult honlap rejtélye</h2><p>Mi történt, mit derítettél ki, és mire használhatod ezt a tudást?</p></div>'+
+  '<section class="sum-sec"><h3>1. Az ügy menete</h3><p><b>1. fejezet:</b> a saját géped beállításaitól (ipconfig) kifelé haladva, pinggel, nslookuppal és tracerttel kiderítetted, hogy az iskolai DNS-szerver elavult címet adott a honlapra. A tracert idői és a fénysebesség alapján azt is bebizonyítottad, milyen messze lehetnek a routerek.</p><p><b>2. fejezet:</b> curl-lel kihallgattad a webszervert: állapotkódok, átirányítások, a forráskódban hagyott megjegyzés, a robots.txt, egy URL- és Base64-kódolt üzenet, végül a szervernaplóban egy szkennelő IP-cím.</p><p><b>3. fejezet:</b> egy adathalász levél fejlécéből, a whois adatokból, a hamis domain IP-címéből és tanúsítványából bebizonyítottad, hogy ugyanaz a gép (198.51.100.66) állt a szkennelés, a levelek és a hamis befizetési oldal mögött.</p></section>'+
+  '<section class="sum-sec long"><h3>2. A legfontosabb fogalmak</h3><table class="mini-t"><tr><th>Fogalom</th><th>Jelentés</th></tr>'+key.map(function(x){ return '<tr><td><b>'+esc(x[0])+'</b></td><td>'+esc(x[1])+'</td></tr>'; }).join('')+'</table></section>'+
+  '<section class="sum-sec"><h3>3. Mire használható ez a tudás?</h3><ul><li><b>Saját hibaelhárítás:</b> ha „nincs internet”, sorban végig tudod nézni: saját beállítások → kapcsolat → DNS → útvonal → szerver.</li><li><b>Valódi eszközök:</b> az ipconfig, ping, nslookup, tracert és curl a te gépeden is működik (Windows parancssor). Ugyanezeket használják a rendszergazdák is.</li><li><b>Biztonság:</b> felismered az adathalász leveleket, el tudod olvasni a levélfejlécet, meg tudod állapítani, kié egy domain, és tudod, mit jelent és mit nem jelent a lakat.</li><li><b>Webfejlesztés:</b> tudod, hogy a forráskód és a robots.txt nyilvános, a Base64 nem titkosítás, és a szervernapló mindent megőriz.</li><li><b>Fizika és informatika:</b> a hálózat sebességének fizikai határa van: a jel a kábelben sem gyorsabb a fénynél.</li></ul></section>'+
+  '<section class="sum-sec"><h3>4. Hova vezet tovább?</h3><p>Erre épül a hálózatüzemeltetés, a kiberbiztonság (etikus hackelés, incidenskezelés), a webfejlesztés és a felhőszolgáltatások világa. A webalkalmazások (például a Streamlittel készült Python-programok) ugyanezen a HTTP-n beszélgetnek a böngészővel.</p></section>'+
+  '<section class="sum-sec"><h3>✓ Teljesítés</h3><div class="stat"><div><span class="small">Megoldott nyomok</span><b>'+countDone()+' / '+CLUES.length+'</b></div><div><span class="small">Futtatott parancsok</span><b>'+S.ran.length+'</b></div>'+(d?'<div><span class="small">Lezárva</span><b style="font-size:1rem">'+d.toLocaleString('hu-HU')+'</b></div>':'')+'</div><p class="small" style="margin-top:.6rem">Ezt a képernyőt vagy a letöltött PDF-et mutasd meg a tanárnak.</p></section></div><p class="small hide" id="pdfMsg"></p>'+saveCall();
+  $('pdfBtn').addEventListener('click',exportPDF);
+}
+var H2P='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+function loadH2P(){ return new Promise(function(res,rej){ if(window.html2pdf) return res(); var sc=document.createElement('script'); sc.src=H2P; sc.onload=function(){ window.html2pdf?res():rej(); }; sc.onerror=rej; document.head.appendChild(sc); setTimeout(function(){ if(!window.html2pdf) rej(); },15000); }); }
+function exportPDF(){
+  var btn=$('pdfBtn'), msg=$('pdfMsg'), src=$('sumDoc'); if(!src) return; btn.disabled=true; btn.textContent='PDF készül…';
+  function done(){ btn.disabled=false; btn.textContent='⬇ Letöltés PDF-ben'; }
+  loadH2P().then(function(){ var holder=document.createElement('div'); holder.style.cssText='position:fixed;left:-10000px;top:0;width:760px'; var el=src.cloneNode(true); el.removeAttribute('id'); el.className='pdfmode'; holder.appendChild(el); document.body.appendChild(holder);
+    var name='Webdetektiv_zarojelentes.pdf';
+    return window.html2pdf().set({margin:[12,12,14,12],filename:name,image:{type:'jpeg',quality:0.96},html2canvas:{scale:2,backgroundColor:'#ffffff',logging:false},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.sum-sec:not(.long)','.chap-h','tr','.pdf-head']}}).from(el).save().then(function(){ holder.remove(); done(); msg.className='small'; msg.textContent='✓ A PDF letöltődött: '+name; },function(){ holder.remove(); throw 0; });
+  }).catch(function(){ done(); msg.className='small'; msg.textContent='A közvetlen letöltés most nem sikerült (talán nincs internet). Megnyílik a nyomtatás: ott válaszd a „Mentés PDF-ként” lehetőséget.'; setTimeout(function(){ window.print(); },300); });
+}
+
+/* ---------- init ---------- */
+if(TEACHER) $('teacherBox').innerHTML='<div class="teacher"><b>Tanári nézet:</b> minden fejezet és nyom nyitva van. A „Mintamegoldás” gomb kitölti a válaszokat, és a szükséges parancsokat is futtatottnak jelöli.</div>';
+(function(){ var b=$('resetBtn'), armed=false, t=null; b.addEventListener('click',function(){ if(!armed){ armed=true; b.textContent='Biztosan? Kattints újra'; t=setTimeout(function(){ armed=false; b.textContent='Minden adat törlése'; },4000); return; } clearTimeout(t); try{ localStorage.removeItem(KEY); }catch(e){} S=fresh(); location.reload(); }); })();
+if(!S.term.length){ line('h','Webdetektív terminál · szimulált hálózat, minden adat kitalált.'); line('h','Írd be: sugo   (vagy kattints a feladatokban a sötét parancsokra)'); line('',''); }
+renderTerm(); updSave();
+window.__wd={CLUES:CLUES,run:run,S:function(){ return S; },check:checkClue,solve:solve,go:go,HINT_COOKIE:HINT_COOKIE};
+go([1,2,3,4].indexOf(S.tab)>=0?S.tab:1);
+})();
+</script>
+</body>
+</html>
