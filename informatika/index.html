@@ -195,6 +195,24 @@
             display: block;
         }
 
+        /* ---- Kategória-fejlécek a dropdownon belül (pl. Elmélet / Gyakorló feladatok) ---- */
+        .dropdown-heading {
+            padding: 10px 22px 6px 22px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #1e40af;
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+
+        .dropdown-heading:not(:first-child) {
+            margin-top: 6px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(30, 64, 175, 0.15);
+        }
+
         /* Ennél a dropdown-contentnél NE vágjon le semmit az overflow,
            mert az almenü (submenu-content) a doboz jobb szélén túlra nyílik.
            A többi (almenü nélküli) dropdownt nem érinti. */
@@ -565,6 +583,43 @@
     </button>
     <div class="dropdown-content has-submenu-parent">
 
+        <!-- ===== Elmélet ===== -->
+        <div class="dropdown-heading">
+            <span class="lang-hu">📘 Elmélet</span>
+            <span class="lang-sr">📘 Teorija</span>
+        </div>
+
+        <div>
+            <a href="excel_home.html" class="lang-hu">💻 Home</a>
+            <a href="excel_home.html" class="lang-sr">💻 Home</a>
+        </div>
+
+        <div>
+            <a href="excel_insert.html" class="lang-hu">💻 Insert</a>
+            <a href="excel_insert.html" class="lang-sr">💻 Insert</a>
+        </div>
+
+        <div>
+            <a href="excel_page_layout.html" class="lang-hu">💻 Page layout</a>
+            <a href="excel_page_layout.html" class="lang-sr">💻 Page layout</a>
+        </div>
+
+        <div>
+            <a href="excel_kepletek.html" class="lang-hu">💻 Formulas</a>
+            <a href="excel_kepletek.html" class="lang-sr">💻 Formulas</a>
+        </div>
+
+        <div>
+            <a href="excel_data.html" class="lang-hu">💻 Data</a>
+            <a href="excel_data.html" class="lang-sr">💻 Data</a>
+        </div>
+
+        <!-- ===== Gyakorló feladatok ===== -->
+        <div class="dropdown-heading">
+            <span class="lang-hu">📝 Gyakorló feladatok</span>
+            <span class="lang-sr">📝 Vežbe</span>
+        </div>
+
         <!-- Hibrid gyakorlás + jobbra nyíló almenü -->
         <div class="has-submenu" tabindex="0">
             <a href="#" onclick="return false;" class="lang-hu">🔀 Hibrid gyakorlás</a>
@@ -586,10 +641,10 @@
             </div>
         </div>
 
-        <!-- Home + jobbra nyíló almenü -->
+        <!-- Home gyakorlás + jobbra nyíló almenü -->
         <div class="has-submenu" tabindex="0">
-            <a href="excel_home.html" class="lang-hu">💻 Home</a>
-            <a href="excel_home.html" class="lang-sr">💻 Home</a>
+            <a href="#" onclick="return false;" class="lang-hu">📊 Home gyakorlás</a>
+            <a href="#" onclick="return false;" class="lang-sr">📊 Home vežbe</a>
             <span class="submenu-arrow">▶</span>
 
             <div class="submenu-content">
@@ -607,11 +662,10 @@
             </div>
         </div>
 
-        <!-- Insert (sima link, nincs almenü) -->
-       
-         <div class="has-submenu" tabindex="0">
-            <a href="excel_insert.html" class="lang-hu">💻 Insert</a>
-            <a href="excel_insert.html" class="lang-sr">💻 Insert</a>
+        <!-- Insert gyakorlás + jobbra nyíló almenü -->
+        <div class="has-submenu" tabindex="0">
+            <a href="#" onclick="return false;" class="lang-hu">📊 Insert gyakorlás</a>
+            <a href="#" onclick="return false;" class="lang-sr">📊 Insert vežbe</a>
             <span class="submenu-arrow">▶</span>
 
             <div class="submenu-content">
@@ -620,16 +674,10 @@
             </div>
         </div>
 
-        <!-- Page layout (sima link) -->
-        <div>
-            <a href="excel_page_layout.html" class="lang-hu">💻 Page layout</a>
-            <a href="excel_page_layout.html" class="lang-sr">💻 Page layout</a>
-        </div>
-
-        <!-- Formulas + jobbra nyíló almenü a gyakorlással -->
+        <!-- Formulas gyakorlás + jobbra nyíló almenü -->
         <div class="has-submenu" tabindex="0">
-            <a href="excel_kepletek.html" class="lang-hu">💻 Formulas</a>
-            <a href="excel_kepletek.html" class="lang-sr">💻 Formulas</a>
+            <a href="#" onclick="return false;" class="lang-hu">📊 Formulas gyakorlás</a>
+            <a href="#" onclick="return false;" class="lang-sr">📊 Formulas vežbe</a>
             <span class="submenu-arrow">▶</span>
 
             <div class="submenu-content">
@@ -640,12 +688,6 @@
                 <a href="excel_kepletek_gyakorlas3.html" class="lang-hu">📝 Gyakorlás 3</a>
                 <a href="excel_kepletek_gyakorlas3.html" class="lang-sr">📝 Vežbe 3</a>
             </div>
-        </div>
-
-        <!-- Data (sima link) -->
-        <div>
-            <a href="excel_data.html" class="lang-hu">💻 Data</a>
-            <a href="excel_data.html" class="lang-sr">💻 Data</a>
         </div>
 
     </div>
