@@ -131,6 +131,9 @@
 
         .dropdown-content a:hover { background: rgba(148, 163, 184, 0.12); color: var(--primary-deep); }
 
+        /* Csak szerb nyelven elérhető anyagok (még nincs magyar fordítás) */
+        html[lang="hu"] .sr-only-lesson { display: none; }
+
         .dropdown-content a .lesson-badge {
             background: rgba(251, 191, 36, 0.18); color: #b45309;
             font-size: 0.7rem; font-weight: 700; padding: 2px 8px;
@@ -266,28 +269,28 @@
                            <span data-translate-key="link-skripta2">Termodinamika – jegyzet</span>
                            <span class="lesson-badge"></span>
                         </a>
-                        <a href="Skripta_Molekulske_sile_i_agregatna_stanja.pdf"
+                        <a class="sr-only-lesson" href="Skripta_Molekulske_sile_i_agregatna_stanja.pdf"
                            data-href-hu="Skripta_Molekulske_sile_i_agregatna_stanja.pdf"
                            data-href-sr="Skripta_Molekulske_sile_i_agregatna_stanja.pdf">
-                           <span data-translate-key="link-skripta3">Molekuláris erők és halmazállapotok – jegyzet</span>
+                           <span data-translate-key="link-skripta3">Molekulske sile i agregatna stanja – skripta</span>
                            <span class="lesson-badge"></span>
                         </a>
-                        <a href="Fluidi_skripta.pdf"
+                        <a class="sr-only-lesson" href="Fluidi_skripta.pdf"
                            data-href-hu="Fluidi_skripta.pdf"
                            data-href-sr="Fluidi_skripta.pdf">
-                           <span data-translate-key="link-skripta4">Folyadékok és gázok (fluidumok) – jegyzet</span>
+                           <span data-translate-key="link-skripta4">Fluidi – skripta</span>
                            <span class="lesson-badge"></span>
                         </a>
-                        <a href="Skripta_Elektrostatika.pdf"
+                        <a class="sr-only-lesson" href="Skripta_Elektrostatika.pdf"
                            data-href-hu="Skripta_Elektrostatika.pdf"
                            data-href-sr="Skripta_Elektrostatika.pdf">
-                           <span data-translate-key="link-skripta5">Elektrosztatika – jegyzet</span>
+                           <span data-translate-key="link-skripta5">Elektrostatika – skripta</span>
                            <span class="lesson-badge"></span>
                         </a>
-                        <a href="Skripta_Stalna_elektricna_struja.pdf"
+                        <a class="sr-only-lesson" href="Skripta_Stalna_elektricna_struja.pdf"
                            data-href-hu="Skripta_Stalna_elektricna_struja.pdf"
                            data-href-sr="Skripta_Stalna_elektricna_struja.pdf">
-                           <span data-translate-key="link-skripta6">Állandó elektromos áram – jegyzet</span>
+                           <span data-translate-key="link-skripta6">Stalna električna struja – skripta</span>
                            <span class="lesson-badge"></span>
                         </a>
                         <!-- ÚJ JEGYZET HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, és cseréld ki a fájlneveket és a data-translate-key értékét (pl. link-skripta2), majd a translations objektumban is add hozzá az új kulcsot. -->
@@ -516,19 +519,19 @@
                     sr: 'Termodinamika – skripta'
                 },
                 'link-skripta3': {
-                    hu: 'Molekuláris erők és halmazállapotok – jegyzet',
+                    hu: 'Molekulske sile i agregatna stanja – skripta',
                     sr: 'Molekulske sile i agregatna stanja – skripta'
                 },
                 'link-skripta4': {
-                    hu: 'Folyadékok és gázok (fluidumok) – jegyzet',
+                    hu: 'Fluidi – skripta',
                     sr: 'Fluidi – skripta'
                 },
                 'link-skripta5': {
-                    hu: 'Elektrosztatika – jegyzet',
+                    hu: 'Elektrostatika – skripta',
                     sr: 'Elektrostatika – skripta'
                 },
                 'link-skripta6': {
-                    hu: 'Állandó elektromos áram – jegyzet',
+                    hu: 'Stalna električna struja – skripta',
                     sr: 'Stalna električna struja – skripta'
                 },
                 'link-interaktiv1': {
