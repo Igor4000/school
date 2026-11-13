@@ -123,11 +123,11 @@ footer { padding: 24px 0 40px; color: var(--steel); font-size: 14px; display: fl
   </section>
 
   <div class="cats">
-    <a class="cat" href="#" data-grade="1">
+    <a class="cat" href="1_osztaly/index.html" data-grade="1">
       <span class="num">1.</span>
       <h3 data-i18n="c1.title">1. évfolyam</h3>
       <p data-i18n="c1.text">Az első lépések: ismerkedés a fizika és az informatika világával.</p>
-      <span class="go"><span data-i18n="go">Hamarosan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span class="go"><span data-i18n="go4">Tovább</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
     <a class="cat" href="#" data-grade="2">
       <span class="num">2.</span>
@@ -211,7 +211,7 @@ var I18N = {
     try { localStorage.setItem(KEY, lang); } catch (e) {}
   }
   document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.lang); }); });
-  document.querySelectorAll('.cat[data-grade="1"], .cat[data-grade="2"], .cat[data-grade="3"]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
+  document.querySelectorAll('.cat[data-grade="2"], .cat[data-grade="3"]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
   var saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
   set(saved || 'hu');
 })();
