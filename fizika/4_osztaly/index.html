@@ -131,6 +131,9 @@
 
         .dropdown-content a:hover { background: rgba(148, 163, 184, 0.12); color: var(--primary-deep); }
 
+        /* Csak szerb nyelven elérhető anyagok (még nincs magyar fordítás) */
+        html[lang="hu"] .sr-only-lesson { display: none; }
+
         .dropdown-content a .lesson-badge {
             background: rgba(251, 191, 36, 0.18); color: #b45309;
             font-size: 0.7rem; font-weight: 700; padding: 2px 8px;
@@ -258,6 +261,42 @@
                            data-href-hu="Kvantna_priroda_EM_zracenja_skripta_HU.pdf"
                            data-href-sr="Kvantna_priroda_EM_zracenja_skripta_SR.pdf">
                            <span data-translate-key="link-skripta2">A kvantumos EM sugárzás – jegyzet</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <a class="sr-only-lesson" href="Skripta_Talasna_svojstva_cestica_i_kvantna_teorija_H_atoma.pdf"
+                           data-href-hu="Skripta_Talasna_svojstva_cestica_i_kvantna_teorija_H_atoma.pdf"
+                           data-href-sr="Skripta_Talasna_svojstva_cestica_i_kvantna_teorija_H_atoma.pdf">
+                           <span data-translate-key="link-skripta3">Talasna svojstva čestica i kvantna teorija H-atoma – skripta</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <a class="sr-only-lesson" href="Osnovi_fizike_cvrstog_stanja_skripta.pdf"
+                           data-href-hu="Osnovi_fizike_cvrstog_stanja_skripta.pdf"
+                           data-href-sr="Osnovi_fizike_cvrstog_stanja_skripta.pdf">
+                           <span data-translate-key="link-skripta4">Osnovi fizike čvrstog stanja – skripta</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <a class="sr-only-lesson" href="Jezgro_1_struktura_i_energija_veze.pdf"
+                           data-href-hu="Jezgro_1_struktura_i_energija_veze.pdf"
+                           data-href-sr="Jezgro_1_struktura_i_energija_veze.pdf">
+                           <span data-translate-key="link-skripta5">Jezgro 1: struktura i energija veze – skripta</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <a class="sr-only-lesson" href="Jezgro_2_radioaktivnost_i_raspadi.pdf"
+                           data-href-hu="Jezgro_2_radioaktivnost_i_raspadi.pdf"
+                           data-href-sr="Jezgro_2_radioaktivnost_i_raspadi.pdf">
+                           <span data-translate-key="link-skripta6">Jezgro 2: radioaktivnost i raspadi – skripta</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <a class="sr-only-lesson" href="Jezgro_3_nuklearne_reakcije_i_fuzija.pdf"
+                           data-href-hu="Jezgro_3_nuklearne_reakcije_i_fuzija.pdf"
+                           data-href-sr="Jezgro_3_nuklearne_reakcije_i_fuzija.pdf">
+                           <span data-translate-key="link-skripta7">Jezgro 3: nuklearne reakcije i fuzija – skripta</span>
+                           <span class="lesson-badge"></span>
+                        </a>
+                        <a class="sr-only-lesson" href="Laseri_skripta.pdf"
+                           data-href-hu="Laseri_skripta.pdf"
+                           data-href-sr="Laseri_skripta.pdf">
+                           <span data-translate-key="link-skripta8">Laseri – skripta</span>
                            <span class="lesson-badge"></span>
                         </a>
                         <!-- ÚJ JEGYZET HOZZÁADÁSA: másold a fenti <a>...</a> blokkot ide, és cseréld ki a fájlneveket és a data-translate-key értékét (pl. link-skripta2), majd a translations objektumban is add hozzá az új kulcsot. -->
@@ -470,6 +509,30 @@
                 'link-skripta2': {
                     hu: 'A kvantumos EM sugárzás – jegyzet',
                     sr: 'Kvantna priroda EM zračenja – skripta'
+                },
+                'link-skripta3': {
+                    hu: 'Talasna svojstva čestica i kvantna teorija H-atoma – skripta',
+                    sr: 'Talasna svojstva čestica i kvantna teorija H-atoma – skripta'
+                },
+                'link-skripta4': {
+                    hu: 'Osnovi fizike čvrstog stanja – skripta',
+                    sr: 'Osnovi fizike čvrstog stanja – skripta'
+                },
+                'link-skripta5': {
+                    hu: 'Jezgro 1: struktura i energija veze – skripta',
+                    sr: 'Jezgro 1: struktura i energija veze – skripta'
+                },
+                'link-skripta6': {
+                    hu: 'Jezgro 2: radioaktivnost i raspadi – skripta',
+                    sr: 'Jezgro 2: radioaktivnost i raspadi – skripta'
+                },
+                'link-skripta7': {
+                    hu: 'Jezgro 3: nuklearne reakcije i fuzija – skripta',
+                    sr: 'Jezgro 3: nuklearne reakcije i fuzija – skripta'
+                },
+                'link-skripta8': {
+                    hu: 'Laseri – skripta',
+                    sr: 'Laseri – skripta'
                 },
                 'link-interaktiv1': {
                     hu: 'A kvantumos EM sugárzás – interaktív anyag',
