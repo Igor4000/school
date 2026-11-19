@@ -231,6 +231,14 @@
             border-radius: 12px;
         }
 
+        /* Ugyanez, ha egy almenü maga is tartalmaz jobbra nyíló almenüt (3. szint) */
+        .submenu-content.has-submenu-parent {
+            overflow: visible;
+        }
+        .submenu-content.has-submenu-parent a:hover {
+            border-radius: 12px;
+        }
+
         .dropdown.active .dropbtn i {
             transform: rotate(180deg);
         }
@@ -591,122 +599,120 @@
     </button>
     <div class="dropdown-content has-submenu-parent">
 
-        <!-- ===== Elmélet ===== -->
-        <div class="dropdown-heading">
-            <span class="lang-hu">📘 Elmélet</span>
-            <span class="lang-sr">📘 Teorija</span>
-        </div>
-
-        <div>
-            <a href="excel_home.html" class="lang-hu">💻 Home</a>
-            <a href="excel_home.html" class="lang-sr">💻 Home</a>
-        </div>
-
-        <div>
-            <a href="excel_insert.html" class="lang-hu">💻 Insert</a>
-            <a href="excel_insert.html" class="lang-sr">💻 Insert</a>
-        </div>
-
-        <div>
-            <a href="excel_page_layout.html" class="lang-hu">💻 Page layout</a>
-            <a href="excel_page_layout.html" class="lang-sr">💻 Page layout</a>
-        </div>
-
-        <div>
-            <a href="excel_kepletek.html" class="lang-hu">💻 Formulas</a>
-            <a href="excel_kepletek.html" class="lang-sr">💻 Formulas</a>
-        </div>
-
-        <div>
-            <a href="excel_data.html" class="lang-hu">💻 Data</a>
-            <a href="excel_data.html" class="lang-sr">💻 Data</a>
-        </div>
-
-        <!-- ===== Gyakorló feladatok ===== -->
-        <div class="dropdown-heading">
-            <span class="lang-hu">📝 Gyakorló feladatok</span>
-            <span class="lang-sr">📝 Vežbe</span>
-        </div>
-
-        <!-- Hibrid gyakorlás + jobbra nyíló almenü -->
+        <!-- Elmélet + jobbra nyíló almenü -->
         <div class="has-submenu" tabindex="0">
-            <a href="#" onclick="return false;" class="lang-hu">🔀 Hibrid gyakorlás</a>
-            <a href="#" onclick="return false;" class="lang-sr">🔀 Hibridne vežbe</a>
+            <a href="#" onclick="return false;" class="lang-hu">📘 Elmélet</a>
+            <a href="#" onclick="return false;" class="lang-sr">📘 Teorija</a>
             <span class="submenu-arrow">▶</span>
 
             <div class="submenu-content">
-                <a href="excel_hibrid_gyakorlas.html" class="lang-hu">📝 Gyakorlás 1</a>
-                <a href="excel_hibrid_gyakorlas.html" class="lang-sr">📝 Vežbe 1</a>
+                <a href="excel_home.html" class="lang-hu">💻 Home</a>
+                <a href="excel_home.html" class="lang-sr">💻 Home</a>
 
-                <a href="excel_hibrid_gyakorlas2.html" class="lang-hu">📝 Gyakorlás 2</a>
-                <a href="excel_hibrid_gyakorlas2.html" class="lang-sr">📝 Vežbe 2</a>
+                <a href="excel_insert.html" class="lang-hu">💻 Insert</a>
+                <a href="excel_insert.html" class="lang-sr">💻 Insert</a>
 
-                <a href="excel_hibrid_gyakorlas2_megoldas.html" class="lang-hu">✅ Gyakorlás 2 megoldás</a>
-                <a href="excel_hibrid_gyakorlas2_megoldas.html" class="lang-sr">✅ Vežbe 2 rešenje</a>
+                <a href="excel_page_layout.html" class="lang-hu">💻 Page layout</a>
+                <a href="excel_page_layout.html" class="lang-sr">💻 Page layout</a>
 
-                <a href="excel_hibrid_gyakorlas3.html" class="lang-hu">📝 Gyakorlás 3</a>
-                <a href="excel_hibrid_gyakorlas3.html" class="lang-sr">📝 Vežbe 3</a>
+                <a href="excel_kepletek.html" class="lang-hu">💻 Formulas</a>
+                <a href="excel_kepletek.html" class="lang-sr">💻 Formulas</a>
+
+                <a href="excel_data.html" class="lang-hu">💻 Data</a>
+                <a href="excel_data.html" class="lang-sr">💻 Data</a>
             </div>
         </div>
 
-        <!-- Home gyakorlás + jobbra nyíló almenü -->
+        <!-- Gyakorló feladatok + jobbra nyíló almenü -->
         <div class="has-submenu" tabindex="0">
-            <a href="#" onclick="return false;" class="lang-hu">📊 Home gyakorlás</a>
-            <a href="#" onclick="return false;" class="lang-sr">📊 Home vežbe</a>
+            <a href="#" onclick="return false;" class="lang-hu">📝 Gyakorló feladatok</a>
+            <a href="#" onclick="return false;" class="lang-sr">📝 Vežbe</a>
+            <span class="submenu-arrow">▶</span>
+
+            <div class="submenu-content has-submenu-parent">
+
+                <!-- Hibrid gyakorlás + jobbra nyíló almenü -->
+                <div class="has-submenu" tabindex="0">
+                    <a href="#" onclick="return false;" class="lang-hu">🔀 Hibrid gyakorlás</a>
+                    <a href="#" onclick="return false;" class="lang-sr">🔀 Hibridne vežbe</a>
+                    <span class="submenu-arrow">▶</span>
+
+                    <div class="submenu-content">
+                        <a href="excel_hibrid_gyakorlas.html" class="lang-hu">📝 Gyakorlás 1</a>
+                        <a href="excel_hibrid_gyakorlas.html" class="lang-sr">📝 Vežbe 1</a>
+
+                        <a href="excel_hibrid_gyakorlas2.html" class="lang-hu">📝 Gyakorlás 2</a>
+                        <a href="excel_hibrid_gyakorlas2.html" class="lang-sr">📝 Vežbe 2</a>
+
+                        <a href="excel_hibrid_gyakorlas2_megoldas.html" class="lang-hu">✅ Gyakorlás 2 megoldás</a>
+                        <a href="excel_hibrid_gyakorlas2_megoldas.html" class="lang-sr">✅ Vežbe 2 rešenje</a>
+
+                        <a href="excel_hibrid_gyakorlas3.html" class="lang-hu">📝 Gyakorlás 3</a>
+                        <a href="excel_hibrid_gyakorlas3.html" class="lang-sr">📝 Vežbe 3</a>
+                    </div>
+                </div>
+
+                <!-- Home gyakorlás + jobbra nyíló almenü -->
+                <div class="has-submenu" tabindex="0">
+                    <a href="#" onclick="return false;" class="lang-hu">📊 Home gyakorlás</a>
+                    <a href="#" onclick="return false;" class="lang-sr">📊 Home vežbe</a>
+                    <span class="submenu-arrow">▶</span>
+
+                    <div class="submenu-content">
+                        <a href="home_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
+                        <a href="home_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
+
+                        <a href="home_gyakorlas_2.html" class="lang-hu">📝 Gyakorlás 2</a>
+                        <a href="home_gyakorlas_2.html" class="lang-sr">📝 Vežbe 2</a>
+
+                        <a href="home_gyakorlas_3.html" class="lang-hu">📝 Gyakorlás 3</a>
+                        <a href="home_gyakorlas_3.html" class="lang-sr">📝 Vežbe 3</a>
+
+                        <a href="home_gyakorlas_4.html" class="lang-hu">📝 Gyakorlás 4</a>
+                        <a href="home_gyakorlas_4.html" class="lang-sr">📝 Vežbe 4</a>
+                    </div>
+                </div>
+
+                <!-- Insert gyakorlás + jobbra nyíló almenü -->
+                <div class="has-submenu" tabindex="0">
+                    <a href="#" onclick="return false;" class="lang-hu">📊 Insert gyakorlás</a>
+                    <a href="#" onclick="return false;" class="lang-sr">📊 Insert vežbe</a>
+                    <span class="submenu-arrow">▶</span>
+
+                    <div class="submenu-content">
+                        <a href="insert_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
+                        <a href="insert_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
+                    </div>
+                </div>
+
+                <!-- Formulas gyakorlás + jobbra nyíló almenü -->
+                <div class="has-submenu" tabindex="0">
+                    <a href="#" onclick="return false;" class="lang-hu">📊 Formulas gyakorlás</a>
+                    <a href="#" onclick="return false;" class="lang-sr">📊 Formulas vežbe</a>
+                    <span class="submenu-arrow">▶</span>
+
+                    <div class="submenu-content">
+                        <a href="excel_kepletek_gyakorlas.html" class="lang-hu">📝 Gyakorlás 1</a>
+                        <a href="excel_kepletek_gyakorlas.html" class="lang-sr">📝 Vežbe 1</a>
+                        <a href="excel_kepletek_gyakorlas2.html" class="lang-hu">📝 Gyakorlás 2</a>
+                        <a href="excel_kepletek_gyakorlas2.html" class="lang-sr">📝 Vežbe 2</a>
+                        <a href="excel_kepletek_gyakorlas3.html" class="lang-hu">📝 Gyakorlás 3</a>
+                        <a href="excel_kepletek_gyakorlas3.html" class="lang-sr">📝 Vežbe 3</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Házi feladat + jobbra nyíló almenü -->
+        <div class="has-submenu" tabindex="0">
+            <a href="#" onclick="return false;" class="lang-hu">🏠 Házi feladat</a>
+            <a href="#" onclick="return false;" class="lang-sr">🏠 Domaći zadatak</a>
             <span class="submenu-arrow">▶</span>
 
             <div class="submenu-content">
-                <a href="home_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
-                <a href="home_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
-
-                <a href="home_gyakorlas_2.html" class="lang-hu">📝 Gyakorlás 2</a>
-                <a href="home_gyakorlas_2.html" class="lang-sr">📝 Vežbe 2</a>
-
-                <a href="home_gyakorlas_3.html" class="lang-hu">📝 Gyakorlás 3</a>
-                <a href="home_gyakorlas_3.html" class="lang-sr">📝 Vežbe 3</a>
-
-                <a href="home_gyakorlas_4.html" class="lang-hu">📝 Gyakorlás 4</a>
-                <a href="home_gyakorlas_4.html" class="lang-sr">📝 Vežbe 4</a>
+                <a href="excel_hazi_feladat_kepletek.html" class="lang-hu">📌 Formulas házi feladat</a>
+                <a href="excel_hazi_feladat_kepletek.html" class="lang-sr">📌 Formulas domaći zadatak</a>
             </div>
-        </div>
-
-        <!-- Insert gyakorlás + jobbra nyíló almenü -->
-        <div class="has-submenu" tabindex="0">
-            <a href="#" onclick="return false;" class="lang-hu">📊 Insert gyakorlás</a>
-            <a href="#" onclick="return false;" class="lang-sr">📊 Insert vežbe</a>
-            <span class="submenu-arrow">▶</span>
-
-            <div class="submenu-content">
-                <a href="insert_gyakorlas_1.html" class="lang-hu">📝 Gyakorlás 1</a>
-                <a href="insert_gyakorlas_1.html" class="lang-sr">📝 Vežbe 1</a>
-            </div>
-        </div>
-
-        <!-- Formulas gyakorlás + jobbra nyíló almenü -->
-        <div class="has-submenu" tabindex="0">
-            <a href="#" onclick="return false;" class="lang-hu">📊 Formulas gyakorlás</a>
-            <a href="#" onclick="return false;" class="lang-sr">📊 Formulas vežbe</a>
-            <span class="submenu-arrow">▶</span>
-
-            <div class="submenu-content">
-                <a href="excel_kepletek_gyakorlas.html" class="lang-hu">📝 Gyakorlás 1</a>
-                <a href="excel_kepletek_gyakorlas.html" class="lang-sr">📝 Vežbe 1</a>
-                <a href="excel_kepletek_gyakorlas2.html" class="lang-hu">📝 Gyakorlás 2</a>
-                <a href="excel_kepletek_gyakorlas2.html" class="lang-sr">📝 Vežbe 2</a>
-                <a href="excel_kepletek_gyakorlas3.html" class="lang-hu">📝 Gyakorlás 3</a>
-                <a href="excel_kepletek_gyakorlas3.html" class="lang-sr">📝 Vežbe 3</a>
-            </div>
-        </div>
-
-        <!-- ===== Házi feladat ===== -->
-        <div class="dropdown-heading">
-            <span class="lang-hu">🏠 Házi feladat</span>
-            <span class="lang-sr">🏠 Domaći zadatak</span>
-        </div>
-
-        <div>
-            <a href="excel_hazi_feladat_kepletek.html" class="lang-hu">📌 Formulas házi feladat</a>
-            <a href="excel_hazi_feladat_kepletek.html" class="lang-sr">📌 Formulas domaći zadatak</a>
         </div>
 
     </div>
@@ -930,9 +936,13 @@
         /* Érintőképernyőn (hover nélkül) koppintásra nyíljon/záródjon
            az almenü, ne csak hoverre */
         document.querySelectorAll('.has-submenu').forEach(function(item) {
+            // csak a SAJÁT (közvetlen) almenüjét nézzük, nem az esetleges
+            // beágyazott (3. szintű) almenükét - így egymásba ágyazott
+            // jobbra nyíló almenük is külön-külön nyithatók érintőképernyőn
+            var ownContent = item.querySelector(':scope > .submenu-content');
             item.addEventListener('click', function(event) {
                 if (window.matchMedia('(hover: none)').matches) {
-                    if (!event.target.closest('.submenu-content')) {
+                    if (!(ownContent && ownContent.contains(event.target))) {
                         event.preventDefault();
                         item.classList.toggle('open');
                     }
