@@ -319,6 +319,21 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
+        /* Ha az almenü a jobb képernyőszélen túlra nyílna, a JS ráteszi
+           ezt az osztályt, és az almenü balra nyílik a szülő mellett,
+           így sosem kell jobbra görgetni, hogy elérjük. */
+        .has-submenu.open-left > .submenu-content {
+            left: auto;
+            right: 100%;
+            margin-left: 0;
+            margin-right: 6px;
+        }
+
+        .has-submenu.open-left::after {
+            right: auto;
+            left: -14px;
+        }
+
         /* Kis képernyőn a hover nem elérhető - ilyenkor az almenü
            a szülő alá csúszik, sima blokk-listaként */
         @media (max-width: 768px) {
@@ -931,6 +946,33 @@
                 document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
                 document.querySelectorAll('.dropbtn').forEach(b => b.setAttribute('aria-expanded', 'false'));
             }
+        });
+
+        /* Ha egy jobbra nyíló almenü kilógna a képernyő jobb széléhez képest,
+           automatikusan balra nyitjuk, hogy sose kelljen jobbra görgetni
+           ahhoz, hogy elérjük és megnyithassuk. */
+        function positionSubmenu(item) {
+            var submenu = item.querySelector(':scope > .submenu-content');
+            if (!submenu) return;
+            if (window.matchMedia('(max-width: 768px)').matches) return;
+
+            var prevDisplay = submenu.style.display;
+            var prevVisibility = submenu.style.visibility;
+            submenu.style.display = 'block';
+            submenu.style.visibility = 'hidden';
+
+            var itemRect = item.getBoundingClientRect();
+            var submenuWidth = submenu.offsetWidth;
+            var fitsOnRight = (itemRect.right + submenuWidth + 10) <= window.innerWidth;
+            item.classList.toggle('open-left', !fitsOnRight);
+
+            submenu.style.display = prevDisplay;
+            submenu.style.visibility = prevVisibility;
+        }
+
+        document.querySelectorAll('.has-submenu').forEach(function(item) {
+            item.addEventListener('mouseenter', function() { positionSubmenu(item); });
+            item.addEventListener('focus', function() { positionSubmenu(item); });
         });
 
         /* Érintőképernyőn (hover nélkül) koppintásra nyíljon/záródjon
