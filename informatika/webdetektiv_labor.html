@@ -101,6 +101,15 @@ button,input,select{font:inherit; color:inherit}
 .know p{margin:.3rem 0}
 .term-def{background:var(--paper); border:1px dashed var(--line); border-radius:6px; padding:4px 9px; margin:.3rem 0; font-size:.88rem}
 .term-def b{color:var(--blue)}
+.know ul{margin:.3rem 0 .4rem; padding-left:1.15rem}
+.know li{margin:.18rem 0}
+.know .exl{font-family:var(--type); font-weight:700; font-size:.88rem; color:var(--blue); margin:.6rem 0 .1rem}
+.know .ex{background:var(--paper); border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:6px; padding:7px 10px; margin:.35rem 0; font-size:.88rem}
+.know .ex .mono{display:block; font-family:var(--mono); font-size:.78rem; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.5}
+.know .ex .ptr{color:var(--red); font-weight:700}
+.know .steps{margin:.3rem 0; padding-left:1.3rem; font-size:.9rem}
+.know .steps li{margin:.22rem 0}
+.sub{display:block; color:var(--muted); font-size:.87rem; font-weight:400; margin-top:.1rem; line-height:1.45}
 .todo{margin:.5rem 0; padding-left:1.25rem}
 .todo li{margin:.25rem 0}
 .cmd{font-family:var(--mono); font-size:.82rem; background:var(--term); color:var(--term-ink); border:0; border-radius:4px; padding:.08rem .45rem; cursor:pointer; white-space:normal; overflow-wrap:anywhere; text-align:left}
@@ -527,54 +536,164 @@ var CLUES=[
      {k:'d',t:'sel',text:'Mikor történt a szkennelés?',opts:['Reggel 8 óra körül','Hajnali 3 óra körül','Délben'],ans:1}]},
 
 /* ===== 3. FEJEZET ===== */
-{id:'3.1',L:3,title:'A gyanús levél',diff:'easy',time:'4 perc',
- brief:'Hétfő reggel több szülő is továbbította ezt a levelet: „Tényleg ma kell fizetni?” A hírek oldalon (2. fejezet) viszont azt olvastad, hogy a befizetés készpénzben, az osztályfőnöknél történik…',
- know:'<p>Az <b>adathalász</b> levél megbízható feladónak álcázza magát, hogy pénzt vagy adatot csaljon ki. Árulkodó jelek: sürgetés és fenyegetés, általános megszólítás, kártyaadatok kérése, és olyan link, amelynek <b>valódi címe</b> más, mint a felirata. Vidd az egeret a gomb fölé, mielőtt kattintanál!</p>',
- terms:[term('Adathalászat (phishing)','Megbízhatónak álcázott csaló üzenet, amely adatot vagy pénzt próbál kicsalni.')],
+{id:'3.1',L:3,title:'A gyanús levél',diff:'easy',time:'5 perc',
+ brief:'Hétfő reggel sok szülő kapta meg ezt a levelet. Az iskola honlapján viszont az áll, hogy a kirándulás árát <b>készpénzben, az osztályfőnöknél</b> kell befizetni. Valaki tehát hazudik. Döntsd el: igazi ez a levél vagy sem?',
+ know:'<div class="exl">Egy mondatban</div>'
+ +'<p><b>Az adathalász levél úgy tesz, mintha az iskola (vagy a bank, a posta) küldte volna, hogy pénzt vagy jelszót csaljon ki tőled.</b></p>'
+ +'<p>Nincs benne vírus. A csapda az, hogy <b>te magad</b> írod be a kártyaszámodat egy hamis oldalon, mert azt hiszed, az igazi oldalon vagy.</p>'
+ +'<div class="exl">Mi árulja el az ilyen levelet?</div>'
+ +'<ul><li><b>Sürget és ijesztget:</b> „ma éjfélig”, „különben elveszik a helyed”. Aki megijed, nem gondolkodik.</li>'
+ +'<li><b>Nem a nevedet írja:</b> csak annyi, hogy „Tisztelt Szülő!”. Mert több ezer embernek ment ki ugyanaz.</li>'
+ +'<li><b>Azonnal pénzt vagy jelszót kér.</b></li>'
+ +'<li><b>Mást mond, mint a hivatalos oldal.</b></li>'
+ +'<li><b>A link felirata és a valódi címe nem ugyanaz.</b> Ez a legbiztosabb jel.</li></ul>'
+ +'<div class="exl">Egy link felirata nem bizonyít semmit</div>'
+ +'<p>A felirat csak <b>szöveg</b>. A küldő bármit odaírhat, mint egy névtáblára. Hogy valójában hova visz, azt úgy nézed meg, hogy <b>ráviszed az egeret</b> (nem kattintasz!). A böngésző alul kiírja a valódi címet.</p>'
+ +'<div class="ex"><b>Példa egy másik csaló levélből:</b><span class="mono">amit a gombra írtak:  posta.hu/csomag\nahova tényleg visz:   https://posta.hu.csomag-ertesito.net/fizetes</span><p style="margin:.45rem 0 0">A kettő nem ugyanaz &rarr; <b>csalás.</b></p></div>'
+ +'<p class="small">Az alábbi gyakorló levélben nyugodtan rákattinthatsz a gombra: nem nyílik meg semmi, csak megjelenik alatta pirossal a valódi cím.</p>',
+ terms:[term('Adathalászat (phishing)','Csaló üzenet, amely másnak adja ki magát, hogy pénzt vagy jelszót szerezzen.'),term('A link valódi címe','Ahova a link tényleg visz. Nem ugyanaz, mint a felirata.')],
  pre:emailHTML,
- todo:['Olvasd el a levelet. Vidd az egeret a gomb fölé (vagy kattints rá: a gyakorló levélben nem nyílik meg semmi).','Jelöld be az árulkodó jeleket.'],
- qs:[{k:'a',t:'chk',text:'Mely jelek utalnak csalásra? (Több is jó.)',opts:['Sürgetés: „ma éjfélig”, különben elveszik a helyet','Az iskola nevével érkezett','A gomb felirata és valódi címe eltér','Bankkártyás fizetést kér, pedig a hírek szerint készpénzben kell fizetni','Magyar nyelven íródott'],ans:[0,2,3]}]},
+ todo:['Olvasd el a levelet, és keresd meg benne a fenti jeleket.',
+       'Kattints a kék „Befizetés…” gombra. <span class="sub">Megjelenik alatta pirossal a <b>valódi</b> cím. Ugyanaz, mint amit a gombra írtak?</span>',
+       'Gondold végig: melyik jel <b>bizonyít</b> csalást? <span class="sub">Az, hogy a levél magyarul van, és hogy az iskola nevét írja, még nem bizonyít semmit: ilyet bárki írhat.</span>',
+       'Pipáld ki az árulkodó jeleket (több is jó).'],
+ hints:['Három válasz jó. Mindegyiknél kérdezd meg: ilyet egy igazi iskola is írhat, vagy csak csaló?',
+        'Magyarul írni és az iskola nevét leírni bárki tud. Ez a kettő tehát nem jó válasz.',
+        'A másik háromnál baj van: ijesztget a határidővel, mást ír a fizetésről, mint a honlap, és a gomb máshova visz, mint amit kiír.'],
+ qs:[{k:'a',t:'chk',text:'Mely jelek utalnak csalásra? (Három jó válasz van.)',opts:['Sürgetés: „ma éjfélig”, különben elveszik a helyet','Az iskola nevével érkezett','A gomb felirata és valódi címe eltér','Bankkártyás fizetést kér, pedig a hírek szerint készpénzben kell fizetni','Magyar nyelven íródott'],ans:[0,2,3]}]},
 {id:'3.2',L:3,title:'A fejléc nem hazudik',diff:'mid',time:'6 perc',
- brief:'A levél az iskola címéről jött… legalábbis ezt állítja. A teljes fejléc többet elárul.',
- know:'<p>A levél <b>Feladó</b> (From) mezőjét a küldő szabadon beírhatja, ezért könnyen hamisítható. Megbízhatóbb nyomok a teljes fejlécben vannak: a <code>Received: from</code> sor megmutatja, melyik szerver és IP-cím küldte valójában a levelet, a <code>Return-Path</code> és a <code>Reply-To</code> pedig azt, hová mennek a visszapattanó levelek és a válaszok.</p>',
- terms:[term('Levélfejléc','A levél technikai adatai. A Received sorok mutatják a valódi útját.'),term('Hamisított feladó','A From mező szabadon írható, ezért önmagában nem bizonyíték.')],
+ brief:'A levél azt írja, hogy a titkarsag@napsugar-gimi.hu címről jött. De tényleg onnan jött? Minden levél magával hozza, hogy merre járt. Ezt nézzük meg most.',
+ know:'<div class="exl">Egy mondatban</div>'
+ +'<p><b>A „Feladó” mezőt a küldő írja, a fejléc többi sorát viszont a szerverek. Ezért a fejlécnek lehet hinni, a Feladó mezőnek nem.</b></p>'
+ +'<div class="exl">Képzeld el borítékként</div>'
+ +'<p>A boríték hátuljára a feladót <b>kézzel</b> írják. Bárki odaírhat bármit. A <b>postai bélyegző</b> viszont nem hamisítható: azt a posta nyomja rá, és látszik rajta, honnan indult a levél.</p>'
+ +'<p>Az e-mailnél ugyanez van. A levél rejtett részét <b>fejlécnek</b> hívjuk. Ebben:</p>'
+ +'<ul><li><code>From:</code> = a kézzel írt feladó. <b>A küldő írja. Nem bizonyíték.</b></li>'
+ +'<li><code>Received: from</code> = a postai bélyegző. <b>A szerverek írják. Ez az igazi nyom.</b> Itt áll a küldő szerver neve és az IP-címe.</li>'
+ +'<li><code>Reply-To:</code> = ide megy a leveled, ha a Válasz gombot nyomod.</li></ul>'
+ +'<div class="exl">Így olvasd el (minta egy másik csaló levélből)</div>'
+ +'<div class="ex"><span class="mono">From: "Posta Zrt." &lt;ugyfel@posta.hu&gt;   <span class="ptr">&lt;- ezt a csaló írta: HAMIS</span>\nReceived: from mail.csomag-ertesito.net (mail.csomag-ertesito.net [203.0.113.99])\nReply-To: dij@csomag-ertesito.net        <span class="ptr">&lt;- ide menne a válaszod</span></span>'
+ +'<ul style="margin:.45rem 0 0"><li>A szerver neve: <code>mail.csomag-ertesito.net</code>. A <code>mail.</code> rész csak annyit jelent, hogy ez a gép a leveleket kezeli. A <b>domain</b> ezért: <b>csomag-ertesito.net</b></li>'
+ +'<li>A szögletes zárójelben az IP-cím: <b>203.0.113.99</b></li>'
+ +'<li>A levél tehát <b>nem</b> a posta.hu-tól jött, hanem a csomag-ertesito.net-től.</li></ul></div>',
+ terms:[term('Levélfejléc','A levél rejtett, technikai része. Megmutatja, honnan jött valójában.'),term('Hamisított feladó','A Feladó (From) mezőbe a küldő bármit beírhat, ezért nem bizonyíték.'),term('Reply-To','Az a cím, ahova a válaszod megy. Nem biztos, hogy ez a feladó címe.')],
  pre:emailHTML,
- todo:['Nyisd meg a levél alatt a „Teljes fejléc mutatása” részt.','Keresd meg a valódi küldő szervert és a válaszcímet.'],
- qs:[{k:'a',t:'txt',text:'Melyik domainről küldték valójában a levelet?',ans:'napsugar-gimn.hu'},{k:'b',t:'txt',text:'A küldő levelezőszerver IP-címe:',ans:'198.51.100.66'},
-     {k:'c',t:'mc',text:'Hová érkezne, ha a szülő a Válasz gombra kattintana?',opts:['titkarsag@napsugar-gimi.hu','penzugy@napsugar-gimn.hu','szulo@pelda-mail.net'],ans:1},
-     {k:'d',t:'mc',text:'Miért nem elég a Feladó mezőt nézni?',opts:['Mert azt a küldő szabadon beírhatja, ezért hamisítható.','Mert az mindig üres.','Mert csak a tanárok látják.'],ans:0}]},
+ todo:['A levél alján kattints rá: <b>„Teljes fejléc mutatása”</b>. <span class="sub">Megjelenik egy fekete mező, benne 8 sor.</span>',
+       'Keresd meg benne a <code>Received: from</code> kezdetű sort (ez a 2. sor). <span class="sub">Itt van az 1. és a 2. kérdés válasza is: a szerver neve, és utána a szögletes zárójelben az IP-címe.</span>',
+       'Keresd meg a <code>Reply-To:</code> sort.',
+       'Hasonlítsd össze a <code>From:</code> és a <code>Received</code> sort. <span class="sub">Ugyanaz a név van bennük? Figyelj: gimi és gim<b>n</b> nem ugyanaz!</span>'],
+ hints:['Nyisd ki a „Teljes fejléc mutatása” részt. A második sor kezdődik így: Received: from …',
+        'A szerver neve mail.valami.hu alakú. A válaszba a mail. nélküli részt írd: valami.hu',
+        'Az IP-cím ugyanabban a sorban van, szögletes zárójelben: négy szám, pontokkal.',
+        'A 3. kérdéshez a Reply-To: sort nézd. A 4. kérdésnél gondolj a borítékra: a feladót ki írja rá?'],
+ qs:[{k:'a',t:'txt',text:'Melyik domainről küldték valójában a levelet? <span class="sub">A Received: from sorból, a „mail.” nélkül. Így írd: valami.hu</span>',ans:'napsugar-gimn.hu'},
+     {k:'b',t:'txt',text:'Mi a küldő szerver IP-címe? <span class="sub">Ugyanabban a sorban, szögletes zárójelben [ ].</span>',ans:'198.51.100.66'},
+     {k:'c',t:'mc',text:'Hova menne a levél, ha a szülő a Válasz gombot nyomná? <span class="sub">A Reply-To: sor mutatja.</span>',opts:['titkarsag@napsugar-gimi.hu','penzugy@napsugar-gimn.hu','szulo@pelda-mail.net'],ans:1},
+     {k:'d',t:'mc',text:'Miért nem elég a Feladó (From) mezőt megnézni?',opts:['Mert azt a küldő szabadon beírhatja, ezért hamisítható.','Mert az mindig üres.','Mert csak a tanárok látják.'],ans:0}]},
 {id:'3.3',L:3,title:'Ki van a domain mögött?',diff:'mid',time:'6 perc',
- brief:'napsugar-gimi.hu és napsugar-gimn.hu: két betű különbség. Nézzük meg, ki regisztrálta őket, és mikor!',
- know:'<p>A <code>whois</code> parancs megmutatja egy domain nyilvános regisztrációs adatait: mikor regisztrálták, meddig érvényes, ki a regisztrátor, és (ha nem rejtették el) ki a tulajdonos. A csalók domainjei jellemzően <b>néhány naposak</b>, a tulajdonos <b>rejtve</b> van, és a név egy valódira hasonlít (<b>megtévesztő domain</b>).</p>',
- terms:[term('whois','Parancs, amely egy domain regisztrációs adatait mutatja.'),term('Megtévesztő domain','A valódira hasonlító név (betűcsere, elírás), amelyet csalók regisztrálnak.')],
- todo:['Futtasd: '+C('whois napsugar-gimi.hu')+' és '+C('whois napsugar-gimn.hu'),'Hasonlítsd össze a két eredményt. A nyomozás napja: 2026-11-09.'],
+ brief:'A levél a <b>napsugar-gimn.hu</b> szerveréről jött. Az iskola igazi címe viszont <b>napsugar-gimi.hu</b>. Egy betű a különbség: i helyett n. Nézzük meg, ki és mikor vette meg ezt a második nevet!',
+ know:'<div class="exl">Egy mondatban</div>'
+ +'<p><b>Minden internetes nevet meg kell venni, és bárki megnézheti, ki és mikor vette meg. Ezt kérdezi meg a <code>whois</code> parancs.</b></p>'
+ +'<p>Olyan ez, mint az autó rendszáma: nem a semmiből van, hanem valaki igényelte, és ez be van jegyezve.</p>'
+ +'<div class="exl">Így néz ki a whois válasza (minta)</div>'
+ +'<div class="ex"><span class="mono">Domain:        csomag-ertesito.net\nRegisztrálva:  2026-11-04   <span class="ptr">&lt;- ekkor vették meg</span>\nLejárat:       2027-11-04\nTulajdonos:    ADATVÉDELMI OKBÓL REJTVE   <span class="ptr">&lt;- nem vállalja a nevét</span>\nRegisztrátor:  OlcsoDomain24</span></div>'
+ +'<div class="exl">Hány napos a név? Így számold ki</div>'
+ +'<p>A nyomozás napja <b>2026-11-09</b>. A nevet <b>2026-11-04</b>-én vették meg. Az év is, a hónap is ugyanaz, ezért elég a napokat kivonni:</p>'
+ +'<div class="ex"><span class="mono">9 - 4 = 5   ->   a név 5 napos</span></div>'
+ +'<div class="exl">Mit jelent ez?</div>'
+ +'<p>Egy iskola neve általában <b>sok éves</b>, és ki van írva a tulajdonos. A csalók nevei viszont <b>pár naposak</b> (közvetlenül a támadás előtt veszik meg), a tulajdonos <b>rejtve</b> van, és a név egy igazira hasonlít.</p>',
+ terms:[term('Domain','Megvásárolt internetes név, pl. napsugar-gimi.hu.'),term('whois','Parancs, amely megmutatja, mikor vették meg a nevet és ki a tulajdonosa.'),term('Megtévesztő domain','Igazira hasonlító név (egy betű eltér), amit csalók vesznek meg.')],
+ todo:['Futtasd az igazi névre: '+C('whois napsugar-gimi.hu')+' <span class="sub">Nézd meg a Regisztrálva és a Tulajdonos sort.</span>',
+       'Futtasd a hamisra: '+C('whois napsugar-gimn.hu')+' <span class="sub">Figyelj: itt gim<b>n</b> van!</span>',
+       'Nézd meg a két eredményt egymás mellett: melyik régi, melyik új, és ki a tulajdonosuk?',
+       'Számold ki, hány napos a hamis név. <span class="sub">A nyomozás napja 2026-11-09. Mindkét dátum 2026 novembere, tehát csak a napokat kell kivonni.</span>'],
+ hints:['Futtasd le mindkét whois parancsot: kattints a sötét gombra, aztán nyomj Entert.',
+        'A hamis névnél ez áll: Regisztrálva: 2026-11-06. A nyomozás napja 2026-11-09.',
+        'Vond ki a napokat: 9 - 6 = ? Ennyi napos a név. Csak a számot írd be.',
+        'A 2. kérdésnél az igazi nevet (napsugar-gimi.hu, i-vel) nézd, és onnan csak az évszámot írd be.'],
  need:[[/^whois napsugar-gimi\.hu$/,'Futtasd a whois napsugar-gimi.hu parancsot.'],[/^whois napsugar-gimn\.hu$/,'Futtasd a whois napsugar-gimn.hu parancsot.']],
- qs:[{k:'a',t:'num',text:'Hány napos volt a napsugar-gimn.hu domain a nyomozás napján (2026-11-09)?',ans:3},{k:'b',t:'num',text:'Melyik évben regisztrálták a valódi napsugar-gimi.hu domaint?',ans:2009},
-     {k:'c',t:'mc',text:'Mi a következtetés?',opts:['Mindkét domain az iskoláé.','A napsugar-gimn.hu friss, rejtett tulajdonosú, megtévesztő domain: tipikus csalás.','A whois adatai mindig hamisak.'],ans:1}]},
-{id:'3.4',L:3,title:'Hová vezet a gomb?',diff:'mid',time:'6 perc',
- brief:'A levél gombja ide mutat: <code>https://napsugar-gimi.hu.befizetes-portal.net/fizetes</code>. Kié valójában ez a cím, és hol fut?',
- know:'<p>A domain nevet <b>jobbról balra</b> olvassuk: az első egyedüli / előtti rész utolsó két tagja mutatja meg, kié a cím. Ami előtte van, az csak <b>aldomain</b>, amelyet a domain tulajdonosa bármire elnevezhet, akár egy iskola nevére is.</p>',
- terms:[term('Aldomain','A domain előtti rész (pl. napsugar-gimi.hu.befizetes-portal.net-ben a „napsugar-gimi.hu”). A domain tulajdonosa szabadon létrehozhatja.')],
- todo:['Állapítsd meg, kié a domain.','Kérdezd le az IP-címét az nslookup paranccsal (magad írd be).','Hasonlítsd össze az eddigi nyomokkal.'],
+ qs:[{k:'a',t:'num',text:'Hány napos volt a hamis napsugar-gimn.hu név a nyomozás napján (2026-11-09)? <span class="sub">9 mínusz a megvásárlás napja. Csak a számot írd be.</span>',ans:3},
+     {k:'b',t:'num',text:'Melyik évben vették meg az igazi napsugar-gimi.hu nevet? <span class="sub">A Regisztrálva sor első négy számjegye.</span>',ans:2009},
+     {k:'c',t:'mc',text:'Mi a következtetés?',opts:['Mindkét domain az iskoláé.','A napsugar-gimn.hu friss, rejtett tulajdonosú, a valódira hasonlító domain: tipikus csalás.','A whois adatai mindig hamisak.'],ans:1}]},
+{id:'3.4',L:3,title:'Hová vezet a gomb?',diff:'mid',time:'7 perc',
+ brief:'A levélben a gomb ide visz: <code>https://napsugar-gimi.hu.befizetes-portal.net/fizetes</code>. Benne van az iskola címe &ndash; mégsem az iskola oldala. Most megtanulod, hogyan kell <b>helyesen elolvasni</b> egy webcímet. Ez talán a leghasznosabb dolog az egész laborban.',
+ know:'<div class="exl">Egy mondatban</div>'
+ +'<p><b>A webcímnél nem az számít, mi van az elején, hanem az, mi van az első per jel (/) előtt, a legvégén.</b></p>'
+ +'<p>A borítékon is a végén van a legfontosabb: az ország. A webcím pont így működik, csak itt pontok választják el a részeket.</p>'
+ +'<div class="exl">4 lépés: kié ez a cím?</div>'
+ +'<div class="ex"><span class="mono">https://posta.hu.csomag-ertesito.net/fizetes</span>'
+ +'<ol class="steps"><li>Töröld az elejéről a <code>https://</code> részt, a végéről pedig mindent az első <code>/</code> jeltől. Marad: <code>posta.hu.csomag-ertesito.net</code></li>'
+ +'<li>Keresd meg a <b>legutolsó két tagot</b> (a pontok választják el): <code>csomag-ertesito</code> és <code>net</code>.</li>'
+ +'<li>Ez a kettő a megvett név: <b>csomag-ertesito.net</b>. <b>Ezé a cím.</b></li>'
+ +'<li>Ami előtte áll (<code>posta.hu.</code>), azt a tulajdonos maga találta ki. Ingyen, bármilyen szöveget odaírhat. Pont ez a trükk.</li></ol></div>'
+ +'<div class="exl">Hasonlítsd össze</div>'
+ +'<div class="ex"><span class="mono">csomag.posta.hu\n   a vége: posta.hu  ->  ez a Postáé\n\nposta.hu.csomag-ertesito.net\n   a vége: csomag-ertesito.net  ->  ez NEM a Postáé</span></div>'
+ +'<p>Ugyanaz a két szó, csak más sorrendben. <b>A sorrend dönt el mindent.</b></p>',
+ terms:[term('Domain','A megvett név: a cím utolsó két tagja, pl. befizetes-portal.net.'),term('Aldomain','Ami a domain elé kerül. A tulajdonos bármilyen szöveget odaírhat, akár egy iskola nevét is.'),term('Webcím olvasása','Mindig az első / előtti rész VÉGÉT nézd, ne az elejét.')],
+ todo:['Csináld végig a 4 lépést ezen a címen: <code>https://napsugar-gimi.hu.befizetes-portal.net/fizetes</code> <span class="sub">Mi az utolsó két tag? Az a megvett név.</span>',
+       'Kérdezd meg, milyen IP-címen van ez a név. <span class="sub">Írd be a terminálba: <code>nslookup</code>, utána szóköz, utána az előbb megtalált név. Minta: <code>nslookup valami.net</code>. A válasz <code>Address:</code> sorában lesz az IP-cím.</span>',
+       'Hasonlítsd össze a kapott IP-címet azzal, amit a 3.2 nyomban találtál, és a 2. fejezet naplójában (<code>/belso/naplo.txt</code>) láttál. <span class="sub">Ha ugyanaz a szám, akkor ugyanaz az ember áll mindhárom mögött.</span>'],
+ hints:['Az 1. kérdéshez nem kell parancs, csak olvasás: az első / előtti rész utolsó két tagja kell, a .net-tel együtt.',
+        'A keresett név: befizetes-portal.net. A napsugar-gimi.hu. csak elé van írva, hogy megtévesszen.',
+        'A 2. kérdéshez írd be: nslookup befizetes-portal.net  Az IP-cím a válasz Address: sorában lesz.',
+        'A 3. kérdésnél két válasz jó. Hol láttad már a 198.51.100.66 számot? A levél fejlécében és a szervernaplóban, az éjszakai szaglászásnál.'],
  need:[[/^nslookup (napsugar-gimi\.hu\.)?befizetes-portal\.net/,'Kérdezd le nslookup-pal a befizetes-portal.net (vagy a teljes cím) IP-címét.']],
- qs:[{k:'a',t:'txt',text:'Melyik regisztrált domainhez tartozik valójában a cím?',ans:'befizetes-portal.net'},{k:'b',t:'txt',text:'Milyen IP-címen fut?',ans:'198.51.100.66'},
-     {k:'c',t:'chk',text:'Hol találkoztál már ezzel az IP-címmel? (Több is jó.)',opts:['A szervernaplóban, a szkennelő gépnél','A levél Received fejlécében','Az iskola saját gépének ipconfig-adatai között','A tanári DNS-szerverénél'],ans:[0,1]}]},
+ qs:[{k:'a',t:'txt',text:'Melyik megvett névhez tartozik valójában a gomb címe? <span class="sub">Az első / előtti rész utolsó két tagja, pl. valami.net</span>',ans:'befizetes-portal.net'},
+     {k:'b',t:'txt',text:'Milyen IP-címen van ez a név? <span class="sub">Az nslookup válaszának Address: sora.</span>',ans:'198.51.100.66'},
+     {k:'c',t:'chk',text:'Hol láttad már ezt az IP-címet? (Két jó válasz van.)',opts:['A szervernaplóban, a szaglászó gépnél (2. fejezet)','A levél Received fejlécében (3.2 nyom)','Az iskola saját gépének ipconfig-adatai között','A tanári DNS-szerverénél'],ans:[0,1]}]},
 {id:'3.5',L:3,title:'Lakat a hamis oldalon',diff:'mid',time:'5 perc',
- brief:'Egy szülő megnyugtatna: „De hát ott a lakat a címsorban, akkor biztonságos!” Igaza van?',
- know:'<p>A <b>HTTPS</b> és a lakat azt jelenti, hogy a kapcsolat <b>titkosított</b>, és hogy az oldal birtokolja a domainjéhez kiállított <b>tanúsítványt</b>. Tanúsítványt viszont bárki kaphat a <i>saját</i> domainjére, akár ingyen és percek alatt. A lakat tehát nem azt mondja meg, hogy az oldal tisztességes, csak azt, hogy kié a domain, és hogy a kapcsolatot más nem látja.</p>',
- terms:[term('Tanúsítvány (HTTPS)','Igazolja, hogy a kapcsolat egy adott domainhez tartozik, és titkosított. Nem igazolja a tulajdonos becsületességét.')],
- todo:['Hasonlítsd össze a két oldal tanúsítványát (a * TLS kezdetű sor):','  '+C('curl -I https://napsugar-gimi.hu/'),'  '+C('curl -I https://napsugar-gimi.hu.befizetes-portal.net/fizetes')],
+ brief:'Egy szülő megnyugtatna: „De ott a lakat a címsorban, akkor ez biztonságos!” Igaza van? Ez a nyom a leggyakoribb tévhitet tisztázza.',
+ know:'<div class="exl">Egy mondatban</div>'
+ +'<p><b>A lakat azt jelenti, hogy senki nem látja, mit küldesz. Azt NEM jelenti, hogy az oldal becsületes.</b></p>'
+ +'<div class="exl">Megint a boríték</div>'
+ +'<p>A lakat olyan, mint a <b>leragasztott boríték</b>: útközben senki nem olvashatja el, mit írtál bele. De hogy a <b>címzett</b> csaló-e, arról a boríték semmit nem mond.</p>'
+ +'<p>Minden oldal kap egy <b>tanúsítványt</b>: ez egy igazolvány arról, hogy tényleg azon a néven van, amit a címsor mutat. Ilyen igazolványt viszont <b>bárki kaphat a saját nevére</b>, ingyen, pár perc alatt. A csaló is a sajátjára.</p>'
+ +'<div class="exl">Így olvasd el a tanúsítvány sorát</div>'
+ +'<div class="ex"><span class="mono">* TLS: tanúsítvány kiállítva erre: csomag-ertesito.net · kiállító: Ingyen-Tanusitvany CA · érvényes: 2026-11-04-től</span>'
+ +'<ul style="margin:.45rem 0 0"><li><b>kiállítva erre:</b> melyik névre szól &rarr; csomag-ertesito.net</li>'
+ +'<li><b>kiállító:</b> ki adta &rarr; Ingyen-Tanusitvany CA</li>'
+ +'<li><b>érvényes:</b> mikortól &rarr; 2026-11-04</li></ul>'
+ +'<p style="margin:.45rem 0 0">Vagyis a csaló a <b>saját</b> nevére kapott igazolványt, ingyen, pár nappal a támadás előtt. Lakat tehát van &ndash; csalás is.</p></div>'
+ +'<p class="small">A <code>curl -I cím</code> parancs lekéri az oldal adatait. A kimenet első, csillaggal kezdődő sora (<code>* TLS:</code>) szól a tanúsítványról.</p>',
+ terms:[term('HTTPS és a lakat','Titkosított kapcsolat: útközben senki nem látja az adatot. Nem jelenti, hogy az oldal becsületes.'),term('Tanúsítvány','Az oldal igazolványa arról, hogy tényleg azon a néven van. Bárki kaphat a saját nevére.')],
+ todo:['Kérd le az igazi iskolai oldalt: '+C('curl -I https://napsugar-gimi.hu/')+' <span class="sub">Keresd a <code>* TLS:</code> kezdetű sort.</span>',
+       'Kérd le a hamis oldalt: '+C('curl -I https://napsugar-gimi.hu.befizetes-portal.net/fizetes')+' <span class="sub">Ennek is van <code>* TLS:</code> sora &ndash; tehát ennek is van lakatja!</span>',
+       'Hasonlítsd össze a két sort: <b>melyik névre</b> szól, <b>ki adta</b>, <b>mikortól</b> érvényes.',
+       'Fogalmazd meg, mit mondanál a szülőnek.'],
+ hints:['Futtasd le mindkét parancsot, és keresd a csillaggal kezdődő sort: * TLS: …',
+        'Az 1. kérdéshez a „kiállítva erre:” utáni nevet írd be. A *. elejét elhagyhatod.',
+        'A 2. kérdéshez az „érvényes:” utáni dátum kell, ebben az alakban: 2026-11-05.',
+        'Vedd észre: a hamis oldal igazolványa pár napos, és nem az iskola nevére szól.'],
  need:[[/^curl -i https:\/\/napsugar-gimi\.hu\.befizetes-portal\.net\/fizetes$/,'Kérd le a hamis oldal fejlécét curl -I-vel.']],
- qs:[{k:'a',t:'txt',text:'Kinek a nevére állították ki a hamis oldal tanúsítványát?',ans:'befizetes-portal.net',alts:['*.befizetes-portal.net']},{k:'b',t:'txt',text:'Mikortól érvényes ez a tanúsítvány? (ÉÉÉÉ-HH-NN)',ans:'2026-11-05'},
+ qs:[{k:'a',t:'txt',text:'Milyen névre szól a hamis oldal tanúsítványa? <span class="sub">A „kiállítva erre:” utáni név; a *. elhagyható.</span>',ans:'befizetes-portal.net',alts:['*.befizetes-portal.net']},
+     {k:'b',t:'txt',text:'Mikortól érvényes ez a tanúsítvány? <span class="sub">Az „érvényes:” utáni dátum, pl. 2026-01-31 alakban.</span>',ans:'2026-11-05'},
      {k:'c',t:'mc',text:'Mit válaszolsz a szülőnek?',opts:['Igaza van, a lakat azt jelenti, hogy az oldal biztonságos.','A lakat csak a titkosított kapcsolatot jelzi. Ez a tanúsítvány egy pár napos, idegen domainé, nem az iskoláé.','A lakat azt jelenti, hogy az iskola ellenőrizte az oldalt.'],ans:1}]},
 {id:'3.6',L:3,title:'Az ügy lezárása',diff:'mid',time:'6 perc',
- brief:'Minden nyom összeállt. Írd meg a zárójelentést az igazgatónak!',
- know:'<p>Egy incidens lezárásakor három dolgot kell tenni: <b>megvédeni</b> az érintetteket (figyelmeztetés, ne fizessenek), <b>bejelenteni</b> a csalást (a domain regisztrátorának, a levelezőszolgáltatónak, szükség esetén a rendőrségnek), és <b>megerősíteni</b> a rendszert (pl. letiltani a támadó IP-címét, eltávolítani a régi admin felületet és a kódolt nyomokat).</p>',
- terms:[term('Incidenskezelés','Védekezés, bejelentés és a rendszer megerősítése egy biztonsági esemény után.')],
- todo:['Válaszd ki a helyes lépéseket, és foglald össze az ügyet.'],
- qs:[{k:'a',t:'chk',text:'Mit tegyen az iskola? (Több is jó.)',opts:['Figyelmeztesse a szülőket, hogy ne fizessenek a linken keresztül','Jelentse a hamis domaineket a regisztrátornak és a levelezőszolgáltatónak','Válaszoljon a csalónak, hogy hagyja abba','Tiltsa le a 198.51.100.66 IP-címet az iskola szerverén','Kattintson a linkre, hogy kipróbálja, működik-e','Távolítsa el a régi admin felületet és a forráskódban hagyott megjegyzést'],ans:[0,1,3,5]},
-     {k:'b',t:'mc',text:'Mi kapcsolja össze a szkennelést és az adathalász leveleket?',opts:['Ugyanaz az IP-cím (198.51.100.66) állt a szkennelés, a levelek és a hamis oldal mögött.','Mindkettő hétfőn történt.','Semmi, véletlen egybeesés.'],ans:0},
-     {k:'c',t:'mc',text:'Melyik nyom vezetett rá a /belso/naplo.txt fájlra?',opts:['A robots.txt és a sütiben kódolt üzenet','A whois adatai','A tracert eredménye'],ans:0}]}
+ brief:'Minden nyom megvan. Most te vagy a szakértő: el kell döntened, mit tegyen az iskola, és le kell zárnod az ügyet.',
+ know:'<div class="exl">Mi derült ki eddig? (összefoglaló)</div>'
+ +'<ul><li><b>1. óra:</b> a diákgépek rossz, régi IP-címet kaptak az iskola honlapjára, ezért nem jött be. A tanáriban más DNS van, ott működött.</li>'
+ +'<li><b>2. óra:</b> a honlapon felejtettek egy régi admin oldalt. A naplóból kiderült: <b>2026-11-08-án éjjel 3 óra körül a 198.51.100.66 címről valaki végigpróbálgatta</b> a titkos fájlokat.</li>'
+ +'<li><b>3. óra:</b> a hamis levél <b>ugyanerről a 198.51.100.66 címről</b> jött (3.2). A hamis fizetős oldal is ezen a címen van (3.4). A hozzá tartozó neveket pár nappal korábban vették meg, rejtett tulajdonossal (3.3).</li></ul>'
+ +'<p><b>Egyetlen szám köti össze az egészet: 198.51.100.66.</b> Ugyanaz az ember szaglászott a szerveren, küldte a leveleket és üzemelteti a hamis oldalt.</p>'
+ +'<div class="exl">Mit kell ilyenkor tenni? 3 lépés</div>'
+ +'<ul><li><b>1. Védd meg az embereket:</b> szóljanak a szülőknek, hogy ne fizessenek a linken.</li>'
+ +'<li><b>2. Jelentsd:</b> a hamis neveket annál a cégnél, ahol megvették, a leveleket a levelezőszolgáltatónál, komoly esetben a rendőrségen.</li>'
+ +'<li><b>3. Zárd be a réseket:</b> tiltsák le a 198.51.100.66 címet, és töröljék a régi admin oldalt.</li></ul>'
+ +'<div class="exl">Amit SOHA ne csinálj</div>'
+ +'<ul><li><b>Ne válaszolj a csalónak.</b> Ebből megtudná, hogy élő cím, és hogy valaki olvassa.</li>'
+ +'<li><b>Ne kattints a linkre „csak megnézni”.</b> Ezzel is elárulod magad, és adatot adhatsz ki.</li></ul>',
+ terms:[term('Incidenskezelés','Egy ilyen eset lezárása: emberek védelme, bejelentés, a rések bezárása.'),term('Nyomok összekötése','Ha ugyanaz az IP-cím több helyen felbukkan, ugyanaz a támadó áll mögötte.')],
+ todo:['Olvasd el a fenti összefoglalót: ebben benne van mind a három óra.',
+       'Az 1. kérdésben pipáld ki a helyes lépéseket. <span class="sub">Négy jó válasz van. Kettő szándékosan rossz: azokkal a csalónak segítenél.</span>',
+       'A 2. és 3. kérdésnél gondolj vissza, melyik nyom mit bizonyított.',
+       'Végül fent a <b>Zárójelentés</b> fülön nézd meg az összesítést, és mentsd le PDF-be a tanárnak.'],
+ hints:['Négy válasz jó. Mindegyiknél kérdezd meg: ezzel az iskolának segítek, vagy a csalónak?',
+        'A csalónak válaszolni és a linkre kattintani egyaránt rossz: mindkettővel elárulod magad.',
+        'A 2. kérdésnél az összefoglaló utolsó mondata segít: egyetlen szám köti össze az eseményeket.',
+        'A 3. kérdésnél a 2. órára gondolj: a robots.txt mutatta meg a titkos mappát, a sütibe rejtett üzenet pedig a fájl nevét.'],
+ qs:[{k:'a',t:'chk',text:'Mit tegyen az iskola? (Négy jó válasz van.)',opts:['Figyelmeztesse a szülőket, hogy ne fizessenek a linken keresztül','Jelentse a hamis domaineket a regisztrátornak és a levelezőszolgáltatónak','Válaszoljon a csalónak, hogy hagyja abba','Tiltsa le a 198.51.100.66 IP-címet az iskola szerverén','Kattintson a linkre, hogy kipróbálja, működik-e','Távolítsa el a régi admin felületet és a forráskódban hagyott megjegyzést'],ans:[0,1,3,5]},
+     {k:'b',t:'mc',text:'Mi köti össze az éjszakai szaglászást és a hamis leveleket?',opts:['Ugyanaz az IP-cím (198.51.100.66) állt a szkennelés, a levelek és a hamis oldal mögött.','Mindkettő hétfőn történt.','Semmi, véletlen egybeesés.'],ans:0},
+     {k:'c',t:'mc',text:'Melyik nyom vezetett el a /belso/naplo.txt fájlhoz?',opts:['A robots.txt és a sütiben kódolt üzenet','A whois adatai','A tracert eredménye'],ans:0}]}
 ];
 function T(id){ return CLUES.filter(function(t){ return t.id===id; })[0]; }
 function chTasks(L){ return CLUES.filter(function(t){ return t.L===L; }); }
