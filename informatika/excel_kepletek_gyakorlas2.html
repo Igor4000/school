@@ -298,7 +298,7 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
   <section class="panelc hero" id="top">
     <h1>Ugyanaz a hat függvény, három másféle táblázat</h1>
     <p class="lead">
-      A hat alapképletet – <strong>SUM, AVERAGE, MIN, MAX, COUNT, ROUND</strong> – és a <strong>dollárjeles ($) rögzített hivatkozást</strong>
+      A hat alapképletet – <strong>SUM (SZUM), AVERAGE (ÁTLAG), MIN, MAX, COUNT (DARAB), ROUND (KEREKÍTÉS)</strong> – és a <strong>dollárjeles ($) rögzített hivatkozást</strong>
       most három <em>szerkezetileg</em> eltérő táblán gyakoroltatjuk, nem háromszor ugyanazon a sablonon.
     </p>
     <p class="lead">
@@ -321,12 +321,12 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
       Amelyik cellába képletet írsz, azt <strong>színezd ki</strong> <span class="swatch"></span> – így látod, hol tartasz.
     </p>
     <div class="fxgrid">
-      <div class="fxcard"><div class="fn">SUM <span>SZUM – összeadás</span></div><p>Összeadja egy tartomány celláit.</p><code class="ex">=SUM(B2:B9)</code></div>
-      <div class="fxcard"><div class="fn">AVERAGE <span>ÁTLAG</span></div><p>A tartomány számtani átlaga – magától elosztja a darabszámmal.</p><code class="ex">=AVERAGE(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">SUM (SZUM) <span>összeadás</span></div><p>Összeadja egy tartomány celláit.</p><code class="ex">=SUM(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">AVERAGE (ÁTLAG) <span>számtani átlag</span></div><p>A tartomány számtani átlaga – magától elosztja a darabszámmal.</p><code class="ex">=AVERAGE(B2:B9)</code></div>
       <div class="fxcard"><div class="fn">MAX <span>legnagyobb érték</span></div><p>A tartomány legnagyobb száma.</p><code class="ex">=MAX(B2:B9)</code></div>
       <div class="fxcard"><div class="fn">MIN <span>legkisebb érték</span></div><p>A tartomány legkisebb száma.</p><code class="ex">=MIN(B2:B9)</code></div>
-      <div class="fxcard"><div class="fn">COUNT <span>DARAB – darabszám</span></div><p>Megszámolja, hány <em>számmal kitöltött</em> cella van a tartományban. Az üres cellákat nem számolja.</p><code class="ex">=COUNT(B2:B9)</code></div>
-      <div class="fxcard"><div class="fn">ROUND <span>KEREKÍTÉS</span></div><p>Kerekít egy számot a megadott tizedesjegyre. 0 = egész számra.</p><code class="ex">=ROUND(B2,0)</code></div>
+      <div class="fxcard"><div class="fn">COUNT (DARAB) <span>darabszám</span></div><p>Megszámolja, hány <em>számmal kitöltött</em> cella van a tartományban. Az üres cellákat nem számolja.</p><code class="ex">=COUNT(B2:B9)</code></div>
+      <div class="fxcard"><div class="fn">ROUND (KEREKÍTÉS) <span>kerekítés</span></div><p>Kerekít egy számot a megadott tizedesjegyre. 0 = egész számra.</p><code class="ex">=ROUND(B2,0)</code></div>
     </div>
 
     <div class="howto">
@@ -357,7 +357,7 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <p>Egy klasszikus, <strong>hosszú lista</strong>: egyetlen számoszlop (Rendelések), 45 soron át. Itt tanulod be az alapmozdulatokat. Minden kártyán van ellenőrző doboz.</p>
         <div class="meta">
           <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>kb. 15 perc</span>
-          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-fx"/></svg>SUM · COUNT · $ · MAX · AVERAGE · ROUND · MIN</span>
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-fx"/></svg>SUM (SZUM) · COUNT (DARAB) · $ · MAX · AVERAGE (ÁTLAG) · ROUND (KEREKÍTÉS) · MIN</span>
         </div>
       </div>
     </header>
@@ -448,7 +448,7 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
     <div class="pband" id="part1">
       <span class="pn">1</span>
       <div class="pb"><h3>Webshop-feladatok</h3><p>Egyetlen oszlopon dolgozol végig – ez a legegyszerűbb táblatípus.</p></div>
-      <div class="ptag"><span class="ptab">SUM · COUNT · $ · MAX · AVG · ROUND · MIN</span><span class="pcount" data-pc="1">0 / 8</span></div>
+      <div class="ptag"><span class="ptab">SUM (SZUM) · COUNT (DARAB) · $ · MAX · AVG (ÁTLAG) · ROUND (KEREKÍTÉS) · MIN</span><span class="pcount" data-pc="1">0 / 8</span></div>
     </div>
     <div class="tasks">
 
@@ -456,8 +456,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">1</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Hány rendelés futott be összesen?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
-          <p class="txt">Add össze a B oszlop összes napi rendelését a <strong>SUM</strong> függvénnyel. Az üres (zárva volt) napok cellái nyugodtan beleférhetnek a tartományba, az összeget nem rontják el.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM (SZUM)</span></span></div>
+          <p class="txt">Add össze a B oszlop összes napi rendelését a <strong>SUM (SZUM)</strong> függvénnyel. Az üres (zárva volt) napok cellái nyugodtan beleférhetnek a tartományba, az összeget nem rontják el.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>F4</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="1" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -475,8 +475,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">2</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Hány napon volt egyáltalán nyitva a webshop?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT</span></span></div>
-          <p class="txt">45 nap van a listában, de nem mindegyiken működött a bolt. Számold meg a <strong>COUNT</strong> függvénnyel, hány cellában áll <strong>szám</strong> a Rendelések oszlopban – ennyi napon volt nyitva.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT (DARAB)</span></span></div>
+          <p class="txt">45 nap van a listában, de nem mindegyiken működött a bolt. Számold meg a <strong>COUNT (DARAB)</strong> függvénnyel, hány cellában áll <strong>szám</strong> a Rendelések oszlopban – ennyi napon volt nyitva.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>F5</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="2" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -532,8 +532,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">5</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Mennyi az átlagos napi rendelésszám?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
-          <p class="txt">Számítsd ki a rendelések átlagát az <strong>AVERAGE</strong> függvénnyel. A függvény a <strong>nyitott napokra</strong> átlagol – az üres cellákat magától kihagyja, nem számolja nullának.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE (ÁTLAG)</span></span></div>
+          <p class="txt">Számítsd ki a rendelések átlagát az <strong>AVERAGE (ÁTLAG)</strong> függvénnyel. A függvény a <strong>nyitott napokra</strong> átlagol – az üres cellákat magától kihagyja, nem számolja nullának.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>F8</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="5" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -551,8 +551,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">6</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Kerekítsd az átlagot egész rendelésre</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span></span></div>
-          <p class="txt">Az előző feladatban kapott átlag (F8) tizedestört. Kerekítsd <strong>egész számra</strong> a <strong>ROUND</strong> függvénnyel – hivatkozz az F8 cellára, ne írd be újra a tartományt.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND (KEREKÍTÉS)</span></span></div>
+          <p class="txt">Az előző feladatban kapott átlag (F8) tizedestört. Kerekítsd <strong>egész számra</strong> a <strong>ROUND (KEREKÍTÉS)</strong> függvénnyel – hivatkozz az F8 cellára, ne írd be újra a tartományt.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>F9</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="6" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -589,8 +589,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">8</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Mennyi a teljes időszak bevétele?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
-          <p class="txt">A 3. feladatban kiszámolt Napi bevétel oszlop (C) most minden nyitott napnál ki van töltve. Add össze az egész oszlopot a <strong>SUM</strong> függvénnyel – ez a webshop teljes bevétele.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM (SZUM)</span></span></div>
+          <p class="txt">A 3. feladatban kiszámolt Napi bevétel oszlop (C) most minden nyitott napnál ki van töltve. Add össze az egész oszlopot a <strong>SUM (SZUM)</strong> függvénnyel – ez a webshop teljes bevétele.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>F10</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="8" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -614,7 +614,7 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <p>Most nem egy hosszú lista, hanem egy <strong>kereszttábla</strong>: 6 bolt a sorokban, a hét 6 napja az oszlopokban. Ugyanazokat a függvényeket használod, de hol <strong>soronként</strong>, hol <strong>oszloponként</strong>, hol a <strong>teljes mátrixra</strong>.</p>
         <div class="meta">
           <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>kb. 20 perc</span>
-          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-fx"/></svg>SUM · $ · MAX · MIN · AVERAGE · ROUND · COUNT</span>
+          <span class="pill"><svg class="i" aria-hidden="true"><use href="#i-fx"/></svg>SUM (SZUM) · $ · MAX · MIN · AVERAGE (ÁTLAG) · ROUND (KEREKÍTÉS) · COUNT (DARAB)</span>
         </div>
       </div>
     </header>
@@ -665,7 +665,7 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
     <div class="pband" id="part2">
       <span class="pn">2</span>
       <div class="pb"><h3>Pékség-feladatok</h3><p>Figyelj, mikor sort, mikor oszlopot, mikor az egész táblát kell megadnod a függvénynek.</p></div>
-      <div class="ptag"><span class="ptab">SUM · $ · MAX · MIN · AVG · ROUND · COUNT</span><span class="pcount" data-pc="2">0 / 9</span></div>
+      <div class="ptag"><span class="ptab">SUM (SZUM) · $ · MAX · MIN · AVG (ÁTLAG) · ROUND (KEREKÍTÉS) · COUNT (DARAB)</span><span class="pcount" data-pc="2">0 / 9</span></div>
     </div>
     <div class="tasks">
 
@@ -673,8 +673,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">9</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Mennyit adott el hetente egy-egy bolt?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
-          <p class="txt">A H oszlopba számold ki <strong>boltonként</strong> a heti összeladást: add össze a bolt sorának hat napját (<code>B:G</code>) a <strong>SUM</strong> függvénnyel, majd húzd le a 7. sorig. Vízszintesen adsz össze, soronként.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM (SZUM)</span></span></div>
+          <p class="txt">A H oszlopba számold ki <strong>boltonként</strong> a heti összeladást: add össze a bolt sorának hat napját (<code>B:G</code>) a <strong>SUM (SZUM)</strong> függvénnyel, majd húzd le a 7. sorig. Vízszintesen adsz össze, soronként.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>H2:H7</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="9" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -692,8 +692,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">10</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Mennyi kenyér fogyott egy-egy napon az összes boltban?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
-          <p class="txt">A 8. sorba (Napi összesen) számold ki <strong>naponként</strong> a hat bolt eladását: add össze az oszlop hat boltját a <strong>SUM</strong> függvénnyel, és húzd el B-től G-ig. Most függőlegesen adsz össze, oszloponként.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM (SZUM)</span></span></div>
+          <p class="txt">A 8. sorba (Napi összesen) számold ki <strong>naponként</strong> a hat bolt eladását: add össze az oszlop hat boltját a <strong>SUM (SZUM)</strong> függvénnyel, és húzd el B-től G-ig. Most függőlegesen adsz össze, oszloponként.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>B8:G8</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="10" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -730,8 +730,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">12</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Mennyi kenyeret adott el a pékség összesen a héten?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
-          <p class="txt">A teljes heti eladás a hat bolt heti összegeinek összege. Add össze a <strong>H2:H7</strong> tartományt a <strong>SUM</strong> függvénnyel. (Ellenőrzésnek jó: ugyanennyit kapsz, ha a teljes <code>B2:G7</code> mátrixot adod össze.)</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM (SZUM)</span></span></div>
+          <p class="txt">A teljes heti eladás a hat bolt heti összegeinek összege. Add össze a <strong>H2:H7</strong> tartományt a <strong>SUM (SZUM)</strong> függvénnyel. (Ellenőrzésnek jó: ugyanennyit kapsz, ha a teljes <code>B2:G7</code> mátrixot adod össze.)</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>K4</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="12" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -787,8 +787,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">15</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Átlagosan mennyit adott el egy bolt a héten?</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
-          <p class="txt">A boltok heti összegeit (<code>H2:H7</code>) átlagold az <strong>AVERAGE</strong> függvénnyel – nem a napi számokat, hanem a hat heti összeget.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE (ÁTLAG)</span></span></div>
+          <p class="txt">A boltok heti összegeit (<code>H2:H7</code>) átlagold az <strong>AVERAGE (ÁTLAG)</strong> függvénnyel – nem a napi számokat, hanem a hat heti összeget.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>K7</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="15" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -806,8 +806,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">16</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Kerekítsd az átlagot egész kenyérre</h4><div class="chips"><span class="lv"><i></i>Közepes</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span></span></div>
-          <p class="txt">Az előző átlag (K7) tört is lehet. Kerekítsd <strong>egész számra</strong> a <strong>ROUND</strong> függvénnyel, a K7 cellára hivatkozva.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND (KEREKÍTÉS)</span></span></div>
+          <p class="txt">Az előző átlag (K7) tört is lehet. Kerekítsd <strong>egész számra</strong> a <strong>ROUND (KEREKÍTÉS)</strong> függvénnyel, a K7 cellára hivatkozva.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>K8</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="16" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
@@ -825,8 +825,8 @@ table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;b
         <div class="num"><span class="n">17</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
         <div class="card">
           <div class="head"><h4>Hány boltról van egyáltalán adat?</h4><div class="chips"><span class="lv"><i></i>Könnyű</span></div></div>
-          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT</span></span></div>
-          <p class="txt">Számold meg a <strong>COUNT</strong> függvénnyel, hány <strong>szám</strong> áll a Heti összesen oszlopban (<code>H2:H7</code>) – ennyi bolt szerepel a kimutatásban.</p>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT (DARAB)</span></span></div>
+          <p class="txt">Számold meg a <strong>COUNT (DARAB)</strong> függvénnyel, hány <strong>szám</strong> áll a Heti összesen oszlopban (<code>H2:H7</code>) – ennyi bolt szerepel a kimutatásban.</p>
           <div class="foot">
             <div class="helps"><span class="dest">Ide számold: <b>K9</b> <i class="sw"></i> színezd ki</span></div>
             <label class="ok" title="Kész"><input type="checkbox" data-n="17" aria-label="Kész"><span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span><span class="oktxt">Kész</span></label>
