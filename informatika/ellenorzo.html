@@ -35,6 +35,20 @@ p{margin-bottom:12px}
 .card.ready{border-color:#86efac;cursor:pointer;transition:.2s}
 .card.ready:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(21,128,61,.15);border-color:#22c55e}
 footer{text-align:center;color:var(--muted);margin-top:40px;font-size:.9rem}
+.card.pick{border-color:#93c5fd;background:#f0f7ff;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
+.card.pick:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(37,99,235,.15);border-color:#3b82f6}
+.card.pick h4{color:#1d4ed8}
+.soon.pick{background:#dbeafe;color:#1d4ed8}
+.card.pick .arrow{display:inline-block;transition:transform .2s}
+.card.pick[aria-expanded="true"] .arrow{transform:rotate(90deg)}
+.groups{display:none;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:4px}
+.groups.open{display:grid}
+.gcard{background:#fff;border:1px solid #bfdbfe;border-left:5px solid #3b82f6;border-radius:14px;padding:18px;text-decoration:none;display:block;transition:.2s}
+.gcard:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(37,99,235,.15);border-color:#3b82f6}
+.gcard .gnum{display:block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#1d4ed8;margin-bottom:4px}
+.gcard h4{color:var(--text);margin-bottom:6px;font-size:1.05rem}
+.gcard p{font-size:.9rem;color:var(--muted);margin-bottom:0}
+.hint{font-size:.92rem;color:var(--muted);margin-top:10px}
 .lang-hu, .lang-sr{transition:opacity .3s ease}
 body[data-lang="hu"] .lang-sr{display:none}
 body[data-lang="sr"] .lang-hu{display:none}
@@ -121,6 +135,59 @@ body[data-lang="sr"] .lang-hu{display:none}
   </div>
 </section>
 
+<section>
+  <h2>
+    <span class="lang-hu">🧮 Excel képletek ellenőrző</span>
+    <span class="lang-sr">🧮 Excel kontrolni – formule</span>
+  </h2>
+  <p class="lang-hu">
+    Ez a rész <b>külön kategória</b> az Excel ellenőrzőtől: itt csak a <b>képletek és függvények</b> számítanak.
+    Három csoport van – kattints a kategóriára, és válaszd ki, melyiket oldod meg.
+  </p>
+  <p class="lang-sr">
+    Ovaj deo je <b>posebna kategorija</b> u odnosu na Excel kontrolni: ovde se broje samo <b>formule i funkcije</b>.
+    Postoje tri grupe – klikni na kategoriju i izaberi koju rešavaš.
+  </p>
+
+  <div class="cards">
+    <button type="button" class="card pick" id="pick-kepletek" aria-expanded="false" aria-controls="groups-kepletek">
+      <h4>
+        <span class="lang-hu">📐 Képletek ellenőrző – csoportválasztás</span>
+        <span class="lang-sr">📐 Kontrolni iz formula – izbor grupe</span>
+      </h4>
+      <p class="lang-hu">1., 2. és 3. csoport. Kattints, és válassz!</p>
+      <p class="lang-sr">1, 2. i 3. grupa. Klikni i izaberi!</p>
+      <span class="soon pick"><span class="arrow">▶</span>
+        <span class="lang-hu">csoportok</span><span class="lang-sr">grupe</span>
+      </span>
+    </button>
+  </div>
+
+  <div class="groups" id="groups-kepletek">
+    <a class="gcard" href="excel_kepletek_gyakorlas2.html">
+      <span class="gnum"><span class="lang-hu">1. csoport</span><span class="lang-sr">1. grupa</span></span>
+      <h4><span class="lang-hu">Alapfüggvények három táblázaton</span><span class="lang-sr">Osnovne funkcije na tri tabele</span></h4>
+      <p class="lang-hu">Ugyanaz a hat függvény, három másféle táblázatban.</p>
+      <p class="lang-sr">Istih šest funkcija, u tri različite tabele.</p>
+    </a>
+    <a class="gcard" href="excel_kepletek_gyakorlas3.html">
+      <span class="gnum"><span class="lang-hu">2. csoport</span><span class="lang-sr">2. grupa</span></span>
+      <h4><span class="lang-hu">Alapképletek – vegyes feladatsor</span><span class="lang-sr">Osnovne formule – mešoviti zadaci</span></h4>
+      <p class="lang-hu">Összeg, átlag, min/max, darabszám – új táblázatokon.</p>
+      <p class="lang-sr">Zbir, prosek, min/maks, broj – na novim tabelama.</p>
+    </a>
+    <a class="gcard" href="excel_kepletek_gyakorlas4.html">
+      <span class="gnum"><span class="lang-hu">3. csoport</span><span class="lang-sr">3. grupa</span></span>
+      <h4><span class="lang-hu">Feltételes függvények</span><span class="lang-sr">Uslovne funkcije</span></h4>
+      <p class="lang-hu">ÉS, VAGY, SZUMHA, DARABTELI – feltételekkel.</p>
+      <p class="lang-sr">I, ILI, SUMIF, COUNTIF – sa uslovima.</p>
+    </a>
+  </div>
+
+  <p class="hint lang-hu">A feladatlapokon az <b>Ellenőrzés</b> gombbal tudod megnézni, jó-e az eredményed. A helyes megoldások nincsenek benne a lapban – a lap forrásából sem olvashatók ki.</p>
+  <p class="hint lang-sr">Na listovima dugmetom <b>Ellenőrzés</b> proveravaš da li je rezultat tačan. Tačna rešenja nisu u listu – ne mogu se pročitati ni iz izvornog koda.</p>
+</section>
+
 <footer>
   <span class="lang-hu">TECHSCIENCE Informatika • Ellenőrző</span>
   <span class="lang-sr">TECHSCIENCE Informatika • Provera znanja</span>
@@ -133,6 +200,15 @@ function switchLang(lang) {
     document.getElementById('btn-hu').classList.toggle('active', lang === 'hu');
     document.getElementById('btn-sr').classList.toggle('active', lang === 'sr');
     localStorage.setItem('preferredLang', lang);
+}
+var pickBtn = document.getElementById('pick-kepletek');
+var pickBox = document.getElementById('groups-kepletek');
+if (pickBtn && pickBox) {
+    pickBtn.addEventListener('click', function() {
+        var open = pickBox.classList.toggle('open');
+        pickBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) { pickBox.scrollIntoView({behavior: 'smooth', block: 'nearest'}); }
+    });
 }
 document.addEventListener('DOMContentLoaded', function() {
     const savedLang = localStorage.getItem('preferredLang');
