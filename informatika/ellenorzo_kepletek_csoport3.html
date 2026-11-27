@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excel képletek – ellenőrző · 3. csoport (futóverseny)</title>
+<style>
+:root{
+  --d9:#0f1c38; --d8:#172b52; --d7:#21406f; --d6:#2b5490; --d5:#4a76b8;
+  --d2:#c7d7ec; --d1:#e4ecf7; --d0:#f3f7fc;
+  --bg:#eceff0; --line:#d4dcde; --ink:#17201f; --mut:#56666a; --amber:#e8a013;
+  --m:#2f7fb8; --mb:#e2eef8;
+  --k:#c4601a; --kb:#fdeede;
+  --h:#9c3b6a; --hb:#f9e7ef;
+  --font:"Segoe UI",Calibri,Carlito,system-ui,-apple-system,Arial,sans-serif;
+  --mono:Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:116px}
+body{margin:0;overflow-x:hidden;font-family:var(--font);font-size:17px;line-height:1.56;color:var(--ink);background:var(--bg);padding-bottom:62px}
+strong{font-weight:700}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+code{font-family:var(--mono);font-size:.86em;background:var(--d1);color:var(--d8);border:1px solid var(--d2);padding:0 6px;border-radius:5px;white-space:nowrap}
+kbd{font-family:var(--mono);font-size:.82em;background:#fff;border:1px solid #b9c4c6;border-bottom-width:2px;border-radius:5px;padding:0 6px}
+
+.ribbon{position:sticky;top:0;z-index:40;background:var(--d6);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.ribbon .r1{max-width:1120px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:14px}
+.ribbon svg.logo{width:30px;height:30px;flex:none}
+.ribbon .name{font-weight:700;font-size:1.12rem;line-height:1.2}
+.ribbon .sub{font-size:.85rem;color:rgba(255,255,255,.82);line-height:1.2}
+.ribbon .examtag{margin-left:auto;flex:none;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#b4232a;color:#fff;border-radius:999px;padding:4px 14px;white-space:nowrap}
+.tabs{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{color:rgba(255,255,255,.88);text-decoration:none;padding:7px 18px 6px;font-size:.95rem;border-radius:8px 8px 0 0;white-space:nowrap}
+.tabs a:hover{background:rgba(255,255,255,.14)}
+.tabs a.on{background:var(--bg);color:var(--d7);font-weight:700;box-shadow:inset 0 -3px 0 var(--amber)}
+.tabs a:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px 40px;min-width:0}
+.panelc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 30px;margin-bottom:20px;box-shadow:0 1px 2px rgba(10,30,30,.05)}
+.hero{position:relative;overflow:hidden;padding:34px 34px 28px}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--d2),var(--d1) 60%,transparent 72%);pointer-events:none}
+.hero > *{position:relative;z-index:1}
+.exambar{display:inline-flex;align-items:center;gap:9px;background:#fdecec;border:1px solid #f0b4b4;color:#8e1d23;border-radius:999px;padding:4px 16px;font-size:.87rem;font-weight:700;margin-bottom:14px}
+h1{font-size:clamp(1.85rem,3.6vw,2.6rem);line-height:1.12;margin:0 0 14px;color:var(--d8);font-weight:700;letter-spacing:-.012em;max-width:28ch}
+.lead{font-size:1.08rem;max-width:72ch;margin:0 0 10px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stat{display:inline-flex;align-items:center;gap:9px;padding:7px 16px 7px 12px;border-radius:999px;background:var(--d0);border:1px solid var(--d2);font-size:.97rem}
+.stat b{font-size:1.14rem;font-variant-numeric:tabular-nums}
+.stat i{width:11px;height:11px;border-radius:50%;background:var(--c);display:inline-block}
+.stat.s-must{--c:var(--m)} .stat.s-mid{--c:var(--k)} .stat.s-bonus{--c:var(--h)}
+.stat.ver{background:var(--d8);border-color:var(--d8);color:#fff;font-weight:600}
+.panelc h2{margin:0 0 8px;font-size:1.28rem;color:var(--d8);line-height:1.25}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px}
+.two .panelc{margin-bottom:0}
+.legend{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.legend li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:8px 12px;border-radius:10px;background:#f6f9f9;border:1px solid var(--line)}
+.legend .d{font-size:.93rem;color:var(--mut)}
+.legend .req{font-size:.77rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.req.must{background:var(--d6);color:#fff} .req.bonus{background:var(--hb);color:#7d2450;border:1px solid #dca6bf}
+.ul{list-style:none;margin:10px 0 0;padding:0}
+.ul li{padding:5px 0 5px 20px;position:relative}
+.ul li::before{content:"";position:absolute;left:0;top:.95em;width:8px;height:8px;border-radius:50%;background:var(--d5)}
+.ul li.note{color:var(--mut);font-size:.94rem}
+.ul li.note::before{background:var(--amber)}
+.ul li.warn::before{background:#b4232a}
+
+.view{margin:16px 0 0;min-width:0}
+.view figcaption{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px}
+.view .vt{font-weight:700;color:var(--d8);font-size:1.04rem}
+.view .vw{color:var(--mut);font-size:.9rem}
+.copy{margin-left:auto;font:inherit;font-size:.88rem;font-weight:600;color:var(--d7);background:#fff;border:1.5px solid var(--d6);border-radius:999px;padding:3px 14px;cursor:pointer}
+.copy:hover{background:var(--d6);color:#fff}
+.copy:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy .lbl-ok{display:none}
+.copy.copied{background:var(--d6);color:#fff}
+.copy.copied .lbl{display:none} .copy.copied .lbl-ok{display:inline}
+.scroll{overflow:auto;max-height:360px;border:1px solid var(--line);border-bottom:0;background:#fff;border-radius:8px 8px 0 0}
+.scroll.sm{max-height:none}
+table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;background:#fff}
+.xl th{background:#e5eaeb;color:#43545a;font-weight:400;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:2px 10px;text-align:center;font-size:.8rem;position:sticky;top:0;z-index:2}
+.xl th.rn{width:42px;padding:2px 6px;position:sticky;left:0;top:auto;z-index:1}
+.xl th.corner{width:42px;left:0;z-index:3}
+.xl td{border-right:1px solid #e2e8e9;border-bottom:1px solid #e2e8e9;padding:3px 11px;white-space:nowrap}
+.xl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.xl td.hd{background:var(--d1);font-weight:700;color:var(--d8)}
+.xl tbody tr:nth-child(odd) td{background:#fafcfc}
+.xl tbody tr:nth-child(odd) td.hd{background:var(--d1)}
+.swatch{display:inline-block;width:13px;height:13px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-2px;margin:0 2px}
+.dest .sw{display:inline-block;width:11px;height:11px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-1px;margin:0 3px 0 5px}
+.sheettab{display:flex;background:#e5eaeb;border:1px solid var(--line);border-radius:0 0 8px 8px;overflow:hidden}
+.sheettab span{background:#fff;color:var(--d7);font-weight:700;font-size:.9rem;padding:4px 18px 3px;border-bottom:3px solid var(--d6);border-right:1px solid var(--line)}
+.howto{margin-top:20px;background:#fdf8ea;border:1px solid #ecd79a;border-left:5px solid var(--amber);border-radius:12px;padding:16px 22px 18px}
+.howto h3{margin:0 0 6px;font-size:1.08rem;color:#7a5200;display:flex;align-items:center;gap:9px}
+.howto p{margin:0}
+
+.sec{margin-top:34px}
+.lband{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,var(--d9),var(--d7));color:#fff;border-radius:16px;padding:22px 28px;box-shadow:0 2px 6px rgba(10,30,30,.2)}
+.lband .big{flex:none;width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center;font-size:1.9rem;font-weight:700;line-height:1}
+.lband h2{margin:0;font-size:1.46rem;line-height:1.2;color:#fff}
+.lband p{margin:5px 0 0;color:rgba(255,255,255,.82);max-width:72ch}
+.lband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 11px;border-radius:999px;font-size:.85rem;border:1px solid rgba(255,255,255,.45);color:#fff;white-space:nowrap}
+.xband{display:flex;align-items:center;gap:20px;border-radius:16px;padding:22px 28px;margin-top:34px}
+.xband .big{flex:none;width:60px;height:60px;border-radius:16px;display:grid;place-items:center;font-size:1.7rem}
+.xband h2{margin:0;font-size:1.44rem;line-height:1.2}
+.xband p{margin:5px 0 0;max-width:72ch}
+.xband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.xband.bonus{background:linear-gradient(120deg,#3a1529,#6b2045);color:#f7e5ee;border:2px dashed #cf8fae}
+.xband.bonus .big{background:rgba(255,255,255,.12);color:var(--amber);border:1px solid rgba(255,255,255,.35)}
+.xband.bonus h2{color:#fff}
+.xband.bonus .pill{border-color:rgba(255,255,255,.5);color:#fff}
+
+.pband{display:flex;align-items:center;gap:16px;margin:28px 0 16px;padding:12px 18px;background:var(--d1);border:1px solid var(--d2);border-radius:12px}
+.pband .pn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--d6);color:#fff;font-weight:700;display:grid;place-items:center;font-size:1rem}
+.pband .pb{flex:1;min-width:0}
+.pband h3{margin:0;font-size:1.13rem;color:var(--d8);line-height:1.25}
+.pband p{margin:1px 0 0;color:var(--mut);font-size:.93rem}
+.pband .ptag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right}
+.ptab{font-size:.83rem;color:var(--d7);font-weight:700;background:#fff;border:1px solid var(--d2);padding:1px 11px;border-radius:999px;font-family:var(--mono)}
+.pcount{font-size:.87rem;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcount.full{color:var(--d6);font-weight:700}
+.xband .pcount{color:inherit;font-size:.85rem}
+.xband .pcount.full{color:inherit;font-weight:700}
+
+.tasks{position:relative;margin-top:0}
+.tasks::before{content:"";position:absolute;left:21px;top:22px;bottom:30px;width:2px;background:var(--d2)}
+.task{--c:var(--m);--cb:var(--mb);display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 16px;margin-bottom:14px;position:relative}
+.task.lv-m{--c:var(--m);--cb:var(--mb)}
+.task.lv-k{--c:var(--k);--cb:var(--kb)} .task.lv-h{--c:var(--h);--cb:var(--hb)}
+.num{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;font-size:1rem;display:grid;place-items:center;font-variant-numeric:tabular-nums;border:4px solid var(--bg);box-shadow:0 0 0 1px var(--c)}
+.num svg{display:none;width:20px;height:20px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.task.done .num{background:var(--d6);box-shadow:0 0 0 1px var(--d6)}
+.task.done .num .n{display:none} .task.done .num svg{display:block}
+
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:16px 22px 14px;box-shadow:0 1px 2px rgba(10,30,30,.05);min-width:0;transition:box-shadow .15s,border-color .15s}
+.task:hover .card{box-shadow:0 3px 10px rgba(10,30,30,.1)}
+.task.kind-bonus .card{background:#fdf5f9;border-style:dashed;border-left-style:solid;border-color:#dca6bf;border-left-color:var(--h)}
+.task.done .card{background:var(--d0);border-color:var(--d5);border-left-color:var(--d6);border-style:solid}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap}
+.head h4{margin:0;font-size:1.14rem;line-height:1.3;color:var(--d8);flex:1 1 240px}
+.chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lv{display:inline-flex;align-items:center;gap:6px;font-size:.81rem;font-weight:700;color:var(--c);background:var(--cb);padding:2px 11px 2px 9px;border-radius:999px;white-space:nowrap}
+.lv i{width:8px;height:8px;border-radius:50%;background:var(--c);display:inline-block}
+.tag{font-size:.73rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.tag.bonus{background:var(--h);color:#fff}
+
+.path{display:flex;align-items:flex-start;gap:8px;margin:9px 0 11px;font-size:.85rem}
+.path > span{display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px}
+.path .pi{color:var(--d5);font-size:1.15rem;margin-top:3px}
+.crumb{background:var(--d1);color:var(--d8);border:1px solid var(--d2);border-radius:6px;padding:1px 9px;line-height:1.5;font-family:var(--mono);font-size:.93em}
+.crumb:first-of-type{background:var(--d6);border-color:var(--d6);color:#fff;font-weight:600;font-family:var(--font)}
+.crumb.solo{background:#f2e7ef;border-color:#dcb9d0;color:#6b2045;font-family:var(--font);font-weight:600}
+.sep{color:#8ba0a5;font-style:normal;font-weight:700}
+.txt{margin:0;max-width:84ch}
+.txt strong{color:var(--d9)}
+.txt + .txt{margin-top:8px}
+
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;margin-top:14px;padding-top:11px;border-top:1px dashed #d6dedf}
+.helps{display:flex;gap:10px;flex-wrap:wrap;align-items:center;min-height:30px}
+.dest{font-size:.84rem;color:var(--mut);background:#f4f7f7;border:1px solid var(--line);border-radius:999px;padding:3px 12px;white-space:nowrap}
+.dest b{font-family:var(--mono);color:var(--d7)}
+.hbtn{font:inherit;font-size:.87rem;font-weight:700;display:inline-flex;align-items:center;gap:7px;padding:4px 13px 4px 10px;border-radius:999px;cursor:pointer;background:#fff;border:1.5px solid var(--bc);color:var(--bt)}
+.hbtn.chkb{--bc:var(--d6);--bt:var(--d7)}
+.hbtn:hover,.hbtn[aria-expanded="true"]{background:var(--bc);color:#fff}
+.hbtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.hbtn svg.i{font-size:1.1em}
+.panel{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:.96rem;max-width:78ch}
+.panel p{margin:0}
+.panel .plab{display:block;font-size:.77rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.panel.chk{background:var(--d0);border:1px solid var(--d2)} .panel.chk .plab{color:var(--d7)}
+.panel[hidden]{display:none}
+
+.ok{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;font-weight:700;color:var(--d7);-webkit-user-select:none;user-select:none;position:relative}
+.ok input{position:absolute;opacity:0;width:0;height:0}
+.ok .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--d5);background:#fff;display:grid;place-items:center;flex:none}
+.ok .box svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.ok input:checked + .box{background:var(--d6);border-color:var(--d6)}
+.ok input:checked + .box svg{opacity:1}
+.ok input:focus-visible + .box{outline:3px solid var(--amber);outline-offset:2px}
+
+.milestone{position:relative;margin:34px 0 0;padding:20px 26px;border-radius:16px;background:#fff;border:2px dashed #a6b6b8;display:flex;align-items:center;gap:18px}
+.milestone .mi{flex:none;width:52px;height:52px;border-radius:50%;background:var(--d1);color:var(--d6);display:grid;place-items:center;font-size:1.5rem}
+.milestone h2{margin:0;font-size:1.26rem;color:var(--d8)}
+.milestone p{margin:3px 0 0;color:var(--mut)}
+.milestone .m-done{display:none}
+.milestone.done{background:var(--d6);border:2px solid var(--d7);color:#fff}
+.milestone.done .mi{background:#fff;color:var(--d6)}
+.milestone.done h2,.milestone.done p{color:#fff}
+.milestone.done .m-todo{display:none} .milestone.done .m-done{display:block}
+.done-band{display:none;margin-top:24px;background:linear-gradient(120deg,var(--d9),var(--d6));color:#fff;padding:24px 30px;border-radius:16px}
+.done-band.show{display:block}
+.done-band h2{margin:0 0 4px;font-size:1.46rem}
+.done-band p{margin:0}
+.endnote{padding:22px 4px 0;color:var(--mut);font-size:.89rem}
+
+.status{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--d8);color:#fff;font-size:.94rem;box-shadow:0 -2px 8px rgba(0,0,0,.15)}
+.status .in{max-width:1120px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:14px}
+.status b{font-variant-numeric:tabular-nums}
+.status .opt{color:#ffe3a8;white-space:nowrap}
+.track{flex:1;height:9px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;min-width:60px}
+.fill{height:100%;width:0;background:var(--amber);transition:width .25s,background .25s}
+.fill.full{background:#7be0a5}
+.reset{font:inherit;font-size:.85rem;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:2px 12px;cursor:pointer;white-space:nowrap}
+.reset:hover{background:rgba(255,255,255,.16)}
+.cfx{position:fixed;inset:0;pointer-events:none;z-index:60}
+
+@media (max-width:880px){
+  body{font-size:16.5px}
+  .wrap{padding:16px 12px 30px}
+  .panelc{padding:20px 18px}
+  .hero{padding:26px 20px 22px}
+  .two{grid-template-columns:minmax(0,1fr)}
+  .tasks::before{left:15px}
+  .task{grid-template-columns:32px minmax(0,1fr);gap:0 10px}
+  .num{width:32px;height:32px;font-size:.85rem;border-width:3px}
+  .num svg{width:15px;height:15px}
+  .card{padding:14px 15px 12px}
+  .lband,.xband{padding:18px 16px;gap:14px;align-items:flex-start}
+  .lband .big,.xband .big{width:46px;height:46px;font-size:1.35rem;border-radius:12px}
+  .lband h2,.xband h2{font-size:1.22rem}
+  .pband{flex-wrap:wrap;gap:8px 12px;padding:10px 12px}
+  .pband .ptag{flex-direction:row;align-items:center;gap:10px;margin-left:46px}
+  .ribbon .sub,.ribbon .examtag{display:none}
+  .ribbon .r1{padding:8px 12px}
+  .tabs{padding:0 8px}
+  .tabs a{padding:7px 12px 6px}
+  .view figcaption .copy{margin-left:0}
+  .milestone{flex-direction:column;align-items:flex-start;padding:18px}
+  .status .in{gap:8px;padding:7px 12px;font-size:.85rem}
+  .status .opt .lab{display:none}
+  .legend li{grid-template-columns:1fr auto}
+  .legend .d{grid-column:1 / -1;order:3}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
+@media print{
+  body{background:#fff;padding:0;font-size:11.5pt}
+  .ribbon,.status,.copy,.ok,.hbtn{display:none !important}
+  .panel.chk[hidden]{display:block !important}
+  .wrap{padding:0}
+  .scroll{max-height:none}
+  .card,.panelc{box-shadow:none}
+  .task{break-inside:avoid}
+  .lband,.xband,.num,.crumb,.lv,.tag,.pband,.exambar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 3 1.1-6.2L3 9.7l6.2-.9z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></symbol>
+  <symbol id="i-sheet" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 9h18M8 9v10"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M3 14.5h18M9 9v11"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+</svg>
+
+<header class="ribbon">
+  <div class="r1">
+    <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="1.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+    </svg>
+    <div>
+      <div class="name">Excel képletek – ellenőrző · Futóverseny</div>
+      <div class="sub">SUM · AVERAGE · MIN · MAX · COUNT · ROUND · COUNTIF · SUMIF · IF · AND · OR</div>
+    </div>
+    <span class="examtag">Ellenőrző · 3. csoport</span>
+  </div>
+  <nav class="tabs" aria-label="Navigáció">
+    <a href="#top" class="on">Kezdés</a>
+    <a href="#adatok">Adatok</a>
+    <a href="#feladatok">Feladatok</a>
+    <a href="#bonus">Bónusz</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="panelc hero" id="top">
+    <span class="exambar"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg> Önálló munka · segítség nélkül</span>
+    <h1>Futóverseny – Excel képletek ellenőrző</h1>
+    <p class="lead">Egy városi futóverseny <strong>102 versenyzőjének eredményeivel</strong> dolgozol: időkkel, korcsoportokkal, klubokkal és nevezési díjakkal. A feladatod az, hogy a nyers eredményekből <strong>Excel-képletekkel</strong> állítsd elő azokat a számokat, amelyeket a szervezők a versenyjegyzőkönyvbe kérnek.</p>
+    <p class="lead">A feladatsor <strong>23 kötelező</strong> feladatból áll: ezek <strong>70%-a közepes szintű</strong>
+    (itt megmondjuk, melyik függvényre lesz szükséged, de azt nem, hogyan építsd fel a képletet),
+    <strong>30%-a pedig közepesen nehéz</strong> (ott már neked kell eldöntened, melyik függvény vezet célra).
+    A végén <strong>4 nehéz bónuszfeladat</strong> vár arra, aki mindennel elkészült.</p>
+    <div class="stats">
+      <span class="stat s-must"><i></i><b>16</b> közepes</span>
+      <span class="stat s-mid"><i></i><b>7</b> közepesen nehéz</span>
+      <span class="stat s-bonus"><i></i><b>4</b> nehéz bónusz</span>
+      <span class="stat ver"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg> 1 munkalap · 102 adatsor</span>
+      <span class="stat ver"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg> kb. 60–75 perc</span>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="panelc">
+      <h2>Jelölések</h2>
+      <ul class="legend">
+        <li style="--c:var(--m);--cb:var(--mb)"><span class="lv"><i></i>Közepes</span><span class="d">a függvény nevét megadjuk, a képletet neked kell megírnod</span><span class="req must">kötelező</span></li>
+        <li style="--c:var(--k);--cb:var(--kb)"><span class="lv"><i></i>Közepesen nehéz</span><span class="d">a függvényt is neked kell kiválasztanod</span><span class="req must">kötelező</span></li>
+        <li style="--c:var(--h);--cb:var(--hb)"><span class="lv"><i></i>Nehéz</span><span class="d">egymásba ágyazott vagy többlépéses megoldás</span><span class="req bonus">bónusz</span></li>
+      </ul>
+      <ul class="ul">
+        <li>Ha egy feladattal elkészültél, pipáld ki a kártya alján a <strong>Kész</strong> gombot – a lap alján
+        folyamatosan látod, hol tartasz.</li>
+        <li>A <strong>Megoldás</strong> gomb <strong>nem a képletet</strong> adja meg, csak a végeredményt. Ebből
+        magad tudod ellenőrizni, jól számoltál-e.</li>
+        <li class="note">Ahol a feladat azt írja, hogy <em>„minden sorra”</em>, ott a képletet az első adatsorba írd
+        meg, majd <strong>húzd le</strong> az utolsó adatsorig.</li>
+      </ul>
+    </section>
+
+    <section class="panelc">
+      <h2>Mielőtt elkezded</h2>
+      <ul class="ul">
+        <li>Nyiss egy új Excel munkafüzetet. A munkalap neve maradhat <code>Munka1</code>.</li>
+        <li>Illeszd be a <strong>A verseny eredményei</strong> táblázatot az <code>A1</code> cellától a
+        <code>Munka1</code> munkalapra.</li>
+        <li>A táblázat <strong>csak adatokat tartalmaz</strong>. Hogy melyik cellába vagy oszlopba kerül egy-egy
+        eredmény, azt mindig a feladat kártyáján találod meg.</li>
+        <li>Minden cellát, amelybe képletet írtál, <strong>tölts ki színnel</strong>. <span class="swatch"></span></li>
+        <li>Mentsd el a fájlt <strong>ellenorzo_futoverseny_vezeteknev.xlsx</strong> néven, és munka közben nyomj gyakran
+        <kbd>Ctrl</kbd>+<kbd>S</kbd>-t.</li>
+        <li class="note">A feladatok <strong>angol függvényneveket</strong> használnak. Magyar nyelvű Excelben a magyar
+        nevet írd be: SUM → SZUM, AVERAGE → ÁTLAG, COUNT → DARAB, ROUND → KEREKÍTÉS,
+        COUNTIF → DARABTELI, SUMIF → SZUMHA, IF → HA, AND → ÉS, OR → VAGY. Az argumentumokat
+        magyar Excelben <strong>pontosvessző</strong> választja el.</li>
+        <li class="warn">Ez <strong>ellenőrző</strong>, nem gyakorlás: egyedül dolgozz, és csak olyan függvényt
+        használj, amelyet a gyakorló feladatsorokban már megtanultál.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section class="sec" id="adatok">
+    <header class="lband">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg></div>
+      <div>
+        <h2>Munka1 – A futóverseny eredményei</h2>
+        <p>102 versenyző adatai 11 oszlopban. A versenyjegyzőkönyvhöz szükséges további oszlopokat képletekkel neked kell feltöltened.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>102 adatsor</span><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-table"/></svg>11 adatoszlop</span></div>
+      </div>
+    </header>
+
+    <section class="panelc" style="margin-top:20px">
+      <h2>A munkalap adatai</h2>
+      <p style="margin:0;font-size:1rem">
+        Kattints a <strong>Másolás Excelbe</strong> gombra, majd illeszd be (<kbd>Ctrl</kbd>+<kbd>V</kbd>) a megadott
+        cellába. A táblázat görgethető – a fejléc és a sorszámok a helyükön maradnak.
+      </p>
+      <figure class="view">
+        <figcaption>
+          <span class="vt">A verseny eredményei</span>
+          <span class="vw">102 adatsor · az <code>A1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl-main"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Kimásolva!</span></button>
+        </figcaption>
+        <div class="scroll"><table class="xl" id="tbl-main"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th><th>K</th></tr></thead><tbody><tr><th class="rn">1</th><td class="hd">Rajtszám</td><td class="hd">Versenyző neve</td><td class="hd">Nem</td><td class="hd">Korcsoport</td><td class="hd">Klub</td><td class="hd">Idő (perc)</td><td class="hd">Táv (km)</td><td class="hd">Átlagpulzus</td><td class="hd">Befejezte</td><td class="hd">Nevezési díj (Ft)</td><td class="hd">Korábbi versenyek</td></tr><tr><th class="rn">2</th><td class="n">1 001</td><td>Novák Márton</td><td>Férfi</td><td>Ifi</td><td>Pacsirta SC</td><td class="n">70</td><td class="n">10</td><td class="n">136</td><td>Nem</td><td class="n">11 750</td><td class="n">21</td></tr><tr><th class="rn">3</th><td class="n">1 002</td><td>Rácz Nóra</td><td>Nő</td><td>Felnőtt</td><td>Városi AC</td><td class="n">40</td><td class="n">5</td><td class="n">139</td><td>Igen</td><td class="n">11 500</td><td class="n">8</td></tr><tr><th class="rn">4</th><td class="n">1 003</td><td>Gulyás Hanna</td><td>Nő</td><td>Szenior</td><td>Pacsirta SC</td><td class="n">107</td><td class="n">21</td><td class="n">161</td><td>Igen</td><td class="n">8 250</td><td class="n">4</td></tr><tr><th class="rn">5</th><td class="n">1 004</td><td>Illés Csilla</td><td>Nő</td><td>Veterán</td><td>Városi AC</td><td class="n">33</td><td class="n">5</td><td class="n"></td><td>Igen</td><td class="n">4 000</td><td class="n">9</td></tr><tr><th class="rn">6</th><td class="n">1 005</td><td>Fodor Nóra</td><td>Nő</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">104</td><td class="n">21</td><td class="n">156</td><td>Igen</td><td class="n">4 000</td><td class="n">21</td></tr><tr><th class="rn">7</th><td class="n">1 006</td><td>Barta Imre</td><td>Férfi</td><td>Felnőtt</td><td>Hegyifutók KE</td><td class="n">62</td><td class="n">10</td><td class="n">132</td><td>Igen</td><td class="n">9 500</td><td class="n">24</td></tr><tr><th class="rn">8</th><td class="n">1 007</td><td>Mohácsi Laura</td><td>Nő</td><td>Szenior</td><td>Szabadidő FC</td><td class="n">29</td><td class="n">5</td><td class="n">133</td><td>Igen</td><td class="n">6 000</td><td class="n">12</td></tr><tr><th class="rn">9</th><td class="n">1 008</td><td>Rácz Bence</td><td>Férfi</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">48</td><td class="n">5</td><td class="n">143</td><td>Igen</td><td class="n">5 250</td><td class="n">9</td></tr><tr><th class="rn">10</th><td class="n">1 009</td><td>Mohácsi Ferenc</td><td>Férfi</td><td>Ifi</td><td>Szabadidő FC</td><td class="n">30</td><td class="n">5</td><td class="n">140</td><td>Igen</td><td class="n">7 500</td><td class="n">5</td></tr><tr><th class="rn">11</th><td class="n">1 010</td><td>Novák Olga</td><td>Nő</td><td>Felnőtt</td><td>Hegyifutók KE</td><td class="n">98</td><td class="n">21</td><td class="n">147</td><td>Igen</td><td class="n">10 750</td><td class="n">24</td></tr><tr><th class="rn">12</th><td class="n">1 011</td><td>Jakab Olga</td><td>Nő</td><td>Szenior</td><td>Pacsirta SC</td><td class="n">49</td><td class="n">10</td><td class="n">142</td><td>Igen</td><td class="n">11 750</td><td class="n">10</td></tr><tr><th class="rn">13</th><td class="n">1 012</td><td>Pintér Csilla</td><td>Nő</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">48</td><td class="n">5</td><td class="n">140</td><td>Igen</td><td class="n">8 500</td><td class="n">12</td></tr><tr><th class="rn">14</th><td class="n">1 013</td><td>Jakab Levente</td><td>Férfi</td><td>Felnőtt</td><td>Pacsirta SC</td><td class="n">50</td><td class="n">10</td><td class="n">134</td><td>Igen</td><td class="n">10 750</td><td class="n">0</td></tr><tr><th class="rn">15</th><td class="n">1 014</td><td>Hegedűs Bianka</td><td>Nő</td><td>Szenior</td><td>Szabadidő FC</td><td class="n">106</td><td class="n">21</td><td class="n">177</td><td>Igen</td><td class="n">6 500</td><td class="n">15</td></tr><tr><th class="rn">16</th><td class="n">1 015</td><td>Novák Sára</td><td>Nő</td><td>Ifi</td><td>Városi AC</td><td class="n">51</td><td class="n">10</td><td class="n">138</td><td>Igen</td><td class="n">6 750</td><td class="n">23</td></tr><tr><th class="rn">17</th><td class="n">1 016</td><td>Csonka Emese</td><td>Nő</td><td>Felnőtt</td><td>Szabadidő FC</td><td class="n">46</td><td class="n">5</td><td class="n"></td><td>Igen</td><td class="n">9 500</td><td class="n">15</td></tr><tr><th class="rn">18</th><td class="n">1 017</td><td>Illés Ferenc</td><td>Férfi</td><td>Felnőtt</td><td>Városi AC</td><td class="n">49</td><td class="n">10</td><td class="n">160</td><td>Igen</td><td class="n">10 250</td><td class="n">15</td></tr><tr><th class="rn">19</th><td class="n">1 018</td><td>Mohácsi Rita</td><td>Nő</td><td>Szenior</td><td>Delfin SE</td><td class="n">82</td><td class="n">10</td><td class="n">146</td><td>Igen</td><td class="n">4 000</td><td class="n">4</td></tr><tr><th class="rn">20</th><td class="n">1 019</td><td>Rácz Mária</td><td>Nő</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">67</td><td class="n">10</td><td class="n">172</td><td>Igen</td><td class="n">5 250</td><td class="n">4</td></tr><tr><th class="rn">21</th><td class="n">1 020</td><td>Jakab Ottó</td><td>Férfi</td><td>Felnőtt</td><td>Városi AC</td><td class="n">47</td><td class="n">10</td><td class="n">164</td><td>Igen</td><td class="n">10 250</td><td class="n">13</td></tr><tr><th class="rn">22</th><td class="n">1 021</td><td>Deák Kázmér</td><td>Férfi</td><td>Szenior</td><td>Delfin SE</td><td class="n">35</td><td class="n">5</td><td class="n">176</td><td>Igen</td><td class="n">5 250</td><td class="n">21</td></tr><tr><th class="rn">23</th><td class="n">1 022</td><td>Illés Imre</td><td>Férfi</td><td>Szenior</td><td>Delfin SE</td><td class="n">47</td><td class="n">10</td><td class="n">162</td><td>Igen</td><td class="n">8 000</td><td class="n">8</td></tr><tr><th class="rn">24</th><td class="n">1 023</td><td>Zalai Tímea</td><td>Nő</td><td>Felnőtt</td><td>Városi AC</td><td class="n">125</td><td class="n">21</td><td class="n">150</td><td>Igen</td><td class="n">8 000</td><td class="n">19</td></tr><tr><th class="rn">25</th><td class="n">1 024</td><td>Ungvári Csaba</td><td>Férfi</td><td>Felnőtt</td><td>Városi AC</td><td class="n">45</td><td class="n">5</td><td class="n">185</td><td>Igen</td><td class="n">11 000</td><td class="n">22</td></tr><tr><th class="rn">26</th><td class="n">1 025</td><td>Hegedűs Levente</td><td>Férfi</td><td>Felnőtt</td><td>Szabadidő FC</td><td class="n">45</td><td class="n">10</td><td class="n">189</td><td>Nem</td><td class="n">6 500</td><td class="n">6</td></tr><tr><th class="rn">27</th><td class="n">1 026</td><td>Csepregi Elemér</td><td>Férfi</td><td>Ifi</td><td>Pacsirta SC</td><td class="n">65</td><td class="n">10</td><td class="n">160</td><td>Igen</td><td class="n">4 750</td><td class="n">7</td></tr><tr><th class="rn">28</th><td class="n">1 027</td><td>Barta Bence</td><td>Férfi</td><td>Ifi</td><td>Pacsirta SC</td><td class="n">122</td><td class="n">21</td><td class="n">148</td><td>Igen</td><td class="n">8 750</td><td class="n">13</td></tr><tr><th class="rn">29</th><td class="n">1 028</td><td>Mohácsi Dénes</td><td>Férfi</td><td>Felnőtt</td><td>Pacsirta SC</td><td class="n">75</td><td class="n">10</td><td class="n"></td><td>Igen</td><td class="n">6 500</td><td class="n">4</td></tr><tr><th class="rn">30</th><td class="n">1 029</td><td>Kelemen Bence</td><td>Férfi</td><td>Veterán</td><td>Városi AC</td><td class="n">114</td><td class="n">21</td><td class="n">147</td><td>Igen</td><td class="n">6 250</td><td class="n">24</td></tr><tr><th class="rn">31</th><td class="n">1 030</td><td>Gulyás Flóra</td><td>Nő</td><td>Felnőtt</td><td>Szabadidő FC</td><td class="n">109</td><td class="n">21</td><td class="n">145</td><td>Igen</td><td class="n">6 500</td><td class="n">24</td></tr><tr><th class="rn">32</th><td class="n">1 031</td><td>Hegedűs Emese</td><td>Nő</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">43</td><td class="n">5</td><td class="n">134</td><td>Igen</td><td class="n">3 500</td><td class="n">4</td></tr><tr><th class="rn">33</th><td class="n">1 032</td><td>Kelemen Richárd</td><td>Férfi</td><td>Ifi</td><td>Városi AC</td><td class="n">39</td><td class="n">5</td><td class="n">171</td><td>Igen</td><td class="n">4 000</td><td class="n">5</td></tr><tr><th class="rn">34</th><td class="n">1 033</td><td>Dobos Soma</td><td>Férfi</td><td>Veterán</td><td>Szabadidő FC</td><td class="n">110</td><td class="n">21</td><td class="n">180</td><td>Igen</td><td class="n">10 500</td><td class="n">13</td></tr><tr><th class="rn">35</th><td class="n">1 034</td><td>Lengyel Flóra</td><td>Nő</td><td>Szenior</td><td>Hegyifutók KE</td><td class="n">55</td><td class="n">5</td><td class="n">164</td><td>Igen</td><td class="n">11 000</td><td class="n">7</td></tr><tr><th class="rn">36</th><td class="n">1 035</td><td>Elek Elemér</td><td>Férfi</td><td>Veterán</td><td>Városi AC</td><td class="n">82</td><td class="n">10</td><td class="n">152</td><td>Igen</td><td class="n">4 750</td><td class="n">18</td></tr><tr><th class="rn">37</th><td class="n">1 036</td><td>Rácz Soma</td><td>Férfi</td><td>Felnőtt</td><td>Delfin SE</td><td class="n">44</td><td class="n">10</td><td class="n">134</td><td>Igen</td><td class="n">9 500</td><td class="n">4</td></tr><tr><th class="rn">38</th><td class="n">1 037</td><td>Dobos Levente</td><td>Férfi</td><td>Ifi</td><td>Pacsirta SC</td><td class="n">28</td><td class="n">5</td><td class="n">192</td><td>Igen</td><td class="n">4 000</td><td class="n">23</td></tr><tr><th class="rn">39</th><td class="n">1 038</td><td>Gulyás Imre</td><td>Férfi</td><td>Felnőtt</td><td>Hegyifutók KE</td><td class="n">73</td><td class="n">10</td><td class="n">184</td><td>Igen</td><td class="n">8 500</td><td class="n">4</td></tr><tr><th class="rn">40</th><td class="n">1 039</td><td>Végh Ferenc</td><td>Férfi</td><td>Szenior</td><td>Szabadidő FC</td><td class="n">43</td><td class="n">10</td><td class="n">164</td><td>Igen</td><td class="n">11 000</td><td class="n">5</td></tr><tr><th class="rn">41</th><td class="n">1 040</td><td>Hegedűs Rita</td><td>Nő</td><td>Szenior</td><td>Pacsirta SC</td><td class="n">20</td><td class="n">5</td><td class="n">176</td><td>Igen</td><td class="n">9 000</td><td class="n">4</td></tr><tr><th class="rn">42</th><td class="n">1 041</td><td>Fodor Ferenc</td><td>Férfi</td><td>Veterán</td><td>Delfin SE</td><td class="n">61</td><td class="n">10</td><td class="n">144</td><td>Igen</td><td class="n">7 750</td><td class="n">18</td></tr><tr><th class="rn">43</th><td class="n">1 042</td><td>Hegedűs Ottó</td><td>Férfi</td><td>Veterán</td><td>Városi AC</td><td class="n">82</td><td class="n">10</td><td class="n">158</td><td>Igen</td><td class="n">4 750</td><td class="n">9</td></tr><tr><th class="rn">44</th><td class="n">1 043</td><td>Jakab Hanna</td><td>Nő</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">33</td><td class="n">5</td><td class="n">182</td><td>Igen</td><td class="n">9 000</td><td class="n">20</td></tr><tr><th class="rn">45</th><td class="n">1 044</td><td>Illés Mária</td><td>Nő</td><td>Veterán</td><td>Szabadidő FC</td><td class="n">133</td><td class="n">21</td><td class="n">168</td><td>Igen</td><td class="n">6 500</td><td class="n">3</td></tr><tr><th class="rn">46</th><td class="n">1 045</td><td>Csonka Richárd</td><td>Férfi</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">37</td><td class="n">5</td><td class="n"></td><td>Igen</td><td class="n">10 000</td><td class="n">10</td></tr><tr><th class="rn">47</th><td class="n">1 046</td><td>Novák Nándor</td><td>Férfi</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">124</td><td class="n">21</td><td class="n">185</td><td>Igen</td><td class="n">4 750</td><td class="n">23</td></tr><tr><th class="rn">48</th><td class="n">1 047</td><td>Ungvári Laura</td><td>Nő</td><td>Felnőtt</td><td>Városi AC</td><td class="n">47</td><td class="n">5</td><td class="n">133</td><td>Igen</td><td class="n">3 500</td><td class="n">7</td></tr><tr><th class="rn">49</th><td class="n">1 048</td><td>Dobos Tímea</td><td>Nő</td><td>Felnőtt</td><td>Hegyifutók KE</td><td class="n">122</td><td class="n">21</td><td class="n">138</td><td>Igen</td><td class="n">10 500</td><td class="n">20</td></tr><tr><th class="rn">50</th><td class="n">1 049</td><td>Pintér Kázmér</td><td>Férfi</td><td>Veterán</td><td>Városi AC</td><td class="n">40</td><td class="n">5</td><td class="n">135</td><td>Igen</td><td class="n">10 000</td><td class="n">5</td></tr><tr><th class="rn">51</th><td class="n">1 050</td><td>Novák Csaba</td><td>Férfi</td><td>Ifi</td><td>Pacsirta SC</td><td class="n">59</td><td class="n">10</td><td class="n">161</td><td>Igen</td><td class="n">11 750</td><td class="n">19</td></tr><tr><th class="rn">52</th><td class="n">1 051</td><td>Illés Ádám</td><td>Férfi</td><td>Ifi</td><td>Delfin SE</td><td class="n">45</td><td class="n">5</td><td class="n">135</td><td>Igen</td><td class="n">9 250</td><td class="n">3</td></tr><tr><th class="rn">53</th><td class="n">1 052</td><td>Rácz Ferenc</td><td>Férfi</td><td>Szenior</td><td>Delfin SE</td><td class="n">80</td><td class="n">10</td><td class="n">163</td><td>Nem</td><td class="n">10 250</td><td class="n">13</td></tr><tr><th class="rn">54</th><td class="n">1 053</td><td>Jakab Richárd</td><td>Férfi</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">44</td><td class="n">10</td><td class="n">180</td><td>Igen</td><td class="n">7 000</td><td class="n">14</td></tr><tr><th class="rn">55</th><td class="n">1 054</td><td>Lengyel Ibolya</td><td>Nő</td><td>Ifi</td><td>Városi AC</td><td class="n">50</td><td class="n">5</td><td class="n">139</td><td>Igen</td><td class="n">9 500</td><td class="n">13</td></tr><tr><th class="rn">56</th><td class="n">1 055</td><td>Zalai Mária</td><td>Nő</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">119</td><td class="n">21</td><td class="n">156</td><td>Igen</td><td class="n">11 000</td><td class="n">15</td></tr><tr><th class="rn">57</th><td class="n">1 056</td><td>Ungvári Sára</td><td>Nő</td><td>Szenior</td><td>Hegyifutók KE</td><td class="n">41</td><td class="n">5</td><td class="n">153</td><td>Igen</td><td class="n">10 500</td><td class="n">22</td></tr><tr><th class="rn">58</th><td class="n">1 057</td><td>Csonka Levente</td><td>Férfi</td><td>Szenior</td><td>Delfin SE</td><td class="n">44</td><td class="n">10</td><td class="n">181</td><td>Igen</td><td class="n">8 500</td><td class="n">14</td></tr><tr><th class="rn">59</th><td class="n">1 058</td><td>Végh Mária</td><td>Nő</td><td>Felnőtt</td><td>Szabadidő FC</td><td class="n">65</td><td class="n">10</td><td class="n">172</td><td>Igen</td><td class="n">10 500</td><td class="n">14</td></tr><tr><th class="rn">60</th><td class="n">1 059</td><td>Mohácsi Nándor</td><td>Férfi</td><td>Ifi</td><td>Városi AC</td><td class="n">56</td><td class="n">5</td><td class="n">182</td><td>Nem</td><td class="n">4 750</td><td class="n">10</td></tr><tr><th class="rn">61</th><td class="n">1 060</td><td>Sipos Ágnes</td><td>Nő</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">36</td><td class="n">5</td><td class="n">172</td><td>Igen</td><td class="n">3 750</td><td class="n">23</td></tr><tr><th class="rn">62</th><td class="n">1 061</td><td>Dobos Dénes</td><td>Férfi</td><td>Szenior</td><td>Delfin SE</td><td class="n">55</td><td class="n">10</td><td class="n">142</td><td>Igen</td><td class="n">7 500</td><td class="n">16</td></tr><tr><th class="rn">63</th><td class="n">1 062</td><td>Ónodi Huba</td><td>Férfi</td><td>Szenior</td><td>Szabadidő FC</td><td class="n">35</td><td class="n">5</td><td class="n"></td><td>Igen</td><td class="n">4 500</td><td class="n">21</td></tr><tr><th class="rn">64</th><td class="n">1 063</td><td>Novák Richárd</td><td>Férfi</td><td>Ifi</td><td>Szabadidő FC</td><td class="n">46</td><td class="n">10</td><td class="n">164</td><td>Igen</td><td class="n">6 250</td><td class="n">17</td></tr><tr><th class="rn">65</th><td class="n">1 064</td><td>Mohácsi Olga</td><td>Nő</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">106</td><td class="n">21</td><td class="n">186</td><td>Igen</td><td class="n">5 250</td><td class="n">15</td></tr><tr><th class="rn">66</th><td class="n">1 065</td><td>Bogdán Gergő</td><td>Férfi</td><td>Veterán</td><td>Városi AC</td><td class="n">44</td><td class="n">10</td><td class="n">156</td><td>Igen</td><td class="n">4 000</td><td class="n">24</td></tr><tr><th class="rn">67</th><td class="n">1 066</td><td>Ungvári Márton</td><td>Férfi</td><td>Veterán</td><td>Delfin SE</td><td class="n">43</td><td class="n">10</td><td class="n">181</td><td>Nem</td><td class="n">8 250</td><td class="n">13</td></tr><tr><th class="rn">68</th><td class="n">1 067</td><td>Dobos Elemér</td><td>Férfi</td><td>Szenior</td><td>Delfin SE</td><td class="n">76</td><td class="n">10</td><td class="n">181</td><td>Igen</td><td class="n">3 500</td><td class="n">9</td></tr><tr><th class="rn">69</th><td class="n">1 068</td><td>Dobos Dalma</td><td>Nő</td><td>Szenior</td><td>Pacsirta SC</td><td class="n">48</td><td class="n">10</td><td class="n">144</td><td>Igen</td><td class="n">8 000</td><td class="n">17</td></tr><tr><th class="rn">70</th><td class="n">1 069</td><td>Csonka Mária</td><td>Nő</td><td>Ifi</td><td>Szabadidő FC</td><td class="n">133</td><td class="n">21</td><td class="n">150</td><td>Igen</td><td class="n">7 000</td><td class="n">15</td></tr><tr><th class="rn">71</th><td class="n">1 070</td><td>Lengyel Elemér</td><td>Férfi</td><td>Veterán</td><td>Hegyifutók KE</td><td class="n">46</td><td class="n">10</td><td class="n">176</td><td>Igen</td><td class="n">10 250</td><td class="n">5</td></tr><tr><th class="rn">72</th><td class="n">1 071</td><td>Novák Flóra</td><td>Nő</td><td>Felnőtt</td><td>Szabadidő FC</td><td class="n">60</td><td class="n">10</td><td class="n">186</td><td>Igen</td><td class="n">6 000</td><td class="n">3</td></tr><tr><th class="rn">73</th><td class="n">1 072</td><td>Tordai Ágnes</td><td>Nő</td><td>Ifi</td><td>Delfin SE</td><td class="n">48</td><td class="n">5</td><td class="n">158</td><td>Igen</td><td class="n">9 000</td><td class="n">1</td></tr><tr><th class="rn">74</th><td class="n">1 073</td><td>Bogdán Nándor</td><td>Férfi</td><td>Ifi</td><td>Pacsirta SC</td><td class="n">112</td><td class="n">21</td><td class="n">171</td><td>Igen</td><td class="n">6 500</td><td class="n">4</td></tr><tr><th class="rn">75</th><td class="n">1 074</td><td>Bogdán Kinga</td><td>Nő</td><td>Szenior</td><td>Pacsirta SC</td><td class="n">126</td><td class="n">21</td><td class="n">141</td><td>Igen</td><td class="n">6 250</td><td class="n">6</td></tr><tr><th class="rn">76</th><td class="n">1 075</td><td>Bogdán Levente</td><td>Férfi</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">120</td><td class="n">21</td><td class="n">146</td><td>Igen</td><td class="n">8 500</td><td class="n">8</td></tr><tr><th class="rn">77</th><td class="n">1 076</td><td>Kelemen Ottó</td><td>Férfi</td><td>Veterán</td><td>Delfin SE</td><td class="n">42</td><td class="n">5</td><td class="n">167</td><td>Igen</td><td class="n">8 500</td><td class="n">7</td></tr><tr><th class="rn">78</th><td class="n">1 077</td><td>Kelemen Levente</td><td>Férfi</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">135</td><td class="n">21</td><td class="n">172</td><td>Igen</td><td class="n">7 250</td><td class="n">19</td></tr><tr><th class="rn">79</th><td class="n">1 078</td><td>Sipos Bence</td><td>Férfi</td><td>Veterán</td><td>Városi AC</td><td class="n">113</td><td class="n">21</td><td class="n"></td><td>Igen</td><td class="n">11 000</td><td class="n">6</td></tr><tr><th class="rn">80</th><td class="n">1 079</td><td>Lengyel Mária</td><td>Nő</td><td>Ifi</td><td>Pacsirta SC</td><td class="n">29</td><td class="n">5</td><td class="n">185</td><td>Igen</td><td class="n">7 500</td><td class="n">24</td></tr><tr><th class="rn">81</th><td class="n">1 080</td><td>Csonka Tibor</td><td>Férfi</td><td>Felnőtt</td><td>Pacsirta SC</td><td class="n">55</td><td class="n">5</td><td class="n">160</td><td>Igen</td><td class="n">8 000</td><td class="n">2</td></tr><tr><th class="rn">82</th><td class="n">1 081</td><td>Deák Ottó</td><td>Férfi</td><td>Szenior</td><td>Delfin SE</td><td class="n">29</td><td class="n">5</td><td class="n">159</td><td>Igen</td><td class="n">9 250</td><td class="n">9</td></tr><tr><th class="rn">83</th><td class="n">1 082</td><td>Jakab Laura</td><td>Nő</td><td>Veterán</td><td>Pacsirta SC</td><td class="n">135</td><td class="n">21</td><td class="n">184</td><td>Igen</td><td class="n">4 500</td><td class="n">3</td></tr><tr><th class="rn">84</th><td class="n">1 083</td><td>Elek Péter</td><td>Férfi</td><td>Veterán</td><td>Delfin SE</td><td class="n">133</td><td class="n">21</td><td class="n">144</td><td>Igen</td><td class="n">9 250</td><td class="n">9</td></tr><tr><th class="rn">85</th><td class="n">1 084</td><td>Mohácsi Bianka</td><td>Nő</td><td>Szenior</td><td>Szabadidő FC</td><td class="n">62</td><td class="n">10</td><td class="n">138</td><td>Igen</td><td class="n">7 250</td><td class="n">11</td></tr><tr><th class="rn">86</th><td class="n">1 085</td><td>Illés Dalma</td><td>Nő</td><td>Szenior</td><td>Hegyifutók KE</td><td class="n">43</td><td class="n">5</td><td class="n">189</td><td>Igen</td><td class="n">10 750</td><td class="n">12</td></tr><tr><th class="rn">87</th><td class="n">1 086</td><td>Barta Dénes</td><td>Férfi</td><td>Ifi</td><td>Városi AC</td><td class="n">45</td><td class="n">5</td><td class="n">173</td><td>Igen</td><td class="n">11 250</td><td class="n">8</td></tr><tr><th class="rn">88</th><td class="n">1 087</td><td>Fodor Laura</td><td>Nő</td><td>Ifi</td><td>Hegyifutók KE</td><td class="n">42</td><td class="n">10</td><td class="n">187</td><td>Igen</td><td class="n">6 250</td><td class="n">3</td></tr><tr><th class="rn">89</th><td class="n">1 088</td><td>Hegedűs Petra</td><td>Nő</td><td>Veterán</td><td>Hegyifutók KE</td><td class="n">42</td><td class="n">10</td><td class="n">174</td><td>Igen</td><td class="n">11 750</td><td class="n">17</td></tr><tr><th class="rn">90</th><td class="n">1 089</td><td>Jakab Petra</td><td>Nő</td><td>Felnőtt</td><td>Városi AC</td><td class="n">30</td><td class="n">5</td><td class="n">154</td><td>Igen</td><td class="n">3 250</td><td class="n">8</td></tr><tr><th class="rn">91</th><td class="n">1 090</td><td>Ungvári Bianka</td><td>Nő</td><td>Ifi</td><td>Szabadidő FC</td><td class="n">122</td><td class="n">21</td><td class="n">188</td><td>Igen</td><td class="n">6 000</td><td class="n">5</td></tr><tr><th class="rn">92</th><td class="n">1 091</td><td>Ungvári Flóra</td><td>Nő</td><td>Veterán</td><td>Városi AC</td><td class="n">30</td><td class="n">5</td><td class="n"></td><td>Igen</td><td class="n">7 750</td><td class="n">9</td></tr><tr><th class="rn">93</th><td class="n">1 092</td><td>Csepregi Csilla</td><td>Nő</td><td>Veterán</td><td>Városi AC</td><td class="n">72</td><td class="n">10</td><td class="n">142</td><td>Igen</td><td class="n">9 500</td><td class="n">23</td></tr><tr><th class="rn">94</th><td class="n">1 093</td><td>Ungvári Mária</td><td>Nő</td><td>Szenior</td><td>Pacsirta SC</td><td class="n">34</td><td class="n">5</td><td class="n">138</td><td>Igen</td><td class="n">6 250</td><td class="n">8</td></tr><tr><th class="rn">95</th><td class="n">1 094</td><td>Deák Ferenc</td><td>Férfi</td><td>Felnőtt</td><td>Szabadidő FC</td><td class="n">115</td><td class="n">21</td><td class="n">150</td><td>Igen</td><td class="n">5 000</td><td class="n">3</td></tr><tr><th class="rn">96</th><td class="n">1 095</td><td>Jakab Csaba</td><td>Férfi</td><td>Felnőtt</td><td>Delfin SE</td><td class="n">122</td><td class="n">21</td><td class="n">161</td><td>Igen</td><td class="n">3 500</td><td class="n">11</td></tr><tr><th class="rn">97</th><td class="n">1 096</td><td>Ónodi Levente</td><td>Férfi</td><td>Szenior</td><td>Szabadidő FC</td><td class="n">106</td><td class="n">21</td><td class="n">184</td><td>Igen</td><td class="n">3 250</td><td class="n">21</td></tr><tr><th class="rn">98</th><td class="n">1 097</td><td>Végh Richárd</td><td>Férfi</td><td>Ifi</td><td>Városi AC</td><td class="n">68</td><td class="n">10</td><td class="n">135</td><td>Igen</td><td class="n">10 500</td><td class="n">20</td></tr><tr><th class="rn">99</th><td class="n">1 098</td><td>Sipos Richárd</td><td>Férfi</td><td>Felnőtt</td><td>Delfin SE</td><td class="n">61</td><td class="n">10</td><td class="n">145</td><td>Igen</td><td class="n">6 250</td><td class="n">19</td></tr><tr><th class="rn">100</th><td class="n">1 099</td><td>Jakab Dalma</td><td>Nő</td><td>Szenior</td><td>Városi AC</td><td class="n">69</td><td class="n">10</td><td class="n">182</td><td>Igen</td><td class="n">5 500</td><td class="n">7</td></tr><tr><th class="rn">101</th><td class="n">1 100</td><td>Csepregi Ibolya</td><td>Nő</td><td>Szenior</td><td>Pacsirta SC</td><td class="n">102</td><td class="n">21</td><td class="n"></td><td>Igen</td><td class="n">4 250</td><td class="n">24</td></tr><tr><th class="rn">102</th><td class="n">1 101</td><td>Ungvári Ágnes</td><td>Nő</td><td>Ifi</td><td>Delfin SE</td><td class="n">57</td><td class="n">10</td><td class="n">171</td><td>Igen</td><td class="n">4 000</td><td class="n">1</td></tr><tr><th class="rn">103</th><td class="n">1 102</td><td>Zalai Richárd</td><td>Férfi</td><td>Veterán</td><td>Delfin SE</td><td class="n">106</td><td class="n">21</td><td class="n">164</td><td>Igen</td><td class="n">7 250</td><td class="n">20</td></tr></tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+      <div class="howto">
+        <h3><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Jó tudni</h3>
+        <p>Az <code>Átlagpulzus</code> oszlopban néhány cella szándékosan üres: ott a versenyzőn nem volt pulzusmérő. Ez nem hiba, hanem része a feladatnak – gondold végig, melyik függvény hogyan viselkedik az üres cellákkal. Fontos: a versenyen <strong>három távon</strong> (5, 10 és 21 km) indultak a futók, ezért az időket <strong>nem</strong> szabad egymás ellen rangsorolni – a feladatok ezért a <em>pályán töltött időről</em> és a <em>tempóról</em> szólnak. Az M, N, O, P és R oszlopot te fogod feltölteni képletekkel, az L és Q oszlop maradjon üresen.</p>
+      </div>
+    </section>
+  </section>
+
+  <section class="sec" id="feladatok">
+    <header class="lband">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></div>
+      <div>
+        <h2>Kötelező feladatok</h2>
+        <p>23 feladat négy részben. Haladj sorban: a 4. rész feladatai az előzőekben kiszámolt oszlopokra is
+        támaszkodnak.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>23 kötelező feladat</span></div>
+      </div>
+    </header>
+
+    <div class="pband" id="part1">
+      <span class="pn">1</span>
+      <div class="pb"><h3>1. rész – Alapösszesítések</h3><p>A verseny lebonyolításához kellő számok: összegek, átlagok és a két időbeli véglet.</p></div>
+      <div class="ptag"><span class="ptab">SUM · AVERAGE · MAX · MIN · ROUND</span><span class="pcount" data-pc="1">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t1" data-part="1" data-kind="must">
+        <div class="num"><span class="n">1</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi nevezési díj folyt be?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">A szervezők azt szeretnék tudni, <strong>mennyi nevezési díj folyt be összesen</strong>. A díjakat a <code>Nevezési díj (Ft)</code> oszlop (J) tartalmazza, a <code>J2</code> cellától a <code>J103</code> cellá­ig. Add össze a <strong>SUM</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H106</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol1"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="1" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol1" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A befolyt nevezési díj: <code>768 250 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t2" data-part="1" data-kind="must">
+        <div class="num"><span class="n">2</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi időt töltöttek átlagosan a pályán?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Az <code>Idő (perc)</code> oszlop (F) azt mutatja, hány percet töltött a versenyző a pályán. A szervezőknek ez a frissítőpontok működtetéséhez kell. Számold ki az <strong>AVERAGE</strong> függvénnyel az <strong>átlagos pályán töltött időt</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H107</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol2"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="2" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol2" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az átlagos futóidő kb. <code>68.14 perc</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t3" data-part="1" data-kind="must">
+        <div class="num"><span class="n">3</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mikor ért be az első futó?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MIN</span></span></div>
+          <p class="txt">A célkaput akkor kell megnyitni, amikor az első futó beérkezik. Add meg a <strong>MIN</strong> függvénnyel, <strong>mennyi a legrövidebb pályán töltött idő</strong> (F oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H108</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol3"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="3" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol3" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legjobb idő: <code>20 perc</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t4" data-part="1" data-kind="must">
+        <div class="num"><span class="n">4</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora volt a legnagyobb átlagpulzus?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">Az <code>Átlagpulzus</code> oszlop (H) a futás alatti átlagos szívfrekvenciát tartalmazza – néhány versenyzőnél nincs adat, mert nem volt rajta pulzusmérő. Add meg a <strong>MAX</strong> függvénnyel, <strong>mekkora volt a legnagyobb mért átlagpulzus</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H109</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol4"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="4" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol4" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legnagyobb átlagpulzus: <code>192</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t5" data-part="1" data-kind="must">
+        <div class="num"><span class="n">5</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány versenyen indultak korábban összesen?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">A <code>Korábbi versenyek</code> oszlop (K) azt mutatja, ki hány versenyen indult már korábban. Add össze a <strong>SUM</strong> függvénnyel, <strong>mennyi ez összesen</strong> a teljes indulómezőnyre.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H110</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol5"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="5" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol5" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A mezőny összesen <code>1 241</code> korábbi versenyen indult.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t6" data-part="1" data-kind="must">
+        <div class="num"><span class="n">6</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mikor zárható a pálya?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">A pályát csak akkor lehet lezárni, ha az utolsó futó is beérkezett. Add meg a <strong>MAX</strong> függvénnyel, <strong>mennyi a leghosszabb pályán töltött idő</strong> (F oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H111</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol6"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="6" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol6" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A leglassabb idő: <code>135 perc</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t7" data-part="1" data-kind="must">
+        <div class="num"><span class="n">7</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Átlagpulzus, kerekítve</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Számold ki az <code>Átlagpulzus</code> oszlop (H) <strong>átlagát</strong>, de az orvosi jelentésbe csak <strong>egy tizedesjegyre kerekítve</strong> kerülhet be. Ehhez a <strong>ROUND</strong> és az <strong>AVERAGE</strong> függvényt is használd, egyetlen képletben.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H112</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol7"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="7" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol7" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A mezőny átlagpulzusa: <code>160.0</code>.</p></div>
+        </div>
+      </article></div>
+
+    <div class="pband" id="part2">
+      <span class="pn">2</span>
+      <div class="pb"><h3>2. rész – Darabszámok és feltételes összesítés</h3><p>Most már nem mindenkit számolunk össze, csak azokat, akik megfelelnek egy feltételnek.</p></div>
+      <div class="ptag"><span class="ptab">COUNT · COUNTIF · SUMIF</span><span class="pcount" data-pc="2">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t8" data-part="2" data-kind="must">
+        <div class="num"><span class="n">8</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány versenyzőnél volt pulzusmérő?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT</span></span></div>
+          <p class="txt">Az <code>Átlagpulzus</code> oszlopban (H) <strong>nem minden sorban van szám</strong> – ahol nem volt pulzusmérő, ott üres a cella. Számold meg a <strong>COUNT</strong> függvénnyel, <strong>hány versenyzőnél van pulzusadat</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H113</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol8"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="8" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol8" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>94</code> versenyzőnél van pulzusadat (összesen 102-ből).</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t9" data-part="2" data-kind="must">
+        <div class="num"><span class="n">9</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány nő indult a versenyen?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNTIF</span></span></div>
+          <p class="txt">A <code>Nem</code> oszlop (C) értéke <code>Férfi</code> vagy <code>Nő</code>. Számold meg a <strong>COUNTIF</strong> függvénnyel, <strong>hány nő indult</strong> a versenyen.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H114</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol9"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="9" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol9" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>47</code> nő indult.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t10" data-part="2" data-kind="must">
+        <div class="num"><span class="n">10</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hányan nem fejezték be a versenyt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNTIF</span></span></div>
+          <p class="txt">A <code>Befejezte</code> oszlop (I) értéke <code>Igen</code> vagy <code>Nem</code>. Add meg a <strong>COUNTIF</strong> függvénnyel, <strong>hány versenyző nem fejezte be</strong> a versenyt.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H115</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol10"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="10" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol10" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>5</code> versenyző nem fejezte be.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t11" data-part="2" data-kind="must">
+        <div class="num"><span class="n">11</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi nevezési díjat fizettek a szeniorok?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUMIF</span></span></div>
+          <p class="txt">A <code>Korcsoport</code> oszlop (D) négy értéket vehet fel: Ifi, Felnőtt, Szenior, Veterán. Számold ki a <strong>SUMIF</strong> függvénnyel, <strong>mennyi nevezési díjat fizettek összesen a „Szenior” korcsoport versenyzői</strong> (J oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H116</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol11"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="11" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol11" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A szeniorok nevezési díja összesen: <code>186 250 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t12" data-part="2" data-kind="must">
+        <div class="num"><span class="n">12</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi versenytapasztalata van a Delfin SE-nek?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUMIF</span></span></div>
+          <p class="txt">A feltétel ezúttal a <code>Klub</code> oszlopban (E) van, az összeadandó értékek pedig a <code>Korábbi versenyek</code> oszlopban (K). Add meg a <strong>SUMIF</strong> függvénnyel, <strong>összesen hány korábbi versenyen indultak a „Delfin SE” futói</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H117</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol12"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="12" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol12" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A Delfin SE futói összesen <code>200</code> korábbi versenyen indultak.</p></div>
+        </div>
+      </article></div>
+
+    <div class="pband" id="part3">
+      <span class="pn">3</span>
+      <div class="pb"><h3>3. rész – Soronkénti döntések</h3><p>Itt minden versenyzőhöz külön eredmény tartozik: a képletet le kell húznod az egész oszlopra.</p></div>
+      <div class="ptag"><span class="ptab">IF · AND · OR · ROUND</span><span class="pcount" data-pc="3">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t13" data-part="3" data-kind="must">
+        <div class="num"><span class="n">13</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Ki ért be a forgalom visszaengedése előtt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span></span></div>
+          <p class="txt">A rendőrség a rajt után <strong>100 perccel</strong> visszaengedi a forgalmat a lezárt útszakaszra, ezért a szervezőknek tudniuk kell, ki ért be addig. Az <strong>M oszlopba</strong> írj képletet, amely <strong>minden sorra</strong> megmondja: ha a pályán töltött idő (F oszlop) <strong>legfeljebb 100 perc</strong>, akkor a cellában a <code>Határidőn belül</code> szöveg álljon, egyébként a <code>Határidő után</code>. Használd az <strong>IF</strong> függvényt, majd húzd le a képletet az utolsó adatsorig.</p><p class="txt">Az <code>M1</code> cellába írd fejlécként: <code>Forgalomnyitás</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>M2:M103</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol13"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="13" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol13" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Határidőn belül</code>: 75, <code>Határidő után</code>: 27. Az <code>M2</code> cellában (70 perc) ennek kell állnia: <code>Határidőn belül</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t14" data-part="3" data-kind="must">
+        <div class="num"><span class="n">14</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora volt a versenyző tempója?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span></span></div>
+          <p class="txt">Mivel a futók három különböző távon indultak, az eredményeket csak a <strong>tempón</strong> keresztül lehet összevetni: ez azt mutatja, <strong>mennyi idő jutott egy kilométerre</strong> – a pályán töltött időt (F oszlop) el kell osztani a távval (G oszlop). Az <strong>N oszlopba</strong> írj képletet, amely ezt <strong>minden sorra</strong> kiszámolja, és az eredményt <strong>két tizedesjegyre kerekítve</strong> adja meg – a kerekítéshez a <strong>ROUND</strong> függvényt használd. Végül húzd le a képletet az utolsó adatsorig.</p><p class="txt">Az <code>N1</code> cellába írd fejlécként: <code>Tempó (perc/km)</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>N2:N103</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol14"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="14" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol14" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az <code>N2</code> cellában (70 perc / 10 km) ennek kell állnia: <code>7.00</code>. A leggyorsabb tempó az oszlopban <code>4.00</code>, a leglassabb <code>11.20</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t15" data-part="3" data-kind="must">
+        <div class="num"><span class="n">15</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Ki kerül az első éremátadó csoportba?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span><i class="sep">›</i><span class="crumb">AND</span></span></div>
+          <p class="txt">Az éremátadás két körben zajlik. Az <strong>első csoportba</strong> az kerül, aki <strong>befejezte</strong> a versenyt (I oszlop = <code>Igen</code>), <strong>és</strong> <strong>legfeljebb 95 percet</strong> töltött a pályán (F oszlop) – mindkettőnek teljesülnie kell. Az <strong>O oszlopba</strong> írj képletet, amely minden sorra az <code>Első csoport</code> szöveget adja, ha mindkét feltétel teljesül, egyébként egy gondolatjelet (<code>—</code>). Az <strong>IF</strong> és az <strong>AND</strong> függvényre is szükséged lesz.</p><p class="txt">Az <code>O1</code> cellába írd fejlécként: <code>Éremátadás</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>O2:O103</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol15"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="15" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol15" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Első csoport</code> összesen <code>69</code> versenyzőnél lesz.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t16" data-part="3" data-kind="must">
+        <div class="num"><span class="n">16</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Kit kell orvosnak megvizsgálnia?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span><i class="sep">›</i><span class="crumb">OR</span></span></div>
+          <p class="txt">A versenyorvos azokat nézi meg a célban, akiknél <strong>vagy</strong> az átlagpulzus (H oszlop) <strong>175 fölötti</strong>, <strong>vagy</strong> ez volt az <strong>első versenyük</strong> (a <code>Korábbi versenyek</code> oszlop értéke 0) – elég, ha az egyik teljesül. A <strong>P oszlopba</strong> írj képletet, amely minden sorra az <code>Orvosi ellenőrzés</code> vagy a <code>Rendben</code> szöveget adja. Az <strong>IF</strong> és az <strong>OR</strong> függvényt használd.</p><p class="txt">A <code>P1</code> cellába írd fejlécként: <code>Orvosi teendő</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>P2:P103</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol16"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="16" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol16" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Orvosi ellenőrzés</code>: <code>26</code>, <code>Rendben</code>: <code>76</code> versenyző.</p></div>
+        </div>
+      </article></div>
+
+  <section class="milestone" id="mid">
+    <div class="mi"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></div>
+    <div>
+      <h2 class="m-todo">A közepes szintű feladatokból még <span id="midLeft">16</span> hátravan</h2>
+      <h2 class="m-done">A közepes szintű rész kész!</h2>
+      <p class="m-todo">Ha ezekkel megvagy, jön a négy önálló feladat – ott már a függvényt is neked kell megtalálnod.</p>
+      <p class="m-done">Innentől a függvényt is neked kell kiválasztanod. Figyelj az M, N, O és P oszlopra: a következő feladatok ezekre is építenek.</p>
+    </div>
+  </section>
+
+    <div class="pband" id="part4">
+      <span class="pn">4</span>
+      <div class="pb"><h3>4. rész – Önálló feladatok</h3><p>Innentől nem adjuk meg, melyik függvény kell. Olvasd el figyelmesen, mit kérdez a feladat.</p></div>
+      <div class="ptag"><span class="ptab">a függvényt te választod</span><span class="pcount" data-pc="4">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-k kind-must" id="t17" data-part="4" data-kind="must">
+        <div class="num"><span class="n">17</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hányan értek be 90 perc alatt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A célterületi büfé az első 90 percre külön adagot rendel, ezért tudni kell, <strong>hány versenyző töltött 90 percnél kevesebb időt a pályán</strong>. Az F oszlop adataiból dolgozz.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H118</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol17"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="17" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol17" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>74</code> versenyző futott 90 percen belül.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t18" data-part="4" data-kind="must">
+        <div class="num"><span class="n">18</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi nevezési díjat fizettek a nők?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>mennyi nevezési díjat fizettek összesen a női versenyzők</strong>. A nem a C, a nevezési díj a J oszlopban található.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H119</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol18"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="18" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol18" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A női versenyzők nevezési díja összesen: <code>345 500 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t19" data-part="4" data-kind="must">
+        <div class="num"><span class="n">19</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi az átlagos tempó?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Számold ki, <strong>mennyi idő jut átlagosan egy kilométerre</strong> az egész mezőnyben: az összes lefutott időt kell elosztanod az összes lefutott kilométerrel (G oszlop). Az eredményt <strong>két tizedesjegyre kerekítve</strong> írd be.</p><p class="txt">Figyelj: itt a <strong>teljes</strong> időt kell a <strong>teljes</strong> távval elosztanod – nem az N oszlop tempóinak átlagát kérjük.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H120</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol19"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="19" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol19" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az átlagos tempó <code>6.00 perc/km</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t20" data-part="4" data-kind="must">
+        <div class="num"><span class="n">20</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Meddig kell nyitva tartani a célkaput?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A célkaput az első befutótól az utolsóig üzemeltetni kell. Add meg <strong>egyetlen képlettel</strong>, hogy <strong>mekkora a különbség a leghosszabb és a legrövidebb pályán töltött idő között</strong> (F oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H121</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol20"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="20" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol20" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A különbség <code>115 perc</code> (135 perc − 20 perc).</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t21" data-part="4" data-kind="must">
+        <div class="num"><span class="n">21</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hányan értek be a forgalomnyitás előtt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A 13. feladatban kiszámolt <strong>M oszlop</strong> alapján add meg, <strong>hány versenyző kapta a „Határidőn belül” jelölést</strong>. Ne számold meg kézzel – képlettel dolgozz!</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H122</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol21"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="21" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol21" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>75</code> versenyző ért be a forgalomnyitás előtt.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t22" data-part="4" data-kind="must">
+        <div class="num"><span class="n">22</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi időt töltöttek a pályán a veteránok?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>mennyi az átlagos pályán töltött idő a „Veterán” korcsoportban</strong>. Gondold végig: ehhez két értékre lesz szükséged, és azokat el kell osztanod egymással. Az eredményt <strong>két tizedesjegyre kerekítve</strong> írd be.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H123</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol22"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="22" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol22" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A veteránok átlagideje kb. <code>75.50 perc</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t23" data-part="4" data-kind="must">
+        <div class="num"><span class="n">23</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyit fizettek az első éremátadó csoport tagjai?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A 15. feladat <strong>O oszlopát</strong> használva add meg, <strong>mennyi nevezési díjat fizettek összesen azok, akik az „Első csoport” jelölést kapták</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H124</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol23"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="23" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol23" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az első csoport tagjainak nevezési díja: <code>529 750 Ft</code>.</p></div>
+        </div>
+      </article></div>
+
+  </section>
+
+  <section class="sec" id="bonus">
+    <header class="xband bonus">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg></div>
+      <div>
+        <h2>Bónuszfeladatok</h2>
+        <p>Négy nehéz feladat annak, aki a 23 kötelezővel elkészült. Itt sem adjuk meg a függvényeket – és
+        többnyire egyszerre többre is szükség lesz.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg>4 bónuszfeladat</span><span class="pcount" data-pc="9">0 / 0</span></div>
+      </div>
+    </header>
+    <div class="tasks" style="margin-top:16px">
+      <article class="task lv-h kind-bonus" id="t24" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">24</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi a felnőttek tempója?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Számold ki, <strong>mennyi idő jut egy kilométerre a „Felnőtt” korcsoportban</strong>. Csak a felnőtt korcsoport versenyzőivel számolj: az ő összes idejüket kell elosztanod az általuk lefutott összes kilométerrel. Az eredményt <strong>két tizedesjegyre kerekítve</strong> add meg.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H125</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol24"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="24" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol24" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A felnőttek tempója <code>5.96 perc/km</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t25" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">25</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Négy idősáv a célkapu-statisztikához</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A szervezők négy idősávba rendezik a beérkezőket, hogy lássák, mikor mekkora tömeg van a célterületen. A pályán töltött idő (F oszlop) alapján: <strong>85 perc alatt</strong> → <code>A sáv</code>; <strong>85 és 100 perc között</strong> (100 alatt) → <code>B sáv</code>; <strong>100 és 115 perc között</strong> (115 alatt) → <code>C sáv</code>; <strong>115 perc vagy több</strong> → <code>D sáv</code>. Az <strong>R oszlopba</strong> írj <strong>egyetlen képletet</strong>, amely minden sorra a helyes sávot adja, és húzd le az utolsó adatsorig.</p><p class="txt">Az <code>R1</code> cellába írd fejlécként: <code>Idősáv</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>R2:R103</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol25"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="25" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol25" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>A sáv</code>: 74, <code>B sáv</code>: 1, <code>C sáv</code>: 12, <code>D sáv</code>: 15 versenyző.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t26" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">26</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hányan értek be az átlagosnál hamarabb?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>hány versenyző töltött az átlagosnál kevesebb időt a pályán</strong> (F oszlop). A trükk az, hogy magát az átlagot kell beépítened a feltételbe – <strong>egyetlen képlettel</strong> oldd meg, segédcella nélkül.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H126</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol26"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="26" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol26" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>64</code> versenyző futott az átlagnál (kb. 68.14 perc) jobb időt.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t27" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">27</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Melyik klub futói értek be leghamarabb?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Döntsd el, <strong>melyik klub versenyzői töltötték átlagosan a legrövidebb időt a pályán</strong>. Öt klub indult: Delfin SE, Hegyifutók KE, Pacsirta SC, Szabadidő FC, Városi AC. Mindegyikre ki kell számolnod az átlagidőt – ezt szabadon megteheted segédcellákban a lap jobb oldalán (például a <code>V</code> oszloptól kezdve). Végül a <code>H127</code> cellába írd be a <strong>nyertes klub nevét</strong>, a <code>H128</code> cellába pedig az <strong>átlagát két tizedesjegyre kerekítve</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H127 és H128</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol27"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="27" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol27" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legrövidebb átlagos pályán töltött idő a <code>Városi AC</code> futóinál van: kb. <code>59.61 perc</code>. (A klubok átlaga: Delfin SE 63.68 perc, Hegyifutók KE 69.76 perc, Pacsirta SC 71.52 perc, Szabadidő FC 77.50 perc, Városi AC 59.61 perc)</p></div>
+        </div>
+      </article></div>
+  </section>
+
+  <section class="done-band" id="allDone" aria-live="polite">
+    <h2>Minden feladat kész, a bónusz is!</h2>
+    <p>Mentsd el a munkafüzetet, ellenőrizd, hogy minden képletes cella ki van színezve, és add be a tanárodnak.</p>
+  </section>
+
+  <div class="endnote">Közép szintű ellenőrző feladatsor Excel képletekhez · 3. csoport: futóverseny · 23 kötelező + 4 bónusz feladat. Az adatok kitaláltak, kizárólag értékelési célra készültek.</div>
+
+</main>
+
+<footer class="status">
+  <div class="in">
+    <span><span class="lab">Kötelező:</span> <b id="doneN">0</b> / 23</span>
+    <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="23" aria-valuenow="0" id="bar"><div class="fill" id="fill"></div></div>
+    <span class="opt"><svg class="i" aria-hidden="true" style="vertical-align:-.12em"><use href="#i-star"/></svg> <span class="lab">Bónusz:</span> <b id="doneO">0</b> / 4</span>
+    <button type="button" class="reset" id="reset">Újrakezdés</button>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var MUST = 23, ALAP = 16, KEY = 'ellenorzo-kepletek-g3-v1';
+  function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+
+  function confetti(){
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var c = document.createElement('canvas');
+    c.className = 'cfx';
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    document.body.appendChild(c);
+    var ctx = c.getContext('2d'), cols = ['#e8a013','#2b5490','#1e7a63','#9c3b6a','#b4232a','#36a184'], ps = [];
+    for(var i=0;i<140;i++){
+      ps.push({x:Math.random()*c.width, y:-20-Math.random()*c.height*0.4,
+        w:5+Math.random()*7, h:7+Math.random()*9, vy:2+Math.random()*3.4,
+        vx:-1.4+Math.random()*2.8, a:Math.random()*6.28, va:-0.12+Math.random()*0.24,
+        col:cols[(Math.random()*cols.length)|0]});
+    }
+    var t0 = Date.now();
+    function frame(){
+      ctx.clearRect(0,0,c.width,c.height);
+      ps.forEach(function(p){
+        p.x += p.vx; p.y += p.vy; p.a += p.va;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a);
+        ctx.fillStyle = p.col; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+      });
+      if(Date.now()-t0 < 3400){ window.requestAnimationFrame(frame); }
+      else if(c.parentNode){ c.parentNode.removeChild(c); }
+    }
+    window.requestAnimationFrame(frame);
+  }
+
+  var state = {};
+  try{ state = JSON.parse(lsGet(KEY) || '{}') || {}; }catch(e){ state = {}; }
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+
+  function refresh(){
+    var must=0, opt=0, per={}, tot={}, all=0, alapDone=0;
+    boxes.forEach(function(b){
+      var t=b.closest('.task'), p=t.getAttribute('data-part'), k=t.getAttribute('data-kind');
+      tot[p]=(tot[p]||0)+1;
+      t.classList.toggle('done', b.checked);
+      if(b.checked){
+        per[p]=(per[p]||0)+1; all++;
+        if(k==='must'){ must++; } else { opt++; }
+        if(parseInt(b.getAttribute('data-n'),10) <= ALAP){ alapDone++; }
+      }
+    });
+    document.getElementById('doneN').textContent = must;
+    document.getElementById('doneO').textContent = opt;
+    var fill = document.getElementById('fill');
+    fill.style.width = (100*must/MUST) + '%';
+    fill.classList.toggle('full', must === MUST);
+    document.getElementById('bar').setAttribute('aria-valuenow', must);
+    Array.prototype.forEach.call(document.querySelectorAll('.pcount'), function(el){
+      var p = el.getAttribute('data-pc'), d = per[p]||0, t = tot[p]||0;
+      el.textContent = d + ' / ' + t;
+      el.classList.toggle('full', d === t && t > 0);
+    });
+    var mid = document.getElementById('mid');
+    if(mid){ mid.classList.toggle('done', alapDone === ALAP);
+      document.getElementById('midLeft').textContent = (ALAP - alapDone); }
+    document.getElementById('allDone').classList.toggle('show', all === boxes.length);
+  }
+
+  function counts(){
+    var must=0, all=0;
+    boxes.forEach(function(b){ if(b.checked){ all++; if(b.closest('.task').getAttribute('data-kind')==='must'){ must++; } } });
+    return {must:must, all:all};
+  }
+  boxes.forEach(function(b){ b.checked = !!state[b.getAttribute('data-n')]; });
+  var start = counts();
+  var mustDone = (start.must === MUST), allDoneFlag = (start.all === boxes.length);
+
+  boxes.forEach(function(b){
+    var n = b.getAttribute('data-n');
+    b.addEventListener('change', function(){
+      if(b.checked){ state[n]=1; } else { delete state[n]; }
+      lsSet(KEY, JSON.stringify(state));
+      refresh();
+      var c = counts();
+      if(b.checked){
+        if(!mustDone && c.must === MUST){ mustDone = true; confetti(); }
+        if(!allDoneFlag && c.all === boxes.length){ allDoneFlag = true; confetti(); }
+      } else {
+        if(c.must < MUST){ mustDone = false; }
+        if(c.all < boxes.length){ allDoneFlag = false; }
+      }
+    });
+  });
+  refresh();
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if(window.confirm('Törlöd az összes pipát?')){
+      state = {}; lsSet(KEY, '{}');
+      boxes.forEach(function(b){ b.checked = false; });
+      refresh();
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.hbtn'), function(btn){
+    btn.addEventListener('click', function(){
+      var p = document.getElementById(btn.getAttribute('aria-controls'));
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      if(open){ p.setAttribute('hidden',''); } else { p.removeAttribute('hidden'); }
+    });
+  });
+
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var tbl = document.getElementById(btn.getAttribute('data-tbl'));
+      var rows = [];
+      Array.prototype.forEach.call(tbl.querySelectorAll('tr'), function(tr){
+        var cells = tr.querySelectorAll('td');
+        if(cells.length){ rows.push(Array.prototype.map.call(cells, function(c){ return c.textContent.trim(); }).join('\t')); }
+      });
+      var text = rows.join('\n');
+      function ok(){ btn.classList.add('copied'); setTimeout(function(){ btn.classList.remove('copied'); }, 1800); }
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(ok, function(){ fallbackCopy(text); ok(); });
+      } else { fallbackCopy(text); ok(); }
+    });
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('.tabs a'));
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+        }
+      });
+    }, {rootMargin:'-130px 0px -65% 0px'});
+    ['top','adatok','feladatok','bonus'].forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>
