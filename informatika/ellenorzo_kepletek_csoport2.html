@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excel képletek – ellenőrző · 2. csoport (étterem)</title>
+<style>
+:root{
+  --d9:#331a0b; --d8:#4d2a10; --d7:#6f3f16; --d6:#8a541c; --d5:#b4752f;
+  --d2:#ecd9bd; --d1:#f7ecdb; --d0:#fdf7ef;
+  --bg:#eceff0; --line:#d4dcde; --ink:#17201f; --mut:#56666a; --amber:#e8a013;
+  --m:#2f7fb8; --mb:#e2eef8;
+  --k:#c4601a; --kb:#fdeede;
+  --h:#9c3b6a; --hb:#f9e7ef;
+  --font:"Segoe UI",Calibri,Carlito,system-ui,-apple-system,Arial,sans-serif;
+  --mono:Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:116px}
+body{margin:0;overflow-x:hidden;font-family:var(--font);font-size:17px;line-height:1.56;color:var(--ink);background:var(--bg);padding-bottom:62px}
+strong{font-weight:700}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+code{font-family:var(--mono);font-size:.86em;background:var(--d1);color:var(--d8);border:1px solid var(--d2);padding:0 6px;border-radius:5px;white-space:nowrap}
+kbd{font-family:var(--mono);font-size:.82em;background:#fff;border:1px solid #b9c4c6;border-bottom-width:2px;border-radius:5px;padding:0 6px}
+
+.ribbon{position:sticky;top:0;z-index:40;background:var(--d6);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.ribbon .r1{max-width:1120px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:14px}
+.ribbon svg.logo{width:30px;height:30px;flex:none}
+.ribbon .name{font-weight:700;font-size:1.12rem;line-height:1.2}
+.ribbon .sub{font-size:.85rem;color:rgba(255,255,255,.82);line-height:1.2}
+.ribbon .examtag{margin-left:auto;flex:none;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#b4232a;color:#fff;border-radius:999px;padding:4px 14px;white-space:nowrap}
+.tabs{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{color:rgba(255,255,255,.88);text-decoration:none;padding:7px 18px 6px;font-size:.95rem;border-radius:8px 8px 0 0;white-space:nowrap}
+.tabs a:hover{background:rgba(255,255,255,.14)}
+.tabs a.on{background:var(--bg);color:var(--d7);font-weight:700;box-shadow:inset 0 -3px 0 var(--amber)}
+.tabs a:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px 40px;min-width:0}
+.panelc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 30px;margin-bottom:20px;box-shadow:0 1px 2px rgba(10,30,30,.05)}
+.hero{position:relative;overflow:hidden;padding:34px 34px 28px}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--d2),var(--d1) 60%,transparent 72%);pointer-events:none}
+.hero > *{position:relative;z-index:1}
+.exambar{display:inline-flex;align-items:center;gap:9px;background:#fdecec;border:1px solid #f0b4b4;color:#8e1d23;border-radius:999px;padding:4px 16px;font-size:.87rem;font-weight:700;margin-bottom:14px}
+h1{font-size:clamp(1.85rem,3.6vw,2.6rem);line-height:1.12;margin:0 0 14px;color:var(--d8);font-weight:700;letter-spacing:-.012em;max-width:28ch}
+.lead{font-size:1.08rem;max-width:72ch;margin:0 0 10px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stat{display:inline-flex;align-items:center;gap:9px;padding:7px 16px 7px 12px;border-radius:999px;background:var(--d0);border:1px solid var(--d2);font-size:.97rem}
+.stat b{font-size:1.14rem;font-variant-numeric:tabular-nums}
+.stat i{width:11px;height:11px;border-radius:50%;background:var(--c);display:inline-block}
+.stat.s-must{--c:var(--m)} .stat.s-mid{--c:var(--k)} .stat.s-bonus{--c:var(--h)}
+.stat.ver{background:var(--d8);border-color:var(--d8);color:#fff;font-weight:600}
+.panelc h2{margin:0 0 8px;font-size:1.28rem;color:var(--d8);line-height:1.25}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px}
+.two .panelc{margin-bottom:0}
+.legend{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.legend li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:8px 12px;border-radius:10px;background:#f6f9f9;border:1px solid var(--line)}
+.legend .d{font-size:.93rem;color:var(--mut)}
+.legend .req{font-size:.77rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.req.must{background:var(--d6);color:#fff} .req.bonus{background:var(--hb);color:#7d2450;border:1px solid #dca6bf}
+.ul{list-style:none;margin:10px 0 0;padding:0}
+.ul li{padding:5px 0 5px 20px;position:relative}
+.ul li::before{content:"";position:absolute;left:0;top:.95em;width:8px;height:8px;border-radius:50%;background:var(--d5)}
+.ul li.note{color:var(--mut);font-size:.94rem}
+.ul li.note::before{background:var(--amber)}
+.ul li.warn::before{background:#b4232a}
+
+.view{margin:16px 0 0;min-width:0}
+.view figcaption{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px}
+.view .vt{font-weight:700;color:var(--d8);font-size:1.04rem}
+.view .vw{color:var(--mut);font-size:.9rem}
+.copy{margin-left:auto;font:inherit;font-size:.88rem;font-weight:600;color:var(--d7);background:#fff;border:1.5px solid var(--d6);border-radius:999px;padding:3px 14px;cursor:pointer}
+.copy:hover{background:var(--d6);color:#fff}
+.copy:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy .lbl-ok{display:none}
+.copy.copied{background:var(--d6);color:#fff}
+.copy.copied .lbl{display:none} .copy.copied .lbl-ok{display:inline}
+.scroll{overflow:auto;max-height:360px;border:1px solid var(--line);border-bottom:0;background:#fff;border-radius:8px 8px 0 0}
+.scroll.sm{max-height:none}
+table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;background:#fff}
+.xl th{background:#e5eaeb;color:#43545a;font-weight:400;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:2px 10px;text-align:center;font-size:.8rem;position:sticky;top:0;z-index:2}
+.xl th.rn{width:42px;padding:2px 6px;position:sticky;left:0;top:auto;z-index:1}
+.xl th.corner{width:42px;left:0;z-index:3}
+.xl td{border-right:1px solid #e2e8e9;border-bottom:1px solid #e2e8e9;padding:3px 11px;white-space:nowrap}
+.xl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.xl td.hd{background:var(--d1);font-weight:700;color:var(--d8)}
+.xl tbody tr:nth-child(odd) td{background:#fafcfc}
+.xl tbody tr:nth-child(odd) td.hd{background:var(--d1)}
+.swatch{display:inline-block;width:13px;height:13px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-2px;margin:0 2px}
+.dest .sw{display:inline-block;width:11px;height:11px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-1px;margin:0 3px 0 5px}
+.sheettab{display:flex;background:#e5eaeb;border:1px solid var(--line);border-radius:0 0 8px 8px;overflow:hidden}
+.sheettab span{background:#fff;color:var(--d7);font-weight:700;font-size:.9rem;padding:4px 18px 3px;border-bottom:3px solid var(--d6);border-right:1px solid var(--line)}
+.howto{margin-top:20px;background:#fdf8ea;border:1px solid #ecd79a;border-left:5px solid var(--amber);border-radius:12px;padding:16px 22px 18px}
+.howto h3{margin:0 0 6px;font-size:1.08rem;color:#7a5200;display:flex;align-items:center;gap:9px}
+.howto p{margin:0}
+
+.sec{margin-top:34px}
+.lband{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,var(--d9),var(--d7));color:#fff;border-radius:16px;padding:22px 28px;box-shadow:0 2px 6px rgba(10,30,30,.2)}
+.lband .big{flex:none;width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center;font-size:1.9rem;font-weight:700;line-height:1}
+.lband h2{margin:0;font-size:1.46rem;line-height:1.2;color:#fff}
+.lband p{margin:5px 0 0;color:rgba(255,255,255,.82);max-width:72ch}
+.lband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 11px;border-radius:999px;font-size:.85rem;border:1px solid rgba(255,255,255,.45);color:#fff;white-space:nowrap}
+.xband{display:flex;align-items:center;gap:20px;border-radius:16px;padding:22px 28px;margin-top:34px}
+.xband .big{flex:none;width:60px;height:60px;border-radius:16px;display:grid;place-items:center;font-size:1.7rem}
+.xband h2{margin:0;font-size:1.44rem;line-height:1.2}
+.xband p{margin:5px 0 0;max-width:72ch}
+.xband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.xband.bonus{background:linear-gradient(120deg,#3a1529,#6b2045);color:#f7e5ee;border:2px dashed #cf8fae}
+.xband.bonus .big{background:rgba(255,255,255,.12);color:var(--amber);border:1px solid rgba(255,255,255,.35)}
+.xband.bonus h2{color:#fff}
+.xband.bonus .pill{border-color:rgba(255,255,255,.5);color:#fff}
+
+.pband{display:flex;align-items:center;gap:16px;margin:28px 0 16px;padding:12px 18px;background:var(--d1);border:1px solid var(--d2);border-radius:12px}
+.pband .pn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--d6);color:#fff;font-weight:700;display:grid;place-items:center;font-size:1rem}
+.pband .pb{flex:1;min-width:0}
+.pband h3{margin:0;font-size:1.13rem;color:var(--d8);line-height:1.25}
+.pband p{margin:1px 0 0;color:var(--mut);font-size:.93rem}
+.pband .ptag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right}
+.ptab{font-size:.83rem;color:var(--d7);font-weight:700;background:#fff;border:1px solid var(--d2);padding:1px 11px;border-radius:999px;font-family:var(--mono)}
+.pcount{font-size:.87rem;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcount.full{color:var(--d6);font-weight:700}
+.xband .pcount{color:inherit;font-size:.85rem}
+.xband .pcount.full{color:inherit;font-weight:700}
+
+.tasks{position:relative;margin-top:0}
+.tasks::before{content:"";position:absolute;left:21px;top:22px;bottom:30px;width:2px;background:var(--d2)}
+.task{--c:var(--m);--cb:var(--mb);display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 16px;margin-bottom:14px;position:relative}
+.task.lv-m{--c:var(--m);--cb:var(--mb)}
+.task.lv-k{--c:var(--k);--cb:var(--kb)} .task.lv-h{--c:var(--h);--cb:var(--hb)}
+.num{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;font-size:1rem;display:grid;place-items:center;font-variant-numeric:tabular-nums;border:4px solid var(--bg);box-shadow:0 0 0 1px var(--c)}
+.num svg{display:none;width:20px;height:20px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.task.done .num{background:var(--d6);box-shadow:0 0 0 1px var(--d6)}
+.task.done .num .n{display:none} .task.done .num svg{display:block}
+
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:16px 22px 14px;box-shadow:0 1px 2px rgba(10,30,30,.05);min-width:0;transition:box-shadow .15s,border-color .15s}
+.task:hover .card{box-shadow:0 3px 10px rgba(10,30,30,.1)}
+.task.kind-bonus .card{background:#fdf5f9;border-style:dashed;border-left-style:solid;border-color:#dca6bf;border-left-color:var(--h)}
+.task.done .card{background:var(--d0);border-color:var(--d5);border-left-color:var(--d6);border-style:solid}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap}
+.head h4{margin:0;font-size:1.14rem;line-height:1.3;color:var(--d8);flex:1 1 240px}
+.chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lv{display:inline-flex;align-items:center;gap:6px;font-size:.81rem;font-weight:700;color:var(--c);background:var(--cb);padding:2px 11px 2px 9px;border-radius:999px;white-space:nowrap}
+.lv i{width:8px;height:8px;border-radius:50%;background:var(--c);display:inline-block}
+.tag{font-size:.73rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.tag.bonus{background:var(--h);color:#fff}
+
+.path{display:flex;align-items:flex-start;gap:8px;margin:9px 0 11px;font-size:.85rem}
+.path > span{display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px}
+.path .pi{color:var(--d5);font-size:1.15rem;margin-top:3px}
+.crumb{background:var(--d1);color:var(--d8);border:1px solid var(--d2);border-radius:6px;padding:1px 9px;line-height:1.5;font-family:var(--mono);font-size:.93em}
+.crumb:first-of-type{background:var(--d6);border-color:var(--d6);color:#fff;font-weight:600;font-family:var(--font)}
+.crumb.solo{background:#f2e7ef;border-color:#dcb9d0;color:#6b2045;font-family:var(--font);font-weight:600}
+.sep{color:#8ba0a5;font-style:normal;font-weight:700}
+.txt{margin:0;max-width:84ch}
+.txt strong{color:var(--d9)}
+.txt + .txt{margin-top:8px}
+
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;margin-top:14px;padding-top:11px;border-top:1px dashed #d6dedf}
+.helps{display:flex;gap:10px;flex-wrap:wrap;align-items:center;min-height:30px}
+.dest{font-size:.84rem;color:var(--mut);background:#f4f7f7;border:1px solid var(--line);border-radius:999px;padding:3px 12px;white-space:nowrap}
+.dest b{font-family:var(--mono);color:var(--d7)}
+.hbtn{font:inherit;font-size:.87rem;font-weight:700;display:inline-flex;align-items:center;gap:7px;padding:4px 13px 4px 10px;border-radius:999px;cursor:pointer;background:#fff;border:1.5px solid var(--bc);color:var(--bt)}
+.hbtn.chkb{--bc:var(--d6);--bt:var(--d7)}
+.hbtn:hover,.hbtn[aria-expanded="true"]{background:var(--bc);color:#fff}
+.hbtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.hbtn svg.i{font-size:1.1em}
+.panel{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:.96rem;max-width:78ch}
+.panel p{margin:0}
+.panel .plab{display:block;font-size:.77rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.panel.chk{background:var(--d0);border:1px solid var(--d2)} .panel.chk .plab{color:var(--d7)}
+.panel[hidden]{display:none}
+
+.ok{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;font-weight:700;color:var(--d7);-webkit-user-select:none;user-select:none;position:relative}
+.ok input{position:absolute;opacity:0;width:0;height:0}
+.ok .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--d5);background:#fff;display:grid;place-items:center;flex:none}
+.ok .box svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.ok input:checked + .box{background:var(--d6);border-color:var(--d6)}
+.ok input:checked + .box svg{opacity:1}
+.ok input:focus-visible + .box{outline:3px solid var(--amber);outline-offset:2px}
+
+.milestone{position:relative;margin:34px 0 0;padding:20px 26px;border-radius:16px;background:#fff;border:2px dashed #a6b6b8;display:flex;align-items:center;gap:18px}
+.milestone .mi{flex:none;width:52px;height:52px;border-radius:50%;background:var(--d1);color:var(--d6);display:grid;place-items:center;font-size:1.5rem}
+.milestone h2{margin:0;font-size:1.26rem;color:var(--d8)}
+.milestone p{margin:3px 0 0;color:var(--mut)}
+.milestone .m-done{display:none}
+.milestone.done{background:var(--d6);border:2px solid var(--d7);color:#fff}
+.milestone.done .mi{background:#fff;color:var(--d6)}
+.milestone.done h2,.milestone.done p{color:#fff}
+.milestone.done .m-todo{display:none} .milestone.done .m-done{display:block}
+.done-band{display:none;margin-top:24px;background:linear-gradient(120deg,var(--d9),var(--d6));color:#fff;padding:24px 30px;border-radius:16px}
+.done-band.show{display:block}
+.done-band h2{margin:0 0 4px;font-size:1.46rem}
+.done-band p{margin:0}
+.endnote{padding:22px 4px 0;color:var(--mut);font-size:.89rem}
+
+.status{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--d8);color:#fff;font-size:.94rem;box-shadow:0 -2px 8px rgba(0,0,0,.15)}
+.status .in{max-width:1120px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:14px}
+.status b{font-variant-numeric:tabular-nums}
+.status .opt{color:#ffe3a8;white-space:nowrap}
+.track{flex:1;height:9px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;min-width:60px}
+.fill{height:100%;width:0;background:var(--amber);transition:width .25s,background .25s}
+.fill.full{background:#7be0a5}
+.reset{font:inherit;font-size:.85rem;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:2px 12px;cursor:pointer;white-space:nowrap}
+.reset:hover{background:rgba(255,255,255,.16)}
+.cfx{position:fixed;inset:0;pointer-events:none;z-index:60}
+
+@media (max-width:880px){
+  body{font-size:16.5px}
+  .wrap{padding:16px 12px 30px}
+  .panelc{padding:20px 18px}
+  .hero{padding:26px 20px 22px}
+  .two{grid-template-columns:minmax(0,1fr)}
+  .tasks::before{left:15px}
+  .task{grid-template-columns:32px minmax(0,1fr);gap:0 10px}
+  .num{width:32px;height:32px;font-size:.85rem;border-width:3px}
+  .num svg{width:15px;height:15px}
+  .card{padding:14px 15px 12px}
+  .lband,.xband{padding:18px 16px;gap:14px;align-items:flex-start}
+  .lband .big,.xband .big{width:46px;height:46px;font-size:1.35rem;border-radius:12px}
+  .lband h2,.xband h2{font-size:1.22rem}
+  .pband{flex-wrap:wrap;gap:8px 12px;padding:10px 12px}
+  .pband .ptag{flex-direction:row;align-items:center;gap:10px;margin-left:46px}
+  .ribbon .sub,.ribbon .examtag{display:none}
+  .ribbon .r1{padding:8px 12px}
+  .tabs{padding:0 8px}
+  .tabs a{padding:7px 12px 6px}
+  .view figcaption .copy{margin-left:0}
+  .milestone{flex-direction:column;align-items:flex-start;padding:18px}
+  .status .in{gap:8px;padding:7px 12px;font-size:.85rem}
+  .status .opt .lab{display:none}
+  .legend li{grid-template-columns:1fr auto}
+  .legend .d{grid-column:1 / -1;order:3}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
+@media print{
+  body{background:#fff;padding:0;font-size:11.5pt}
+  .ribbon,.status,.copy,.ok,.hbtn{display:none !important}
+  .panel.chk[hidden]{display:block !important}
+  .wrap{padding:0}
+  .scroll{max-height:none}
+  .card,.panelc{box-shadow:none}
+  .task{break-inside:avoid}
+  .lband,.xband,.num,.crumb,.lv,.tag,.pband,.exambar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 3 1.1-6.2L3 9.7l6.2-.9z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></symbol>
+  <symbol id="i-sheet" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 9h18M8 9v10"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M3 14.5h18M9 9v11"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+</svg>
+
+<header class="ribbon">
+  <div class="r1">
+    <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="1.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+    </svg>
+    <div>
+      <div class="name">Excel képletek – ellenőrző · Étterem</div>
+      <div class="sub">SUM · AVERAGE · MIN · MAX · COUNT · ROUND · COUNTIF · SUMIF · IF · AND · OR</div>
+    </div>
+    <span class="examtag">Ellenőrző · 2. csoport</span>
+  </div>
+  <nav class="tabs" aria-label="Navigáció">
+    <a href="#top" class="on">Kezdés</a>
+    <a href="#adatok">Adatok</a>
+    <a href="#feladatok">Feladatok</a>
+    <a href="#bonus">Bónusz</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="panelc hero" id="top">
+    <span class="exambar"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg> Önálló munka · segítség nélkül</span>
+    <h1>Étterem – Excel képletek ellenőrző</h1>
+    <p class="lead">Egy étterem <strong>egy napjának 105 rendelésével</strong> dolgozol. A feladatod az, hogy a nyers rendelési adatokból <strong>Excel-képletekkel</strong> állítsd elő azokat a számokat, amelyeket az étterem vezetője a napi zárásnál kér.</p>
+    <p class="lead">A feladatsor <strong>23 kötelező</strong> feladatból áll: ezek <strong>70%-a közepes szintű</strong>
+    (itt megmondjuk, melyik függvényre lesz szükséged, de azt nem, hogyan építsd fel a képletet),
+    <strong>30%-a pedig közepesen nehéz</strong> (ott már neked kell eldöntened, melyik függvény vezet célra).
+    A végén <strong>4 nehéz bónuszfeladat</strong> vár arra, aki mindennel elkészült.</p>
+    <div class="stats">
+      <span class="stat s-must"><i></i><b>16</b> közepes</span>
+      <span class="stat s-mid"><i></i><b>7</b> közepesen nehéz</span>
+      <span class="stat s-bonus"><i></i><b>4</b> nehéz bónusz</span>
+      <span class="stat ver"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg> 1 munkalap · 105 adatsor</span>
+      <span class="stat ver"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg> kb. 60–75 perc</span>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="panelc">
+      <h2>Jelölések</h2>
+      <ul class="legend">
+        <li style="--c:var(--m);--cb:var(--mb)"><span class="lv"><i></i>Közepes</span><span class="d">a függvény nevét megadjuk, a képletet neked kell megírnod</span><span class="req must">kötelező</span></li>
+        <li style="--c:var(--k);--cb:var(--kb)"><span class="lv"><i></i>Közepesen nehéz</span><span class="d">a függvényt is neked kell kiválasztanod</span><span class="req must">kötelező</span></li>
+        <li style="--c:var(--h);--cb:var(--hb)"><span class="lv"><i></i>Nehéz</span><span class="d">egymásba ágyazott vagy többlépéses megoldás</span><span class="req bonus">bónusz</span></li>
+      </ul>
+      <ul class="ul">
+        <li>Ha egy feladattal elkészültél, pipáld ki a kártya alján a <strong>Kész</strong> gombot – a lap alján
+        folyamatosan látod, hol tartasz.</li>
+        <li>A <strong>Megoldás</strong> gomb <strong>nem a képletet</strong> adja meg, csak a végeredményt. Ebből
+        magad tudod ellenőrizni, jól számoltál-e.</li>
+        <li class="note">Ahol a feladat azt írja, hogy <em>„minden sorra”</em>, ott a képletet az első adatsorba írd
+        meg, majd <strong>húzd le</strong> az utolsó adatsorig.</li>
+      </ul>
+    </section>
+
+    <section class="panelc">
+      <h2>Mielőtt elkezded</h2>
+      <ul class="ul">
+        <li>Nyiss egy új Excel munkafüzetet. A munkalap neve maradhat <code>Munka1</code>.</li>
+        <li>Illeszd be a <strong>A nap rendelései</strong> táblázatot az <code>A1</code> cellától a
+        <code>Munka1</code> munkalapra.</li>
+        <li>A táblázat <strong>csak adatokat tartalmaz</strong>. Hogy melyik cellába vagy oszlopba kerül egy-egy
+        eredmény, azt mindig a feladat kártyáján találod meg.</li>
+        <li>Minden cellát, amelybe képletet írtál, <strong>tölts ki színnel</strong>. <span class="swatch"></span></li>
+        <li>Mentsd el a fájlt <strong>ellenorzo_etterem_vezeteknev.xlsx</strong> néven, és munka közben nyomj gyakran
+        <kbd>Ctrl</kbd>+<kbd>S</kbd>-t.</li>
+        <li class="note">A feladatok <strong>angol függvényneveket</strong> használnak. Magyar nyelvű Excelben a magyar
+        nevet írd be: SUM → SZUM, AVERAGE → ÁTLAG, COUNT → DARAB, ROUND → KEREKÍTÉS,
+        COUNTIF → DARABTELI, SUMIF → SZUMHA, IF → HA, AND → ÉS, OR → VAGY. Az argumentumokat
+        magyar Excelben <strong>pontosvessző</strong> választja el.</li>
+        <li class="warn">Ez <strong>ellenőrző</strong>, nem gyakorlás: egyedül dolgozz, és csak olyan függvényt
+        használj, amelyet a gyakorló feladatsorokban már megtanultál.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section class="sec" id="adatok">
+    <header class="lband">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg></div>
+      <div>
+        <h2>Munka1 – Egy nap rendelései az étteremben</h2>
+        <p>105 rendelés adatai 11 oszlopban. A napi záráshoz szükséges további oszlopokat képletekkel neked kell feltöltened.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>105 adatsor</span><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-table"/></svg>11 adatoszlop</span></div>
+      </div>
+    </header>
+
+    <section class="panelc" style="margin-top:20px">
+      <h2>A munkalap adatai</h2>
+      <p style="margin:0;font-size:1rem">
+        Kattints a <strong>Másolás Excelbe</strong> gombra, majd illeszd be (<kbd>Ctrl</kbd>+<kbd>V</kbd>) a megadott
+        cellába. A táblázat görgethető – a fejléc és a sorszámok a helyükön maradnak.
+      </p>
+      <figure class="view">
+        <figcaption>
+          <span class="vt">A nap rendelései</span>
+          <span class="vw">105 adatsor · az <code>A1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl-main"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Kimásolva!</span></button>
+        </figcaption>
+        <div class="scroll"><table class="xl" id="tbl-main"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th><th>K</th></tr></thead><tbody><tr><th class="rn">1</th><td class="hd">Rendelés kódja</td><td class="hd">Étel neve</td><td class="hd">Kategória</td><td class="hd">Pincér</td><td class="hd">Napszak</td><td class="hd">Egységár (Ft)</td><td class="hd">Darabszám</td><td class="hd">Összeg (Ft)</td><td class="hd">Fizetési mód</td><td class="hd">Vendégek száma</td><td class="hd">Értékelés (1–5)</td></tr><tr><th class="rn">2</th><td>R001</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">3 590</td><td class="n">7</td><td class="n">25 130</td><td>Készpénz</td><td class="n">4</td><td class="n">3</td></tr><tr><th class="rn">3</th><td>R002</td><td>Somlói galuska</td><td>Desszert</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">1 790</td><td class="n">4</td><td class="n">7 160</td><td>Kártya</td><td class="n">4</td><td class="n">3</td></tr><tr><th class="rn">4</th><td>R003</td><td>Lazacfilé párolt zöldséggel</td><td>Főétel</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">5 490</td><td class="n">5</td><td class="n">27 450</td><td>Készpénz</td><td class="n">3</td><td class="n">3</td></tr><tr><th class="rn">5</th><td>R004</td><td>Bécsi szelet</td><td>Főétel</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">3 890</td><td class="n">9</td><td class="n">35 010</td><td>Kártya</td><td class="n">6</td><td class="n">4</td></tr><tr><th class="rn">6</th><td>R005</td><td>Gesztenyepüré</td><td>Desszert</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">1 490</td><td class="n">1</td><td class="n">1 490</td><td>Készpénz</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">7</th><td>R006</td><td>Kaprosuborka-saláta</td><td>Saláta</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">1 190</td><td class="n">4</td><td class="n">4 760</td><td>Készpénz</td><td class="n">5</td><td class="n">4</td></tr><tr><th class="rn">8</th><td>R007</td><td>Töltött paprika</td><td>Főétel</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">3 190</td><td class="n">4</td><td class="n">12 760</td><td>Kártya</td><td class="n">1</td><td class="n"></td></tr><tr><th class="rn">9</th><td>R008</td><td>Narancslé</td><td>Ital</td><td>Orosz Dávid</td><td>Ebéd</td><td class="n">890</td><td class="n">9</td><td class="n">8 010</td><td>Készpénz</td><td class="n">5</td><td class="n">5</td></tr><tr><th class="rn">10</th><td>R009</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Orosz Dávid</td><td>Ebéd</td><td class="n">590</td><td class="n">7</td><td class="n">4 130</td><td>Készpénz</td><td class="n">1</td><td class="n">2</td></tr><tr><th class="rn">11</th><td>R010</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Szabó Péter</td><td>Ebéd</td><td class="n">590</td><td class="n">5</td><td class="n">2 950</td><td>Készpénz</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">12</th><td>R011</td><td>Libamájpástétom</td><td>Előétel</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">2 450</td><td class="n">9</td><td class="n">22 050</td><td>Kártya</td><td class="n">6</td><td class="n">5</td></tr><tr><th class="rn">13</th><td>R012</td><td>Kávé</td><td>Ital</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">790</td><td class="n">7</td><td class="n">5 530</td><td>Kártya</td><td class="n">8</td><td class="n">2</td></tr><tr><th class="rn">14</th><td>R013</td><td>Lazacfilé párolt zöldséggel</td><td>Főétel</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">5 490</td><td class="n">7</td><td class="n">38 430</td><td>Készpénz</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">15</th><td>R014</td><td>Húsleves cérnametélttel</td><td>Előétel</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">1 290</td><td class="n">1</td><td class="n">1 290</td><td>Készpénz</td><td class="n">6</td><td class="n">2</td></tr><tr><th class="rn">16</th><td>R015</td><td>Kávé</td><td>Ital</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">790</td><td class="n">7</td><td class="n">5 530</td><td>Készpénz</td><td class="n">2</td><td class="n">2</td></tr><tr><th class="rn">17</th><td>R016</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">3 590</td><td class="n">4</td><td class="n">14 360</td><td>Készpénz</td><td class="n">6</td><td class="n">4</td></tr><tr><th class="rn">18</th><td>R017</td><td>Vegán lencsefasírt</td><td>Főétel</td><td>Budai Eszter</td><td>Ebéd</td><td class="n">2 990</td><td class="n">8</td><td class="n">23 920</td><td>Készpénz</td><td class="n">8</td><td class="n">5</td></tr><tr><th class="rn">19</th><td>R018</td><td>Húsleves cérnametélttel</td><td>Előétel</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">1 290</td><td class="n">7</td><td class="n">9 030</td><td>Készpénz</td><td class="n">7</td><td class="n">5</td></tr><tr><th class="rn">20</th><td>R019</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">3 590</td><td class="n">7</td><td class="n">25 130</td><td>Kártya</td><td class="n">7</td><td class="n">5</td></tr><tr><th class="rn">21</th><td>R020</td><td>Rántott camembert</td><td>Előétel</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">2 190</td><td class="n">9</td><td class="n">19 710</td><td>Készpénz</td><td class="n">6</td><td class="n"></td></tr><tr><th class="rn">22</th><td>R021</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">590</td><td class="n">4</td><td class="n">2 360</td><td>Kártya</td><td class="n">1</td><td class="n">4</td></tr><tr><th class="rn">23</th><td>R022</td><td>Narancslé</td><td>Ital</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">890</td><td class="n">8</td><td class="n">7 120</td><td>Készpénz</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">24</th><td>R023</td><td>Somlói galuska</td><td>Desszert</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">1 790</td><td class="n">6</td><td class="n">10 740</td><td>Készpénz</td><td class="n">7</td><td class="n">3</td></tr><tr><th class="rn">25</th><td>R024</td><td>Bécsi szelet</td><td>Főétel</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">3 890</td><td class="n">9</td><td class="n">35 010</td><td>Kártya</td><td class="n">2</td><td class="n">2</td></tr><tr><th class="rn">26</th><td>R025</td><td>Kávé</td><td>Ital</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">790</td><td class="n">1</td><td class="n">790</td><td>Kártya</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">27</th><td>R026</td><td>Almás pite</td><td>Desszert</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">1 290</td><td class="n">3</td><td class="n">3 870</td><td>Készpénz</td><td class="n">1</td><td class="n">5</td></tr><tr><th class="rn">28</th><td>R027</td><td>Kaprosuborka-saláta</td><td>Saláta</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">1 190</td><td class="n">3</td><td class="n">3 570</td><td>Készpénz</td><td class="n">5</td><td class="n">4</td></tr><tr><th class="rn">29</th><td>R028</td><td>Vegán lencsefasírt</td><td>Főétel</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">2 990</td><td class="n">1</td><td class="n">2 990</td><td>Készpénz</td><td class="n">5</td><td class="n">4</td></tr><tr><th class="rn">30</th><td>R029</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Szabó Péter</td><td>Ebéd</td><td class="n">3 590</td><td class="n">6</td><td class="n">21 540</td><td>Kártya</td><td class="n">8</td><td class="n">5</td></tr><tr><th class="rn">31</th><td>R030</td><td>Cézár saláta</td><td>Saláta</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">2 690</td><td class="n">9</td><td class="n">24 210</td><td>Kártya</td><td class="n">6</td><td class="n">5</td></tr><tr><th class="rn">32</th><td>R031</td><td>Húsleves cérnametélttel</td><td>Előétel</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">1 290</td><td class="n">2</td><td class="n">2 580</td><td>Kártya</td><td class="n">1</td><td class="n">5</td></tr><tr><th class="rn">33</th><td>R032</td><td>Gesztenyepüré</td><td>Desszert</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">1 490</td><td class="n">8</td><td class="n">11 920</td><td>Kártya</td><td class="n">6</td><td class="n">3</td></tr><tr><th class="rn">34</th><td>R033</td><td>Marhapörkölt galuskával</td><td>Főétel</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">4 290</td><td class="n">5</td><td class="n">21 450</td><td>Kártya</td><td class="n">1</td><td class="n">4</td></tr><tr><th class="rn">35</th><td>R034</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">590</td><td class="n">7</td><td class="n">4 130</td><td>Kártya</td><td class="n">7</td><td class="n"></td></tr><tr><th class="rn">36</th><td>R035</td><td>Bécsi szelet</td><td>Főétel</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">3 890</td><td class="n">3</td><td class="n">11 670</td><td>Kártya</td><td class="n">8</td><td class="n">5</td></tr><tr><th class="rn">37</th><td>R036</td><td>Lazacfilé párolt zöldséggel</td><td>Főétel</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">5 490</td><td class="n">5</td><td class="n">27 450</td><td>Készpénz</td><td class="n">5</td><td class="n">4</td></tr><tr><th class="rn">38</th><td>R037</td><td>Házi limonádé</td><td>Ital</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">990</td><td class="n">5</td><td class="n">4 950</td><td>Készpénz</td><td class="n">5</td><td class="n">4</td></tr><tr><th class="rn">39</th><td>R038</td><td>Gesztenyepüré</td><td>Desszert</td><td>Orosz Dávid</td><td>Ebéd</td><td class="n">1 490</td><td class="n">4</td><td class="n">5 960</td><td>Készpénz</td><td class="n">8</td><td class="n">4</td></tr><tr><th class="rn">40</th><td>R039</td><td>Narancslé</td><td>Ital</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">890</td><td class="n">6</td><td class="n">5 340</td><td>Kártya</td><td class="n">7</td><td class="n">4</td></tr><tr><th class="rn">41</th><td>R040</td><td>Narancslé</td><td>Ital</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">890</td><td class="n">1</td><td class="n">890</td><td>Készpénz</td><td class="n">4</td><td class="n">4</td></tr><tr><th class="rn">42</th><td>R041</td><td>Somlói galuska</td><td>Desszert</td><td>Orosz Dávid</td><td>Ebéd</td><td class="n">1 790</td><td class="n">5</td><td class="n">8 950</td><td>Kártya</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">43</th><td>R042</td><td>Kávé</td><td>Ital</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">790</td><td class="n">7</td><td class="n">5 530</td><td>Készpénz</td><td class="n">7</td><td class="n">3</td></tr><tr><th class="rn">44</th><td>R043</td><td>Almás pite</td><td>Desszert</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">1 290</td><td class="n">5</td><td class="n">6 450</td><td>Készpénz</td><td class="n">4</td><td class="n">2</td></tr><tr><th class="rn">45</th><td>R044</td><td>Libamájpástétom</td><td>Előétel</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">2 450</td><td class="n">8</td><td class="n">19 600</td><td>Készpénz</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">46</th><td>R045</td><td>Húsleves cérnametélttel</td><td>Előétel</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">1 290</td><td class="n">6</td><td class="n">7 740</td><td>Kártya</td><td class="n">8</td><td class="n">5</td></tr><tr><th class="rn">47</th><td>R046</td><td>Húsleves cérnametélttel</td><td>Előétel</td><td>Budai Eszter</td><td>Ebéd</td><td class="n">1 290</td><td class="n">8</td><td class="n">10 320</td><td>Kártya</td><td class="n">8</td><td class="n">2</td></tr><tr><th class="rn">48</th><td>R047</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">3 590</td><td class="n">2</td><td class="n">7 180</td><td>Készpénz</td><td class="n">2</td><td class="n">3</td></tr><tr><th class="rn">49</th><td>R048</td><td>Cézár saláta</td><td>Saláta</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">2 690</td><td class="n">4</td><td class="n">10 760</td><td>Kártya</td><td class="n">8</td><td class="n"></td></tr><tr><th class="rn">50</th><td>R049</td><td>Görög saláta</td><td>Saláta</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">2 390</td><td class="n">4</td><td class="n">9 560</td><td>Kártya</td><td class="n">2</td><td class="n">5</td></tr><tr><th class="rn">51</th><td>R050</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">590</td><td class="n">4</td><td class="n">2 360</td><td>Készpénz</td><td class="n">7</td><td class="n">5</td></tr><tr><th class="rn">52</th><td>R051</td><td>Csokoládétorta</td><td>Desszert</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">1 890</td><td class="n">9</td><td class="n">17 010</td><td>Készpénz</td><td class="n">1</td><td class="n">2</td></tr><tr><th class="rn">53</th><td>R052</td><td>Görög saláta</td><td>Saláta</td><td>Szabó Péter</td><td>Ebéd</td><td class="n">2 390</td><td class="n">9</td><td class="n">21 510</td><td>Kártya</td><td class="n">1</td><td class="n">4</td></tr><tr><th class="rn">54</th><td>R053</td><td>Görög saláta</td><td>Saláta</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">2 390</td><td class="n">7</td><td class="n">16 730</td><td>Készpénz</td><td class="n">2</td><td class="n">2</td></tr><tr><th class="rn">55</th><td>R054</td><td>Csokoládétorta</td><td>Desszert</td><td>Szabó Péter</td><td>Ebéd</td><td class="n">1 890</td><td class="n">8</td><td class="n">15 120</td><td>Készpénz</td><td class="n">4</td><td class="n">3</td></tr><tr><th class="rn">56</th><td>R055</td><td>Bécsi szelet</td><td>Főétel</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">3 890</td><td class="n">7</td><td class="n">27 230</td><td>Kártya</td><td class="n">8</td><td class="n">5</td></tr><tr><th class="rn">57</th><td>R056</td><td>Gesztenyepüré</td><td>Desszert</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">1 490</td><td class="n">6</td><td class="n">8 940</td><td>Kártya</td><td class="n">8</td><td class="n">2</td></tr><tr><th class="rn">58</th><td>R057</td><td>Bécsi szelet</td><td>Főétel</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">3 890</td><td class="n">3</td><td class="n">11 670</td><td>Kártya</td><td class="n">4</td><td class="n">2</td></tr><tr><th class="rn">59</th><td>R058</td><td>Libamájpástétom</td><td>Előétel</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">2 450</td><td class="n">9</td><td class="n">22 050</td><td>Kártya</td><td class="n">8</td><td class="n">4</td></tr><tr><th class="rn">60</th><td>R059</td><td>Marhapörkölt galuskával</td><td>Főétel</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">4 290</td><td class="n">2</td><td class="n">8 580</td><td>Kártya</td><td class="n">5</td><td class="n"></td></tr><tr><th class="rn">61</th><td>R060</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">3 590</td><td class="n">3</td><td class="n">10 770</td><td>Kártya</td><td class="n">3</td><td class="n">3</td></tr><tr><th class="rn">62</th><td>R061</td><td>Almás pite</td><td>Desszert</td><td>Orosz Dávid</td><td>Ebéd</td><td class="n">1 290</td><td class="n">7</td><td class="n">9 030</td><td>Készpénz</td><td class="n">6</td><td class="n">5</td></tr><tr><th class="rn">63</th><td>R062</td><td>Almás pite</td><td>Desszert</td><td>Nagy Zsolt</td><td>Vacsora</td><td class="n">1 290</td><td class="n">8</td><td class="n">10 320</td><td>Készpénz</td><td class="n">1</td><td class="n">2</td></tr><tr><th class="rn">64</th><td>R063</td><td>Gesztenyepüré</td><td>Desszert</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">1 490</td><td class="n">4</td><td class="n">5 960</td><td>Készpénz</td><td class="n">2</td><td class="n">5</td></tr><tr><th class="rn">65</th><td>R064</td><td>Almás pite</td><td>Desszert</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">1 290</td><td class="n">6</td><td class="n">7 740</td><td>Kártya</td><td class="n">2</td><td class="n">3</td></tr><tr><th class="rn">66</th><td>R065</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">3 590</td><td class="n">3</td><td class="n">10 770</td><td>Kártya</td><td class="n">5</td><td class="n">3</td></tr><tr><th class="rn">67</th><td>R066</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">590</td><td class="n">2</td><td class="n">1 180</td><td>Kártya</td><td class="n">1</td><td class="n">3</td></tr><tr><th class="rn">68</th><td>R067</td><td>Marhapörkölt galuskával</td><td>Főétel</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">4 290</td><td class="n">1</td><td class="n">4 290</td><td>Készpénz</td><td class="n">5</td><td class="n">5</td></tr><tr><th class="rn">69</th><td>R068</td><td>Házi limonádé</td><td>Ital</td><td>Szabó Péter</td><td>Ebéd</td><td class="n">990</td><td class="n">3</td><td class="n">2 970</td><td>Készpénz</td><td class="n">4</td><td class="n">4</td></tr><tr><th class="rn">70</th><td>R069</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Budai Eszter</td><td>Ebéd</td><td class="n">590</td><td class="n">1</td><td class="n">590</td><td>Készpénz</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">71</th><td>R070</td><td>Kaprosuborka-saláta</td><td>Saláta</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">1 190</td><td class="n">6</td><td class="n">7 140</td><td>Kártya</td><td class="n">1</td><td class="n">2</td></tr><tr><th class="rn">72</th><td>R071</td><td>Bécsi szelet</td><td>Főétel</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">3 890</td><td class="n">9</td><td class="n">35 010</td><td>Kártya</td><td class="n">3</td><td class="n">2</td></tr><tr><th class="rn">73</th><td>R072</td><td>Marhapörkölt galuskával</td><td>Főétel</td><td>Orosz Dávid</td><td>Ebéd</td><td class="n">4 290</td><td class="n">2</td><td class="n">8 580</td><td>Kártya</td><td class="n">5</td><td class="n">2</td></tr><tr><th class="rn">74</th><td>R073</td><td>Rántott camembert</td><td>Előétel</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">2 190</td><td class="n">5</td><td class="n">10 950</td><td>Kártya</td><td class="n">8</td><td class="n"></td></tr><tr><th class="rn">75</th><td>R074</td><td>Francia hagymakrémleves</td><td>Előétel</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">1 690</td><td class="n">5</td><td class="n">8 450</td><td>Kártya</td><td class="n">1</td><td class="n">4</td></tr><tr><th class="rn">76</th><td>R075</td><td>Kávé</td><td>Ital</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">790</td><td class="n">4</td><td class="n">3 160</td><td>Kártya</td><td class="n">8</td><td class="n">2</td></tr><tr><th class="rn">77</th><td>R076</td><td>Töltött paprika</td><td>Főétel</td><td>Szabó Péter</td><td>Ebéd</td><td class="n">3 190</td><td class="n">6</td><td class="n">19 140</td><td>Készpénz</td><td class="n">7</td><td class="n">4</td></tr><tr><th class="rn">78</th><td>R077</td><td>Vegán lencsefasírt</td><td>Főétel</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">2 990</td><td class="n">9</td><td class="n">26 910</td><td>Kártya</td><td class="n">7</td><td class="n">5</td></tr><tr><th class="rn">79</th><td>R078</td><td>Almás pite</td><td>Desszert</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">1 290</td><td class="n">4</td><td class="n">5 160</td><td>Kártya</td><td class="n">6</td><td class="n">2</td></tr><tr><th class="rn">80</th><td>R079</td><td>Cézár saláta</td><td>Saláta</td><td>Tamás Réka</td><td>Ebéd</td><td class="n">2 690</td><td class="n">3</td><td class="n">8 070</td><td>Kártya</td><td class="n">5</td><td class="n">5</td></tr><tr><th class="rn">81</th><td>R080</td><td>Kaprosuborka-saláta</td><td>Saláta</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">1 190</td><td class="n">1</td><td class="n">1 190</td><td>Kártya</td><td class="n">1</td><td class="n">2</td></tr><tr><th class="rn">82</th><td>R081</td><td>Cézár saláta</td><td>Saláta</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">2 690</td><td class="n">8</td><td class="n">21 520</td><td>Készpénz</td><td class="n">8</td><td class="n">5</td></tr><tr><th class="rn">83</th><td>R082</td><td>Narancslé</td><td>Ital</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">890</td><td class="n">1</td><td class="n">890</td><td>Készpénz</td><td class="n">1</td><td class="n">5</td></tr><tr><th class="rn">84</th><td>R083</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">590</td><td class="n">4</td><td class="n">2 360</td><td>Készpénz</td><td class="n">4</td><td class="n">5</td></tr><tr><th class="rn">85</th><td>R084</td><td>Bécsi szelet</td><td>Főétel</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">3 890</td><td class="n">7</td><td class="n">27 230</td><td>Kártya</td><td class="n">6</td><td class="n">3</td></tr><tr><th class="rn">86</th><td>R085</td><td>Almás pite</td><td>Desszert</td><td>Nagy Zsolt</td><td>Vacsora</td><td class="n">1 290</td><td class="n">8</td><td class="n">10 320</td><td>Kártya</td><td class="n">6</td><td class="n">2</td></tr><tr><th class="rn">87</th><td>R086</td><td>Húsleves cérnametélttel</td><td>Előétel</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">1 290</td><td class="n">8</td><td class="n">10 320</td><td>Készpénz</td><td class="n">3</td><td class="n">3</td></tr><tr><th class="rn">88</th><td>R087</td><td>Húsleves cérnametélttel</td><td>Előétel</td><td>Nagy Zsolt</td><td>Ebéd</td><td class="n">1 290</td><td class="n">6</td><td class="n">7 740</td><td>Kártya</td><td class="n">8</td><td class="n">3</td></tr><tr><th class="rn">89</th><td>R088</td><td>Házi limonádé</td><td>Ital</td><td>Nagy Zsolt</td><td>Vacsora</td><td class="n">990</td><td class="n">5</td><td class="n">4 950</td><td>Kártya</td><td class="n">2</td><td class="n">3</td></tr><tr><th class="rn">90</th><td>R089</td><td>Ásványvíz 0,5 l</td><td>Ital</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">590</td><td class="n">4</td><td class="n">2 360</td><td>Készpénz</td><td class="n">3</td><td class="n"></td></tr><tr><th class="rn">91</th><td>R090</td><td>Házi limonádé</td><td>Ital</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">990</td><td class="n">7</td><td class="n">6 930</td><td>Kártya</td><td class="n">8</td><td class="n">4</td></tr><tr><th class="rn">92</th><td>R091</td><td>Marhapörkölt galuskával</td><td>Főétel</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">4 290</td><td class="n">7</td><td class="n">30 030</td><td>Készpénz</td><td class="n">2</td><td class="n">4</td></tr><tr><th class="rn">93</th><td>R092</td><td>Bécsi szelet</td><td>Főétel</td><td>Budai Eszter</td><td>Ebéd</td><td class="n">3 890</td><td class="n">4</td><td class="n">15 560</td><td>Kártya</td><td class="n">6</td><td class="n">3</td></tr><tr><th class="rn">94</th><td>R093</td><td>Vegán lencsefasírt</td><td>Főétel</td><td>Budai Eszter</td><td>Ebéd</td><td class="n">2 990</td><td class="n">3</td><td class="n">8 970</td><td>Készpénz</td><td class="n">8</td><td class="n">2</td></tr><tr><th class="rn">95</th><td>R094</td><td>Görög saláta</td><td>Saláta</td><td>Budai Eszter</td><td>Vacsora</td><td class="n">2 390</td><td class="n">5</td><td class="n">11 950</td><td>Kártya</td><td class="n">4</td><td class="n">2</td></tr><tr><th class="rn">96</th><td>R095</td><td>Vegán lencsefasírt</td><td>Főétel</td><td>Tamás Réka</td><td>Vacsora</td><td class="n">2 990</td><td class="n">8</td><td class="n">23 920</td><td>Kártya</td><td class="n">3</td><td class="n">4</td></tr><tr><th class="rn">97</th><td>R096</td><td>Kávé</td><td>Ital</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">790</td><td class="n">2</td><td class="n">1 580</td><td>Kártya</td><td class="n">5</td><td class="n">3</td></tr><tr><th class="rn">98</th><td>R097</td><td>Kaprosuborka-saláta</td><td>Saláta</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">1 190</td><td class="n">3</td><td class="n">3 570</td><td>Kártya</td><td class="n">3</td><td class="n">4</td></tr><tr><th class="rn">99</th><td>R098</td><td>Almás pite</td><td>Desszert</td><td>Orosz Dávid</td><td>Ebéd</td><td class="n">1 290</td><td class="n">6</td><td class="n">7 740</td><td>Készpénz</td><td class="n">6</td><td class="n">5</td></tr><tr><th class="rn">100</th><td>R099</td><td>Csokoládétorta</td><td>Desszert</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">1 890</td><td class="n">8</td><td class="n">15 120</td><td>Készpénz</td><td class="n">8</td><td class="n">2</td></tr><tr><th class="rn">101</th><td>R100</td><td>Házi limonádé</td><td>Ital</td><td>Kovács Anna</td><td>Ebéd</td><td class="n">990</td><td class="n">4</td><td class="n">3 960</td><td>Kártya</td><td class="n">4</td><td class="n">3</td></tr><tr><th class="rn">102</th><td>R101</td><td>Görög saláta</td><td>Saláta</td><td>Szabó Péter</td><td>Vacsora</td><td class="n">2 390</td><td class="n">4</td><td class="n">9 560</td><td>Kártya</td><td class="n">3</td><td class="n">3</td></tr><tr><th class="rn">103</th><td>R102</td><td>Vegán lencsefasírt</td><td>Főétel</td><td>Szabó Péter</td><td>Ebéd</td><td class="n">2 990</td><td class="n">6</td><td class="n">17 940</td><td>Kártya</td><td class="n">7</td><td class="n"></td></tr><tr><th class="rn">104</th><td>R103</td><td>Házi limonádé</td><td>Ital</td><td>Kovács Anna</td><td>Vacsora</td><td class="n">990</td><td class="n">6</td><td class="n">5 940</td><td>Készpénz</td><td class="n">4</td><td class="n">2</td></tr><tr><th class="rn">105</th><td>R104</td><td>Grillezett csirkemell</td><td>Főétel</td><td>Nagy Zsolt</td><td>Vacsora</td><td class="n">3 590</td><td class="n">9</td><td class="n">32 310</td><td>Készpénz</td><td class="n">8</td><td class="n">4</td></tr><tr><th class="rn">106</th><td>R105</td><td>Kávé</td><td>Ital</td><td>Orosz Dávid</td><td>Vacsora</td><td class="n">790</td><td class="n">7</td><td class="n">5 530</td><td>Kártya</td><td class="n">5</td><td class="n">4</td></tr></tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+      <div class="howto">
+        <h3><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Jó tudni</h3>
+        <p>Az <code>Értékelés (1–5)</code> oszlopban néhány cella szándékosan üres: ott a vendég nem értékelt. Ez nem hiba, hanem része a feladatnak – gondold végig, melyik függvény hogyan viselkedik az üres cellákkal. Az M, N, O, P és R oszlopot te fogod feltölteni képletekkel, az L és Q oszlop maradjon üresen.</p>
+      </div>
+    </section>
+  </section>
+
+  <section class="sec" id="feladatok">
+    <header class="lband">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></div>
+      <div>
+        <h2>Kötelező feladatok</h2>
+        <p>23 feladat négy részben. Haladj sorban: a 4. rész feladatai az előzőekben kiszámolt oszlopokra is
+        támaszkodnak.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>23 kötelező feladat</span></div>
+      </div>
+    </header>
+
+    <div class="pband" id="part1">
+      <span class="pn">1</span>
+      <div class="pb"><h3>1. rész – Alapösszesítések</h3><p>A nap egészét jellemző számok: mennyi jött be, és mi a tipikus rendelés.</p></div>
+      <div class="ptag"><span class="ptab">SUM · AVERAGE · MAX · MIN · ROUND</span><span class="pcount" data-pc="1">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t1" data-part="1" data-kind="must">
+        <div class="num"><span class="n">1</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi volt a napi bevétel?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">Az étterem vezetője a nap végén azt szeretné tudni, <strong>mennyi pénz jött be összesen</strong>. Az egyes rendelések végösszegét az <code>Összeg (Ft)</code> oszlop (H) tartalmazza, a <code>H2</code> cellától a <code>H106</code> cellá­ig. Add össze a <strong>SUM</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H109</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol1"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="1" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol1" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A napi bevétel: <code>1 225 340 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t2" data-part="1" data-kind="must">
+        <div class="num"><span class="n">2</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora az átlagos vendégértékelés?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Az <code>Értékelés (1–5)</code> oszlopban (K) a vendégek osztályzata szerepel – néhány rendelésnél a vendég nem értékelt, ott a cella üres. Számold ki az <strong>AVERAGE</strong> függvénnyel az <strong>átlagos értékelést</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H110</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol2"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="2" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol2" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az átlagos értékelés kb. <code>3.39</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t3" data-part="1" data-kind="must">
+        <div class="num"><span class="n">3</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi volt a legnagyobb rendelés?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">Add meg a <strong>MAX</strong> függvénnyel, hogy <strong>a legdrágább rendelés mennyibe került</strong> (H oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H111</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol3"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="3" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol3" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legnagyobb rendelés értéke: <code>38 430 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t4" data-part="1" data-kind="must">
+        <div class="num"><span class="n">4</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mi a legalacsonyabb egységár az étlapon?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MIN</span></span></div>
+          <p class="txt">Az <code>Egységár (Ft)</code> oszlop (F) egy-egy adag árát mutatja. Add meg a <strong>MIN</strong> függvénnyel, <strong>mi a legalacsonyabb egységár</strong> a mai rendelések között.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H112</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol4"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="4" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol4" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legalacsonyabb egységár: <code>590 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t5" data-part="1" data-kind="must">
+        <div class="num"><span class="n">5</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány adag fogyott összesen?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">A <code>Darabszám</code> oszlop (G) megmutatja, egy rendelésen hány adagot kértek. Add össze a <strong>SUM</strong> függvénnyel, <strong>hány adag fogyott összesen</strong> a nap során.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H113</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol5"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="5" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol5" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Összesen <code>562</code> adag fogyott.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t6" data-part="1" data-kind="must">
+        <div class="num"><span class="n">6</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora volt a legnagyobb társaság?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">A <code>Vendégek száma</code> oszlop (J) azt mutatja, hány fő ült az adott rendelés asztalánál. Add meg a <strong>MAX</strong> függvénnyel, <strong>mekkora volt a legnagyobb társaság</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H114</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol6"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="6" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol6" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legnagyobb társaság <code>8</code> fős volt.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t7" data-part="1" data-kind="must">
+        <div class="num"><span class="n">7</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Átlagos rendelési érték, kerekítve</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Számold ki az <code>Összeg (Ft)</code> oszlop (H) <strong>átlagát</strong>, vagyis az átlagos rendelési értéket. Pénzről van szó, ezért az eredményt <strong>egész forintra kerekítve</strong> add meg – ehhez a <strong>ROUND</strong> és az <strong>AVERAGE</strong> függvényt is használd, egyetlen képletben.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H115</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol7"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="7" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol7" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az átlagos rendelési érték: <code>11 670 Ft</code>.</p></div>
+        </div>
+      </article></div>
+
+    <div class="pband" id="part2">
+      <span class="pn">2</span>
+      <div class="pb"><h3>2. rész – Darabszámok és feltételes összesítés</h3><p>Most már nem mindent számolunk össze, csak azt, ami megfelel egy feltételnek.</p></div>
+      <div class="ptag"><span class="ptab">COUNT · COUNTIF · SUMIF</span><span class="pcount" data-pc="2">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t8" data-part="2" data-kind="must">
+        <div class="num"><span class="n">8</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány vendég értékelt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT</span></span></div>
+          <p class="txt">Az <code>Értékelés (1–5)</code> oszlopban (K) <strong>nem minden sorban van szám</strong> – ahol a vendég nem értékelt, ott üres a cella. Számold meg a <strong>COUNT</strong> függvénnyel, <strong>hány rendeléshez tartozik értékelés</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H116</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol8"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="8" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol8" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>97</code> rendeléshez tartozik értékelés (összesen 105-ből).</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t9" data-part="2" data-kind="must">
+        <div class="num"><span class="n">9</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány főételt rendeltek?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNTIF</span></span></div>
+          <p class="txt">A <code>Kategória</code> oszlop (C) öt értéket vehet fel: Előétel, Főétel, Desszert, Ital, Saláta. Számold meg a <strong>COUNTIF</strong> függvénnyel, <strong>hány rendelés tartozik a „Főétel” kategóriába</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H117</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol9"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="9" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol9" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>32</code> főétel-rendelés volt.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t10" data-part="2" data-kind="must">
+        <div class="num"><span class="n">10</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hányan fizettek kártyával?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNTIF</span></span></div>
+          <p class="txt">A <code>Fizetési mód</code> oszlop (I) értéke <code>Kártya</code> vagy <code>Készpénz</code>. Add meg a <strong>COUNTIF</strong> függvénnyel, <strong>hány rendelést fizettek kártyával</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H118</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol10"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="10" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol10" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>56</code> rendelést fizettek kártyával.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t11" data-part="2" data-kind="must">
+        <div class="num"><span class="n">11</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi volt a vacsora-bevétel?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUMIF</span></span></div>
+          <p class="txt">A <code>Napszak</code> oszlop (E) megmutatja, hogy a rendelés <code>Ebéd</code> vagy <code>Vacsora</code> idején érkezett. Számold ki a <strong>SUMIF</strong> függvénnyel, <strong>mennyi bevétel jött be a vacsora idején</strong> (H oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H119</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol11"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="11" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol11" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A vacsora-bevétel: <code>700 720 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t12" data-part="2" data-kind="must">
+        <div class="num"><span class="n">12</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány adag desszert fogyott?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUMIF</span></span></div>
+          <p class="txt">A feltétel ezúttal a <code>Kategória</code> oszlopban (C) van, az összeadandó értékek pedig a <code>Darabszám</code> oszlopban (G). Add meg a <strong>SUMIF</strong> függvénnyel, <strong>összesen hány adag desszert fogyott</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H120</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol12"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="12" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol12" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Összesen <code>110</code> adag desszert fogyott.</p></div>
+        </div>
+      </article></div>
+
+    <div class="pband" id="part3">
+      <span class="pn">3</span>
+      <div class="pb"><h3>3. rész – Soronkénti döntések</h3><p>Itt minden rendeléshez külön eredmény tartozik: a képletet le kell húznod az egész oszlopra.</p></div>
+      <div class="ptag"><span class="ptab">IF · AND · OR · ROUND</span><span class="pcount" data-pc="3">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t13" data-part="3" data-kind="must">
+        <div class="num"><span class="n">13</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Melyik a nagy rendelés?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span></span></div>
+          <p class="txt">A konyha külön jelölést kér a nagy rendelésekre. Az <strong>M oszlopba</strong> írj képletet, amely <strong>minden sorra</strong> megmondja: ha a darabszám (G oszlop) <strong>legalább 5</strong>, akkor a cellában a <code>Nagy rendelés</code> szöveg álljon, egyébként a <code>Normál</code> szó. Használd az <strong>IF</strong> függvényt, majd húzd le a képletet az utolsó adatsorig.</p><p class="txt">Az <code>M1</code> cellába írd fejlécként: <code>Rendelés mérete</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>M2:M106</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol13"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="13" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol13" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Nagy rendelés</code>: 63, <code>Normál</code>: 42. Az <code>M2</code> cellában (7 adag) ennek kell állnia: <code>Nagy rendelés</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t14" data-part="3" data-kind="must">
+        <div class="num"><span class="n">14</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi jut egy vendégre a rendelésből?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span></span></div>
+          <p class="txt">A vezető minden rendelésnél látni szeretné, <strong>mennyi összeg jut egy vendégre</strong>: a rendelés összegét (H oszlop) el kell osztani a vendégek számával (J oszlop). Az <strong>N oszlopba</strong> írj képletet, amely ezt <strong>minden sorra</strong> kiszámolja, és az eredményt <strong>két tizedesjegyre kerekítve</strong> adja meg – a kerekítéshez a <strong>ROUND</strong> függvényt használd. Végül húzd le a képletet az utolsó adatsorig.</p><p class="txt">Az <code>N1</code> cellába írd fejlécként: <code>Egy vendégre (Ft)</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>N2:N106</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol14"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="14" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol14" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az <code>N2</code> cellában (25 130 Ft / 4 vendég) ennek kell állnia: <code>6 282.50</code>. Az oszlop legnagyobb értéke <code>21 510.00</code>, a legkisebb <code>118.00</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t15" data-part="3" data-kind="must">
+        <div class="num"><span class="n">15</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Kik az elégedett kártyás vendégek?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span><i class="sep">›</i><span class="crumb">AND</span></span></div>
+          <p class="txt">Az étterem azoknak a vendégeknek küld kedvezménykupont, akik <strong>legalább 4-es értékelést</strong> adtak (K oszlop), <strong>és</strong> <strong>kártyával fizettek</strong> (I oszlop = <code>Kártya</code>) – mert így tudják elérni őket. Az <strong>O oszlopba</strong> írj képletet, amely minden sorra az <code>Elégedett kártyás</code> szöveget adja, ha mindkét feltétel teljesül, egyébként egy gondolatjelet (<code>—</code>). Az <strong>IF</strong> és az <strong>AND</strong> függvényre is szükséged lesz.</p><p class="txt">Az <code>O1</code> cellába írd fejlécként: <code>Kuponra jogosult</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>O2:O106</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol15"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="15" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol15" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Elégedett kártyás</code> összesen <code>22</code> rendelés lesz.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t16" data-part="3" data-kind="must">
+        <div class="num"><span class="n">16</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Melyik rendelés kiemelt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span><i class="sep">›</i><span class="crumb">OR</span></span></div>
+          <p class="txt">Egy rendelés <strong>kiemeltnek</strong> számít, ha <strong>vagy</strong> az összege (H oszlop) <strong>20 000 Ft-nál több</strong>, <strong>vagy</strong> legalább <strong>6 fős</strong> társaság rendelte (J oszlop) – elég, ha az egyik teljesül. A <strong>P oszlopba</strong> írj képletet, amely minden sorra a <code>Kiemelt</code> vagy az <code>Átlagos</code> szöveget adja. Az <strong>IF</strong> és az <strong>OR</strong> függvényt használd.</p><p class="txt">A <code>P1</code> cellába írd fejlécként: <code>Rendelés jellege</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>P2:P106</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol16"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="16" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol16" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Kiemelt</code>: <code>52</code>, <code>Átlagos</code>: <code>53</code> rendelés.</p></div>
+        </div>
+      </article></div>
+
+  <section class="milestone" id="mid">
+    <div class="mi"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></div>
+    <div>
+      <h2 class="m-todo">A közepes szintű feladatokból még <span id="midLeft">16</span> hátravan</h2>
+      <h2 class="m-done">A közepes szintű rész kész!</h2>
+      <p class="m-todo">Ha ezekkel megvagy, jön a négy önálló feladat – ott már a függvényt is neked kell megtalálnod.</p>
+      <p class="m-done">Innentől a függvényt is neked kell kiválasztanod. Figyelj az M, N, O és P oszlopra: a következő feladatok ezekre is építenek.</p>
+    </div>
+  </section>
+
+    <div class="pband" id="part4">
+      <span class="pn">4</span>
+      <div class="pb"><h3>4. rész – Önálló feladatok</h3><p>Innentől nem adjuk meg, melyik függvény kell. Olvasd el figyelmesen, mit kérdez a feladat.</p></div>
+      <div class="ptag"><span class="ptab">a függvényt te választod</span><span class="pcount" data-pc="4">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-k kind-must" id="t17" data-part="4" data-kind="must">
+        <div class="num"><span class="n">17</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány rendelés haladta meg a 15 000 Ft-ot?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A havi kimutatásba be kell írni, <strong>hány olyan rendelés volt, amelynek az összege meghaladta a 15 000 Ft-ot</strong>. A H oszlop adataiból dolgozz.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H121</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol17"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="17" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol17" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>31</code> ilyen rendelés volt.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t18" data-part="4" data-kind="must">
+        <div class="num"><span class="n">18</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi bevételt hozott Kovács Anna?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>mennyi bevételt hoztak összesen azok a rendelések, amelyeket „Kovács Anna” szolgált ki</strong>. A pincér neve a D, a rendelés összege a H oszlopban van.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H122</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol18"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="18" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol18" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Kovács Anna rendeléseinek összértéke: <code>324 950 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t19" data-part="4" data-kind="must">
+        <div class="num"><span class="n">19</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyit fogyasztott egy vendég átlagosan?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Számold ki, <strong>mennyi bevétel jut egy vendégre</strong>: a teljes napi bevételt kell elosztanod az összes vendég számával (J oszlop). Az eredményt <strong>két tizedesjegyre kerekítve</strong> írd be.</p><p class="txt">Figyelj: itt a <strong>teljes</strong> bevételt kell a <strong>teljes</strong> vendégszámmal elosztanod – nem az N oszlop értékeinek átlagát kérjük.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H123</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol19"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="19" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol19" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Egy vendégre <code>2 426.42 Ft</code> bevétel jut.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t20" data-part="4" data-kind="must">
+        <div class="num"><span class="n">20</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora az árkülönbség az étlapon?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg <strong>egyetlen képlettel</strong>, hogy <strong>mekkora a különbség a legdrágább és a legolcsóbb egységár között</strong> (F oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H124</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol20"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="20" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol20" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A különbség <code>4 900 Ft</code> (5 490 Ft − 590 Ft).</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t21" data-part="4" data-kind="must">
+        <div class="num"><span class="n">21</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány nagy rendelés volt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A 13. feladatban kiszámolt <strong>M oszlop</strong> alapján add meg, <strong>hány rendelés kapta a „Nagy rendelés” jelölést</strong>. Ne számold meg kézzel – képlettel dolgozz!</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H125</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol21"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="21" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol21" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>63</code> nagy rendelés volt.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t22" data-part="4" data-kind="must">
+        <div class="num"><span class="n">22</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora az átlagos ebédrendelés?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>mekkora átlagosan egy rendelés összege az „Ebéd” napszakban</strong>. Gondold végig: ehhez két értékre lesz szükséged, és azokat el kell osztanod egymással. Az eredményt <strong>két tizedesjegyre kerekítve</strong> írd be.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H126</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol22"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="22" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol22" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az átlagos ebédrendelés kb. <code>11 658.22 Ft</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t23" data-part="4" data-kind="must">
+        <div class="num"><span class="n">23</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyit hoztak a kiemelt rendelések?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A 16. feladat <strong>P oszlopát</strong> használva add meg, <strong>mennyi bevételt hoztak összesen a „Kiemelt” jelölésű rendelések</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H127</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol23"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="23" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol23" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A kiemelt rendelések bevétele: <code>877 590 Ft</code>.</p></div>
+        </div>
+      </article></div>
+
+  </section>
+
+  <section class="sec" id="bonus">
+    <header class="xband bonus">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg></div>
+      <div>
+        <h2>Bónuszfeladatok</h2>
+        <p>Négy nehéz feladat annak, aki a 23 kötelezővel elkészült. Itt sem adjuk meg a függvényeket – és
+        többnyire egyszerre többre is szükség lesz.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg>4 bónuszfeladat</span><span class="pcount" data-pc="9">0 / 0</span></div>
+      </div>
+    </header>
+    <div class="tasks" style="margin-top:16px">
+      <article class="task lv-h kind-bonus" id="t24" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">24</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyibe kerül átlagosan egy ital?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Számold ki, <strong>mennyi bevétel jut egyetlen eladott adagra az „Ital” kategóriában</strong>. Vigyázz: ez nem ugyanaz, mint az italok átlagos egységára, mert egy rendelésben több adag is lehet. Csak az italokkal számolj, és az eredményt <strong>két tizedesjegyre kerekítve</strong> add meg.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H128</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol24"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="24" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol24" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Egy eladott ital-adagra <code>797.03 Ft</code> bevétel jut.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t25" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">25</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Négyszintű rendeléskategória</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Az étterem négy sávba osztja a rendeléseket az összegük (H oszlop) alapján: <strong>20 000 Ft vagy több</strong> → <code>Nagy</code>; <strong>10 000 Ft vagy több, de 20 000 alatt</strong> → <code>Közepes</code>; <strong>4 000 Ft vagy több, de 10 000 alatt</strong> → <code>Kis</code>; <strong>4 000 Ft alatt</strong> → <code>Mini</code>. Az <strong>R oszlopba</strong> írj <strong>egyetlen képletet</strong>, amely minden sorra a helyes sávot adja, és húzd le az utolsó adatsorig.</p><p class="txt">Az <code>R1</code> cellába írd fejlécként: <code>Sáv</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>R2:R106</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol25"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="25" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol25" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Nagy</code>: 22, <code>Közepes</code>: 24, <code>Kis</code>: 37, <code>Mini</code>: 22 rendelés.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t26" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">26</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány rendelés jobb az átlagnál?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>hány rendelés összege nagyobb az átlagos rendelési értéknél</strong> (H oszlop). A trükk az, hogy magát az átlagot kell beépítened a feltételbe – <strong>egyetlen képlettel</strong> oldd meg, segédcella nélkül.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H129</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol26"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="26" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol26" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>37</code> rendelés értéke nagyobb az átlagnál (kb. 11 669.90 Ft).</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t27" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">27</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Melyik pincér hozta a legtöbb bevételt?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Döntsd el, <strong>melyik pincér rendelései hozták a legnagyobb bevételt</strong>. Hat pincér dolgozott: Budai Eszter, Kovács Anna, Nagy Zsolt, Orosz Dávid, Szabó Péter, Tamás Réka. Mindegyikre ki kell számolnod a bevételt – ezt szabadon megteheted segédcellákban a lap jobb oldalán (például a <code>V</code> oszloptól kezdve). Végül a <code>H130</code> cellába írd be a <strong>nyertes pincér nevét</strong>, a <code>H131</code> cellába pedig az általa hozott <strong>bevételt</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>H130 és H131</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol27"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="27" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol27" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legtöbb bevételt <code>Kovács Anna</code> hozta: <code>324 950 Ft</code>. (A pincérek bevétele: Budai Eszter 133 790 Ft, Kovács Anna 324 950 Ft, Nagy Zsolt 145 270 Ft, Orosz Dávid 159 060 Ft, Szabó Péter 223 330 Ft, Tamás Réka 238 940 Ft)</p></div>
+        </div>
+      </article></div>
+  </section>
+
+  <section class="done-band" id="allDone" aria-live="polite">
+    <h2>Minden feladat kész, a bónusz is!</h2>
+    <p>Mentsd el a munkafüzetet, ellenőrizd, hogy minden képletes cella ki van színezve, és add be a tanárodnak.</p>
+  </section>
+
+  <div class="endnote">Közép szintű ellenőrző feladatsor Excel képletekhez · 2. csoport: étterem · 23 kötelező + 4 bónusz feladat. Az adatok kitaláltak, kizárólag értékelési célra készültek.</div>
+
+</main>
+
+<footer class="status">
+  <div class="in">
+    <span><span class="lab">Kötelező:</span> <b id="doneN">0</b> / 23</span>
+    <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="23" aria-valuenow="0" id="bar"><div class="fill" id="fill"></div></div>
+    <span class="opt"><svg class="i" aria-hidden="true" style="vertical-align:-.12em"><use href="#i-star"/></svg> <span class="lab">Bónusz:</span> <b id="doneO">0</b> / 4</span>
+    <button type="button" class="reset" id="reset">Újrakezdés</button>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var MUST = 23, ALAP = 16, KEY = 'ellenorzo-kepletek-g2-v1';
+  function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+
+  function confetti(){
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var c = document.createElement('canvas');
+    c.className = 'cfx';
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    document.body.appendChild(c);
+    var ctx = c.getContext('2d'), cols = ['#e8a013','#2b5490','#1e7a63','#9c3b6a','#b4232a','#36a184'], ps = [];
+    for(var i=0;i<140;i++){
+      ps.push({x:Math.random()*c.width, y:-20-Math.random()*c.height*0.4,
+        w:5+Math.random()*7, h:7+Math.random()*9, vy:2+Math.random()*3.4,
+        vx:-1.4+Math.random()*2.8, a:Math.random()*6.28, va:-0.12+Math.random()*0.24,
+        col:cols[(Math.random()*cols.length)|0]});
+    }
+    var t0 = Date.now();
+    function frame(){
+      ctx.clearRect(0,0,c.width,c.height);
+      ps.forEach(function(p){
+        p.x += p.vx; p.y += p.vy; p.a += p.va;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a);
+        ctx.fillStyle = p.col; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+      });
+      if(Date.now()-t0 < 3400){ window.requestAnimationFrame(frame); }
+      else if(c.parentNode){ c.parentNode.removeChild(c); }
+    }
+    window.requestAnimationFrame(frame);
+  }
+
+  var state = {};
+  try{ state = JSON.parse(lsGet(KEY) || '{}') || {}; }catch(e){ state = {}; }
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+
+  function refresh(){
+    var must=0, opt=0, per={}, tot={}, all=0, alapDone=0;
+    boxes.forEach(function(b){
+      var t=b.closest('.task'), p=t.getAttribute('data-part'), k=t.getAttribute('data-kind');
+      tot[p]=(tot[p]||0)+1;
+      t.classList.toggle('done', b.checked);
+      if(b.checked){
+        per[p]=(per[p]||0)+1; all++;
+        if(k==='must'){ must++; } else { opt++; }
+        if(parseInt(b.getAttribute('data-n'),10) <= ALAP){ alapDone++; }
+      }
+    });
+    document.getElementById('doneN').textContent = must;
+    document.getElementById('doneO').textContent = opt;
+    var fill = document.getElementById('fill');
+    fill.style.width = (100*must/MUST) + '%';
+    fill.classList.toggle('full', must === MUST);
+    document.getElementById('bar').setAttribute('aria-valuenow', must);
+    Array.prototype.forEach.call(document.querySelectorAll('.pcount'), function(el){
+      var p = el.getAttribute('data-pc'), d = per[p]||0, t = tot[p]||0;
+      el.textContent = d + ' / ' + t;
+      el.classList.toggle('full', d === t && t > 0);
+    });
+    var mid = document.getElementById('mid');
+    if(mid){ mid.classList.toggle('done', alapDone === ALAP);
+      document.getElementById('midLeft').textContent = (ALAP - alapDone); }
+    document.getElementById('allDone').classList.toggle('show', all === boxes.length);
+  }
+
+  function counts(){
+    var must=0, all=0;
+    boxes.forEach(function(b){ if(b.checked){ all++; if(b.closest('.task').getAttribute('data-kind')==='must'){ must++; } } });
+    return {must:must, all:all};
+  }
+  boxes.forEach(function(b){ b.checked = !!state[b.getAttribute('data-n')]; });
+  var start = counts();
+  var mustDone = (start.must === MUST), allDoneFlag = (start.all === boxes.length);
+
+  boxes.forEach(function(b){
+    var n = b.getAttribute('data-n');
+    b.addEventListener('change', function(){
+      if(b.checked){ state[n]=1; } else { delete state[n]; }
+      lsSet(KEY, JSON.stringify(state));
+      refresh();
+      var c = counts();
+      if(b.checked){
+        if(!mustDone && c.must === MUST){ mustDone = true; confetti(); }
+        if(!allDoneFlag && c.all === boxes.length){ allDoneFlag = true; confetti(); }
+      } else {
+        if(c.must < MUST){ mustDone = false; }
+        if(c.all < boxes.length){ allDoneFlag = false; }
+      }
+    });
+  });
+  refresh();
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if(window.confirm('Törlöd az összes pipát?')){
+      state = {}; lsSet(KEY, '{}');
+      boxes.forEach(function(b){ b.checked = false; });
+      refresh();
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.hbtn'), function(btn){
+    btn.addEventListener('click', function(){
+      var p = document.getElementById(btn.getAttribute('aria-controls'));
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      if(open){ p.setAttribute('hidden',''); } else { p.removeAttribute('hidden'); }
+    });
+  });
+
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var tbl = document.getElementById(btn.getAttribute('data-tbl'));
+      var rows = [];
+      Array.prototype.forEach.call(tbl.querySelectorAll('tr'), function(tr){
+        var cells = tr.querySelectorAll('td');
+        if(cells.length){ rows.push(Array.prototype.map.call(cells, function(c){ return c.textContent.trim(); }).join('\t')); }
+      });
+      var text = rows.join('\n');
+      function ok(){ btn.classList.add('copied'); setTimeout(function(){ btn.classList.remove('copied'); }, 1800); }
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(ok, function(){ fallbackCopy(text); ok(); });
+      } else { fallbackCopy(text); ok(); }
+    });
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('.tabs a'));
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+        }
+      });
+    }, {rootMargin:'-130px 0px -65% 0px'});
+    ['top','adatok','feladatok','bonus'].forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>

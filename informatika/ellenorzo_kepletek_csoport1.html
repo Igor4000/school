@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excel képletek – ellenőrző · 1. csoport (környezetvédelem)</title>
+<style>
+:root{
+  --d9:#0b2a22; --d8:#113f32; --d7:#176050; --d6:#1e7a63; --d5:#36a184;
+  --d2:#c2e3da; --d1:#e2f2ee; --d0:#f1f9f7;
+  --bg:#eceff0; --line:#d4dcde; --ink:#17201f; --mut:#56666a; --amber:#e8a013;
+  --m:#2f7fb8; --mb:#e2eef8;
+  --k:#c4601a; --kb:#fdeede;
+  --h:#9c3b6a; --hb:#f9e7ef;
+  --font:"Segoe UI",Calibri,Carlito,system-ui,-apple-system,Arial,sans-serif;
+  --mono:Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:116px}
+body{margin:0;overflow-x:hidden;font-family:var(--font);font-size:17px;line-height:1.56;color:var(--ink);background:var(--bg);padding-bottom:62px}
+strong{font-weight:700}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+code{font-family:var(--mono);font-size:.86em;background:var(--d1);color:var(--d8);border:1px solid var(--d2);padding:0 6px;border-radius:5px;white-space:nowrap}
+kbd{font-family:var(--mono);font-size:.82em;background:#fff;border:1px solid #b9c4c6;border-bottom-width:2px;border-radius:5px;padding:0 6px}
+
+.ribbon{position:sticky;top:0;z-index:40;background:var(--d6);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.ribbon .r1{max-width:1120px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:14px}
+.ribbon svg.logo{width:30px;height:30px;flex:none}
+.ribbon .name{font-weight:700;font-size:1.12rem;line-height:1.2}
+.ribbon .sub{font-size:.85rem;color:rgba(255,255,255,.82);line-height:1.2}
+.ribbon .examtag{margin-left:auto;flex:none;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#b4232a;color:#fff;border-radius:999px;padding:4px 14px;white-space:nowrap}
+.tabs{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{color:rgba(255,255,255,.88);text-decoration:none;padding:7px 18px 6px;font-size:.95rem;border-radius:8px 8px 0 0;white-space:nowrap}
+.tabs a:hover{background:rgba(255,255,255,.14)}
+.tabs a.on{background:var(--bg);color:var(--d7);font-weight:700;box-shadow:inset 0 -3px 0 var(--amber)}
+.tabs a:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px 40px;min-width:0}
+.panelc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 30px;margin-bottom:20px;box-shadow:0 1px 2px rgba(10,30,30,.05)}
+.hero{position:relative;overflow:hidden;padding:34px 34px 28px}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--d2),var(--d1) 60%,transparent 72%);pointer-events:none}
+.hero > *{position:relative;z-index:1}
+.exambar{display:inline-flex;align-items:center;gap:9px;background:#fdecec;border:1px solid #f0b4b4;color:#8e1d23;border-radius:999px;padding:4px 16px;font-size:.87rem;font-weight:700;margin-bottom:14px}
+h1{font-size:clamp(1.85rem,3.6vw,2.6rem);line-height:1.12;margin:0 0 14px;color:var(--d8);font-weight:700;letter-spacing:-.012em;max-width:28ch}
+.lead{font-size:1.08rem;max-width:72ch;margin:0 0 10px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stat{display:inline-flex;align-items:center;gap:9px;padding:7px 16px 7px 12px;border-radius:999px;background:var(--d0);border:1px solid var(--d2);font-size:.97rem}
+.stat b{font-size:1.14rem;font-variant-numeric:tabular-nums}
+.stat i{width:11px;height:11px;border-radius:50%;background:var(--c);display:inline-block}
+.stat.s-must{--c:var(--m)} .stat.s-mid{--c:var(--k)} .stat.s-bonus{--c:var(--h)}
+.stat.ver{background:var(--d8);border-color:var(--d8);color:#fff;font-weight:600}
+.panelc h2{margin:0 0 8px;font-size:1.28rem;color:var(--d8);line-height:1.25}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px}
+.two .panelc{margin-bottom:0}
+.legend{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.legend li{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:8px 12px;border-radius:10px;background:#f6f9f9;border:1px solid var(--line)}
+.legend .d{font-size:.93rem;color:var(--mut)}
+.legend .req{font-size:.77rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.req.must{background:var(--d6);color:#fff} .req.bonus{background:var(--hb);color:#7d2450;border:1px solid #dca6bf}
+.ul{list-style:none;margin:10px 0 0;padding:0}
+.ul li{padding:5px 0 5px 20px;position:relative}
+.ul li::before{content:"";position:absolute;left:0;top:.95em;width:8px;height:8px;border-radius:50%;background:var(--d5)}
+.ul li.note{color:var(--mut);font-size:.94rem}
+.ul li.note::before{background:var(--amber)}
+.ul li.warn::before{background:#b4232a}
+
+.view{margin:16px 0 0;min-width:0}
+.view figcaption{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px}
+.view .vt{font-weight:700;color:var(--d8);font-size:1.04rem}
+.view .vw{color:var(--mut);font-size:.9rem}
+.copy{margin-left:auto;font:inherit;font-size:.88rem;font-weight:600;color:var(--d7);background:#fff;border:1.5px solid var(--d6);border-radius:999px;padding:3px 14px;cursor:pointer}
+.copy:hover{background:var(--d6);color:#fff}
+.copy:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy .lbl-ok{display:none}
+.copy.copied{background:var(--d6);color:#fff}
+.copy.copied .lbl{display:none} .copy.copied .lbl-ok{display:inline}
+.scroll{overflow:auto;max-height:360px;border:1px solid var(--line);border-bottom:0;background:#fff;border-radius:8px 8px 0 0}
+.scroll.sm{max-height:none}
+table.xl{border-collapse:separate;border-spacing:0;width:100%;font-size:.93rem;background:#fff}
+.xl th{background:#e5eaeb;color:#43545a;font-weight:400;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:2px 10px;text-align:center;font-size:.8rem;position:sticky;top:0;z-index:2}
+.xl th.rn{width:42px;padding:2px 6px;position:sticky;left:0;top:auto;z-index:1}
+.xl th.corner{width:42px;left:0;z-index:3}
+.xl td{border-right:1px solid #e2e8e9;border-bottom:1px solid #e2e8e9;padding:3px 11px;white-space:nowrap}
+.xl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.xl td.hd{background:var(--d1);font-weight:700;color:var(--d8)}
+.xl tbody tr:nth-child(odd) td{background:#fafcfc}
+.xl tbody tr:nth-child(odd) td.hd{background:var(--d1)}
+.swatch{display:inline-block;width:13px;height:13px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-2px;margin:0 2px}
+.dest .sw{display:inline-block;width:11px;height:11px;border-radius:3px;background:#ffe08a;border:1px solid #d9b352;vertical-align:-1px;margin:0 3px 0 5px}
+.sheettab{display:flex;background:#e5eaeb;border:1px solid var(--line);border-radius:0 0 8px 8px;overflow:hidden}
+.sheettab span{background:#fff;color:var(--d7);font-weight:700;font-size:.9rem;padding:4px 18px 3px;border-bottom:3px solid var(--d6);border-right:1px solid var(--line)}
+.howto{margin-top:20px;background:#fdf8ea;border:1px solid #ecd79a;border-left:5px solid var(--amber);border-radius:12px;padding:16px 22px 18px}
+.howto h3{margin:0 0 6px;font-size:1.08rem;color:#7a5200;display:flex;align-items:center;gap:9px}
+.howto p{margin:0}
+
+.sec{margin-top:34px}
+.lband{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,var(--d9),var(--d7));color:#fff;border-radius:16px;padding:22px 28px;box-shadow:0 2px 6px rgba(10,30,30,.2)}
+.lband .big{flex:none;width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center;font-size:1.9rem;font-weight:700;line-height:1}
+.lband h2{margin:0;font-size:1.46rem;line-height:1.2;color:#fff}
+.lband p{margin:5px 0 0;color:rgba(255,255,255,.82);max-width:72ch}
+.lband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 11px;border-radius:999px;font-size:.85rem;border:1px solid rgba(255,255,255,.45);color:#fff;white-space:nowrap}
+.xband{display:flex;align-items:center;gap:20px;border-radius:16px;padding:22px 28px;margin-top:34px}
+.xband .big{flex:none;width:60px;height:60px;border-radius:16px;display:grid;place-items:center;font-size:1.7rem}
+.xband h2{margin:0;font-size:1.44rem;line-height:1.2}
+.xband p{margin:5px 0 0;max-width:72ch}
+.xband .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.xband.bonus{background:linear-gradient(120deg,#3a1529,#6b2045);color:#f7e5ee;border:2px dashed #cf8fae}
+.xband.bonus .big{background:rgba(255,255,255,.12);color:var(--amber);border:1px solid rgba(255,255,255,.35)}
+.xband.bonus h2{color:#fff}
+.xband.bonus .pill{border-color:rgba(255,255,255,.5);color:#fff}
+
+.pband{display:flex;align-items:center;gap:16px;margin:28px 0 16px;padding:12px 18px;background:var(--d1);border:1px solid var(--d2);border-radius:12px}
+.pband .pn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--d6);color:#fff;font-weight:700;display:grid;place-items:center;font-size:1rem}
+.pband .pb{flex:1;min-width:0}
+.pband h3{margin:0;font-size:1.13rem;color:var(--d8);line-height:1.25}
+.pband p{margin:1px 0 0;color:var(--mut);font-size:.93rem}
+.pband .ptag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right}
+.ptab{font-size:.83rem;color:var(--d7);font-weight:700;background:#fff;border:1px solid var(--d2);padding:1px 11px;border-radius:999px;font-family:var(--mono)}
+.pcount{font-size:.87rem;color:var(--mut);font-variant-numeric:tabular-nums}
+.pcount.full{color:var(--d6);font-weight:700}
+.xband .pcount{color:inherit;font-size:.85rem}
+.xband .pcount.full{color:inherit;font-weight:700}
+
+.tasks{position:relative;margin-top:0}
+.tasks::before{content:"";position:absolute;left:21px;top:22px;bottom:30px;width:2px;background:var(--d2)}
+.task{--c:var(--m);--cb:var(--mb);display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 16px;margin-bottom:14px;position:relative}
+.task.lv-m{--c:var(--m);--cb:var(--mb)}
+.task.lv-k{--c:var(--k);--cb:var(--kb)} .task.lv-h{--c:var(--h);--cb:var(--hb)}
+.num{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;font-size:1rem;display:grid;place-items:center;font-variant-numeric:tabular-nums;border:4px solid var(--bg);box-shadow:0 0 0 1px var(--c)}
+.num svg{display:none;width:20px;height:20px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.task.done .num{background:var(--d6);box-shadow:0 0 0 1px var(--d6)}
+.task.done .num .n{display:none} .task.done .num svg{display:block}
+
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:16px 22px 14px;box-shadow:0 1px 2px rgba(10,30,30,.05);min-width:0;transition:box-shadow .15s,border-color .15s}
+.task:hover .card{box-shadow:0 3px 10px rgba(10,30,30,.1)}
+.task.kind-bonus .card{background:#fdf5f9;border-style:dashed;border-left-style:solid;border-color:#dca6bf;border-left-color:var(--h)}
+.task.done .card{background:var(--d0);border-color:var(--d5);border-left-color:var(--d6);border-style:solid}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px 14px;flex-wrap:wrap}
+.head h4{margin:0;font-size:1.14rem;line-height:1.3;color:var(--d8);flex:1 1 240px}
+.chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lv{display:inline-flex;align-items:center;gap:6px;font-size:.81rem;font-weight:700;color:var(--c);background:var(--cb);padding:2px 11px 2px 9px;border-radius:999px;white-space:nowrap}
+.lv i{width:8px;height:8px;border-radius:50%;background:var(--c);display:inline-block}
+.tag{font-size:.73rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.tag.bonus{background:var(--h);color:#fff}
+
+.path{display:flex;align-items:flex-start;gap:8px;margin:9px 0 11px;font-size:.85rem}
+.path > span{display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px}
+.path .pi{color:var(--d5);font-size:1.15rem;margin-top:3px}
+.crumb{background:var(--d1);color:var(--d8);border:1px solid var(--d2);border-radius:6px;padding:1px 9px;line-height:1.5;font-family:var(--mono);font-size:.93em}
+.crumb:first-of-type{background:var(--d6);border-color:var(--d6);color:#fff;font-weight:600;font-family:var(--font)}
+.crumb.solo{background:#f2e7ef;border-color:#dcb9d0;color:#6b2045;font-family:var(--font);font-weight:600}
+.sep{color:#8ba0a5;font-style:normal;font-weight:700}
+.txt{margin:0;max-width:84ch}
+.txt strong{color:var(--d9)}
+.txt + .txt{margin-top:8px}
+
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;margin-top:14px;padding-top:11px;border-top:1px dashed #d6dedf}
+.helps{display:flex;gap:10px;flex-wrap:wrap;align-items:center;min-height:30px}
+.dest{font-size:.84rem;color:var(--mut);background:#f4f7f7;border:1px solid var(--line);border-radius:999px;padding:3px 12px;white-space:nowrap}
+.dest b{font-family:var(--mono);color:var(--d7)}
+.hbtn{font:inherit;font-size:.87rem;font-weight:700;display:inline-flex;align-items:center;gap:7px;padding:4px 13px 4px 10px;border-radius:999px;cursor:pointer;background:#fff;border:1.5px solid var(--bc);color:var(--bt)}
+.hbtn.chkb{--bc:var(--d6);--bt:var(--d7)}
+.hbtn:hover,.hbtn[aria-expanded="true"]{background:var(--bc);color:#fff}
+.hbtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.hbtn svg.i{font-size:1.1em}
+.panel{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:.96rem;max-width:78ch}
+.panel p{margin:0}
+.panel .plab{display:block;font-size:.77rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.panel.chk{background:var(--d0);border:1px solid var(--d2)} .panel.chk .plab{color:var(--d7)}
+.panel[hidden]{display:none}
+
+.ok{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;font-weight:700;color:var(--d7);-webkit-user-select:none;user-select:none;position:relative}
+.ok input{position:absolute;opacity:0;width:0;height:0}
+.ok .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--d5);background:#fff;display:grid;place-items:center;flex:none}
+.ok .box svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.ok input:checked + .box{background:var(--d6);border-color:var(--d6)}
+.ok input:checked + .box svg{opacity:1}
+.ok input:focus-visible + .box{outline:3px solid var(--amber);outline-offset:2px}
+
+.milestone{position:relative;margin:34px 0 0;padding:20px 26px;border-radius:16px;background:#fff;border:2px dashed #a6b6b8;display:flex;align-items:center;gap:18px}
+.milestone .mi{flex:none;width:52px;height:52px;border-radius:50%;background:var(--d1);color:var(--d6);display:grid;place-items:center;font-size:1.5rem}
+.milestone h2{margin:0;font-size:1.26rem;color:var(--d8)}
+.milestone p{margin:3px 0 0;color:var(--mut)}
+.milestone .m-done{display:none}
+.milestone.done{background:var(--d6);border:2px solid var(--d7);color:#fff}
+.milestone.done .mi{background:#fff;color:var(--d6)}
+.milestone.done h2,.milestone.done p{color:#fff}
+.milestone.done .m-todo{display:none} .milestone.done .m-done{display:block}
+.done-band{display:none;margin-top:24px;background:linear-gradient(120deg,var(--d9),var(--d6));color:#fff;padding:24px 30px;border-radius:16px}
+.done-band.show{display:block}
+.done-band h2{margin:0 0 4px;font-size:1.46rem}
+.done-band p{margin:0}
+.endnote{padding:22px 4px 0;color:var(--mut);font-size:.89rem}
+
+.status{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--d8);color:#fff;font-size:.94rem;box-shadow:0 -2px 8px rgba(0,0,0,.15)}
+.status .in{max-width:1120px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:14px}
+.status b{font-variant-numeric:tabular-nums}
+.status .opt{color:#ffe3a8;white-space:nowrap}
+.track{flex:1;height:9px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;min-width:60px}
+.fill{height:100%;width:0;background:var(--amber);transition:width .25s,background .25s}
+.fill.full{background:#7be0a5}
+.reset{font:inherit;font-size:.85rem;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:2px 12px;cursor:pointer;white-space:nowrap}
+.reset:hover{background:rgba(255,255,255,.16)}
+.cfx{position:fixed;inset:0;pointer-events:none;z-index:60}
+
+@media (max-width:880px){
+  body{font-size:16.5px}
+  .wrap{padding:16px 12px 30px}
+  .panelc{padding:20px 18px}
+  .hero{padding:26px 20px 22px}
+  .two{grid-template-columns:minmax(0,1fr)}
+  .tasks::before{left:15px}
+  .task{grid-template-columns:32px minmax(0,1fr);gap:0 10px}
+  .num{width:32px;height:32px;font-size:.85rem;border-width:3px}
+  .num svg{width:15px;height:15px}
+  .card{padding:14px 15px 12px}
+  .lband,.xband{padding:18px 16px;gap:14px;align-items:flex-start}
+  .lband .big,.xband .big{width:46px;height:46px;font-size:1.35rem;border-radius:12px}
+  .lband h2,.xband h2{font-size:1.22rem}
+  .pband{flex-wrap:wrap;gap:8px 12px;padding:10px 12px}
+  .pband .ptag{flex-direction:row;align-items:center;gap:10px;margin-left:46px}
+  .ribbon .sub,.ribbon .examtag{display:none}
+  .ribbon .r1{padding:8px 12px}
+  .tabs{padding:0 8px}
+  .tabs a{padding:7px 12px 6px}
+  .view figcaption .copy{margin-left:0}
+  .milestone{flex-direction:column;align-items:flex-start;padding:18px}
+  .status .in{gap:8px;padding:7px 12px;font-size:.85rem}
+  .status .opt .lab{display:none}
+  .legend li{grid-template-columns:1fr auto}
+  .legend .d{grid-column:1 / -1;order:3}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
+@media print{
+  body{background:#fff;padding:0;font-size:11.5pt}
+  .ribbon,.status,.copy,.ok,.hbtn{display:none !important}
+  .panel.chk[hidden]{display:block !important}
+  .wrap{padding:0}
+  .scroll{max-height:none}
+  .card,.panelc{box-shadow:none}
+  .task{break-inside:avoid}
+  .lband,.xband,.num,.crumb,.lv,.tag,.pband,.exambar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 3 1.1-6.2L3 9.7l6.2-.9z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></symbol>
+  <symbol id="i-sheet" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 9h18M8 9v10"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M3 14.5h18M9 9v11"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+</svg>
+
+<header class="ribbon">
+  <div class="r1">
+    <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="1.5"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+    </svg>
+    <div>
+      <div class="name">Excel képletek – ellenőrző · Környezetvédelem</div>
+      <div class="sub">SUM · AVERAGE · MIN · MAX · COUNT · ROUND · COUNTIF · SUMIF · IF · AND · OR</div>
+    </div>
+    <span class="examtag">Ellenőrző · 1. csoport</span>
+  </div>
+  <nav class="tabs" aria-label="Navigáció">
+    <a href="#top" class="on">Kezdés</a>
+    <a href="#adatok">Adatok</a>
+    <a href="#feladatok">Feladatok</a>
+    <a href="#bonus">Bónusz</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="panelc hero" id="top">
+    <span class="exambar"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg> Önálló munka · segítség nélkül</span>
+    <h1>Környezetvédelem – Excel képletek ellenőrző</h1>
+    <p class="lead">Egy megyei környezetvédelmi felmérés adataival dolgozol: <strong>110 település</strong> szelektív hulladékgyűjtési és környezeti adataival. A feladatod az, hogy a nyers adatokból <strong>Excel-képletekkel</strong> állítsd elő azokat a számokat, amelyeket a megyei jelentés kér.</p>
+    <p class="lead">A feladatsor <strong>23 kötelező</strong> feladatból áll: ezek <strong>70%-a közepes szintű</strong>
+    (itt megmondjuk, melyik függvényre lesz szükséged, de azt nem, hogyan építsd fel a képletet),
+    <strong>30%-a pedig közepesen nehéz</strong> (ott már neked kell eldöntened, melyik függvény vezet célra).
+    A végén <strong>4 nehéz bónuszfeladat</strong> vár arra, aki mindennel elkészült.</p>
+    <div class="stats">
+      <span class="stat s-must"><i></i><b>16</b> közepes</span>
+      <span class="stat s-mid"><i></i><b>7</b> közepesen nehéz</span>
+      <span class="stat s-bonus"><i></i><b>4</b> nehéz bónusz</span>
+      <span class="stat ver"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg> 1 munkalap · 110 adatsor</span>
+      <span class="stat ver"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg> kb. 60–75 perc</span>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="panelc">
+      <h2>Jelölések</h2>
+      <ul class="legend">
+        <li style="--c:var(--m);--cb:var(--mb)"><span class="lv"><i></i>Közepes</span><span class="d">a függvény nevét megadjuk, a képletet neked kell megírnod</span><span class="req must">kötelező</span></li>
+        <li style="--c:var(--k);--cb:var(--kb)"><span class="lv"><i></i>Közepesen nehéz</span><span class="d">a függvényt is neked kell kiválasztanod</span><span class="req must">kötelező</span></li>
+        <li style="--c:var(--h);--cb:var(--hb)"><span class="lv"><i></i>Nehéz</span><span class="d">egymásba ágyazott vagy többlépéses megoldás</span><span class="req bonus">bónusz</span></li>
+      </ul>
+      <ul class="ul">
+        <li>Ha egy feladattal elkészültél, pipáld ki a kártya alján a <strong>Kész</strong> gombot – a lap alján
+        folyamatosan látod, hol tartasz.</li>
+        <li>A <strong>Megoldás</strong> gomb <strong>nem a képletet</strong> adja meg, csak a végeredményt. Ebből
+        magad tudod ellenőrizni, jól számoltál-e.</li>
+        <li class="note">Ahol a feladat azt írja, hogy <em>„minden sorra”</em>, ott a képletet az első adatsorba írd
+        meg, majd <strong>húzd le</strong> az utolsó adatsorig.</li>
+      </ul>
+    </section>
+
+    <section class="panelc">
+      <h2>Mielőtt elkezded</h2>
+      <ul class="ul">
+        <li>Nyiss egy új Excel munkafüzetet. A munkalap neve maradhat <code>Munka1</code>.</li>
+        <li>Illeszd be a <strong>Települések környezeti adatai</strong> táblázatot az <code>A1</code> cellától a
+        <code>Munka1</code> munkalapra.</li>
+        <li>A táblázat <strong>csak adatokat tartalmaz</strong>. Hogy melyik cellába vagy oszlopba kerül egy-egy
+        eredmény, azt mindig a feladat kártyáján találod meg.</li>
+        <li>Minden cellát, amelybe képletet írtál, <strong>tölts ki színnel</strong>. <span class="swatch"></span></li>
+        <li>Mentsd el a fájlt <strong>ellenorzo_kornyezetvedelem_vezeteknev.xlsx</strong> néven, és munka közben nyomj gyakran
+        <kbd>Ctrl</kbd>+<kbd>S</kbd>-t.</li>
+        <li class="note">A feladatok <strong>angol függvényneveket</strong> használnak. Magyar nyelvű Excelben a magyar
+        nevet írd be: SUM → SZUM, AVERAGE → ÁTLAG, COUNT → DARAB, ROUND → KEREKÍTÉS,
+        COUNTIF → DARABTELI, SUMIF → SZUMHA, IF → HA, AND → ÉS, OR → VAGY. Az argumentumokat
+        magyar Excelben <strong>pontosvessző</strong> választja el.</li>
+        <li class="warn">Ez <strong>ellenőrző</strong>, nem gyakorlás: egyedül dolgozz, és csak olyan függvényt
+        használj, amelyet a gyakorló feladatsorokban már megtanultál.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section class="sec" id="adatok">
+    <header class="lband">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg></div>
+      <div>
+        <h2>Munka1 – Települések környezeti adatai</h2>
+        <p>110 település adatai 10 oszlopban. A jelentéshez szükséges további oszlopokat képletekkel neked kell feltöltened.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>110 adatsor</span><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-table"/></svg>10 adatoszlop</span></div>
+      </div>
+    </header>
+
+    <section class="panelc" style="margin-top:20px">
+      <h2>A munkalap adatai</h2>
+      <p style="margin:0;font-size:1rem">
+        Kattints a <strong>Másolás Excelbe</strong> gombra, majd illeszd be (<kbd>Ctrl</kbd>+<kbd>V</kbd>) a megadott
+        cellába. A táblázat görgethető – a fejléc és a sorszámok a helyükön maradnak.
+      </p>
+      <figure class="view">
+        <figcaption>
+          <span class="vt">Települések környezeti adatai</span>
+          <span class="vw">110 adatsor · az <code>A1</code> cellába illeszd be</span>
+          <button type="button" class="copy" data-tbl="tbl-main"><span class="lbl">Másolás Excelbe</span><span class="lbl-ok">Kimásolva!</span></button>
+        </figcaption>
+        <div class="scroll"><table class="xl" id="tbl-main"><thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th></tr></thead><tbody><tr><th class="rn">1</th><td class="hd">Település</td><td class="hd">Régió</td><td class="hd">Lakosok száma</td><td class="hd">Papír (kg)</td><td class="hd">Műanyag (kg)</td><td class="hd">Üveg (kg)</td><td class="hd">Újrahasznosítás (%)</td><td class="hd">Komposztáló telep</td><td class="hd">Levegőminőségi index</td><td class="hd">Zöldterület (ha)</td></tr><tr><th class="rn">2</th><td>Csurvár</td><td>Északi</td><td class="n">6 750</td><td class="n">3 830</td><td class="n">1 160</td><td class="n">1 130</td><td class="n">56</td><td>Nem</td><td class="n">92</td><td class="n">43</td></tr><tr><th class="rn">3</th><td>Jánhida</td><td>Déli</td><td class="n">30 300</td><td class="n">810</td><td class="n">870</td><td class="n">340</td><td class="n">55</td><td>Nem</td><td class="n">94</td><td class="n">169</td></tr><tr><th class="rn">4</th><td>Váchalom</td><td>Keleti</td><td class="n">9 600</td><td class="n">1 400</td><td class="n">2 970</td><td class="n">1 500</td><td class="n">72</td><td>Igen</td><td class="n">60</td><td class="n">154</td></tr><tr><th class="rn">5</th><td>Csóhalom</td><td>Nyugati</td><td class="n">2 450</td><td class="n">1 970</td><td class="n">2 260</td><td class="n">590</td><td class="n">62</td><td>Igen</td><td class="n">48</td><td class="n">151</td></tr><tr><th class="rn">6</th><td>Egehalom</td><td>Közép</td><td class="n">37 550</td><td class="n">3 040</td><td class="n">2 830</td><td class="n">2 650</td><td class="n">79</td><td>Nem</td><td class="n"></td><td class="n">66</td></tr><tr><th class="rn">7</th><td>Fürliget</td><td>Északi</td><td class="n">46 300</td><td class="n">2 260</td><td class="n">340</td><td class="n">1 100</td><td class="n">24</td><td>Nem</td><td class="n">116</td><td class="n">103</td></tr><tr><th class="rn">8</th><td>Örvfalva</td><td>Déli</td><td class="n">44 200</td><td class="n">4 400</td><td class="n">1 610</td><td class="n">2 600</td><td class="n">38</td><td>Igen</td><td class="n">114</td><td class="n">44</td></tr><tr><th class="rn">9</th><td>Fürszeg</td><td>Keleti</td><td class="n">47 800</td><td class="n">820</td><td class="n">620</td><td class="n">2 580</td><td class="n">25</td><td>Nem</td><td class="n">107</td><td class="n">192</td></tr><tr><th class="rn">10</th><td>Tálvár</td><td>Nyugati</td><td class="n">15 150</td><td class="n">4 690</td><td class="n">2 860</td><td class="n">1 860</td><td class="n">60</td><td>Nem</td><td class="n">97</td><td class="n">85</td></tr><tr><th class="rn">11</th><td>Sármező</td><td>Közép</td><td class="n">26 000</td><td class="n">3 170</td><td class="n">3 310</td><td class="n">1 900</td><td class="n">73</td><td>Igen</td><td class="n">91</td><td class="n">315</td></tr><tr><th class="rn">12</th><td>Domberek</td><td>Északi</td><td class="n">2 200</td><td class="n">1 170</td><td class="n">2 330</td><td class="n">730</td><td class="n">25</td><td>Nem</td><td class="n">40</td><td class="n">311</td></tr><tr><th class="rn">13</th><td>Jánszeg</td><td>Déli</td><td class="n">28 550</td><td class="n">3 320</td><td class="n">3 000</td><td class="n">2 690</td><td class="n">20</td><td>Igen</td><td class="n">82</td><td class="n">281</td></tr><tr><th class="rn">14</th><td>Harhida</td><td>Keleti</td><td class="n">17 750</td><td class="n">3 870</td><td class="n">2 400</td><td class="n">1 910</td><td class="n">78</td><td>Igen</td><td class="n">92</td><td class="n">161</td></tr><tr><th class="rn">15</th><td>Sárszeg</td><td>Nyugati</td><td class="n">5 900</td><td class="n">710</td><td class="n">2 880</td><td class="n">690</td><td class="n">82</td><td>Nem</td><td class="n">101</td><td class="n">271</td></tr><tr><th class="rn">16</th><td>Csurszeg</td><td>Közép</td><td class="n">18 400</td><td class="n">4 470</td><td class="n">1 830</td><td class="n">1 400</td><td class="n">49</td><td>Igen</td><td class="n">98</td><td class="n">121</td></tr><tr><th class="rn">17</th><td>Márhida</td><td>Nyugati</td><td class="n">46 150</td><td class="n">2 820</td><td class="n">2 410</td><td class="n">590</td><td class="n">76</td><td>Igen</td><td class="n">35</td><td class="n">20</td></tr><tr><th class="rn">18</th><td>Gyálszeg</td><td>Keleti</td><td class="n">24 750</td><td class="n">4 010</td><td class="n">660</td><td class="n">1 690</td><td class="n">63</td><td>Nem</td><td class="n">111</td><td class="n">39</td></tr><tr><th class="rn">19</th><td>Jánmező</td><td>Nyugati</td><td class="n">35 650</td><td class="n">1 260</td><td class="n">880</td><td class="n">1 710</td><td class="n">43</td><td>Nem</td><td class="n"></td><td class="n">275</td></tr><tr><th class="rn">20</th><td>Bélymajor</td><td>Nyugati</td><td class="n">30 550</td><td class="n">2 040</td><td class="n">250</td><td class="n">2 650</td><td class="n">61</td><td>Igen</td><td class="n">113</td><td class="n">54</td></tr><tr><th class="rn">21</th><td>Rákvár</td><td>Déli</td><td class="n">20 850</td><td class="n">1 750</td><td class="n">940</td><td class="n">210</td><td class="n">76</td><td>Igen</td><td class="n">119</td><td class="n">302</td></tr><tr><th class="rn">22</th><td>Pilpatak</td><td>Nyugati</td><td class="n">3 150</td><td class="n">1 740</td><td class="n">2 870</td><td class="n">1 250</td><td class="n">34</td><td>Nem</td><td class="n">100</td><td class="n">49</td></tr><tr><th class="rn">23</th><td>Csóberek</td><td>Nyugati</td><td class="n">4 500</td><td class="n">3 110</td><td class="n">3 270</td><td class="n">2 840</td><td class="n">62</td><td>Igen</td><td class="n">104</td><td class="n">200</td></tr><tr><th class="rn">24</th><td>Zámfalva</td><td>Nyugati</td><td class="n">40 900</td><td class="n">3 430</td><td class="n">2 910</td><td class="n">2 840</td><td class="n">23</td><td>Nem</td><td class="n">60</td><td class="n">118</td></tr><tr><th class="rn">25</th><td>Harliget</td><td>Keleti</td><td class="n">47 950</td><td class="n">1 610</td><td class="n">390</td><td class="n">1 690</td><td class="n">77</td><td>Nem</td><td class="n">98</td><td class="n">122</td></tr><tr><th class="rn">26</th><td>Csurhida</td><td>Keleti</td><td class="n">33 750</td><td class="n">3 780</td><td class="n">2 810</td><td class="n">460</td><td class="n">47</td><td>Nem</td><td class="n">90</td><td class="n">145</td></tr><tr><th class="rn">27</th><td>Nyírhalom</td><td>Északi</td><td class="n">31 800</td><td class="n">1 570</td><td class="n">3 360</td><td class="n">1 010</td><td class="n">73</td><td>Nem</td><td class="n">72</td><td class="n">27</td></tr><tr><th class="rn">28</th><td>Zámpatak</td><td>Nyugati</td><td class="n">14 400</td><td class="n">2 230</td><td class="n">3 500</td><td class="n">580</td><td class="n">39</td><td>Nem</td><td class="n">70</td><td class="n">166</td></tr><tr><th class="rn">29</th><td>Bodszeg</td><td>Keleti</td><td class="n">26 700</td><td class="n">4 550</td><td class="n">2 990</td><td class="n">1 940</td><td class="n">32</td><td>Nem</td><td class="n">117</td><td class="n">22</td></tr><tr><th class="rn">30</th><td>Rákliget</td><td>Déli</td><td class="n">45 650</td><td class="n">1 470</td><td class="n">3 510</td><td class="n">150</td><td class="n">18</td><td>Igen</td><td class="n">41</td><td class="n">238</td></tr><tr><th class="rn">31</th><td>Bodliget</td><td>Északi</td><td class="n">34 200</td><td class="n">3 450</td><td class="n">1 520</td><td class="n">150</td><td class="n">51</td><td>Igen</td><td class="n"></td><td class="n">288</td></tr><tr><th class="rn">32</th><td>Örvszeg</td><td>Déli</td><td class="n">46 750</td><td class="n">3 170</td><td class="n">1 640</td><td class="n">2 000</td><td class="n">54</td><td>Igen</td><td class="n">103</td><td class="n">88</td></tr><tr><th class="rn">33</th><td>Lökfalva</td><td>Északi</td><td class="n">26 150</td><td class="n">1 900</td><td class="n">3 040</td><td class="n">1 730</td><td class="n">81</td><td>Igen</td><td class="n">92</td><td class="n">183</td></tr><tr><th class="rn">34</th><td>Rákmajor</td><td>Nyugati</td><td class="n">10 550</td><td class="n">3 280</td><td class="n">1 290</td><td class="n">1 910</td><td class="n">78</td><td>Igen</td><td class="n">88</td><td class="n">29</td></tr><tr><th class="rn">35</th><td>Dommező</td><td>Déli</td><td class="n">20 500</td><td class="n">470</td><td class="n">1 640</td><td class="n">1 910</td><td class="n">48</td><td>Nem</td><td class="n">77</td><td class="n">51</td></tr><tr><th class="rn">36</th><td>Sárfalva</td><td>Közép</td><td class="n">30 350</td><td class="n">1 500</td><td class="n">3 540</td><td class="n">1 270</td><td class="n">55</td><td>Igen</td><td class="n">74</td><td class="n">104</td></tr><tr><th class="rn">37</th><td>Vácszeg</td><td>Északi</td><td class="n">1 600</td><td class="n">1 550</td><td class="n">240</td><td class="n">480</td><td class="n">27</td><td>Nem</td><td class="n">111</td><td class="n">277</td></tr><tr><th class="rn">38</th><td>Vácvár</td><td>Közép</td><td class="n">38 000</td><td class="n">2 520</td><td class="n">890</td><td class="n">2 470</td><td class="n">62</td><td>Nem</td><td class="n">63</td><td class="n">224</td></tr><tr><th class="rn">39</th><td>Csurfalva</td><td>Északi</td><td class="n">17 400</td><td class="n">4 000</td><td class="n">2 060</td><td class="n">2 410</td><td class="n">42</td><td>Nem</td><td class="n">109</td><td class="n">318</td></tr><tr><th class="rn">40</th><td>Fürmező</td><td>Keleti</td><td class="n">13 100</td><td class="n">2 340</td><td class="n">2 550</td><td class="n">1 950</td><td class="n">58</td><td>Nem</td><td class="n"></td><td class="n">304</td></tr><tr><th class="rn">41</th><td>Egehida</td><td>Közép</td><td class="n">45 900</td><td class="n">4 770</td><td class="n">1 530</td><td class="n">1 450</td><td class="n">59</td><td>Nem</td><td class="n">105</td><td class="n">287</td></tr><tr><th class="rn">42</th><td>Fürmajor</td><td>Déli</td><td class="n">27 600</td><td class="n">2 070</td><td class="n">2 540</td><td class="n">1 210</td><td class="n">21</td><td>Nem</td><td class="n">78</td><td class="n">267</td></tr><tr><th class="rn">43</th><td>Bodfalva</td><td>Északi</td><td class="n">31 750</td><td class="n">3 520</td><td class="n">2 480</td><td class="n">240</td><td class="n">55</td><td>Igen</td><td class="n">119</td><td class="n">274</td></tr><tr><th class="rn">44</th><td>Domfalva</td><td>Déli</td><td class="n">46 950</td><td class="n">2 660</td><td class="n">430</td><td class="n">760</td><td class="n">23</td><td>Nem</td><td class="n">108</td><td class="n">141</td></tr><tr><th class="rn">45</th><td>Márberek</td><td>Északi</td><td class="n">13 650</td><td class="n">3 640</td><td class="n">3 250</td><td class="n">530</td><td class="n">67</td><td>Nem</td><td class="n">103</td><td class="n">281</td></tr><tr><th class="rn">46</th><td>Harvár</td><td>Közép</td><td class="n">30 900</td><td class="n">780</td><td class="n">2 640</td><td class="n">2 270</td><td class="n">49</td><td>Igen</td><td class="n">37</td><td class="n">285</td></tr><tr><th class="rn">47</th><td>Sárhalom</td><td>Északi</td><td class="n">16 800</td><td class="n">1 530</td><td class="n">1 640</td><td class="n">830</td><td class="n">82</td><td>Igen</td><td class="n">43</td><td class="n">8</td></tr><tr><th class="rn">48</th><td>Örvpatak</td><td>Északi</td><td class="n">37 450</td><td class="n">2 090</td><td class="n">3 130</td><td class="n">2 550</td><td class="n">53</td><td>Nem</td><td class="n">106</td><td class="n">149</td></tr><tr><th class="rn">49</th><td>Gyálberek</td><td>Nyugati</td><td class="n">14 900</td><td class="n">3 060</td><td class="n">2 140</td><td class="n">2 750</td><td class="n">39</td><td>Nem</td><td class="n">60</td><td class="n">6</td></tr><tr><th class="rn">50</th><td>Egeliget</td><td>Nyugati</td><td class="n">15 700</td><td class="n">2 220</td><td class="n">2 520</td><td class="n">2 010</td><td class="n">24</td><td>Nem</td><td class="n">58</td><td class="n">83</td></tr><tr><th class="rn">51</th><td>Csópatak</td><td>Déli</td><td class="n">5 100</td><td class="n">4 430</td><td class="n">3 360</td><td class="n">1 210</td><td class="n">23</td><td>Nem</td><td class="n">52</td><td class="n">67</td></tr><tr><th class="rn">52</th><td>Kérhalom</td><td>Közép</td><td class="n">41 800</td><td class="n">3 410</td><td class="n">3 540</td><td class="n">2 630</td><td class="n">66</td><td>Nem</td><td class="n">41</td><td class="n">18</td></tr><tr><th class="rn">53</th><td>Bélyberek</td><td>Déli</td><td class="n">1 650</td><td class="n">3 130</td><td class="n">750</td><td class="n">1 230</td><td class="n">29</td><td>Nem</td><td class="n"></td><td class="n">102</td></tr><tr><th class="rn">54</th><td>Csókert</td><td>Északi</td><td class="n">38 400</td><td class="n">800</td><td class="n">690</td><td class="n">2 630</td><td class="n">50</td><td>Igen</td><td class="n">62</td><td class="n">107</td></tr><tr><th class="rn">55</th><td>Pilkert</td><td>Keleti</td><td class="n">31 650</td><td class="n">1 200</td><td class="n">2 820</td><td class="n">970</td><td class="n">71</td><td>Igen</td><td class="n">87</td><td class="n">191</td></tr><tr><th class="rn">56</th><td>Rákkert</td><td>Déli</td><td class="n">8 750</td><td class="n">620</td><td class="n">3 040</td><td class="n">480</td><td class="n">38</td><td>Igen</td><td class="n">105</td><td class="n">252</td></tr><tr><th class="rn">57</th><td>Pilszeg</td><td>Északi</td><td class="n">17 850</td><td class="n">2 890</td><td class="n">1 680</td><td class="n">2 360</td><td class="n">35</td><td>Igen</td><td class="n">46</td><td class="n">301</td></tr><tr><th class="rn">58</th><td>Gyálliget</td><td>Déli</td><td class="n">33 650</td><td class="n">1 980</td><td class="n">1 400</td><td class="n">1 520</td><td class="n">18</td><td>Nem</td><td class="n">104</td><td class="n">155</td></tr><tr><th class="rn">59</th><td>Egefalva</td><td>Déli</td><td class="n">18 050</td><td class="n">3 310</td><td class="n">1 580</td><td class="n">2 730</td><td class="n">66</td><td>Nem</td><td class="n">56</td><td class="n">190</td></tr><tr><th class="rn">60</th><td>Örvvár</td><td>Közép</td><td class="n">8 250</td><td class="n">4 780</td><td class="n">2 670</td><td class="n">1 060</td><td class="n">74</td><td>Igen</td><td class="n">87</td><td class="n">194</td></tr><tr><th class="rn">61</th><td>Domhida</td><td>Északi</td><td class="n">41 650</td><td class="n">3 480</td><td class="n">3 540</td><td class="n">2 450</td><td class="n">25</td><td>Igen</td><td class="n">60</td><td class="n">165</td></tr><tr><th class="rn">62</th><td>Vácpatak</td><td>Nyugati</td><td class="n">23 050</td><td class="n">730</td><td class="n">1 270</td><td class="n">410</td><td class="n">20</td><td>Igen</td><td class="n">35</td><td class="n">65</td></tr><tr><th class="rn">63</th><td>Tálmajor</td><td>Déli</td><td class="n">10 400</td><td class="n">1 000</td><td class="n">2 460</td><td class="n">1 240</td><td class="n">70</td><td>Igen</td><td class="n">43</td><td class="n">55</td></tr><tr><th class="rn">64</th><td>Gyálmajor</td><td>Közép</td><td class="n">44 100</td><td class="n">2 130</td><td class="n">1 310</td><td class="n">1 670</td><td class="n">26</td><td>Igen</td><td class="n">75</td><td class="n">182</td></tr><tr><th class="rn">65</th><td>Gyálkert</td><td>Közép</td><td class="n">43 850</td><td class="n">2 180</td><td class="n">1 570</td><td class="n">1 350</td><td class="n">41</td><td>Igen</td><td class="n">116</td><td class="n">104</td></tr><tr><th class="rn">66</th><td>Csurliget</td><td>Északi</td><td class="n">9 900</td><td class="n">2 290</td><td class="n">3 550</td><td class="n">600</td><td class="n">29</td><td>Nem</td><td class="n">96</td><td class="n">244</td></tr><tr><th class="rn">67</th><td>Somhalom</td><td>Nyugati</td><td class="n">5 000</td><td class="n">1 560</td><td class="n">2 560</td><td class="n">1 960</td><td class="n">40</td><td>Igen</td><td class="n">103</td><td class="n">188</td></tr><tr><th class="rn">68</th><td>Pilberek</td><td>Közép</td><td class="n">23 950</td><td class="n">3 570</td><td class="n">2 730</td><td class="n">1 870</td><td class="n">77</td><td>Igen</td><td class="n"></td><td class="n">174</td></tr><tr><th class="rn">69</th><td>Bélyhida</td><td>Északi</td><td class="n">13 300</td><td class="n">1 770</td><td class="n">2 920</td><td class="n">2 580</td><td class="n">79</td><td>Nem</td><td class="n">73</td><td class="n">15</td></tr><tr><th class="rn">70</th><td>Rákhida</td><td>Keleti</td><td class="n">11 400</td><td class="n">2 760</td><td class="n">3 310</td><td class="n">1 150</td><td class="n">49</td><td>Igen</td><td class="n">45</td><td class="n">33</td></tr><tr><th class="rn">71</th><td>Somszeg</td><td>Északi</td><td class="n">41 750</td><td class="n">2 630</td><td class="n">310</td><td class="n">1 580</td><td class="n">77</td><td>Igen</td><td class="n">120</td><td class="n">61</td></tr><tr><th class="rn">72</th><td>Dunaszentmárton</td><td>Északi</td><td class="n">35 250</td><td class="n">3 750</td><td class="n">2 370</td><td class="n">1 270</td><td class="n">29</td><td>Nem</td><td class="n">114</td><td class="n">197</td></tr><tr><th class="rn">73</th><td>Nagyújváros</td><td>Déli</td><td class="n">37 450</td><td class="n">3 310</td><td class="n">2 120</td><td class="n">810</td><td class="n">19</td><td>Igen</td><td class="n">43</td><td class="n">283</td></tr><tr><th class="rn">74</th><td>Alsóberény</td><td>Északi</td><td class="n">12 300</td><td class="n">3 520</td><td class="n">2 730</td><td class="n">1 150</td><td class="n">22</td><td>Nem</td><td class="n">85</td><td class="n">51</td></tr><tr><th class="rn">75</th><td>Kisapáti</td><td>Déli</td><td class="n">21 850</td><td class="n">1 320</td><td class="n">3 070</td><td class="n">2 390</td><td class="n">23</td><td>Nem</td><td class="n">70</td><td class="n">212</td></tr><tr><th class="rn">76</th><td>Szépharaszti</td><td>Közép</td><td class="n">30 950</td><td class="n">2 060</td><td class="n">1 340</td><td class="n">690</td><td class="n">47</td><td>Igen</td><td class="n">54</td><td class="n">277</td></tr><tr><th class="rn">77</th><td>Dunavásárhely</td><td>Keleti</td><td class="n">34 950</td><td class="n">570</td><td class="n">3 150</td><td class="n">1 070</td><td class="n">77</td><td>Igen</td><td class="n">104</td><td class="n">57</td></tr><tr><th class="rn">78</th><td>Kisvásárhely</td><td>Déli</td><td class="n">28 950</td><td class="n">1 320</td><td class="n">1 110</td><td class="n">2 470</td><td class="n">45</td><td>Nem</td><td class="n">65</td><td class="n">263</td></tr><tr><th class="rn">79</th><td>Tiszaberény</td><td>Déli</td><td class="n">21 200</td><td class="n">2 640</td><td class="n">2 340</td><td class="n">2 720</td><td class="n">44</td><td>Nem</td><td class="n">94</td><td class="n">93</td></tr><tr><th class="rn">80</th><td>Felsőszőlős</td><td>Keleti</td><td class="n">1 850</td><td class="n">1 880</td><td class="n">2 270</td><td class="n">440</td><td class="n">56</td><td>Nem</td><td class="n">39</td><td class="n">22</td></tr><tr><th class="rn">81</th><td>Felsőberény</td><td>Keleti</td><td class="n">27 800</td><td class="n">4 790</td><td class="n">2 110</td><td class="n">1 970</td><td class="n">28</td><td>Nem</td><td class="n"></td><td class="n">167</td></tr><tr><th class="rn">82</th><td>Felsővásárhely</td><td>Déli</td><td class="n">8 850</td><td class="n">3 670</td><td class="n">1 790</td><td class="n">1 150</td><td class="n">49</td><td>Igen</td><td class="n">79</td><td class="n">122</td></tr><tr><th class="rn">83</th><td>Öregharaszti</td><td>Közép</td><td class="n">5 900</td><td class="n">2 370</td><td class="n">840</td><td class="n">1 310</td><td class="n">21</td><td>Nem</td><td class="n">114</td><td class="n">101</td></tr><tr><th class="rn">84</th><td>Nagyberény</td><td>Közép</td><td class="n">22 650</td><td class="n">2 070</td><td class="n">1 170</td><td class="n">1 220</td><td class="n">64</td><td>Nem</td><td class="n">61</td><td class="n">248</td></tr><tr><th class="rn">85</th><td>Öregapáti</td><td>Közép</td><td class="n">33 050</td><td class="n">510</td><td class="n">2 340</td><td class="n">370</td><td class="n">63</td><td>Igen</td><td class="n">86</td><td class="n">97</td></tr><tr><th class="rn">86</th><td>Felsőapáti</td><td>Déli</td><td class="n">45 300</td><td class="n">900</td><td class="n">2 430</td><td class="n">1 260</td><td class="n">19</td><td>Igen</td><td class="n">105</td><td class="n">78</td></tr><tr><th class="rn">87</th><td>Bácsújváros</td><td>Nyugati</td><td class="n">22 200</td><td class="n">4 770</td><td class="n">3 200</td><td class="n">1 380</td><td class="n">41</td><td>Nem</td><td class="n">113</td><td class="n">26</td></tr><tr><th class="rn">88</th><td>Újújváros</td><td>Déli</td><td class="n">34 150</td><td class="n">3 300</td><td class="n">2 440</td><td class="n">1 250</td><td class="n">46</td><td>Nem</td><td class="n">69</td><td class="n">138</td></tr><tr><th class="rn">89</th><td>Öregszőlős</td><td>Keleti</td><td class="n">15 850</td><td class="n">3 240</td><td class="n">590</td><td class="n">1 080</td><td class="n">60</td><td>Nem</td><td class="n">45</td><td class="n">116</td></tr><tr><th class="rn">90</th><td>Tiszavásárhely</td><td>Keleti</td><td class="n">29 750</td><td class="n">380</td><td class="n">3 490</td><td class="n">1 670</td><td class="n">46</td><td>Nem</td><td class="n">96</td><td class="n">126</td></tr><tr><th class="rn">91</th><td>Kisberény</td><td>Nyugati</td><td class="n">27 550</td><td class="n">2 570</td><td class="n">390</td><td class="n">1 450</td><td class="n">82</td><td>Nem</td><td class="n">91</td><td class="n">183</td></tr><tr><th class="rn">92</th><td>Kisharaszti</td><td>Keleti</td><td class="n">45 150</td><td class="n">890</td><td class="n">2 900</td><td class="n">2 410</td><td class="n">41</td><td>Nem</td><td class="n">114</td><td class="n">175</td></tr><tr><th class="rn">93</th><td>Szépapáti</td><td>Nyugati</td><td class="n">31 050</td><td class="n">1 390</td><td class="n">2 430</td><td class="n">2 630</td><td class="n">53</td><td>Nem</td><td class="n">100</td><td class="n">300</td></tr><tr><th class="rn">94</th><td>Alsóapáti</td><td>Keleti</td><td class="n">31 600</td><td class="n">3 830</td><td class="n">2 940</td><td class="n">250</td><td class="n">45</td><td>Nem</td><td class="n">99</td><td class="n">179</td></tr><tr><th class="rn">95</th><td>Nagyvásárhely</td><td>Közép</td><td class="n">18 150</td><td class="n">4 560</td><td class="n">1 320</td><td class="n">1 500</td><td class="n">34</td><td>Nem</td><td class="n">84</td><td class="n">124</td></tr><tr><th class="rn">96</th><td>Újszentmárton</td><td>Közép</td><td class="n">45 600</td><td class="n">950</td><td class="n">2 580</td><td class="n">340</td><td class="n">60</td><td>Igen</td><td class="n">89</td><td class="n">196</td></tr><tr><th class="rn">97</th><td>Kisszentmárton</td><td>Déli</td><td class="n">41 600</td><td class="n">3 890</td><td class="n">1 640</td><td class="n">2 740</td><td class="n">61</td><td>Nem</td><td class="n"></td><td class="n">112</td></tr><tr><th class="rn">98</th><td>Kisújváros</td><td>Nyugati</td><td class="n">16 150</td><td class="n">3 830</td><td class="n">1 210</td><td class="n">2 800</td><td class="n">29</td><td>Nem</td><td class="n">112</td><td class="n">308</td></tr><tr><th class="rn">99</th><td>Újvásárhely</td><td>Nyugati</td><td class="n">11 600</td><td class="n">1 130</td><td class="n">2 900</td><td class="n">1 440</td><td class="n">49</td><td>Nem</td><td class="n">78</td><td class="n">97</td></tr><tr><th class="rn">100</th><td>Újharaszti</td><td>Nyugati</td><td class="n">32 400</td><td class="n">3 450</td><td class="n">2 920</td><td class="n">1 170</td><td class="n">81</td><td>Igen</td><td class="n">79</td><td class="n">304</td></tr><tr><th class="rn">101</th><td>Dunaharaszti</td><td>Nyugati</td><td class="n">16 050</td><td class="n">1 860</td><td class="n">2 750</td><td class="n">2 810</td><td class="n">55</td><td>Nem</td><td class="n">60</td><td class="n">81</td></tr><tr><th class="rn">102</th><td>Bácsvásárhely</td><td>Északi</td><td class="n">37 950</td><td class="n">3 020</td><td class="n">450</td><td class="n">1 880</td><td class="n">81</td><td>Nem</td><td class="n">52</td><td class="n">188</td></tr><tr><th class="rn">103</th><td>Tiszaapáti</td><td>Nyugati</td><td class="n">18 500</td><td class="n">1 050</td><td class="n">2 160</td><td class="n">2 620</td><td class="n">28</td><td>Igen</td><td class="n">37</td><td class="n">64</td></tr><tr><th class="rn">104</th><td>Tiszaszőlős</td><td>Keleti</td><td class="n">13 500</td><td class="n">3 390</td><td class="n">1 160</td><td class="n">930</td><td class="n">45</td><td>Igen</td><td class="n">72</td><td class="n">20</td></tr><tr><th class="rn">105</th><td>Felsőharaszti</td><td>Északi</td><td class="n">4 050</td><td class="n">3 250</td><td class="n">2 530</td><td class="n">1 300</td><td class="n">55</td><td>Nem</td><td class="n">107</td><td class="n">88</td></tr><tr><th class="rn">106</th><td>Tiszaszentmárton</td><td>Nyugati</td><td class="n">39 850</td><td class="n">3 590</td><td class="n">1 350</td><td class="n">1 900</td><td class="n">26</td><td>Nem</td><td class="n">39</td><td class="n">45</td></tr><tr><th class="rn">107</th><td>Tiszaharaszti</td><td>Déli</td><td class="n">42 800</td><td class="n">3 360</td><td class="n">200</td><td class="n">2 550</td><td class="n">44</td><td>Nem</td><td class="n">110</td><td class="n">110</td></tr><tr><th class="rn">108</th><td>Nagyszőlős</td><td>Déli</td><td class="n">20 250</td><td class="n">3 760</td><td class="n">2 580</td><td class="n">2 590</td><td class="n">26</td><td>Igen</td><td class="n">100</td><td class="n">72</td></tr><tr><th class="rn">109</th><td>Bácsapáti</td><td>Déli</td><td class="n">1 600</td><td class="n">870</td><td class="n">3 470</td><td class="n">1 180</td><td class="n">66</td><td>Nem</td><td class="n">78</td><td class="n">177</td></tr><tr><th class="rn">110</th><td>Kisszőlős</td><td>Közép</td><td class="n">15 950</td><td class="n">1 920</td><td class="n">2 570</td><td class="n">1 400</td><td class="n">64</td><td>Nem</td><td class="n">43</td><td class="n">24</td></tr><tr><th class="rn">111</th><td>Alsóharaszti</td><td>Nyugati</td><td class="n">46 700</td><td class="n">2 620</td><td class="n">1 160</td><td class="n">2 810</td><td class="n">54</td><td>Igen</td><td class="n">101</td><td class="n">70</td></tr></tbody></table></div>
+        <div class="sheettab"><span>Munka1</span></div>
+      </figure>
+      <div class="howto">
+        <h3><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Jó tudni</h3>
+        <p>A <code>Levegőminőségi index</code> oszlopban néhány cella szándékosan üres: ott nem volt mérés. Ez nem hiba, hanem része a feladatnak – gondold végig, melyik függvény hogyan viselkedik az üres cellákkal. A K, L, M, N és P oszlopot te fogod feltölteni képletekkel, az O oszlop maradjon üresen.</p>
+      </div>
+    </section>
+  </section>
+
+  <section class="sec" id="feladatok">
+    <header class="lband">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></div>
+      <div>
+        <h2>Kötelező feladatok</h2>
+        <p>23 feladat négy részben. Haladj sorban: a 4. rész feladatai az előzőekben kiszámolt oszlopokra is
+        támaszkodnak.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>23 kötelező feladat</span></div>
+      </div>
+    </header>
+
+    <div class="pband" id="part1">
+      <span class="pn">1</span>
+      <div class="pb"><h3>1. rész – Alapösszesítések</h3><p>Az egész adatsor néhány számmal jellemezve: mennyi gyűlt össze, és mi a tipikus érték.</p></div>
+      <div class="ptag"><span class="ptab">SUM · AVERAGE · MAX · MIN · ROUND</span><span class="pcount" data-pc="1">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t1" data-part="1" data-kind="must">
+        <div class="num"><span class="n">1</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi papírt gyűjtöttek összesen?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">A megye szeretné tudni, <strong>mennyi papírhulladék gyűlt össze összesen</strong> a vizsgált 110 településen. A papír mennyiségét a <code>Papír (kg)</code> oszlop (D) tartalmazza, a <code>D2</code> cellától a <code>D111</code> cellá­ig. Add össze a <strong>SUM</strong> függvénnyel.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D114</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol1"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="1" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol1" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az összes begyűjtött papír: <code>278 020 kg</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t2" data-part="1" data-kind="must">
+        <div class="num"><span class="n">2</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi a szelektíven gyűjtött hulladék összesen?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUM</span></span></div>
+          <p class="txt">Most a <strong>papír, a műanyag és az üveg együttes mennyisége</strong> érdekel minket, vagyis a D, E és F oszlop összes adata. A <strong>SUM</strong> függvénnyel ezt egyetlen képletben is meg tudod oldani – nem kell három részre bontanod.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D115</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol2"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="2" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol2" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A három hulladékfajta együtt: <code>682 530 kg</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t3" data-part="1" data-kind="must">
+        <div class="num"><span class="n">3</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora az átlagos újrahasznosítási arány?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Az <code>Újrahasznosítás (%)</code> oszlop (G) azt mutatja, a településen keletkező hulladék hány százalékát hasznosítják újra. Számold ki az <strong>AVERAGE</strong> függvénnyel, mennyi ennek az <strong>átlaga</strong> a településeken.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D116</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol3"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="3" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol3" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az átlagos újrahasznosítási arány kb. <code>49.37%</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t4" data-part="1" data-kind="must">
+        <div class="num"><span class="n">4</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Melyik a legnépesebb település?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">Keresd meg a <strong>MAX</strong> függvénnyel, hogy a <code>Lakosok száma</code> oszlopban (C) mekkora a <strong>legnagyobb lakosságszám</strong>. Most elég magát a számot megadnod, a település nevét nem kell.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D117</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol4"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="4" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol4" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legnagyobb lakosságszám: <code>47 950</code> fő.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t5" data-part="1" data-kind="must">
+        <div class="num"><span class="n">5</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi a legkisebb zöldterület?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MIN</span></span></div>
+          <p class="txt">A <code>Zöldterület (ha)</code> oszlop (J) hektárban adja meg a települések zöldterületét. Add meg a <strong>MIN</strong> függvénnyel, mekkora a <strong>legkisebb</strong> érték.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D118</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol5"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="5" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol5" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legkisebb zöldterület: <code>6 ha</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t6" data-part="1" data-kind="must">
+        <div class="num"><span class="n">6</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hol gyűjtötték a legtöbb papírt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">MAX</span></span></div>
+          <p class="txt">Egy településen kiemelkedően sok papír gyűlt össze. Add meg a <strong>MAX</strong> függvénnyel, <strong>mennyi papírt</strong> gyűjtöttek ott (a D oszlop alapján).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D119</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol6"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="6" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol6" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legtöbb papír egy településen: <code>4 790 kg</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t7" data-part="1" data-kind="must">
+        <div class="num"><span class="n">7</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Átlagos műanyagmennyiség, kerekítve</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span><i class="sep">›</i><span class="crumb">AVERAGE</span></span></div>
+          <p class="txt">Számold ki a <code>Műanyag (kg)</code> oszlop (E) <strong>átlagát</strong>, de a jelentésbe csak <strong>egy tizedesjegyre kerekítve</strong> kerülhet be. Ehhez a <strong>ROUND</strong> és az <strong>AVERAGE</strong> függvényt is használnod kell, egyetlen képletben.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D120</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol7"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="7" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol7" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az átlagos műanyagmennyiség: <code>2 111.8 kg</code>.</p></div>
+        </div>
+      </article></div>
+
+    <div class="pband" id="part2">
+      <span class="pn">2</span>
+      <div class="pb"><h3>2. rész – Darabszámok és feltételes összesítés</h3><p>Most már nem mindent számolunk össze, csak azt, ami megfelel egy feltételnek.</p></div>
+      <div class="ptag"><span class="ptab">COUNT · COUNTIF · SUMIF</span><span class="pcount" data-pc="2">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t8" data-part="2" data-kind="must">
+        <div class="num"><span class="n">8</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány településen mérték a levegő minőségét?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNT</span></span></div>
+          <p class="txt">A <code>Levegőminőségi index</code> oszlopban (I) <strong>nem minden településnél van adat</strong> – ahol nem volt mérés, ott a cella üres. Számold meg a <strong>COUNT</strong> függvénnyel, <strong>hány településen van tényleges mérési érték</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D121</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol8"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="8" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol8" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Mérési érték <code>102</code> településnél van (összesen 110-ből).</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t9" data-part="2" data-kind="must">
+        <div class="num"><span class="n">9</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány település tartozik az Északi régióba?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNTIF</span></span></div>
+          <p class="txt">A <code>Régió</code> oszlop (B) öt értéket vehet fel: Északi, Déli, Keleti, Nyugati, Közép. Számold meg a <strong>COUNTIF</strong> függvénnyel, <strong>hány település tartozik az „Északi” régióba</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D122</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol9"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="9" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol9" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Az Északi régióban <code>22</code> település van.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t10" data-part="2" data-kind="must">
+        <div class="num"><span class="n">10</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány településen működik komposztáló telep?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">COUNTIF</span></span></div>
+          <p class="txt">A <code>Komposztáló telep</code> oszlop (H) értéke <code>Igen</code> vagy <code>Nem</code>. Add meg a <strong>COUNTIF</strong> függvénnyel, <strong>hány településen van</strong> komposztáló telep.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D123</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol10"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="10" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol10" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Komposztáló telep <code>46</code> településen működik.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t11" data-part="2" data-kind="must">
+        <div class="num"><span class="n">11</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi üveg gyűlt össze a Déli régióban?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUMIF</span></span></div>
+          <p class="txt">Most nem minden települést kell összeadnod, hanem csak azokat, amelyek a <strong>„Déli” régióban</strong> vannak. Számold ki a <strong>SUMIF</strong> függvénnyel, mennyi <strong>üveget</strong> (F oszlop) gyűjtöttek ezeken a településeken.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D124</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol11"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="11" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol11" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A Déli régióban összegyűjtött üveg: <code>41 390 kg</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t12" data-part="2" data-kind="must">
+        <div class="num"><span class="n">12</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi papír gyűlt a komposztálóval rendelkező településeken?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">SUMIF</span></span></div>
+          <p class="txt">A feltétel ezúttal a <code>Komposztáló telep</code> oszlopban (H) van, az összeadandó értékek pedig a <code>Papír (kg)</code> oszlopban (D). Add meg a <strong>SUMIF</strong> függvénnyel, mennyi papír gyűlt össze azokon a településeken, ahol <strong>van</strong> komposztáló telep.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D125</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol12"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="12" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol12" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Ezeken a településeken <code>109 490 kg</code> papír gyűlt össze.</p></div>
+        </div>
+      </article></div>
+
+    <div class="pband" id="part3">
+      <span class="pn">3</span>
+      <div class="pb"><h3>3. rész – Soronkénti döntések</h3><p>Itt minden sorhoz külön eredmény tartozik: a képletet le kell húznod az egész oszlopra.</p></div>
+      <div class="ptag"><span class="ptab">IF · AND · OR · ROUND</span><span class="pcount" data-pc="3">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-m kind-must" id="t13" data-part="3" data-kind="must">
+        <div class="num"><span class="n">13</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Minősítés az újrahasznosítás alapján</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span></span></div>
+          <p class="txt">A megye minden települést minősíteni szeretne. A <strong>K oszlopba</strong> írj képletet, amely <strong>minden sorra</strong> megmondja: ha az újrahasznosítási arány (G oszlop) <strong>legalább 50%</strong>, akkor a cellában a <code>Megfelelő</code> szó álljon, egyébként a <code>Fejlesztendő</code> szó. Használd az <strong>IF</strong> függvényt, majd húzd le a képletet az utolsó adatsorig.</p><p class="txt">A <code>K1</code> cellába írd fejlécként: <code>Minősítés</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>K2:K111</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol13"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="13" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol13" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Megfelelő</code>: 53 település, <code>Fejlesztendő</code>: 57 település. A <code>K2</code> cellában (Csurvár, 56%) ennek kell állnia: <code>Megfelelő</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t14" data-part="3" data-kind="must">
+        <div class="num"><span class="n">14</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi szelektív hulladék jut egy lakosra?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">ROUND</span></span></div>
+          <p class="txt">A jelentés településenként is kéri, <strong>mennyi szelektíven gyűjtött hulladék (papír + műanyag + üveg) jut egy lakosra</strong>. Az <strong>L oszlopba</strong> írj képletet, amely ezt <strong>minden sorra</strong> kiszámolja, és az eredményt <strong>két tizedesjegyre kerekítve</strong> adja meg – a kerekítéshez a <strong>ROUND</strong> függvényt használd. Végül húzd le a képletet az utolsó adatsorig.</p><p class="txt">A <code>L1</code> cellába írd fejlécként: <code>Egy lakosra (kg)</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>L2:L111</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol14"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="14" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol14" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A <code>L2</code> cellában (Csurvár) ennek kell állnia: <code>0.91</code>. Az oszlop legnagyobb értéke <code>3.45</code>, a legkisebb <code>0.07</code>.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t15" data-part="3" data-kind="must">
+        <div class="num"><span class="n">15</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Melyek a mintatelepülések?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span><i class="sep">›</i><span class="crumb">AND</span></span></div>
+          <p class="txt"><strong>Mintatelepülés</strong> az, ahol az újrahasznosítási arány (G) <strong>legalább 60%</strong>, <strong>és</strong> működik komposztáló telep is (H oszlop = <code>Igen</code>). Az <strong>M oszlopba</strong> írj képletet, amely minden sorra kiírja a <code>Mintatelepülés</code> szót, ha mindkét feltétel teljesül, egyébként egy gondolatjelet (<code>—</code>). Az <strong>IF</strong> és az <strong>AND</strong> függvényre is szükséged lesz.</p><p class="txt">A <code>M1</code> cellába írd fejlécként: <code>Mintatelepülés?</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>M2:M111</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol15"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="15" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol15" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Mintatelepülés</code> összesen <code>20</code> település lesz.</p></div>
+        </div>
+      </article>
+      <article class="task lv-m kind-must" id="t16" data-part="3" data-kind="must">
+        <div class="num"><span class="n">16</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hol kell beavatkozni?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepes</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb">IF</span><i class="sep">›</i><span class="crumb">OR</span></span></div>
+          <p class="txt">A megye akkor jelöl ki egy települést beavatkozásra, ha <strong>vagy</strong> a levegőminőségi index (I oszlop) <strong>80 fölötti</strong>, <strong>vagy</strong> az újrahasznosítási arány (G oszlop) <strong>30% alatti</strong> – elég, ha az egyik teljesül. Az <strong>N oszlopba</strong> írj képletet, amely minden sorra a <code>Kiemelt figyelem</code> vagy a <code>Rendben</code> szöveget adja. Az <strong>IF</strong> és az <strong>OR</strong> függvényt használd.</p><p class="txt">A <code>N1</code> cellába írd fejlécként: <code>Beavatkozás</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>N2:N111</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol16"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="16" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol16" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Kiemelt figyelem</code>: <code>72</code> település, <code>Rendben</code>: <code>38</code> település.</p></div>
+        </div>
+      </article></div>
+
+  <section class="milestone" id="mid">
+    <div class="mi"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></div>
+    <div>
+      <h2 class="m-todo">A közepes szintű feladatokból még <span id="midLeft">16</span> hátravan</h2>
+      <h2 class="m-done">A közepes szintű rész kész!</h2>
+      <p class="m-todo">Ha ezekkel megvagy, jön a négy önálló feladat – ott már a függvényt is neked kell megtalálnod.</p>
+      <p class="m-done">Innentől a függvényt is neked kell kiválasztanod. Figyelj a K, L, M és N oszlopra: a következő feladatok ezekre is építenek.</p>
+    </div>
+  </section>
+
+    <div class="pband" id="part4">
+      <span class="pn">4</span>
+      <div class="pb"><h3>4. rész – Önálló feladatok</h3><p>Innentől nem adjuk meg, melyik függvény kell. Olvasd el figyelmesen, mit kérdez a feladat.</p></div>
+      <div class="ptag"><span class="ptab">a függvényt te választod</span><span class="pcount" data-pc="4">0 / 0</span></div>
+    </div>
+    <div class="tasks">
+      <article class="task lv-k kind-must" id="t17" data-part="4" data-kind="must">
+        <div class="num"><span class="n">17</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány településen gyűjtöttek 2000 kg-nál több papírt?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A megyei jelentésbe be kell írni, <strong>hány olyan település van, ahol a begyűjtött papír mennyisége meghaladta a 2000 kg-ot</strong>. A D oszlop adataiból dolgozz.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D126</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol17"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="17" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol17" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>69</code> ilyen település van.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t18" data-part="4" data-kind="must">
+        <div class="num"><span class="n">18</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi a Nyugati régió összlakossága?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>hány ember él összesen a „Nyugati” régió településein</strong>. A régió a B, a lakosságszám a C oszlopban található.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D127</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol18"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="18" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol18" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A Nyugati régió összlakossága: <code>530 050</code> fő.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t19" data-part="4" data-kind="must">
+        <div class="num"><span class="n">19</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány gramm papír jut egy lakosra?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Számold ki, <strong>egy lakosra mennyi papír jut</strong> a teljes adatsorban: az összes begyűjtött papírt kell elosztanod az összes lakossal. A táblázatban az adatok <strong>kilogrammban</strong> vannak, de a jelentés <strong>grammot</strong> kér – a kapott értéket tehát még át is kell váltanod. Az eredményt <strong>egy tizedesjegyre kerekítve</strong> írd be.</p><p class="txt">Figyelj: az <strong>összes</strong> papírt az <strong>összes</strong> lakossal kell elosztanod – nem az L oszlop értékeinek átlagát kérjük.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D128</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol19"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="19" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol19" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>Egy lakosra <code>100.5 gramm</code> papír jut (vagyis 0.1005 kg).</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t20" data-part="4" data-kind="must">
+        <div class="num"><span class="n">20</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora a szórás a két véglet között?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg <strong>egyetlen képlettel</strong>, hogy <strong>mekkora a különbség a legnagyobb és a legkisebb újrahasznosítási arány között</strong> (G oszlop).</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D129</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol20"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="20" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol20" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A különbség <code>64 százalékpont</code> (82% − 18%).</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t21" data-part="4" data-kind="must">
+        <div class="num"><span class="n">21</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány mintatelepülés lett?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A 15. feladatban kiszámolt <strong>M oszlop</strong> alapján add meg, <strong>hány település kapta meg a „Mintatelepülés” jelölést</strong>. Ne számold meg kézzel – képlettel dolgozz!</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D130</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol21"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="21" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol21" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>20</code> mintatelepülés van.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t22" data-part="4" data-kind="must">
+        <div class="num"><span class="n">22</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mekkora egy keleti település átlagos lakossága?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>mekkora az átlagos lakosságszám a „Keleti” régió településein</strong>. Gondold végig: ehhez két értékre lesz szükséged, és azokat el kell osztanod egymással. Az eredményt <strong>két tizedesjegyre kerekítve</strong> írd be.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D131</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol22"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="22" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol22" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A Keleti régió átlagos lakosságszáma kb. <code>25 827.78</code> fő.</p></div>
+        </div>
+      </article>
+      <article class="task lv-k kind-must" id="t23" data-part="4" data-kind="must">
+        <div class="num"><span class="n">23</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Mennyi papír gyűlt a fejlesztendő településeken?</h4>
+            <div class="chips"><span class="lv"><i></i>Közepesen nehéz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A 13. feladat <strong>K oszlopát</strong> használva add meg, <strong>mennyi papír gyűlt össze összesen azokon a településeken, amelyek „Fejlesztendő” minősítést kaptak</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D132</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol23"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="23" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol23" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A fejlesztendő településeken <code>147 380 kg</code> papír gyűlt össze.</p></div>
+        </div>
+      </article></div>
+
+  </section>
+
+  <section class="sec" id="bonus">
+    <header class="xband bonus">
+      <div class="big"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg></div>
+      <div>
+        <h2>Bónuszfeladatok</h2>
+        <p>Négy nehéz feladat annak, aki a 23 kötelezővel elkészült. Itt sem adjuk meg a függvényeket – és
+        többnyire egyszerre többre is szükség lesz.</p>
+        <div class="meta"><span class="pill"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg>4 bónuszfeladat</span><span class="pcount" data-pc="9">0 / 0</span></div>
+      </div>
+    </header>
+    <div class="tasks" style="margin-top:16px">
+      <article class="task lv-h kind-bonus" id="t24" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">24</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Egy lakosra jutó szelektív hulladék a Közép régióban</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Számold ki, <strong>mennyi szelektíven gyűjtött hulladék (papír + műanyag + üveg) jut egy lakosra a „Közép” régióban</strong>. Csak a Közép régió településeivel számolj, és az eredményt <strong>két tizedesjegyre kerekítve</strong> add meg.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D133</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol24"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="24" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol24" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A Közép régióban egy lakosra <code>0.21 kg</code> szelektív hulladék jut.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t25" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">25</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Háromszintű környezetvédelmi fokozat</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">A megye háromfokozatú elismerést ad az újrahasznosítási arány (G oszlop) alapján: <strong>70% vagy több</strong> → <code>Arany</code>; <strong>50% vagy több, de 70 alatt</strong> → <code>Ezüst</code>; <strong>50% alatt</strong> → <code>Bronz</code>. A <strong>P oszlopba</strong> írj <strong>egyetlen képletet</strong>, amely minden sorra a helyes fokozatot adja, és húzd le az utolsó adatsorig.</p><p class="txt">A <code>P1</code> cellába írd fejlécként: <code>Fokozat</code>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide kerül a képlet: <b>P2:P111</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol25"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="25" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol25" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>Arany</code>: 22, <code>Ezüst</code>: 31, <code>Bronz</code>: 57 település.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t26" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">26</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Hány település jobb az átlagnál?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Add meg, <strong>hány település gyűjtött az átlagnál több papírt</strong> (D oszlop). A trükk az, hogy a feltételbe magát az átlagot kell beépítenid – <strong>egyetlen képlettel</strong> oldd meg, segédcella nélkül.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D134</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol26"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="26" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol26" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span><code>55</code> település gyűjtött az átlagnál (kb. 2 527.45 kg) több papírt.</p></div>
+        </div>
+      </article>
+      <article class="task lv-h kind-bonus" id="t27" data-part="9" data-kind="bonus">
+        <div class="num"><span class="n">27</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></div>
+        <div class="card">
+          <div class="head">
+            <h4>Melyik régió a legjobb újrahasznosító?</h4>
+            <div class="chips"><span class="lv"><i></i>Nehéz</span><span class="tag bonus">bónusz</span></div>
+          </div>
+          <div class="path"><svg class="i pi" aria-hidden="true"><use href="#i-route"/></svg><span><span class="crumb">Képletek</span><i class="sep">›</i><span class="crumb solo">a függvényt neked kell kiválasztanod</span></span></div>
+          <p class="txt">Döntsd el, <strong>melyik régióban a legnagyobb az átlagos újrahasznosítási arány</strong>. Ehhez mind az öt régióra ki kell számolnod az átlagot – ezt szabadon megteheted segédcellákban a lap jobb oldalán (például a <code>U</code> oszloptól kezdve). Végül a <code>D135</code> cellába írd be a <strong>nyertes régió nevét</strong>, a <code>D136</code> cellába pedig az <strong>átlagát két tizedesjegyre kerekítve</strong>.</p>
+          <div class="foot">
+            <div class="helps">
+              <span class="dest">Ide számold: <b>D135 és D136</b> <i class="sw"></i> színezd ki</span>
+              <button type="button" class="hbtn chkb" aria-expanded="false" aria-controls="sol27"><svg class="i"><use href="#i-check"/></svg>Megoldás</button>
+            </div>
+            <label class="ok" title="Kész">
+              <input type="checkbox" data-n="27" aria-label="Kész">
+              <span class="box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>
+              <span class="oktxt">Kész</span>
+            </label>
+          </div>
+          <div class="panel chk" id="sol27" hidden><p><span class="plab">Megoldás – ennek kell kijönnie</span>A legjobb a <code>Közép</code> régió, kb. <code>55.95%</code> átlaggal. (Az öt régió átlaga: Északi 50.82%, Déli 39.96%, Keleti 53.89%, Nyugati 49.64%, Közép 55.95%)</p></div>
+        </div>
+      </article></div>
+  </section>
+
+  <section class="done-band" id="allDone" aria-live="polite">
+    <h2>Minden feladat kész, a bónusz is!</h2>
+    <p>Mentsd el a munkafüzetet, ellenőrizd, hogy minden képletes cella ki van színezve, és add be a tanárodnak.</p>
+  </section>
+
+  <div class="endnote">Közép szintű ellenőrző feladatsor Excel képletekhez · 1. csoport: környezetvédelem · 23 kötelező + 4 bónusz feladat. Az adatok kitaláltak, kizárólag értékelési célra készültek.</div>
+
+</main>
+
+<footer class="status">
+  <div class="in">
+    <span><span class="lab">Kötelező:</span> <b id="doneN">0</b> / 23</span>
+    <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="23" aria-valuenow="0" id="bar"><div class="fill" id="fill"></div></div>
+    <span class="opt"><svg class="i" aria-hidden="true" style="vertical-align:-.12em"><use href="#i-star"/></svg> <span class="lab">Bónusz:</span> <b id="doneO">0</b> / 4</span>
+    <button type="button" class="reset" id="reset">Újrakezdés</button>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var MUST = 23, ALAP = 16, KEY = 'ellenorzo-kepletek-g1-v1';
+  function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+
+  function confetti(){
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var c = document.createElement('canvas');
+    c.className = 'cfx';
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    document.body.appendChild(c);
+    var ctx = c.getContext('2d'), cols = ['#e8a013','#2b5490','#1e7a63','#9c3b6a','#b4232a','#36a184'], ps = [];
+    for(var i=0;i<140;i++){
+      ps.push({x:Math.random()*c.width, y:-20-Math.random()*c.height*0.4,
+        w:5+Math.random()*7, h:7+Math.random()*9, vy:2+Math.random()*3.4,
+        vx:-1.4+Math.random()*2.8, a:Math.random()*6.28, va:-0.12+Math.random()*0.24,
+        col:cols[(Math.random()*cols.length)|0]});
+    }
+    var t0 = Date.now();
+    function frame(){
+      ctx.clearRect(0,0,c.width,c.height);
+      ps.forEach(function(p){
+        p.x += p.vx; p.y += p.vy; p.a += p.va;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a);
+        ctx.fillStyle = p.col; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+      });
+      if(Date.now()-t0 < 3400){ window.requestAnimationFrame(frame); }
+      else if(c.parentNode){ c.parentNode.removeChild(c); }
+    }
+    window.requestAnimationFrame(frame);
+  }
+
+  var state = {};
+  try{ state = JSON.parse(lsGet(KEY) || '{}') || {}; }catch(e){ state = {}; }
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+
+  function refresh(){
+    var must=0, opt=0, per={}, tot={}, all=0, alapDone=0;
+    boxes.forEach(function(b){
+      var t=b.closest('.task'), p=t.getAttribute('data-part'), k=t.getAttribute('data-kind');
+      tot[p]=(tot[p]||0)+1;
+      t.classList.toggle('done', b.checked);
+      if(b.checked){
+        per[p]=(per[p]||0)+1; all++;
+        if(k==='must'){ must++; } else { opt++; }
+        if(parseInt(b.getAttribute('data-n'),10) <= ALAP){ alapDone++; }
+      }
+    });
+    document.getElementById('doneN').textContent = must;
+    document.getElementById('doneO').textContent = opt;
+    var fill = document.getElementById('fill');
+    fill.style.width = (100*must/MUST) + '%';
+    fill.classList.toggle('full', must === MUST);
+    document.getElementById('bar').setAttribute('aria-valuenow', must);
+    Array.prototype.forEach.call(document.querySelectorAll('.pcount'), function(el){
+      var p = el.getAttribute('data-pc'), d = per[p]||0, t = tot[p]||0;
+      el.textContent = d + ' / ' + t;
+      el.classList.toggle('full', d === t && t > 0);
+    });
+    var mid = document.getElementById('mid');
+    if(mid){ mid.classList.toggle('done', alapDone === ALAP);
+      document.getElementById('midLeft').textContent = (ALAP - alapDone); }
+    document.getElementById('allDone').classList.toggle('show', all === boxes.length);
+  }
+
+  function counts(){
+    var must=0, all=0;
+    boxes.forEach(function(b){ if(b.checked){ all++; if(b.closest('.task').getAttribute('data-kind')==='must'){ must++; } } });
+    return {must:must, all:all};
+  }
+  boxes.forEach(function(b){ b.checked = !!state[b.getAttribute('data-n')]; });
+  var start = counts();
+  var mustDone = (start.must === MUST), allDoneFlag = (start.all === boxes.length);
+
+  boxes.forEach(function(b){
+    var n = b.getAttribute('data-n');
+    b.addEventListener('change', function(){
+      if(b.checked){ state[n]=1; } else { delete state[n]; }
+      lsSet(KEY, JSON.stringify(state));
+      refresh();
+      var c = counts();
+      if(b.checked){
+        if(!mustDone && c.must === MUST){ mustDone = true; confetti(); }
+        if(!allDoneFlag && c.all === boxes.length){ allDoneFlag = true; confetti(); }
+      } else {
+        if(c.must < MUST){ mustDone = false; }
+        if(c.all < boxes.length){ allDoneFlag = false; }
+      }
+    });
+  });
+  refresh();
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if(window.confirm('Törlöd az összes pipát?')){
+      state = {}; lsSet(KEY, '{}');
+      boxes.forEach(function(b){ b.checked = false; });
+      refresh();
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.hbtn'), function(btn){
+    btn.addEventListener('click', function(){
+      var p = document.getElementById(btn.getAttribute('aria-controls'));
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      if(open){ p.setAttribute('hidden',''); } else { p.removeAttribute('hidden'); }
+    });
+  });
+
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var tbl = document.getElementById(btn.getAttribute('data-tbl'));
+      var rows = [];
+      Array.prototype.forEach.call(tbl.querySelectorAll('tr'), function(tr){
+        var cells = tr.querySelectorAll('td');
+        if(cells.length){ rows.push(Array.prototype.map.call(cells, function(c){ return c.textContent.trim(); }).join('\t')); }
+      });
+      var text = rows.join('\n');
+      function ok(){ btn.classList.add('copied'); setTimeout(function(){ btn.classList.remove('copied'); }, 1800); }
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(ok, function(){ fallbackCopy(text); ok(); });
+      } else { fallbackCopy(text); ok(); }
+    });
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('.tabs a'));
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+        }
+      });
+    }, {rootMargin:'-130px 0px -65% 0px'});
+    ['top','adatok','feladatok','bonus'].forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>
